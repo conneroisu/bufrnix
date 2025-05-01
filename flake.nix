@@ -13,14 +13,150 @@
     flake-utils.lib.eachDefaultSystem (system: let
       pkgs = import inputs.nixpkgs {inherit system;};
 
-      # Import all modules
-      bufrnixOptions = import ./src/lib/bufrnix-options.nix {inherit (pkgs) lib;};
-      bufrnixDebug = import ./src/lib/utils/debug.nix {inherit (pkgs) lib;};
+      # Define all our configurations and utilities inline to avoid import issues
 
-      # Create the mkBufrnixPackage function
+      # Debug utilities
+      debugUtils = {
+        # Debug logging function
+        log = level: msg: config: let
+          shouldLog = config.debug.enable && config.debug.verbosity >= level;
+          logPrefix = "[bufrnix] ";
+        in
+          if shouldLog
+          then
+            if config.debug.logFile != ""
+            then ''
+              echo "${logPrefix}${msg}" >> ${config.debug.logFile}
+            ''
+            else ''
+              echo "${logPrefix}${msg}" >&2
+            ''
+          else "";
+
+        # Function to print commands being executed
+        printCommand = cmd: config: let
+          shouldPrint = config.debug.enable && config.debug.verbosity >= 2;
+        in
+          if shouldPrint
+          then ''
+            echo "[bufrnix] Executing: ${cmd}" >&2
+          ''
+          else "";
+
+        # Function to time command execution
+        timeCommand = cmd: config: let
+          shouldTime = config.debug.enable && config.debug.verbosity >= 3;
+        in
+          if shouldTime
+          then ''
+            echo "[bufrnix] Starting: ${cmd}" >&2
+            TIMEFORMAT="[bufrnix] Command took: %3R seconds"
+            time (${cmd})
+          ''
+          else cmd;
+      };
+
+      # Configuration options
+      bufrnixOptionsModule = with pkgs.lib; {
+        options = {
+          # Basic configuration
+          root = mkOption {
+            type = types.str;
+            default = "./proto";
+            description = "Root directory for proto files";
+          };
+
+          # Debug options
+          debug = {
+            enable = mkOption {
+              type = types.bool;
+              default = false;
+              description = "Enable debug mode";
+            };
+
+            verbosity = mkOption {
+              type = types.int;
+              default = 1;
+              description = "Debug verbosity level (1-3)";
+            };
+
+            logFile = mkOption {
+              type = types.str;
+              default = "";
+              description = "Path to debug log file. If empty, logs to stdout";
+            };
+          };
+
+          # protoc options
+          protoc = {
+            sourceDirectories = mkOption {
+              type = types.listOf types.str;
+              default = ["./proto"];
+              description = "Directories containing proto files to compile";
+            };
+
+            includeDirectories = mkOption {
+              type = types.listOf types.str;
+              default = ["./proto"];
+              description = "Directories to include in the include path";
+            };
+
+            files = mkOption {
+              type = types.listOf types.str;
+              default = [];
+              description = "Specific proto files to compile (leave empty to compile all)";
+            };
+          };
+
+          # Language options
+          languages = {
+            go = {
+              enable = mkOption {
+                type = types.bool;
+                default = false;
+                description = "Enable Go code generation";
+              };
+
+              outputPath = mkOption {
+                type = types.str;
+                default = "gen/go";
+                description = "Output directory for generated Go code";
+              };
+
+              options = mkOption {
+                type = types.listOf types.str;
+                default = ["paths=source_relative"];
+                description = "Options to pass to protoc-gen-go";
+              };
+
+              packagePrefix = mkOption {
+                type = types.str;
+                default = "";
+                description = "Go package prefix for generated code";
+              };
+
+              grpc = {
+                enable = mkOption {
+                  type = types.bool;
+                  default = false;
+                  description = "Enable gRPC code generation for Go";
+                };
+
+                options = mkOption {
+                  type = types.listOf types.str;
+                  default = ["paths=source_relative"];
+                  description = "Options to pass to protoc-gen-go-grpc";
+                };
+              };
+            };
+          };
+        };
+      };
+
+      # Function to create a bufrnix package
       mkBufrnixPackage = config: let
         # Merge defaults with user config
-        cfg = pkgs.lib.recursiveUpdate bufrnixOptions.options config;
+        cfg = pkgs.lib.recursiveUpdate bufrnixOptionsModule.options config;
 
         # Helper function to construct protoc command
         mkProtocCommand = cfg: let
@@ -55,125 +191,79 @@
           #!/usr/bin/env bash
           set -e
 
-          ${bufrnixDebug.log 1 "Starting code generation" cfg}
-          ${bufrnixDebug.printCommand (mkProtocCommand cfg) cfg}
+          ${debugUtils.log 1 "Starting code generation" cfg}
+          ${debugUtils.printCommand (mkProtocCommand cfg) cfg}
 
           # Create output directories
           ${pkgs.lib.optionalString cfg.languages.go.enable ''
             mkdir -p ${cfg.languages.go.outputPath}
-            ${bufrnixDebug.log 2 "Created Go output directory: ${cfg.languages.go.outputPath}" cfg}
+            ${debugUtils.log 2 "Created Go output directory: ${cfg.languages.go.outputPath}" cfg}
           ''}
 
           # Run protoc command
-          ${bufrnixDebug.timeCommand (mkProtocCommand cfg) cfg}
+          ${debugUtils.timeCommand (mkProtocCommand cfg) cfg}
 
-          ${bufrnixDebug.log 1 "Code generation completed successfully" cfg}
+          ${debugUtils.log 1 "Code generation completed successfully" cfg}
         '';
 
-        # Create a wrapper script for initialization
-        initWrapper = pkgs.writeShellScriptBin "bufrnix_init" ''
-                      #!/usr/bin/env bash
-                      set -e
-
-                      ${bufrnixDebug.log 1 "Initializing bufrnix project" cfg}
-
-                      # Create directory structure
-                      mkdir -p ${cfg.root}
-                      ${bufrnixDebug.log 2 "Created root directory: ${cfg.root}" cfg}
-
-                      # Create example proto file if none exist
-                      if [ -z "$(find ${cfg.root} -name '*.proto' 2>/dev/null)" ]; then
-                        mkdir -p ${cfg.root}/example/v1
-                        cat > ${cfg.root}/example/v1/example.proto << EOF
-          syntax = "proto3";
-
-          package example.v1;
-
-          ${pkgs.lib.optionalString cfg.languages.go.enable ''
-            option go_package = "${cfg.languages.go.packagePrefix}/example/v1;examplev1";
-          ''}
-
-          // Example message
-          message Example {
-            string id = 1;
-            string name = 2;
-            int32 value = 3;
-          }
-
-          // Example service
-          service ExampleService {
-            rpc GetExample(GetExampleRequest) returns (GetExampleResponse);
-          }
-
-          message GetExampleRequest {
-            string id = 1;
-          }
-
-          message GetExampleResponse {
-            Example example = 1;
-          }
-          EOF
-                        ${bufrnixDebug.log 2 "Created example proto file: ${cfg.root}/example/v1/example.proto" cfg}
-                      fi
-
-                      # Create buf.yaml for linting
-                      cat > ${cfg.root}/buf.yaml << EOF
-          version: v1
-          name: ${
-            if inputs.self != null
-            then pkgs.lib.baseNameOf (toString inputs.self)
-            else "bufrnix"
-          }/example
-          build:
-            roots:
-              - ./
-          lint:
-            use:
-              - DEFAULT
-          EOF
-                      ${bufrnixDebug.log 2 "Created buf.yaml: ${cfg.root}/buf.yaml" cfg}
-
-                      ${bufrnixDebug.log 1 "Initialization completed successfully" cfg}
-                      echo "Bufrnix project initialized successfully!"
-                      echo "Run 'bufrnix_generate' to generate code from proto files."
-        '';
+        # Initialization functionality removed as requested
 
         # Create a wrapper script for linting
         lintWrapper = pkgs.writeShellScriptBin "bufrnix_lint" ''
           #!/usr/bin/env bash
           set -e
 
-          ${bufrnixDebug.log 1 "Starting linting" cfg}
+          ${debugUtils.log 1 "Starting linting" cfg}
 
           if ! command -v buf &> /dev/null; then
             echo "Error: 'buf' command not found. Please install buf CLI: https://buf.build/docs/installation"
             exit 1
           fi
 
-          ${bufrnixDebug.printCommand "buf lint ${cfg.root}" cfg}
-          ${bufrnixDebug.timeCommand "buf lint ${cfg.root}" cfg}
+          ${debugUtils.printCommand "buf lint ${cfg.root}" cfg}
+          ${debugUtils.timeCommand "buf lint ${cfg.root}" cfg}
 
-          ${bufrnixDebug.log 1 "Linting completed successfully" cfg}
+          ${debugUtils.log 1 "Linting completed successfully" cfg}
         '';
+
+        # Build the dependencies list
+        buildInputsList = with pkgs;
+          [
+            protobuf
+          ]
+          ++ pkgs.lib.optionals cfg.languages.go.enable [
+            protoc-gen-go
+          ]
+          ++ pkgs.lib.optionals (cfg.languages.go.enable && cfg.languages.go.grpc.enable) [
+            protoc-gen-go-grpc
+          ];
       in
         pkgs.symlinkJoin {
           name = "bufrnix";
           paths = [
             protocWrapper
-            initWrapper
             lintWrapper
           ];
-          buildInputs = with pkgs;
-            [
-              protobuf
-            ]
-            ++ pkgs.lib.optionals cfg.languages.go.enable [
-              protoc-gen-go
-            ]
-            ++ pkgs.lib.optionals (cfg.languages.go.enable && cfg.languages.go.grpc.enable) [
-              protoc-gen-go-grpc
-            ];
+          buildInputs = buildInputsList;
         };
+
+      # NixOS module definition
+      nixosModule = {
+        config,
+        lib,
+        pkgs,
+        ...
+      }: let
+        cfg = config.bufrnix;
+      in {
+        options.bufrnix = bufrnixOptionsModule.options;
+
+        config = lib.mkIf (cfg != {}) {
+          environment.systemPackages = [
+            (mkBufrnixPackage cfg)
+          ];
+        };
+      };
 
       scripts = {
         dx = {
@@ -246,12 +336,12 @@
       };
 
       # Export NixOS module
-      nixosModules.default = import ./src/module.nix;
+      nixosModules.default = nixosModule;
 
       # Expose as library for more flexibility
       lib = {
-        bufrnixOptions = import ./src/lib/bufrnix-options.nix {lib = pkgs.lib;};
-        bufrnixDebug = import ./src/lib/utils/debug.nix {lib = pkgs.lib;};
+        bufrnixOptions = bufrnixOptionsModule.options;
+        bufrnixDebug = debugUtils;
         mkBufrnixPackage = mkBufrnixPackage;
       };
     });
