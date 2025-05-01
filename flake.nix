@@ -18,11 +18,14 @@
       pkgs = import inputs.nixpkgs {inherit system;};
 
       # Add our bufrnix functionality
-      mkBufrnixPackage = config:
-        import ./src/lib/mkBufrnix.nix {
-          inherit (pkgs) lib;
-          inherit pkgs config self;
-        };
+      mkBufrnixPackage = let
+        lazyImp = ./src/lib/mkBufrnix.nix;
+      in
+        config:
+          import lazyImp {
+            inherit (pkgs) lib;
+            inherit pkgs config self;
+          };
 
       scripts = {
         dx = {
