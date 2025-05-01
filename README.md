@@ -778,6 +778,7 @@ CI/CD integration ensures consistent proto handling across environments:
 ### 6.1 Incremental Development Approach
 
 #### Phase 1: Core Functionality (Weeks 1-2)
+
 **Development Tasks:**
 1. Create basic package structure with minimal Nix configuration
 2. Implement core protoc wrapper for a single language (Go)
@@ -815,6 +816,7 @@ CI/CD integration ensures consistent proto handling across environments:
    - Test lint configuration options
 
 #### Phase 3: Performance Optimizations and Documentation (Weeks 5-6)
+
 **Development Tasks:**
 1. Implement incremental generation
 2. Add performance benchmarking
@@ -834,6 +836,7 @@ CI/CD integration ensures consistent proto handling across environments:
    - Test edge cases (empty services, complex nested types)
 
 #### Phase 4: CI/CD and Testing Framework (Weeks 7-8)
+
 **Development Tasks:**
 1. Implement CI/CD workflow generation
 2. Create testing framework for generated code

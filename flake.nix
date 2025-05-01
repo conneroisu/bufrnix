@@ -9,9 +9,20 @@
     flake-utils.inputs.systems.follows = "systems";
   };
 
-  outputs = inputs @ {flake-utils, ...}:
+  outputs = inputs @ {
+    self,
+    flake-utils,
+    ...
+  }:
     flake-utils.lib.eachDefaultSystem (system: let
       pkgs = import inputs.nixpkgs {inherit system;};
+
+      # Add our bufrnix functionality
+      mkBufrnixPackage = config:
+        import ./src/lib/mkBufrnix.nix {
+          inherit (pkgs) lib;
+          inherit pkgs config self;
+        };
 
       scripts = {
         dx = {
@@ -24,6 +35,12 @@
             ${pkgs.deadnix}/bin/deadnix $REPO_ROOT/flake.nix
           '';
           description = "Lint flake.nix";
+        };
+        format = {
+          exec = ''
+            ${pkgs.alejandra}/bin/alejandra $REPO_ROOT/flake.nix
+          '';
+          description = "Format flake.nix";
         };
       };
 
@@ -42,10 +59,19 @@
             alejandra
             nixd
             statix
+            deadnix
+            # Protobuf tools
+            protobuf
+            buf
           ]
           ++ builtins.attrValues scriptPackages;
       };
+
+      # Export our bufrnix package functions
       packages = {
+        default = mkBufrnixPackage {};
+        mkBufrnixPackage = mkBufrnixPackage;
+
         doc = pkgs.stdenv.mkDerivation {
           pname = "bufrnix-docs";
           version = "0.1";
