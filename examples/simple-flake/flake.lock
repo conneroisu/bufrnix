@@ -9,11 +9,11 @@
         "systems": "systems"
       },
       "locked": {
-        "lastModified": 1746059483,
-        "narHash": "sha256-zszlifSvUkpSh85ZCI/jLpLI/txcteo8xFeSSADGALg=",
+        "lastModified": 1746059553,
+        "narHash": "sha256-jIUjjpuEjGmaGmHkSKv8NIE/UArbVkNONw5lQ8uP9Zk=",
         "owner": "conneroisu",
         "repo": "bufrnix",
-        "rev": "f372ead2ff54f4b69e13b7be7dbe3480bcc0bf35",
+        "rev": "ccb7ba80f82d663178696d1d0037a566412dbe4c",
         "type": "github"
       },
       "original": {
