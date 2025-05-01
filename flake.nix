@@ -12,7 +12,7 @@
     flake-utils.lib.eachDefaultSystem (system: let
       pkgs = import inputs.nixpkgs {inherit system;};
 
-      # Create the main package
+      # Create the main package function
       mkBufrnixPackage = {
         root ? "./proto",
         languages ? {},
@@ -39,31 +39,59 @@
           protoFiles = "${root}/**/*.proto";
         in "${baseCmd} ${goFlags} ${goGrpcFlags} ${protoFiles}";
 
-        # Create the main executable
-        mainScript = pkgs.writeShellScriptBin "bufrnix" ''
-          #!/usr/bin/env bash
+        # Create the generate script
+        generateScript = pkgs.writeShellApplication {
+          name = "bufrnix-generate";
+          runtimeInputs =
+            [pkgs.protobuf]
+            ++ (
+              if goEnabled
+              then [pkgs.protoc-gen-go]
+              else []
+            )
+            ++ (
+              if goGrpcEnabled
+              then [pkgs.protoc-gen-go-grpc]
+              else []
+            );
+          text = ''
+            echo "[bufrnix] Starting code generation"
 
-          if [ $# -eq 0 ]; then
-            echo "bufrnix - Nix-powered Protocol Buffer tools"
-            echo ""
-            echo "Usage: bufrnix COMMAND [ARGS]"
-            echo ""
-            echo "Available commands:"
-            echo "  generate    Generate code from proto files"
-            echo "  lint        Lint proto files using buf CLI"
-            exit 0
-          fi
+            # Create output directories
+            ${
+              if goEnabled
+              then "mkdir -p ${goOutputPath}"
+              else ""
+            }
 
-          case "$1" in
-            generate)
-              shift
-              exec bufrnix-generate "$@"
-              ;;
-            lint)
-              shift
-              exec bufrnix-lint "$@"
-              ;;
-            --help|-h|help)
+            # Run protoc command
+            echo "[bufrnix] Running: ${mkProtocCmd}"
+            ${mkProtocCmd}
+
+            echo "[bufrnix] Code generation completed successfully"
+          '';
+        };
+
+        # Create the lint script
+        lintScript = pkgs.writeShellApplication {
+          name = "bufrnix-lint";
+          runtimeInputs = [pkgs.buf];
+          text = ''
+            echo "[bufrnix] Starting linting"
+
+            echo "[bufrnix] Running: buf lint ${root}"
+            buf lint ${root}
+
+            echo "[bufrnix] Linting completed successfully"
+          '';
+        };
+
+        # Create the main script
+        mainScript = pkgs.writeShellApplication {
+          name = "bufrnix";
+          runtimeInputs = [generateScript lintScript];
+          text = ''
+            if [ $# -eq 0 ]; then
               echo "bufrnix - Nix-powered Protocol Buffer tools"
               echo ""
               echo "Usage: bufrnix COMMAND [ARGS]"
@@ -72,97 +100,75 @@
               echo "  generate    Generate code from proto files"
               echo "  lint        Lint proto files using buf CLI"
               exit 0
-              ;;
-            *)
-              echo "Error: unknown command '$1'"
-              echo ""
-              echo "Usage: bufrnix COMMAND [ARGS]"
-              echo ""
-              echo "Available commands:"
-              echo "  generate    Generate code from proto files"
-              echo "  lint        Lint proto files using buf CLI"
-              exit 1
-              ;;
-          esac
-        '';
+            fi
 
-        # Create the generate script
-        generateScript = pkgs.writeShellScriptBin "bufrnix-generate" ''
-          #!/usr/bin/env bash
-          set -e
-
-          echo "[bufrnix] Starting code generation"
-
-          # Create output directories
-          ${
-            if goEnabled
-            then "mkdir -p ${goOutputPath}"
-            else ""
-          }
-
-          # Run protoc command
-          echo "[bufrnix] Running: ${mkProtocCmd}"
-          ${mkProtocCmd}
-
-          echo "[bufrnix] Code generation completed successfully"
-        '';
-
-        # Create the lint script
-        lintScript = pkgs.writeShellScriptBin "bufrnix-lint" ''
-          #!/usr/bin/env bash
-          set -e
-
-          echo "[bufrnix] Starting linting"
-
-          if ! command -v buf &> /dev/null; then
-            echo "Error: 'buf' command not found. Please install buf CLI: https://buf.build/docs/installation"
-            exit 1
-          fi
-
-          echo "[bufrnix] Running: buf lint ${root}"
-          buf lint ${root}
-
-          echo "[bufrnix] Linting completed successfully"
-        '';
-
-        # Additional dependencies based on config
-        extraDeps = with pkgs;
-          []
-          ++ (
-            if goEnabled
-            then [protoc-gen-go]
-            else []
-          )
-          ++ (
-            if goGrpcEnabled
-            then [protoc-gen-go-grpc]
-            else []
-          );
-      in
-        pkgs.symlinkJoin {
-          name = "bufrnix";
-          paths =
-            [
-              mainScript
-              generateScript
-              lintScript
-            ]
-            ++ extraDeps;
-          buildInputs = [pkgs.protobuf];
+            case "$1" in
+              generate)
+                shift
+                exec bufrnix-generate "$@"
+                ;;
+              lint)
+                shift
+                exec bufrnix-lint "$@"
+                ;;
+              --help|-h|help)
+                echo "bufrnix - Nix-powered Protocol Buffer tools"
+                echo ""
+                echo "Usage: bufrnix COMMAND [ARGS]"
+                echo ""
+                echo "Available commands:"
+                echo "  generate    Generate code from proto files"
+                echo "  lint        Lint proto files using buf CLI"
+                exit 0
+                ;;
+              *)
+                echo "Error: unknown command '$1'"
+                echo ""
+                echo "Usage: bufrnix COMMAND [ARGS]"
+                echo ""
+                echo "Available commands:"
+                echo "  generate    Generate code from proto files"
+                echo "  lint        Lint proto files using buf CLI"
+                exit 1
+                ;;
+            esac
+          '';
         };
+      in
+        mainScript;
     in {
       # Package exports
       packages = {
         default = mkBufrnixPackage {};
+      };
+
+      # App exports (for nix run)
+      apps = {
+        default = {
+          type = "app";
+          program = "${mkBufrnixPackage {}}/bin/bufrnix";
+        };
+        generate = {
+          type = "app";
+          program = "${(mkBufrnixPackage {}).runtimeInputs.path}/bin/bufrnix-generate";
+        };
+        lint = {
+          type = "app";
+          program = "${(mkBufrnixPackage {}).runtimeInputs.path}/bin/bufrnix-lint";
+        };
+      };
+
+      # Expose the package function
+      lib = {
         mkBufrnixPackage = mkBufrnixPackage;
       };
 
       # Simple development shell
       devShells.default = pkgs.mkShell {
         packages = with pkgs; [
-          (mkBufrnixPackage {})
-          buf
           protobuf
+          buf
+          (mkBufrnixPackage {})
         ];
       };
     });
