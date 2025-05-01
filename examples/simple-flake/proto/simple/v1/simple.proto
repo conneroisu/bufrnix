@@ -1,0 +1,82 @@
+syntax = "proto3";
+
+package userservice;
+
+option go_package = "github.com/conneroisu/bufrnix/examples/simple-flake/proto/simple/v1;userservice";
+
+// User represents a user in the system
+message User {
+  string id = 1;
+  string name = 2;
+  string email = 3;
+  int32 age = 4;
+  repeated string roles = 5;
+  UserStatus status = 6;
+  
+  // Address represents a physical address
+  message Address {
+    string street = 1;
+    string city = 2;
+    string state = 3;
+    string zip = 4;
+    string country = 5;
+  }
+  
+  repeated Address addresses = 7;
+}
+
+// UserStatus represents the current status of a user
+enum UserStatus {
+  UNKNOWN = 0;
+  ACTIVE = 1;
+  INACTIVE = 2;
+  SUSPENDED = 3;
+}
+
+// SomethingElse is another type of entity in the system
+message SomethingElse {
+  string id = 1;
+  string description = 2;
+  int64 created_at = 3;
+  float importance_score = 4;
+  bool is_enabled = 5;
+  
+  // Metadata contains additional information
+  map<string, string> metadata = 6;
+  
+  // Relationship with User
+  string owner_user_id = 7;
+}
+
+// UserService provides methods to manage users
+service UserService {
+  // CreateUser creates a new user
+  rpc CreateUser(CreateUserRequest) returns (CreateUserResponse);
+  
+  // GetUser retrieves a user by ID
+  rpc GetUser(GetUserRequest) returns (GetUserResponse);
+}
+
+// CreateUserRequest is the request for CreateUser
+message CreateUserRequest {
+  User user = 1;
+}
+
+// CreateUserResponse is the response from CreateUser
+message CreateUserResponse {
+  User user = 1;
+  bool success = 2;
+  string error = 3;
+}
+
+// GetUserRequest is the request for GetUser
+message GetUserRequest {
+  string user_id = 1;
+}
+
+// GetUserResponse is the response from GetUser
+message GetUserResponse {
+  User user = 1;
+  bool success = 2;
+  string error = 3;
+}
