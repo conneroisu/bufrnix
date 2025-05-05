@@ -8,138 +8,130 @@
     flake-utils.inputs.systems.follows = "systems";
   };
 
-  outputs = inputs @ {flake-utils, ...}:
-    flake-utils.lib.eachDefaultSystem (system: let
-      pkgs = import inputs.nixpkgs {inherit system;};
+  outputs = inputs @ {flake-utils, nixpkgs, systems, ...}: let
+    # Define all supported systems explicitly
+    supportedSystems = [
+      "x86_64-linux"
+      "i686-linux"
+      "x86_64-darwin"
+      "aarch64-linux"
+      "aarch64-darwin"
+    ];
+  in
+    {
+      # Export the flake module for integration
+      flakeModule = ./flake-module.nix;
+      
+      # Export a common library for all systems
+      lib = {
+        # Import options for use in other flakes
+        options = import ./src/lib/bufrnix-options.nix { lib = nixpkgs.lib; };
+        
+        # Import debug utilities for use in other flakes
+        debug = import ./src/lib/utils/debug.nix { lib = nixpkgs.lib; };
+      };
+      
+      # Export NixOS modules that can be imported in configuration.nix
+      nixosModules = {
+        bufrnix = { config, lib, pkgs, ... }: {
+          imports = [ ./src/module.nix ];
+        };
+        default = { config, lib, pkgs, ... }: {
+          imports = [ ./src/module.nix ];
+        };
+      };
+      
+      # Export overlays for package customization
+      overlays = {
+        default = final: prev: {
+          bufrnix = final.callPackage ./src/lib/mkBufrnix.nix { };
+        };
+      };
+    }
+    // flake-utils.lib.eachSystem supportedSystems (system: let
+      pkgs = import nixpkgs {
+        inherit system;
+        overlays = []; # No overlays needed for the base package
+      };
+      
+      # Import the core mkBufrnix function
+      mkBufrnixFunc = import ./src/lib/mkBufrnix.nix {
+        inherit pkgs;
+        lib = pkgs.lib;
+      };
+      
+      # Import utility modules
+      debug = import ./src/lib/utils/debug.nix { lib = pkgs.lib; };
 
-      # Create the main package function
+      # Create the main package function with a simplified interface
       mkBufrnixPackage = {
         root ? "./proto",
         languages ? {},
         debug ? {},
       }: let
-        # Default values
-        goEnabled = languages.go.enable or false;
-        goGrpcEnabled = (languages.go.grpc.enable or false) && goEnabled;
-        goOutputPath = languages.go.outputPath or "gen/go";
-        goOptions = languages.go.options or ["paths=source_relative"];
-        goGrpcOptions = languages.go.grpc.options or ["paths=source_relative"];
-
-        # Create protoc command
-        mkProtocCmd = let
-          baseCmd = "${pkgs.protobuf}/bin/protoc --proto_path=${root}";
-          goFlags =
-            if goEnabled
-            then "--go_out=${goOutputPath} --go_opt=${pkgs.lib.concatStringsSep " --go_opt=" goOptions}"
-            else "";
-          goGrpcFlags =
-            if goGrpcEnabled
-            then "--go-grpc_out=${goOutputPath} --go-grpc_opt=${pkgs.lib.concatStringsSep " --go-grpc_opt=" goGrpcOptions}"
-            else "";
-          protoFiles = "${root}/**/*.proto";
-        in "${baseCmd} ${goFlags} ${goGrpcFlags} ${protoFiles}";
-
-        # Create the generate script
-        generateScript = pkgs.writeShellApplication {
-          name = "bufrnix-generate";
-          runtimeInputs =
-            [pkgs.protobuf]
-            ++ (
-              if goEnabled
-              then [pkgs.protoc-gen-go]
-              else []
-            )
-            ++ (
-              if goGrpcEnabled
-              then [pkgs.protoc-gen-go-grpc]
-              else []
-            );
-          text = ''
-            echo "[bufrnix] Starting code generation"
-
-            # Create output directories
-            ${
-              if goEnabled
-              then "mkdir -p ${goOutputPath}"
-              else ""
-            }
-
-            # Run protoc command
-            echo "[bufrnix] Running: ${mkProtocCmd}"
-            ${mkProtocCmd}
-
-            echo "[bufrnix] Code generation completed successfully"
-          '';
-        };
-
-        # Create the lint script
-        lintScript = pkgs.writeShellApplication {
-          name = "bufrnix-lint";
-          runtimeInputs = [pkgs.buf];
-          text = ''
-            echo "[bufrnix] Starting linting"
-
-            echo "[bufrnix] Running: buf lint ${root}"
-            buf lint ${root}
-
-            echo "[bufrnix] Linting completed successfully"
-          '';
-        };
-
-        # Create the main script
-        mainScript = pkgs.writeShellApplication {
-          name = "bufrnix";
-          runtimeInputs = [generateScript lintScript];
-          text = ''
-            if [ $# -eq 0 ]; then
-              echo "bufrnix - Nix-powered Protocol Buffer tools"
-              echo ""
-              echo "Usage: bufrnix COMMAND [ARGS]"
-              echo ""
-              echo "Available commands:"
-              echo "  generate    Generate code from proto files"
-              echo "  lint        Lint proto files using buf CLI"
-              exit 0
-            fi
-
-            case "$1" in
-              generate)
-                shift
-                exec bufrnix-generate "$@"
-                ;;
-              lint)
-                shift
-                exec bufrnix-lint "$@"
-                ;;
-              --help|-h|help)
-                echo "bufrnix - Nix-powered Protocol Buffer tools"
-                echo ""
-                echo "Usage: bufrnix COMMAND [ARGS]"
-                echo ""
-                echo "Available commands:"
-                echo "  generate    Generate code from proto files"
-                echo "  lint        Lint proto files using buf CLI"
-                exit 0
-                ;;
-              *)
-                echo "Error: unknown command '$1'"
-                echo ""
-                echo "Usage: bufrnix COMMAND [ARGS]"
-                echo ""
-                echo "Available commands:"
-                echo "  generate    Generate code from proto files"
-                echo "  lint        Lint proto files using buf CLI"
-                exit 1
-                ;;
-            esac
-          '';
+        # Build configuration object from parameters
+        config = {
+          inherit root;
+          
+          # Set debug configuration
+          debug = {
+            enable = debug.enable or false;
+            verbosity = debug.verbosity or 1;
+            logFile = debug.logFile or "";
+          };
+          
+          # Set language configuration
+          languages = {
+            go = {
+              enable = languages.go.enable or false;
+              outputPath = languages.go.outputPath or "gen/go";
+              options = languages.go.options or ["paths=source_relative"];
+              packagePrefix = languages.go.packagePrefix or "";
+              
+              grpc = {
+                enable = (languages.go.grpc.enable or false);
+                options = languages.go.grpc.options or ["paths=source_relative"];
+              };
+            };
+          };
+          
+          # Set protoc configuration
+          protoc = {
+            sourceDirectories = [root];
+            includeDirectories = [root];
+            files = [];
+          };
         };
       in
-        mainScript;
+        mkBufrnixFunc config;
+      
+      # Create Doc package
+      docPackage = pkgs.stdenv.mkDerivation {
+        pname = "bufrnix-docs";
+        version = "0.1.0";
+        src = ./doc;
+        
+        nativeBuildInputs = with pkgs; [
+          mdbook
+          mdbook-toc
+          mdbook-linkcheck
+        ];
+        
+        buildPhase = ''
+          mdbook build
+        '';
+        
+        installPhase = ''
+          mkdir -p $out
+          cp -r book/* $out/
+        '';
+      };
     in {
       # Package exports
       packages = {
         default = mkBufrnixPackage {};
+        mkBufrnix = mkBufrnixFunc;
+        doc = docPackage;
       };
 
       # App exports (for nix run)
@@ -156,20 +148,67 @@
           type = "app";
           program = "${(mkBufrnixPackage {}).runtimeInputs.path}/bin/bufrnix-lint";
         };
+        init = {
+          type = "app";
+          program = "${(mkBufrnixPackage {}).runtimeInputs.path}/bin/bufrnix-init";
+        };
       };
 
-      # Expose the package function
+      # Expose package functions and utilities as lib
       lib = {
         mkBufrnixPackage = mkBufrnixPackage;
+        options = import ./src/lib/bufrnix-options.nix { lib = pkgs.lib; };
+        debug = debug;
       };
 
-      # Simple development shell
+      # Development shell with useful tools
       devShells.default = pkgs.mkShell {
         packages = with pkgs; [
+          # Protobuf tools
           protobuf
           buf
+          protoc-gen-go
+          protoc-gen-go-grpc
+          
+          # Nix development tools
+          alejandra     # Nix formatter
+          statix        # Nix linter 
+          deadnix       # Find unused code
+          
+          # Build our package with default settings
           (mkBufrnixPackage {})
         ];
+        
+        # Add useful environment variables
+        shellHook = ''
+          echo "Welcome to bufrnix development shell"
+          echo "Available commands:"
+          echo "  bufrnix generate - Generate protobuf code"
+          echo "  bufrnix lint     - Lint protobuf files"
+          echo "  format           - Format Nix files with alejandra"
+          echo "  lint             - Lint Nix files with statix"
+          
+          # Command aliases
+          alias format="alejandra ."
+          alias lint="statix check"
+        '';
+      };
+      
+      # Add checks to ensure everything builds correctly
+      checks = {
+        build-default = mkBufrnixPackage {};
+        build-with-go = mkBufrnixPackage {
+          languages.go.enable = true;
+        };
+        build-with-go-grpc = mkBufrnixPackage {
+          languages = {
+            go = {
+              enable = true;
+              grpc.enable = true;
+            };
+          };
+        };
+        build-docs = docPackage;
       };
     });
 }
