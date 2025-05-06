@@ -33,7 +33,7 @@
             cd "$REPO_ROOT"/examples/simple-flake/
             nix run .\#packages.${system}.default
           '';
-          description = "Test the the implementation.";
+          description = "Test the implementation.";
         };
       };
 
