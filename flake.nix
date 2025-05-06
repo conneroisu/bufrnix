@@ -19,11 +19,20 @@
         };
         lint = {
           exec = ''
+            REPO_ROOT=$(git rev-parse --show-toplevel)
             ${pkgs.statix}/bin/statix check $REPO_ROOT/flake.nix
             ${pkgs.deadnix}/bin/deadnix $REPO_ROOT/flake.nix
           '';
           # TODO: Lint other files besides just flake.nix
           description = "Lint flake.nix";
+        };
+        test = {
+          exec = ''
+            REPO_ROOT=$(git rev-parse --show-toplevel)
+            cd "$REPO_ROOT"/examples/simple-flake/
+            nix run .\#packages.${system}.default
+          '';
+          description = "Test the simple-flake example.";
         };
       };
 
