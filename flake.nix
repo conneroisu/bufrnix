@@ -26,13 +26,14 @@
           # TODO: Lint other files besides just flake.nix
           description = "Lint flake.nix";
         };
-        test = {
+        tests = {
           exec = ''
             REPO_ROOT=$(git rev-parse --show-toplevel)
+            echo "validating simple-flake example"
             cd "$REPO_ROOT"/examples/simple-flake/
             nix run .\#packages.${system}.default
           '';
-          description = "Test the simple-flake example.";
+          description = "Test the the implementation.";
         };
       };
 
