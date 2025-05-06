@@ -1,5 +1,5 @@
 {
-  description = "Protobuf Compiler/Codegen from Nix";
+  description = "Protobuf Compiler/Codegen Declaratively from Nix";
 
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
