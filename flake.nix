@@ -23,6 +23,7 @@
             ${pkgs.statix}/bin/statix check $REPO_ROOT/flake.nix
             ${pkgs.deadnix}/bin/deadnix $REPO_ROOT/flake.nix
           '';
+          # TODO: Lint other files besides just flake.nix
           description = "Lint flake.nix";
         };
       };
