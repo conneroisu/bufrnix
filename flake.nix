@@ -2,19 +2,15 @@
   description = "Protobuf Compiler/Codegen Declaratively from Nix";
 
   inputs = {
-    nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
+    nixpkgs.url = "https://flakehub.com/f/NixOS/nixpkgs/0.1.*";
     systems.url = "github:nix-systems/default";
-    flake-utils.url = "github:numtide/flake-utils";
-    flake-utils.inputs.systems.follows = "systems";
-    flake-parts.url = "github:hercules-ci/flake-parts";
+    flake-parts.url = "https://flakehub.com/f/hercules-ci/flake-parts/0.1.*";
     flake-parts.inputs.nixpkgs-lib.follows = "nixpkgs";
     nix-unit.url = "github:nix-community/nix-unit";
     nix-unit.inputs = {
       nixpkgs.follows = "nixpkgs";
       flake-parts.follows = "flake-parts";
     };
-    treefmt-nix.url = "github:numtide/treefmt-nix";
-    treefmt-nix.inputs.nixpkgs.follows = "nixpkgs";
   };
 
   outputs = inputs @ {flake-parts, ...}:
@@ -23,7 +19,6 @@
         systems = import inputs.systems;
         imports = [
           inputs.nix-unit.modules.flake.default
-          inputs.treefmt-nix.flakeModule
           ./shells/flake-module.nix
           ./doc/flake-module.nix
         ];
@@ -53,12 +48,6 @@
             };
           };
 
-          treefmt = {
-            projectRootFile = ".git/config";
-            programs = {
-              alejandra.enable = true;
-            };
-          };
           checks = {};
         };
         flake = {
