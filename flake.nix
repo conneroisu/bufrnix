@@ -67,6 +67,6 @@
             runHook postInstall
           '';
         };
-      };
+      } // pkgs.lib.genAttrs (builtins.attrNames scripts) (name: scriptPackages.${name});
     });
 }
