@@ -6,79 +6,69 @@
     systems.url = "github:nix-systems/default";
     flake-utils.url = "github:numtide/flake-utils";
     flake-utils.inputs.systems.follows = "systems";
+    flake-parts.url = "github:hercules-ci/flake-parts";
+    flake-parts.inputs.nixpkgs-lib.follows = "nixpkgs";
+    nix-unit.url = "github:nix-community/nix-unit";
+    nix-unit.inputs = {
+      nixpkgs.follows = "nixpkgs";
+      flake-parts.follows = "flake-parts";
+    };
+    treefmt-nix.url = "github:numtide/treefmt-nix";
+    treefmt-nix.inputs.nixpkgs.follows = "nixpkgs";
   };
 
-  outputs = inputs @ {flake-utils, ...}:
-    flake-utils.lib.eachDefaultSystem (system: let
-      pkgs = import inputs.nixpkgs {inherit system;};
-
-      scripts = {
-        dx = {
-          exec = ''$EDITOR $REPO_ROOT/flake.nix'';
-          description = "Edit flake.nix";
-        };
-        lint = {
-          exec = ''
-            REPO_ROOT=$(git rev-parse --show-toplevel)
-            ${pkgs.statix}/bin/statix check $REPO_ROOT/flake.nix
-            ${pkgs.deadnix}/bin/deadnix $REPO_ROOT/flake.nix
-          '';
-          # TODO: Lint other files besides just flake.nix
-          description = "Lint flake.nix";
-        };
-        tests = {
-          exec = ''
-            REPO_ROOT=$(git rev-parse --show-toplevel)
-            EPATH="$REPO_ROOT"/examples/simple-flake/
-            echo "validating simple-flake example @ $EPATH"
-            cd $EPATH
-            nix run .\#packages.${system}.default
-          '';
-          description = "Test the implementation.";
-        };
-      };
-
-      scriptPackages =
-        pkgs.lib.mapAttrs
-        (name: script: pkgs.writeShellScriptBin name script.exec)
-        scripts;
-    in {
-      devShells.default = pkgs.mkShell {
-        shellHook = ''
-          export REPO_ROOT=$(git rev-parse --show-toplevel)
-        '';
-        packages = with pkgs;
-          [
-            # Nix
-            alejandra
-            nixd
-            statix
-          ]
-          ++ builtins.attrValues scriptPackages;
-      };
-      packages =
-        {
-          doc = pkgs.stdenv.mkDerivation {
-            pname = "bufrnix-docs";
-            version = "0.1";
-            src = ./.;
-            nativeBuildInputs = with pkgs; [nixdoc mdbook mdbook-open-on-gh mdbook-cmdrun git];
-            dontConfigure = true;
-            dontFixup = true;
-            buildPhase = ''
-              runHook preBuild
-              cd doc  # Navigate to the doc directory during build
-              mkdir -p .git  # Create .git directory
-              mdbook build
-              runHook postBuild
-            '';
-            installPhase = ''
-              runHook preInstall
-              mv book $out
-              runHook postInstall
-            '';
+  outputs = inputs @ {flake-parts, ...}:
+    flake-parts.lib.mkFlake {inherit inputs;} (
+      {self, ...}: {
+        systems = import inputs.systems;
+        imports = [
+          inputs.nix-unit.modules.flake.default
+          inputs.treefmt-nix.flakeModule
+          ./shells/flake-module.nix
+          ./doc/flake-module.nix
+        ];
+        debug = true;
+        perSystem = {
+          lib,
+          self',
+          pkgs,
+          system,
+          ...
+        }: {
+          _module.args.pkgs = import inputs.nixpkgs {
+            inherit system;
+            config.allowUnfree = true;
+            overlays = [];
           };
-        }
-        // pkgs.lib.genAttrs (builtins.attrNames scripts) (name: scriptPackages.${name});
-    });
+          nix-unit.tests = {
+            "test integer equality is reflexive" = {
+              expr = "123";
+              expected = "123";
+            };
+            "frobnicator" = {
+              "testFoo" = {
+                expr = "foo";
+                expected = "foo";
+              };
+            };
+          };
+
+          treefmt = {
+            projectRootFile = ".git/config";
+            programs = {
+              alejandra.enable = true;
+            };
+          };
+          checks = {};
+        };
+        flake = {
+          # System-agnostic tests can be defined here, and will be picked up by
+          # `nix flake check`
+          tests.testBar = {
+            expr = "bar";
+            expected = "bar";
+          };
+        };
+      }
+    );
 }
