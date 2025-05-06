@@ -29,8 +29,9 @@
         tests = {
           exec = ''
             REPO_ROOT=$(git rev-parse --show-toplevel)
-            echo "validating simple-flake example"
-            cd "$REPO_ROOT"/examples/simple-flake/
+            EPATH="$REPO_ROOT"/examples/simple-flake/
+            echo "validating simple-flake example @ $EPATH"
+            cd $EPATH
             nix run .\#packages.${system}.default
           '';
           description = "Test the implementation.";
@@ -55,27 +56,29 @@
           ]
           ++ builtins.attrValues scriptPackages;
       };
-      packages = {
-        doc = pkgs.stdenv.mkDerivation {
-          pname = "bufrnix-docs";
-          version = "0.1";
-          src = ./.;
-          nativeBuildInputs = with pkgs; [nixdoc mdbook mdbook-open-on-gh mdbook-cmdrun git];
-          dontConfigure = true;
-          dontFixup = true;
-          buildPhase = ''
-            runHook preBuild
-            cd doc  # Navigate to the doc directory during build
-            mkdir -p .git  # Create .git directory
-            mdbook build
-            runHook postBuild
-          '';
-          installPhase = ''
-            runHook preInstall
-            mv book $out
-            runHook postInstall
-          '';
-        };
-      } // pkgs.lib.genAttrs (builtins.attrNames scripts) (name: scriptPackages.${name});
+      packages =
+        {
+          doc = pkgs.stdenv.mkDerivation {
+            pname = "bufrnix-docs";
+            version = "0.1";
+            src = ./.;
+            nativeBuildInputs = with pkgs; [nixdoc mdbook mdbook-open-on-gh mdbook-cmdrun git];
+            dontConfigure = true;
+            dontFixup = true;
+            buildPhase = ''
+              runHook preBuild
+              cd doc  # Navigate to the doc directory during build
+              mkdir -p .git  # Create .git directory
+              mdbook build
+              runHook postBuild
+            '';
+            installPhase = ''
+              runHook preInstall
+              mv book $out
+              runHook postInstall
+            '';
+          };
+        }
+        // pkgs.lib.genAttrs (builtins.attrNames scripts) (name: scriptPackages.${name});
     });
 }
