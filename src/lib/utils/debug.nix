@@ -77,8 +77,8 @@ with lib; {
     echo "$(date '+%Y-%m-%d %H:%M:%S') [bufrnix] ERROR: ${msg}" >&2
     if [ -n "$BASH_VERSION" ]; then
       echo "Stack trace:" >&2
-      for i in $(seq 0 $((${"\$"}{#FUNCNAME[@]} - 1))); do
-        echo "  $i: ${"\$"}{BASH_SOURCE[$i]}:${"\$"}{BASH_LINENO[$i-1]} ${"\$"}{FUNCNAME[$i]}()" >&2
+      for i in $(seq 0 $((\$\{#FUNCNAME[@]} - 1))); do
+        echo "  $i: \$\{BASH_SOURCE[$i]}:\$\{BASH_LINENO[$i-1]} \$\{FUNCNAME[$i]}()" >&2
       done
     fi
     exit ${toString exitCode}
