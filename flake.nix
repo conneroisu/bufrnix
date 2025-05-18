@@ -16,13 +16,12 @@
   outputs = inputs @ {flake-parts, ...}:
     flake-parts.lib.mkFlake {inherit inputs;} (
       {self, ...}: {
+        debug = true;
         systems = import inputs.systems;
         imports = [
           inputs.nix-unit.modules.flake.default
-          ./shells/flake-module.nix
           ./doc/flake-module.nix
         ];
-        debug = true;
         perSystem = {
           lib,
           self',
@@ -35,20 +34,50 @@
             config.allowUnfree = true;
             overlays = [];
           };
-          packages = {
-            default = self.lib.mkBufrnixPackage {
-              inherit lib pkgs;
-              config = {
-                root = "./proto";
-                languages.go.enable = true;
-              };
-            };
-          };
-
           nix-unit.tests = {
             "simple-test" = {
               expr = "foo";
               expected = "foo";
+            };
+          };
+
+          devShells = let
+            scripts = {
+              dx = {
+                exec = ''$EDITOR $REPO_ROOT/flake.nix'';
+                description = "Edit flake.nix";
+              };
+              lint = {
+                exec = ''
+                  REPO_ROOT=$(git rev-parse --show-toplevel)
+                  ${pkgs.statix}/bin/statix check $REPO_ROOT/flake.nix
+                  ${pkgs.deadnix}/bin/deadnix $REPO_ROOT/flake.nix
+                '';
+                description = "Lint flake.nix";
+              };
+            };
+
+            scriptPackages =
+              pkgs.lib.mapAttrs
+              (name: script: pkgs.writeShellScriptBin name script.exec)
+              scripts;
+          in {
+            default = pkgs.mkShell {
+              shellHook = ''
+                export REPO_ROOT=$(git rev-parse --show-toplevel)
+              '';
+              packages = with pkgs;
+                [
+                  # Nix
+                  alejandra
+                  nixd
+                  statix
+                  # Docs
+                  astro-language-server
+                  markdownlint-cli
+                  bun
+                ]
+                ++ builtins.attrValues scriptPackages;
             };
           };
 
@@ -61,10 +90,15 @@
             expr = "bar";
             expected = "bar";
           };
-          
+
           # Export the constructor function at the flake level
           lib = {
-            mkBufrnixPackage = {lib, pkgs, self ? null, config ? {}}:
+            mkBufrnixPackage = {
+              lib,
+              pkgs,
+              self ? null,
+              config ? {},
+            }:
               import "${inputs.self}/src/lib/mkBufrnix.nix" {
                 inherit lib pkgs self config;
               };
