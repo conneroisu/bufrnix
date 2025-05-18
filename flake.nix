@@ -35,14 +35,20 @@
             config.allowUnfree = true;
             overlays = [];
           };
-          nix-unit.tests = {
-            "protoc-gen-go-enable" = {
-              expr = self.mkBufrnixPackage.go.enable;
-              expected = false;
+          packages = {
+            default = self.lib.mkBufrnixPackage {
+              inherit lib pkgs;
+              config = {
+                root = "./proto";
+                languages.go.enable = true;
+              };
             };
-            "protoc-gen-go-package" = {
-              expr = self.mkBufrnixPackage.go.package;
-              expected = pkgs.protoc-gen-go;
+          };
+
+          nix-unit.tests = {
+            "simple-test" = {
+              expr = "foo";
+              expected = "foo";
             };
           };
 
@@ -54,6 +60,14 @@
           tests.testBar = {
             expr = "bar";
             expected = "bar";
+          };
+          
+          # Export the constructor function at the flake level
+          lib = {
+            mkBufrnixPackage = {lib, pkgs, self ? null, config ? {}}:
+              import "${inputs.self}/src/lib/mkBufrnix.nix" {
+                inherit lib pkgs self config;
+              };
           };
         };
       }

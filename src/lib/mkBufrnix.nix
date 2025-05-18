@@ -6,11 +6,21 @@
 }:
 with lib; let
   # Import our modules
-  options = import ./bufrnix-options.nix {inherit lib;};
+  optionsDef = import ./bufrnix-options.nix {inherit lib;};
   debug = import ./utils/debug.nix {inherit lib;};
 
+  # Extract default values from options
+  extractDefaults = options:
+    if isOption options
+    then options.default or null
+    else if isAttrs options
+    then mapAttrs (_: extractDefaults) options
+    else options;
+
+  defaultConfig = extractDefaults optionsDef.options;
+
   # Merge defaults with user config
-  cfg = recursiveUpdate options.options config;
+  cfg = recursiveUpdate defaultConfig config;
 
   # Helper function to construct protoc command
   mkProtocCommand = cfg: let
@@ -36,29 +46,11 @@ with lib; let
     protoFiles =
       if (cfg.protoc.files != [])
       then cfg.protoc.files
-      else map (dir: "${dir}/**/*.proto") cfg.protoc.sourceDirectories;
+      else if (cfg.protoc.sourceDirectories != [])
+      then map (dir: "${dir}/**/*.proto") cfg.protoc.sourceDirectories
+      else ["${cfg.root}/**/*.proto"];
   in
     concatStringsSep " " (protocCmd ++ goOpts ++ goGrpcOpts ++ protoFiles);
-
-  # Create a wrapper script for the protoc command
-  protocWrapper = pkgs.writeShellScriptBin "bufrnix_generate" ''
-    #!/usr/bin/env bash
-    set -e
-
-    ${debug.log 1 "Starting code generation" cfg}
-    ${debug.printCommand (mkProtocCommand cfg) cfg}
-
-    # Create output directories
-    ${optionalString cfg.languages.go.enable ''
-      mkdir -p ${cfg.languages.go.outputPath}
-      ${debug.log 2 "Created Go output directory: ${cfg.languages.go.outputPath}" cfg}
-    ''}
-
-    # Run protoc command
-    ${debug.timeCommand (mkProtocCommand cfg) cfg}
-
-    ${debug.log 1 "Code generation completed successfully" cfg}
-  '';
 
   # Create a wrapper script for initialization
   initWrapper = pkgs.writeShellScriptBin "bufrnix_init" ''
@@ -128,7 +120,6 @@ with lib; let
         echo "Run 'bufrnix_generate' to generate code from proto files."
   '';
 
-  # Create a wrapper script for linting
   lintWrapper = pkgs.writeShellScriptBin "bufrnix_lint" ''
     #!/usr/bin/env bash
     set -e
@@ -146,15 +137,12 @@ with lib; let
     ${debug.log 1 "Linting completed successfully" cfg}
   '';
 in
-  pkgs.symlinkJoin {
+  pkgs.writeShellApplication {
     name = "bufrnix";
-    paths = [
-      protocWrapper
-      initWrapper
-      lintWrapper
-    ];
-    buildInputs = with pkgs;
+
+    runtimeInputs = with pkgs;
       [
+        bash
         protobuf
       ]
       ++ optionals cfg.languages.go.enable [
@@ -163,4 +151,12 @@ in
       ++ optionals (cfg.languages.go.enable && cfg.languages.go.grpc.enable) [
         protoc-gen-go-grpc
       ];
+
+    text = ''
+      mkdir -p ${cfg.languages.go.outputPath}
+      ${debug.log 1 "Starting code generation" cfg}
+      ${debug.printCommand (mkProtocCommand cfg) cfg}
+      ${debug.timeCommand (mkProtocCommand cfg) cfg}
+      ${debug.log 1 "Code generation completed successfully" cfg}
+    '';
   }

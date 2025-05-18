@@ -1,5 +1,5 @@
 {
-  description = "Simple bufrnix flake";
+  description = "Simple bufrnix flake for generating go";
 
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
@@ -17,6 +17,11 @@
     flake-utils.lib.eachDefaultSystem (system: let
       pkgs = nixpkgs.legacyPackages.${system};
     in {
+devShells.default = pkgs.mkShell {
+        packages = [
+          pkgs.go
+        ];
+};
       packages = {
         default = bufrnix.lib.mkBufrnixPackage {
           inherit (pkgs) lib;
@@ -30,7 +35,7 @@
             };
             languages.go = {
               enable = true;
-              outputPath = "gen/go";
+              outputPath = "proto/gen/go";
               grpc = {
                 enable = true;
               };
