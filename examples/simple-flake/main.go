@@ -207,8 +207,22 @@ func main() {
 		// Start server in background
 		go runServer(*serverPort)
 		
-		// Give server time to start
-		time.Sleep(time.Second)
+		// Wait for server to be ready with retry loop
+		maxRetries := 30 // 30 retries * 100ms = 3 seconds timeout
+		connected := false
+		for i := 0; i < maxRetries; i++ {
+			conn, err := net.Dial("tcp", *serverAddr)
+			if err == nil {
+				connected = true
+				conn.Close()
+				break
+			}
+			time.Sleep(100 * time.Millisecond)
+		}
+		
+		if !connected {
+			log.Fatalf("Failed to connect to server at %s after %d retries", *serverAddr, maxRetries)
+		}
 		
 		// Run client
 		runClient(*serverAddr)
