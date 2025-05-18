@@ -2,9 +2,9 @@
   description = "Protobuf Compiler/Codegen Declaratively from Nix";
 
   inputs = {
-    nixpkgs.url = "https://flakehub.com/f/NixOS/nixpkgs/0.1.*";
+    nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
     systems.url = "github:nix-systems/default";
-    flake-parts.url = "https://flakehub.com/f/hercules-ci/flake-parts/0.1.*";
+    flake-parts.url = "github:hercules-ci/flake-parts";
     flake-parts.inputs.nixpkgs-lib.follows = "nixpkgs";
     nix-unit.url = "github:nix-community/nix-unit";
     nix-unit.inputs = {
@@ -36,15 +36,13 @@
             overlays = [];
           };
           nix-unit.tests = {
-            "test integer equality is reflexive" = {
-              expr = "123";
-              expected = "123";
+            "protoc-gen-go-enable" = {
+              expr = self.mkBufrnixPackage.go.enable;
+              expected = false;
             };
-            "frobnicator" = {
-              "testFoo" = {
-                expr = "foo";
-                expected = "foo";
-              };
+            "protoc-gen-go-package" = {
+              expr = self.mkBufrnixPackage.go.package;
+              expected = pkgs.protoc-gen-go;
             };
           };
 
