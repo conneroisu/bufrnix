@@ -8,6 +8,7 @@ with lib; let
   # Import our modules
   optionsDef = import ./bufrnix-options.nix {inherit lib;};
   debug = import ./utils/debug.nix {inherit lib;};
+  moduleSystem = import ./module-system.nix {inherit lib;};
 
   # Extract default values from options
   extractDefaults = options:
@@ -22,6 +23,39 @@ with lib; let
   # Merge defaults with user config
   cfg = recursiveUpdate defaultConfig config;
 
+  # Create module system with our configuration
+  modSys = moduleSystem.createModuleSystem {
+    inherit config pkgs self;
+  };
+
+  # Load language modules based on configuration
+  languageNames = attrNames cfg.languages;
+  
+  # Function to load a language module if enabled
+  loadLanguageModule = language:
+    if cfg.languages.${language}.enable
+    then import ../languages/${language} {
+      inherit pkgs lib;
+      config = cfg;
+      cfg = cfg.languages.${language};
+    }
+    else {};
+  
+  # Load all enabled language modules
+  loadedLanguageModules = map loadLanguageModule languageNames;
+  
+  # Extract runtime inputs from language modules
+  languageRuntimeInputs = concatMap (module: module.runtimeInputs or []) loadedLanguageModules;
+  
+  # Extract protoc plugins from language modules
+  languageProtocPlugins = concatMap (module: module.protocPlugins or []) loadedLanguageModules;
+  
+  # Extract initialization hooks from language modules
+  languageInitHooks = concatMapStrings (module: module.initHooks or "") loadedLanguageModules;
+  
+  # Extract code generation hooks from language modules
+  languageGenerateHooks = concatMapStrings (module: module.generateHooks or "") loadedLanguageModules;
+
   # Helper function to construct protoc command
   mkProtocCommand = cfg: let
     # Base protoc command
@@ -30,17 +64,8 @@ with lib; let
       "--proto_path=${concatStringsSep " --proto_path=" cfg.protoc.includeDirectories}"
     ];
 
-    # Go language options
-    goOpts = optionals cfg.languages.go.enable [
-      "--go_out=${cfg.languages.go.outputPath}"
-      "--go_opt=${concatStringsSep " --go_opt=" cfg.languages.go.options}"
-    ];
-
-    # Go gRPC options
-    goGrpcOpts = optionals (cfg.languages.go.enable && cfg.languages.go.grpc.enable) [
-      "--go-grpc_out=${cfg.languages.go.outputPath}"
-      "--go-grpc_opt=${concatStringsSep " --go-grpc_opt=" cfg.languages.go.grpc.options}"
-    ];
+    # Add language-specific protocol plugins
+    protocolPlugins = languageProtocPlugins;
 
     # Proto files selection
     protoFiles =
@@ -50,7 +75,7 @@ with lib; let
       then map (dir: "${dir}/**/*.proto") cfg.protoc.sourceDirectories
       else ["${cfg.root}/**/*.proto"];
   in
-    concatStringsSep " " (protocCmd ++ goOpts ++ goGrpcOpts ++ protoFiles);
+    concatStringsSep " " (protocCmd ++ protocolPlugins ++ protoFiles);
 
   # Create a wrapper script for initialization
   initWrapper = pkgs.writeShellScriptBin "bufrnix_init" ''
@@ -62,6 +87,9 @@ with lib; let
         # Create directory structure
         mkdir -p "${cfg.root}"
         ${debug.log 2 "Created root directory: \"${cfg.root}\"" cfg}
+
+        # Language-specific initialization hooks
+        ${languageInitHooks}
 
         # Create example proto file if none exist
         if [ -z "$(find "${cfg.root}" -name '*.proto' 2>/dev/null)" ]; then
@@ -145,15 +173,12 @@ in
         bash
         protobuf
       ]
-      ++ optionals cfg.languages.go.enable [
-        protoc-gen-go
-      ]
-      ++ optionals (cfg.languages.go.enable && cfg.languages.go.grpc.enable) [
-        protoc-gen-go-grpc
-      ];
+      ++ languageRuntimeInputs;
 
     text = ''
-      mkdir -p ${cfg.languages.go.outputPath}
+      # Language-specific directory creation
+      ${languageGenerateHooks}
+
       ${debug.log 1 "Starting code generation" cfg}
 
       # Expand proto file globs if needed
@@ -179,17 +204,21 @@ in
         ''
       }
 
-      # Build the protoc command
+      # Build the protoc command dynamically using language modules
       protoc_cmd="${pkgs.protobuf}/bin/protoc"
       protoc_args="--proto_path=${concatStringsSep " --proto_path=" cfg.protoc.includeDirectories}"
-      ${optionalString cfg.languages.go.enable ''
-        protoc_args="$protoc_args --go_out=${cfg.languages.go.outputPath}"
-        protoc_args="$protoc_args --go_opt=${concatStringsSep " --go_opt=" cfg.languages.go.options}"
-      ''}
-      ${optionalString (cfg.languages.go.enable && cfg.languages.go.grpc.enable) ''
-        protoc_args="$protoc_args --go-grpc_out=${cfg.languages.go.outputPath}"
-        protoc_args="$protoc_args --go-grpc_opt=${concatStringsSep " --go-grpc_opt=" cfg.languages.go.grpc.options}"
-      ''}
+      
+      # Add language-specific protocol plugins from the loaded modules
+      ${concatMapStrings (module: 
+        if module ? protocPlugins 
+        then ''
+          # Add plugin options
+          ${concatMapStrings (plugin: ''
+            protoc_args="$protoc_args ${plugin}"
+          '') module.protocPlugins}
+        ''
+        else ""
+      ) loadedLanguageModules}
 
       # Execute protoc with expanded file list
       eval "$protoc_cmd $protoc_args $proto_files"

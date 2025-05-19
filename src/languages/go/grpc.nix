@@ -1,36 +1,33 @@
 {
   pkgs,
-  config,
   lib,
+  cfg ? {},
   ...
 }:
+
 with lib; let
-  cfg = config.generators.go.grpc;
+  enabled = cfg.enable or false;
+  outputPath = cfg.outputPath or "gen/go";
+  options = cfg.options or ["paths=source_relative"];
 in {
-  options.generators.go.grpc = {
-    enable = mkEnableOption "protoc-gen-go-grpc";
-    package = mkOption {
-      type = types.package;
-      default = pkgs.protoc-gen-go-grpc;
-      description = ''
-        The package that provides the `protoc-gen-go-grpc` binary, and
-        includes it in the generation step.
+  # Runtime dependencies for gRPC
+  runtimeInputs = optionals enabled [
+    pkgs.protoc-gen-go-grpc
+  ];
 
-        Configuratble Behavior:
-          - Verbosity: (GRPC_GO_LOG_VERBOSITY_LEVEL) - The verbosity level for the gRPC
-          - Output: (--go_out) - The output directory for the generated files
-          - Plugin Out: (--go-grpc_out) - The output directory for the generated files
-          - Plugin: (--go-grpc_opt) - The options to pass to the plugin
-          - Opt: (--go_opt) - The output directory for the generated files
+  # Protoc plugin configuration for gRPC
+  protocPlugins = optionals enabled [
+    "--go-grpc_out=${outputPath}"
+    "--go-grpc_opt=${concatStringsSep " --go-grpc_opt=" options}"
+  ];
 
-        URL: https://github.com/grpc/grpc-go
-      '';
-    };
-  };
+  # Initialization hooks for gRPC
+  initHooks = optionalString enabled ''
+    echo "Setting up Go gRPC generation..."
+  '';
 
-  config = mkIf cfg.enable {
-    buildInputs = [
-      cfg.package
-    ];
-  };
+  # Generation hooks for gRPC
+  generateHooks = optionalString enabled ''
+    echo "Configuring Go gRPC generation..."
+  '';
 }

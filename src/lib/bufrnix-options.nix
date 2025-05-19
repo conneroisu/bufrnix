@@ -52,6 +52,7 @@ with lib; {
 
     # Language options
     languages = {
+      # Go language options
       go = {
         enable = mkOption {
           type = types.bool;
@@ -90,7 +91,53 @@ with lib; {
             description = "Options to pass to protoc-gen-go-grpc";
           };
         };
+
+        # Support for other Go-related plugins
+        gateway = {
+          enable = mkOption {
+            type = types.bool;
+            default = false;
+            description = "Enable gRPC-Gateway code generation for Go";
+          };
+
+          options = mkOption {
+            type = types.listOf types.str;
+            default = ["paths=source_relative"];
+            description = "Options to pass to protoc-gen-grpc-gateway";
+          };
+        };
+
+        validate = {
+          enable = mkOption {
+            type = types.bool;
+            default = false;
+            description = "Enable protoc-gen-validate for Go";
+          };
+
+          options = mkOption {
+            type = types.listOf types.str;
+            default = ["lang=go"];
+            description = "Options to pass to protoc-gen-validate";
+          };
+        };
+
+        connect = {
+          enable = mkOption {
+            type = types.bool;
+            default = false;
+            description = "Enable Connect code generation for Go";
+          };
+
+          options = mkOption {
+            type = types.listOf types.str;
+            default = ["paths=source_relative"];
+            description = "Options to pass to protoc-gen-connect-go";
+          };
+        };
       };
+      
+      # Additional language options will be defined here
+      # For example, python, rust, typescript, etc.
     };
   };
 }

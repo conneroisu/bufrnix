@@ -1,31 +1,33 @@
-# https://github.com/grpc-ecosystem/grpc-gateway
 {
   pkgs,
-  config,
   lib,
+  cfg ? {},
   ...
 }:
+
 with lib; let
-  cfg = config.modules.generators.go.gateway;
+  enabled = cfg.enable or false;
+  outputPath = cfg.outputPath or "gen/go";
+  options = cfg.options or ["paths=source_relative"];
 in {
-  options.generators.go.gateway = {
-    enable = mkEnableOption "protoc-gen-go-gateway";
-    package = mkOption {
-      type = types.package;
-      default = pkgs.grpc-gateway;
-      description = ''
-        The package that provides the `protoc-gen-go-gateway` binary, and
-        includes it in the generation step.
+  # Runtime dependencies for Gateway
+  runtimeInputs = optionals enabled [
+    pkgs.grpc-gateway or pkgs.go
+  ];
 
+  # Protoc plugin configuration for Gateway
+  protocPlugins = optionals enabled [
+    "--grpc-gateway_out=${outputPath}"
+    "--grpc-gateway_opt=${concatStringsSep " --grpc-gateway_opt=" options}"
+  ];
 
-        URL: https://github.com/grpc-ecosystem/grpc-gateway
-      '';
-    };
-  };
+  # Initialization hooks for Gateway
+  initHooks = optionalString enabled ''
+    echo "Setting up Go gRPC-Gateway generation..."
+  '';
 
-  config = mkIf cfg.enable {
-    buildInputs = [
-      cfg.package
-    ];
-  };
+  # Generation hooks for Gateway
+  generateHooks = optionalString enabled ''
+    echo "Configuring Go gRPC-Gateway generation..."
+  '';
 }

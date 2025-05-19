@@ -1,30 +1,33 @@
-# https://github.com/grpc-ecosystem/grpc-
 {
   pkgs,
-  config,
   lib,
+  cfg ? {},
   ...
 }:
+
 with lib; let
-  cfg = config.generators.go.connect;
+  enabled = cfg.enable or false;
+  outputPath = cfg.outputPath or "gen/go";
+  options = cfg.options or ["paths=source_relative"];
 in {
-  options.generators.go.pluginrpc = {
-    enable = mkEnableOption "protoc-gen-go-connect";
-    package = mkOption {
-      type = types.package;
-      default = pkgs.protoc-gen-connect-go;
-      description = ''
-        The package that provides the `protoc-gen-connect-go` binary, and
-        includes it in the generation step.
+  # Runtime dependencies for Connect
+  runtimeInputs = optionals enabled [
+    pkgs.protoc-gen-connect-go or pkgs.go
+  ];
 
-        URL: https://github.com/connectrpc/connect-go
-      '';
-    };
-  };
+  # Protoc plugin configuration for Connect
+  protocPlugins = optionals enabled [
+    "--connect-go_out=${outputPath}"
+    "--connect-go_opt=${concatStringsSep " --connect-go_opt=" options}"
+  ];
 
-  config = mkIf cfg.enable {
-    buildInputs = [
-      cfg.package
-    ];
-  };
+  # Initialization hooks for Connect
+  initHooks = optionalString enabled ''
+    echo "Setting up Go Connect generation..."
+  '';
+
+  # Generation hooks for Connect
+  generateHooks = optionalString enabled ''
+    echo "Configuring Go Connect generation..."
+  '';
 }
