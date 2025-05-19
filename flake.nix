@@ -50,10 +50,6 @@
               alejandra
               nixd
               statix
-              # Docs
-              astro-language-server
-              markdownlint-cli
-              bun
             ]
             ++ builtins.attrValues scriptPackages;
         };

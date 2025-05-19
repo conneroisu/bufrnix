@@ -72,7 +72,7 @@ Create a Nix package that combines the best of protoc for code generation and Bu
 - **protoc for all code generation** with Buf only for linting
 - **Built-in wrapper commands** for common operations
 - **Hermetic environment** for reproducible builds
-- **Comprehensive language support** for Go, Python, Rust, and custom plugins
+- **Comprehensive language support** for Go, PHP (with Twirp), Python, Rust, and custom plugins
 - **Advanced debugging capabilities** for troubleshooting
 - **Performance optimizations** through caching and incremental generation
 - **Testing framework** for validating generated code

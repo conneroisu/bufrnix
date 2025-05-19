@@ -1,0 +1,19 @@
+syntax = "proto3";
+
+package example.v1;
+
+// Simple greeting service example
+service HelloService {
+  // Say hello
+  rpc Hello(HelloRequest) returns (HelloResponse);
+}
+
+// Request message containing the person's name
+message HelloRequest {
+  string name = 1;
+}
+
+// Response message containing the greeting
+message HelloResponse {
+  string greeting = 1;
+}
