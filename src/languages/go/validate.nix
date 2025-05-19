@@ -1,30 +1,33 @@
 {
   pkgs,
-  config,
   lib,
+  cfg ? {},
   ...
 }:
+
 with lib; let
-  cfg = config.modules.generators.go.validate;
+  enabled = cfg.enable or false;
+  outputPath = cfg.outputPath or "gen/go";
+  options = cfg.options or ["lang=go"];
 in {
-  options.generators.go.validate = {
-    enable = mkEnableOption "protoc-gen-validate";
-    package = mkOption {
-      type = types.package;
-      default = pkgs.protoc-gen-validate;
-      description = ''
-        The package that provides the `protoc-gen-validate` binary, and
-        includes it in the generation step.
+  # Runtime dependencies for Validate
+  runtimeInputs = optionals enabled [
+    pkgs.protoc-gen-validate or pkgs.go
+  ];
 
-        URL: https://github.com/bufbuild/protovalidate-go
-      '';
-    };
-    documentation = "https://github.com/bufbuild/protovalidate-go";
-  };
+  # Protoc plugin configuration for Validate
+  protocPlugins = optionals enabled [
+    "--validate_out=${outputPath}"
+    "--validate_opt=${concatStringsSep " --validate_opt=" options}"
+  ];
 
-  config = mkIf cfg.enable {
-    buildInputs = [
-      cfg.package
-    ];
-  };
+  # Initialization hooks for Validate
+  initHooks = optionalString enabled ''
+    echo "Setting up Go Validate generation..."
+  '';
+
+  # Generation hooks for Validate
+  generateHooks = optionalString enabled ''
+    echo "Configuring Go Validate generation..."
+  '';
 }

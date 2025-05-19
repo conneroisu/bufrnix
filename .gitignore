@@ -77,3 +77,4 @@ cython_debug/
 .devenv
 node_modules/
 yarn.lock
+result
