@@ -60,13 +60,13 @@ with lib; let
         ${debug.log 1 "Initializing bufrnix project" cfg}
 
         # Create directory structure
-        mkdir -p ${cfg.root}
-        ${debug.log 2 "Created root directory: ${cfg.root}" cfg}
+        mkdir -p "${cfg.root}"
+        ${debug.log 2 "Created root directory: \"${cfg.root}\"" cfg}
 
         # Create example proto file if none exist
-        if [ -z "$(find ${cfg.root} -name '*.proto' 2>/dev/null)" ]; then
-          mkdir -p ${cfg.root}/example/v1
-          cat > ${cfg.root}/example/v1/example.proto << EOF
+        if [ -z "$(find "${cfg.root}" -name '*.proto' 2>/dev/null)" ]; then
+          mkdir -p "${cfg.root}/example/v1"
+          cat > "${cfg.root}/example/v1/example.proto" << EOF
     syntax = "proto3";
 
     package example.v1;
@@ -95,11 +95,11 @@ with lib; let
       Example example = 1;
     }
     EOF
-          ${debug.log 2 "Created example proto file: ${cfg.root}/example/v1/example.proto" cfg}
+          ${debug.log 2 "Created example proto file: \"${cfg.root}/example/v1/example.proto\"" cfg}
         fi
 
         # Create buf.yaml for linting
-        cat > ${cfg.root}/buf.yaml << EOF
+        cat > "${cfg.root}/buf.yaml" << EOF
     version: v1
     name: ${
       if self != null
@@ -113,7 +113,7 @@ with lib; let
       use:
         - DEFAULT
     EOF
-        ${debug.log 2 "Created buf.yaml: ${cfg.root}/buf.yaml" cfg}
+        ${debug.log 2 "Created buf.yaml: \"${cfg.root}/buf.yaml\"" cfg}
 
         ${debug.log 1 "Initialization completed successfully" cfg}
         echo "Bufrnix project initialized successfully!"
@@ -131,8 +131,8 @@ with lib; let
       exit 1
     fi
 
-    ${debug.printCommand "buf lint ${cfg.root}" cfg}
-    ${debug.timeCommand "buf lint ${cfg.root}" cfg}
+    ${debug.printCommand "buf lint \"${cfg.root}\"" cfg}
+    ${debug.timeCommand "buf lint \"${cfg.root}\"" cfg}
 
     ${debug.log 1 "Linting completed successfully" cfg}
   '';
@@ -155,8 +155,42 @@ in
     text = ''
       mkdir -p ${cfg.languages.go.outputPath}
       ${debug.log 1 "Starting code generation" cfg}
-      ${debug.printCommand (mkProtocCommand cfg) cfg}
-      ${debug.timeCommand (mkProtocCommand cfg) cfg}
+      
+      # Expand proto file globs if needed
+      proto_files=""
+      ${if (cfg.protoc.files == [])
+        then if (cfg.protoc.sourceDirectories == [])
+          then ''
+            # Find all proto files from root
+            proto_files=$(find "${cfg.root}" -name "*.proto" -type f)
+          ''
+          else ''
+            # Find proto files from specified directories
+            ${concatMapStrings (dir: ''
+              proto_files="$proto_files $(find "${dir}" -name "*.proto" -type f)"
+            '') cfg.protoc.sourceDirectories}
+          ''
+        else ''
+          # Use explicitly specified files
+          proto_files="${concatStringsSep " " cfg.protoc.files}"
+        ''
+      }
+      
+      # Build the protoc command
+      protoc_cmd="${pkgs.protobuf}/bin/protoc"
+      protoc_args="--proto_path=${concatStringsSep " --proto_path=" cfg.protoc.includeDirectories}"
+      ${optionalString cfg.languages.go.enable ''
+        protoc_args="$protoc_args --go_out=${cfg.languages.go.outputPath}"
+        protoc_args="$protoc_args --go_opt=${concatStringsSep " --go_opt=" cfg.languages.go.options}"
+      ''}
+      ${optionalString (cfg.languages.go.enable && cfg.languages.go.grpc.enable) ''
+        protoc_args="$protoc_args --go-grpc_out=${cfg.languages.go.outputPath}"
+        protoc_args="$protoc_args --go-grpc_opt=${concatStringsSep " --go-grpc_opt=" cfg.languages.go.grpc.options}"
+      ''}
+      
+      # Execute protoc with expanded file list
+      ${debug.printCommand "$protoc_cmd $protoc_args $proto_files" cfg}
+      ${debug.timeCommand "$protoc_cmd $protoc_args $proto_files" cfg}
       ${debug.log 1 "Code generation completed successfully" cfg}
     '';
   }

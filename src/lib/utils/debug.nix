@@ -63,7 +63,7 @@ with lib; {
       start_time=$(date +%s.%N)
       { ${cmd}; cmd_status=$?; } 
       end_time=$(date +%s.%N)
-      duration=$(echo "$end_time - $start_time" | bc)
+      duration=$(awk -v end="$end_time" -v start="$start_time" 'BEGIN{print end - start}')
       echo "${timestamp} [bufrnix] TRACE: Command completed in $duration seconds with status $cmd_status" >&2
       if [ $cmd_status -ne 0 ]; then
         echo "${timestamp} [bufrnix] ERROR: Command failed with status $cmd_status" >&2
