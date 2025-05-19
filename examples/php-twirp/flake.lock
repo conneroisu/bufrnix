@@ -6,15 +6,16 @@
         "systems": "systems"
       },
       "locked": {
-        "lastModified": 1747666572,
-        "narHash": "sha256-lAG5QwciaHk9Hc2d68lJdvbTtJGza3Y+ueYrg7523gQ=",
+        "lastModified": 1747681617,
+        "narHash": "sha256-ElO8oFRX5a1KUMq3VCOtZcLYmH9cq7Q1goNg5s2JuCA=",
         "owner": "conneroisu",
         "repo": "bufrnix",
-        "rev": "3cf6b86e01b7f2aae72e9c8f4f617fe02ba88a1c",
+        "rev": "50d6bb6a747e82661a4c378c8e426c6cad2a6768",
         "type": "github"
       },
       "original": {
         "owner": "conneroisu",
+        "ref": "php",
         "repo": "bufrnix",
         "type": "github"
       }

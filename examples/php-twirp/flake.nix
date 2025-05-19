@@ -3,7 +3,7 @@
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
     flake-utils.url = "github:numtide/flake-utils";
-    bufrnix.url = "github:conneroisu/bufrnix";
+    bufrnix.url = "github:conneroisu/bufrnix/php";
   };
 
   outputs = { self, nixpkgs, flake-utils, bufrnix }:
@@ -24,11 +24,17 @@
             fileinfo
             pdo
             dom
+            iconv
+            intl
+            zip
+            sodium
+            openssl
           ]);
           extraConfig = ''
             memory_limit = 256M
             display_errors = On
             error_reporting = E_ALL
+            date.timezone = UTC
           '';
         };
 
@@ -68,10 +74,24 @@
           echo "Generating code with bufrnix..."
           ${bufrnixPackage}/bin/bufrnix
           
+          # Verify PHP configuration
+          echo "Checking PHP configuration..."
+          if ! php -m | grep -q mbstring; then
+            echo "Error: mbstring extension not available in PHP"
+            echo "PHP modules loaded: $(php -m | sort | tr '\n' ' ')"
+            exit 1
+          fi
+          
+          if ! php -m | grep -q iconv && ! php -m | grep -q mbstring; then
+            echo "Error: Neither iconv nor mbstring extension is available"
+            echo "PHP modules loaded: $(php -m | sort | tr '\n' ' ')"
+            exit 1
+          fi
+          
           # Install composer dependencies
           if [ -f "composer.json" ]; then
             echo "Installing PHP dependencies..."
-            composer install
+            ${phpWithExtensions.packages.composer}/bin/composer install --no-interaction
           else
             echo "Warning: composer.json not found"
           fi
@@ -87,7 +107,7 @@
           set -euo pipefail
           
           echo "Starting Twirp PHP server..."
-          php server.php
+          ${phpWithExtensions}/bin/php server.php
         '';
 
         # Helper script to run the client
@@ -96,7 +116,7 @@
           set -euo pipefail
           
           echo "Running Twirp PHP client..."
-          php client.php
+          ${phpWithExtensions}/bin/php client.php
         '';
 
       in {
@@ -124,11 +144,23 @@
             
             # PHP configuration
             export PHP_INI_SCAN_DIR="${phpWithExtensions}/lib/php/php.d"
+            export PATH="${phpWithExtensions}/bin:${phpWithExtensions.packages.composer}/bin:$PATH"
+            
+            # Verify PHP configuration
+            echo "Checking PHP configuration..."
+            PHP_MODULES=$(${phpWithExtensions}/bin/php -m | sort)
+            if ! echo "$PHP_MODULES" | grep -q mbstring; then
+              echo "Warning: mbstring extension not available in PHP"
+            fi
+            
+            if ! echo "$PHP_MODULES" | grep -q iconv; then
+              echo "Warning: iconv extension not available in PHP"
+            fi
             
             echo "==================================================="
             echo "Bufrnix PHP Twirp Example"
             echo "==================================================="
-            echo "PHP version: $(php -v | head -n 1)"
+            echo "PHP version: $(${phpWithExtensions}/bin/php -v | head -n 1)"
             echo "Composer: $(${phpWithExtensions.packages.composer}/bin/composer --version)"
             echo ""
             echo "Available commands:"
