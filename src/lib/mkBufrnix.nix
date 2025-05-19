@@ -155,11 +155,13 @@ in
     text = ''
       mkdir -p ${cfg.languages.go.outputPath}
       ${debug.log 1 "Starting code generation" cfg}
-      
+
       # Expand proto file globs if needed
       proto_files=""
-      ${if (cfg.protoc.files == [])
-        then if (cfg.protoc.sourceDirectories == [])
+      ${
+        if (cfg.protoc.files == [])
+        then
+          if (cfg.protoc.sourceDirectories == [])
           then ''
             # Find all proto files from root
             proto_files=$(find "${cfg.root}" -name "*.proto" -type f)
@@ -167,15 +169,16 @@ in
           else ''
             # Find proto files from specified directories
             ${concatMapStrings (dir: ''
-              proto_files="$proto_files $(find "${dir}" -name "*.proto" -type f)"
-            '') cfg.protoc.sourceDirectories}
+                proto_files="$proto_files $(find "${dir}" -name "*.proto" -type f)"
+              '')
+              cfg.protoc.sourceDirectories}
           ''
         else ''
           # Use explicitly specified files
           proto_files="${concatStringsSep " " cfg.protoc.files}"
         ''
       }
-      
+
       # Build the protoc command
       protoc_cmd="${pkgs.protobuf}/bin/protoc"
       protoc_args="--proto_path=${concatStringsSep " --proto_path=" cfg.protoc.includeDirectories}"
@@ -187,10 +190,9 @@ in
         protoc_args="$protoc_args --go-grpc_out=${cfg.languages.go.outputPath}"
         protoc_args="$protoc_args --go-grpc_opt=${concatStringsSep " --go-grpc_opt=" cfg.languages.go.grpc.options}"
       ''}
-      
+
       # Execute protoc with expanded file list
-      ${debug.printCommand "$protoc_cmd $protoc_args $proto_files" cfg}
-      ${debug.timeCommand "$protoc_cmd $protoc_args $proto_files" cfg}
+      eval "$protoc_cmd $protoc_args $proto_files"
       ${debug.log 1 "Code generation completed successfully" cfg}
     '';
   }
