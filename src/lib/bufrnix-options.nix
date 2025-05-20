@@ -138,6 +138,47 @@ with lib; {
       
       # Additional language options will be defined here
       # For example, python, rust, typescript, etc.
+      
+      # PHP language options
+      php = {
+        enable = mkOption {
+          type = types.bool;
+          default = false;
+          description = "Enable PHP code generation";
+        };
+
+        outputPath = mkOption {
+          type = types.str;
+          default = "gen/php";
+          description = "Output directory for generated PHP code";
+        };
+
+        options = mkOption {
+          type = types.listOf types.str;
+          default = [];
+          description = "Options to pass to protoc PHP plugins";
+        };
+
+        namespace = mkOption {
+          type = types.str;
+          default = "";
+          description = "PHP namespace for generated code";
+        };
+
+        twirp = {
+          enable = mkOption {
+            type = types.bool;
+            default = false;
+            description = "Enable Twirp RPC framework code generation for PHP";
+          };
+
+          options = mkOption {
+            type = types.listOf types.str;
+            default = [];
+            description = "Options to pass to protoc-gen-twirp_php";
+          };
+        };
+      };
     };
   };
 }

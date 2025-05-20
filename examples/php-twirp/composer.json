@@ -1,0 +1,15 @@
+{
+    "name": "example/twirp-hello",
+    "description": "Example PHP service using Protocol Buffers and Twirp",
+    "type": "project",
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "Example\\Twirp\\": "gen/php/"
+        }
+    },
+    "require": {
+        "twirp/twirp": "^0.8.0",
+        "google/protobuf": "^3.19"
+    }
+}
