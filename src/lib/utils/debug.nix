@@ -20,10 +20,13 @@ with lib; {
   log = level: msg: config: let
     shouldLog = config.debug.enable && config.debug.verbosity >= level;
     logPrefix = "[bufrnix] ";
-    levelPrefix = 
-      if level == 1 then "INFO: "
-      else if level == 2 then "DEBUG: "
-      else if level == 3 then "TRACE: "
+    levelPrefix =
+      if level == 1
+      then "INFO: "
+      else if level == 2
+      then "DEBUG: "
+      else if level == 3
+      then "TRACE: "
       else "";
     timestamp = "$(date '+%Y-%m-%d %H:%M:%S')";
     fullMessage = "${timestamp} ${logPrefix}${levelPrefix}${msg}";
@@ -61,7 +64,7 @@ with lib; {
       echo "${timestamp} [bufrnix] TRACE: Starting command execution" >&2
       echo "  ${cmd}" >&2
       start_time=$(date +%s.%N)
-      { ${cmd}; cmd_status=$?; } 
+      { ${cmd}; cmd_status=$?; }
       end_time=$(date +%s.%N)
       duration=$(awk -v end="$end_time" -v start="$start_time" 'BEGIN{print end - start}')
       echo "${timestamp} [bufrnix] TRACE: Command completed in $duration seconds with status $cmd_status" >&2
@@ -87,10 +90,14 @@ with lib; {
   # Function to enable debug mode based on environment variables
   getDebugConfig = config: ''
     # Initialize with config values
-    debug_enable=${if config.debug.enable then "true" else "false"}
+    debug_enable=${
+      if config.debug.enable
+      then "true"
+      else "false"
+    }
     debug_verbosity=${toString config.debug.verbosity}
     debug_logfile="${config.debug.logFile}"
-    
+
     # Check environment variables
     if [ -n "$BUFRNIX_DEBUG" ]; then
       debug_enable=true
@@ -101,7 +108,7 @@ with lib; {
         debug_logfile="$BUFRNIX_DEBUG_LOG"
       fi
     fi
-    
+
     # Create log file directory if needed
     if [ -n "$debug_logfile" ] && [ "$debug_enable" = "true" ]; then
       mkdir -p "$(dirname "$debug_logfile")" 2>/dev/null || true

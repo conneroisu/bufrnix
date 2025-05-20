@@ -135,10 +135,10 @@ with lib; {
           };
         };
       };
-      
+
       # Additional language options will be defined here
       # For example, python, rust, typescript, etc.
-      
+
       # PHP language options
       php = {
         enable = mkOption {

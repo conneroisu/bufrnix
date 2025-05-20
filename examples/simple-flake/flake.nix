@@ -17,11 +17,11 @@
     flake-utils.lib.eachDefaultSystem (system: let
       pkgs = nixpkgs.legacyPackages.${system};
     in {
-devShells.default = pkgs.mkShell {
+      devShells.default = pkgs.mkShell {
         packages = [
           pkgs.go
         ];
-};
+      };
       packages = {
         default = bufrnix.lib.mkBufrnixPackage {
           inherit (pkgs) lib;

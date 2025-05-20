@@ -5,7 +5,6 @@
   cfg ? config.languages.someLanguage,
   ...
 }:
-
 # This is a template for language modules.
 # Each language module should implement this interface.
 {

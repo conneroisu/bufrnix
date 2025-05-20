@@ -1,4 +1,4 @@
-{ mkBunDerivation, ... }:
+{mkBunDerivation, ...}:
 mkBunDerivation {
   pname = "bun2nix-example";
   version = "1.0.0";

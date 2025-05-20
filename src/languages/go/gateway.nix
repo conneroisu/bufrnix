@@ -4,7 +4,6 @@
   cfg ? {},
   ...
 }:
-
 with lib; let
   enabled = cfg.enable or false;
   outputPath = cfg.outputPath or "gen/go";
