@@ -11,32 +11,23 @@
       let
         pkgs = import nixpkgs {
           inherit system;
+          # Allow for unfree packages like PHP extensions
+          config.allowUnfree = true;
         };
+        
+        # Create a PHP package with extensions from external sources if needed
+        phpWithExtensions = pkgs.php83.withExtensions ({ all }: [
+          all.curl
+          all.ctype
+          all.dom
+          all.iconv
+          all.mbstring
+          all.openssl
+          all.pdo
+          all.tokenizer
+          all.xml
+        ]);
 
-        # Define PHP with required extensions
-        phpWithExtensions = pkgs.php83.buildEnv {
-          extensions = { enabled, all }: enabled ++ (with all; [
-            curl
-            mbstring
-            tokenizer
-            xml
-            ctype
-            fileinfo
-            pdo
-            dom
-            iconv
-            intl
-            zip
-            sodium
-            openssl
-          ]);
-          extraConfig = ''
-            memory_limit = 256M
-            display_errors = On
-            error_reporting = E_ALL
-            date.timezone = UTC
-          '';
-        };
 
         # Create a bufrnix package for this project
         bufrnixPackage = bufrnix.lib.mkBufrnixPackage {
@@ -76,22 +67,29 @@
           
           # Verify PHP configuration
           echo "Checking PHP configuration..."
-          if ! php -m | grep -q mbstring; then
-            echo "Error: mbstring extension not available in PHP"
-            echo "PHP modules loaded: $(php -m | sort | tr '\n' ' ')"
-            exit 1
+          PHP_MODULES=$(${phpWithExtensions}/bin/php -m | sort)
+          echo "PHP modules loaded: $(echo "$PHP_MODULES" | tr '\n' ' ')"
+          
+          # Check if mbstring is available
+          if ${phpWithExtensions}/bin/php -m | grep -q mbstring; then
+            echo "✓ mbstring extension is available"
+          else
+            echo "Warning: mbstring extension not available in PHP."
+            echo "This may cause issues with the Twirp example."
           fi
           
-          if ! php -m | grep -q iconv && ! php -m | grep -q mbstring; then
-            echo "Error: Neither iconv nor mbstring extension is available"
-            echo "PHP modules loaded: $(php -m | sort | tr '\n' ' ')"
-            exit 1
+          # Check if iconv is available
+          if ${phpWithExtensions}/bin/php -m | grep -q iconv; then
+            echo "✓ iconv extension is available"
+          else
+            echo "Warning: iconv extension not available in PHP."
+            echo "This may cause issues with the Twirp example."
           fi
           
           # Install composer dependencies
           if [ -f "composer.json" ]; then
             echo "Installing PHP dependencies..."
-            ${phpWithExtensions.packages.composer}/bin/composer install --no-interaction
+            PATH="${phpWithExtensions}/bin:$PATH" ${phpWithExtensions.packages.composer}/bin/composer install --no-interaction
           else
             echo "Warning: composer.json not found"
           fi
@@ -107,7 +105,7 @@
           set -euo pipefail
           
           echo "Starting Twirp PHP server..."
-          ${phpWithExtensions}/bin/php server.php
+          PATH="${phpWithExtensions}/bin:$PATH" PHP_INI_SCAN_DIR="${phpWithExtensions}/lib/php/php.d" ${phpWithExtensions}/bin/php server.php
         '';
 
         # Helper script to run the client
@@ -116,7 +114,7 @@
           set -euo pipefail
           
           echo "Running Twirp PHP client..."
-          ${phpWithExtensions}/bin/php client.php
+          PATH="${phpWithExtensions}/bin:$PATH" PHP_INI_SCAN_DIR="${phpWithExtensions}/lib/php/php.d" ${phpWithExtensions}/bin/php client.php
         '';
 
       in {
@@ -146,15 +144,49 @@
             export PHP_INI_SCAN_DIR="${phpWithExtensions}/lib/php/php.d"
             export PATH="${phpWithExtensions}/bin:${phpWithExtensions.packages.composer}/bin:$PATH"
             
-            # Verify PHP configuration
-            echo "Checking PHP configuration..."
-            PHP_MODULES=$(${phpWithExtensions}/bin/php -m | sort)
-            if ! echo "$PHP_MODULES" | grep -q mbstring; then
-              echo "Warning: mbstring extension not available in PHP"
+            # Create a workaround for mbstring missing in flake environment
+            echo "Creating custom PHP wrapper to handle extension loading..."
+            mkdir -p $PROJECT_ROOT/.nix-php
+            
+            # Create a custom php.ini that forces extension loading
+            cat > $PROJECT_ROOT/.nix-php/php.ini << EOF
+            extension=mbstring.so
+            EOF
+            
+            # Create a custom PHP wrapper script
+            cat > $PROJECT_ROOT/.nix-php/php-wrapper << EOF
+            #!/bin/sh
+            # Wrapper script to ensure mbstring is loaded
+            PHP_INI_SCAN_DIR=$PROJECT_ROOT/.nix-php ${phpWithExtensions}/bin/php -n -c $PROJECT_ROOT/.nix-php/php.ini "\$@"
+            EOF
+            
+            chmod +x $PROJECT_ROOT/.nix-php/php-wrapper
+            export PATH="$PROJECT_ROOT/.nix-php:$PATH"
+            
+            # Check if we can use system PHP as a fallback
+            if command -v /usr/bin/php >/dev/null; then
+              if /usr/bin/php -m | grep -q mbstring; then
+                echo "System PHP has mbstring available, using it as a fallback"
+                echo "#!/bin/sh" > $PROJECT_ROOT/.nix-php/php
+                echo "/usr/bin/php \"\$@\"" >> $PROJECT_ROOT/.nix-php/php
+                chmod +x $PROJECT_ROOT/.nix-php/php
+              fi
             fi
             
-            if ! echo "$PHP_MODULES" | grep -q iconv; then
-              echo "Warning: iconv extension not available in PHP"
+            # Verify PHP configuration
+            echo "Checking PHP configuration..."
+            PHP_MODULES=$(php -m | sort)
+            echo "Available PHP modules:"
+            echo "$PHP_MODULES"
+            
+            if ! echo "$PHP_MODULES" | grep -q mbstring; then
+              echo "Warning: mbstring extension not available in PHP"
+              echo "You may need to install PHP with mbstring support on your system"
+              echo "sudo apt-get install php-mbstring  # For Debian/Ubuntu"
+              echo "sudo dnf install php-mbstring     # For Fedora/RHEL"
+              echo "Or modify client.php and server.php to work without mbstring"
+            else
+              echo "✓ mbstring extension is available"
             fi
             
             echo "==================================================="

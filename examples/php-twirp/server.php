@@ -2,6 +2,11 @@
 // server.php
 require_once 'vendor/autoload.php';
 
+// Load mbstring polyfill if it exists
+if (file_exists(__DIR__ . '/mbstring_polyfill.php')) {
+    require_once __DIR__ . '/mbstring_polyfill.php';
+}
+
 use Example\Twirp\Example\V1\HelloRequest;
 use Example\Twirp\Example\V1\HelloResponse;
 use Example\Twirp\Example\V1\HelloServiceInterface;
