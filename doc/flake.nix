@@ -31,8 +31,7 @@
       pkgs = nixpkgs.legacyPackages.${system};
     in {
 
-
-my-package = pkgs.callPackage ./default.nix {
+bufrnix-docs = pkgs.callPackage ./default.nix {
     inherit (bun2nix.lib.${system}) mkBunDerivation;
 };
 
