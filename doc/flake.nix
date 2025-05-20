@@ -27,5 +27,15 @@
         ];
       };
     });
+    packages = forAllSystems (system: let
+      pkgs = nixpkgs.legacyPackages.${system};
+    in {
+
+
+my-package = pkgs.callPackage ./default.nix {
+    inherit (bun2nix.lib.${system}) mkBunDerivation;
+};
+
+    });
   };
 }
