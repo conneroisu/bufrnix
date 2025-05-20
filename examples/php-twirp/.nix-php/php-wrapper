@@ -1,3 +1,3 @@
 #!/bin/sh
 # Wrapper script to ensure mbstring is loaded
-PHP_INI_SCAN_DIR=/home/connerohnesorge/Documents/001Repos/bufrnix/examples/php-twirp/.nix-php /nix/store/inbybpkivlgsgnhl2hldgyz16sqhzdi2-php-with-extensions-8.3.21/bin/php -n -c /home/connerohnesorge/Documents/001Repos/bufrnix/examples/php-twirp/.nix-php/php.ini "$@"
+PHP_INI_SCAN_DIR=/home/connerohnesorge/Documents/001Repos/bufrnix/examples/php-twirp/.nix-php /nix/store/mx39n1qm2w2kwri155f8mgf9q72175h2-php-with-extensions-8.3.21/bin/php -n -c /home/connerohnesorge/Documents/001Repos/bufrnix/examples/php-twirp/.nix-php/php.ini "$@"
