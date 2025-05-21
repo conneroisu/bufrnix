@@ -15,9 +15,8 @@ in {
   ];
 
   # Protoc plugin configuration for gRPC
-  protocPlugins = optionals enabled [
-    "--dart_out=grpc:${outputPath}"
-  ];
+  # Note: gRPC generation is handled in the main dart module
+  protocPlugins = [];
 
   # Initialization hooks for gRPC
   initHooks = optionalString enabled ''

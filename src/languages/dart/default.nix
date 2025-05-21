@@ -10,6 +10,12 @@ with lib; let
   outputPath = cfg.outputPath;
   dartOptions = cfg.options;
 
+  # Determine the dart_out option based on whether gRPC is enabled
+  dartOutOption = 
+    if (cfg.grpc.enable or false)
+    then "grpc:${outputPath}"
+    else "${outputPath}";
+
   # Import Dart-specific sub-modules
   grpcModule = import ./grpc.nix {
     inherit pkgs lib;
@@ -32,16 +38,14 @@ in {
       pkgs.protoc-gen-dart
     ]
     ++ (combineModuleAttrs "runtimeInputs");
-
-  # Protoc plugin configuration for Dart
+    
   protocPlugins =
     [
-      "--dart_out=${outputPath}"
+      "--dart_out=${dartOutOption}"
     ]
     ++ (optionals (dartOptions != []) [
       "--dart_opt=${concatStringsSep " --dart_opt=" dartOptions}"
-    ])
-    ++ (combineModuleAttrs "protocPlugins");
+    ]);
 
   # Initialization hook for Dart
   initHooks =
