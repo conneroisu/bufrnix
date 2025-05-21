@@ -14,10 +14,16 @@ languages/
   │   ├── connect.nix       # Connect plugin for Go
   │   ├── gateway.nix       # gRPC-Gateway plugin for Go
   │   └── validate.nix      # Validate plugin for Go
-  ├── python/
-  │   └── ...
-  ├── rust/
-  │   └── ...
+  ├── dart/
+  │   ├── default.nix       # Main entry point for Dart code generation
+  │   └── grpc.nix          # gRPC plugin for Dart
+  ├── js/
+  │   ├── default.nix       # Main entry point for JavaScript code generation
+  │   ├── grpc-web.nix      # gRPC-Web plugin for JS
+  │   └── twirp.nix         # Twirp plugin for JS
+  ├── php/
+  │   ├── default.nix       # Main entry point for PHP code generation
+  │   └── twirp.nix         # Twirp plugin for PHP
   └── ...
 ```
 
@@ -78,5 +84,44 @@ languages = {
     outputPath = "gen/go";
     grpc.enable = true;
   };
+  dart = {
+    enable = true;
+    outputPath = "lib/proto";
+    packageName = "my_proto";
+    grpc.enable = true;
+  };
+  js = {
+    enable = true;
+    outputPath = "src/proto";
+    grpcWeb.enable = true;
+  };
 };
 ```
+
+## Supported Languages
+
+### Go
+
+- **Base support**: Standard protobuf message generation
+- **gRPC**: Full gRPC server and client generation
+- **Connect**: Connect-Go plugin support
+- **Gateway**: gRPC-Gateway for HTTP/JSON transcoding
+- **Validate**: protoc-gen-validate for message validation
+
+### Dart
+
+- **Base support**: Standard protobuf message generation with Dart classes
+- **gRPC**: gRPC client and server stub generation
+- **Features**: Supports all protobuf field types, nested messages, enums, and services
+
+### JavaScript/TypeScript
+
+- **Base support**: Standard protobuf message generation (CommonJS and ES modules)
+- **gRPC-Web**: Browser-compatible gRPC client generation
+- **Twirp**: Twirp RPC framework support
+- **ECMAScript**: Modern JavaScript with ES modules
+
+### PHP
+
+- **Base support**: Standard protobuf message generation
+- **Twirp**: Twirp RPC framework support for PHP

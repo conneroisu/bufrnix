@@ -52,6 +52,17 @@ Defining new proto dependencies is simple as settings in nix.
 # TODO: add example
 ```
 
+## Supported Languages
+
+Bufrnix currently supports code generation for the following languages:
+
+- **Go**: Full protobuf and gRPC support with additional plugins (Connect, Gateway, Validate)
+- **Dart**: Complete protobuf and gRPC client/server generation for Flutter and server applications
+- **JavaScript/TypeScript**: Modern JavaScript with ES modules, gRPC-Web, and Twirp support
+- **PHP**: Basic protobuf messages and Twirp RPC framework support
+
+See the [languages documentation](src/languages/README.md) for detailed configuration options and the [examples](examples/) directory for working implementations.
+
 ## Diving Deeper
 
 CLI = script
