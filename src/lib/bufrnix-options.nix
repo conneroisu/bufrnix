@@ -266,6 +266,47 @@ with lib; {
           };
         };
       };
+
+      # Dart language options
+      dart = {
+        enable = mkOption {
+          type = types.bool;
+          default = false;
+          description = "Enable Dart code generation";
+        };
+
+        outputPath = mkOption {
+          type = types.str;
+          default = "lib/proto";
+          description = "Output directory for generated Dart code";
+        };
+
+        options = mkOption {
+          type = types.listOf types.str;
+          default = [];
+          description = "Options to pass to protoc-gen-dart";
+        };
+
+        packageName = mkOption {
+          type = types.str;
+          default = "";
+          description = "Dart package name for generated code";
+        };
+
+        grpc = {
+          enable = mkOption {
+            type = types.bool;
+            default = false;
+            description = "Enable gRPC code generation for Dart";
+          };
+
+          options = mkOption {
+            type = types.listOf types.str;
+            default = [];
+            description = "Options to pass to protoc-gen-dart for gRPC";
+          };
+        };
+      };
     };
   };
 }

@@ -1,0 +1,78 @@
+syntax = "proto3";
+
+package example.v1;
+
+// Example message for demonstrating Dart protobuf generation
+message ExampleMessage {
+  int32 id = 1;
+  string name = 2;
+  string email = 3;
+  repeated string tags = 4;
+  optional string description = 5;
+  TimestampMessage created_at = 6;
+}
+
+// Nested message to demonstrate complex types
+message TimestampMessage {
+  int64 seconds = 1;
+  int32 nanos = 2;
+}
+
+// Request/Response messages for gRPC service
+message CreateExampleRequest {
+  ExampleMessage example = 1;
+}
+
+message CreateExampleResponse {
+  ExampleMessage example = 1;
+  bool success = 2;
+  string message = 3;
+}
+
+message GetExampleRequest {
+  int32 id = 1;
+}
+
+message GetExampleResponse {
+  ExampleMessage example = 1;
+  bool found = 2;
+}
+
+message ListExamplesRequest {
+  int32 page_size = 1;
+  string page_token = 2;
+  string filter = 3;
+}
+
+message ListExamplesResponse {
+  repeated ExampleMessage examples = 1;
+  string next_page_token = 2;
+  int32 total_count = 3;
+}
+
+message DeleteExampleRequest {
+  int32 id = 1;
+}
+
+message DeleteExampleResponse {
+  bool success = 1;
+  string message = 2;
+}
+
+// Example gRPC service
+service ExampleService {
+  // Create a new example
+  rpc CreateExample(CreateExampleRequest) returns (CreateExampleResponse);
+  
+  // Get an example by ID
+  rpc GetExample(GetExampleRequest) returns (GetExampleResponse);
+  
+  // List examples with pagination
+  rpc ListExamples(ListExamplesRequest) returns (ListExamplesResponse);
+  
+  // Delete an example
+  rpc DeleteExample(DeleteExampleRequest) returns (DeleteExampleResponse);
+  
+  // Streaming example - watch for example updates
+  rpc WatchExamples(ListExamplesRequest) returns (stream ExampleMessage);
+}
