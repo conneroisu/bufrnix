@@ -32,6 +32,7 @@
             alejandra.enable = true;
 
             # Format Markdown, TypeScript, and JSON files with prettier
+            buf.enable = true;
             prettier.enable = true;
             prettier.includes = [
               "**/*.md"

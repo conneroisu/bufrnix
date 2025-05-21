@@ -1,36 +1,59 @@
 ---
-title: Welcome to Starlight
-description: Get started building your docs site with Starlight.
+title: Bufrnix Documentation
+description: Nix powered Protocol Buffers with complete developer tooling.
 template: splash
 hero:
-  tagline: Congrats on setting up a new Starlight project!
+  tagline: Modern Protocol Buffer tooling for Nix developers
   image:
     file: ../../assets/houston.webp
   actions:
-    - text: Example Guide
-      link: /guides/example/
+    - text: Get Started
+      link: /guides/getting-started/
       icon: right-arrow
-    - text: Read the Starlight docs
-      link: https://starlight.astro.build
+    - text: View on GitHub
+      link: https://github.com/conneroisu/bufrnix
       icon: external
       variant: minimal
 ---
 
 import { Card, CardGrid } from "@astrojs/starlight/components";
 
-## Next steps
+## Why Bufrnix?
 
 <CardGrid stagger>
-  <Card title="Update content" icon="pencil">
-    Edit `src/content/docs/index.mdx` to see this page change.
+  <Card title="Simple Configuration" icon="setting">
+    Define your Protocol Buffer generation pipeline with a clean Nix
+    configuration interface.
   </Card>
-  <Card title="Add new content" icon="add-document">
-    Add Markdown or MDX files to `src/content/docs` to create new pages.
+  <Card title="Multi-language Support" icon="puzzle">
+    Generate code for Go, Dart, JavaScript/TypeScript, PHP and more from a
+    single source.
   </Card>
-  <Card title="Configure your site" icon="setting">
-    Edit your `sidebar` and other config in `astro.config.mjs`.
+  <Card title="Developer Friendly" icon="open-book">
+    Complete tooling including CLI, linter, formatter, and language server
+    protocol (LSP) support.
   </Card>
-  <Card title="Read the docs" icon="open-book">
-    Learn more in [the Starlight Docs](https://starlight.astro.build/).
+  <Card title="Reproducible Builds" icon="rocket">
+    Leverage Nix to ensure consistent builds across all environments and team
+    members.
   </Card>
 </CardGrid>
+
+## Get Started
+
+Add Bufrnix to your Nix flake and start generating Protocol Buffer code right away:
+
+```nix
+{
+  inputs = {
+    nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
+    bufrnix.url = "github:conneroisu/bufrnix";
+  };
+
+  outputs = { self, nixpkgs, bufrnix, ... }: {
+    # Your configuration here
+  };
+}
+```
+
+Check out our [Getting Started guide](/guides/getting-started/) to learn more.

@@ -3,15 +3,13 @@
 
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
-    bun2nix.url = "github:baileyluTCD/bun2nix";
-    bun2nix.inputs.nixpkgs.follows = "nixpkgs";
+    bun2nix = {
+      url = "github:baileyluTCD/bun2nix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
-  outputs = {
-    nixpkgs,
-    bun2nix,
-    ...
-  }: let
+  outputs = { self, nixpkgs, bun2nix, ... }: let
     systems = [
       "x86_64-linux"
       "x86_64-darwin"
@@ -27,17 +25,48 @@
       default = pkgs.mkShell {
         packages = with pkgs; [
           bun
+          nodePackages.typescript
           bun2nix.packages.${system}.default
         ];
+        shellHook = ''
+          # Setup the environment
+          export PATH=$PWD/node_modules/.bin:$PATH
+        '';
       };
     });
 
     packages = forAllSystems (system: let
       pkgs = nixpkgs.legacyPackages.${system};
+    in rec {
+      bufrnix-docs = bun2nix.lib.${system}.mkBunDerivation {
+        pname = "bufrnix-docs";
+        version = "0.0.1";
+        src = ./.;
+        bunNix = ./bun.nix;
+        
+        buildPhase = ''
+          # Build the Astro site
+          bun run build
+        '';
+        
+        installPhase = ''
+          cp -r dist $out
+        '';
+      };
+      default = bufrnix-docs;
+    });
+    
+    apps = forAllSystems (system: let
+      pkgs = nixpkgs.legacyPackages.${system};
     in {
-      bufrnix-docs = pkgs.callPackage ./default.nix {
-        inherit (bun2nix.lib.${system}) mkBunDerivation;
+      default = {
+        type = "app";
+        program = "${pkgs.writeShellScript "serve-docs" ''
+          ${pkgs.python3}/bin/python3 -m http.server 8000 -d ${self.packages.${system}.default}
+        ''}";
       };
     });
+    
+    formatter = forAllSystems (system: nixpkgs.legacyPackages.${system}.nixpkgs-fmt);
   };
 }

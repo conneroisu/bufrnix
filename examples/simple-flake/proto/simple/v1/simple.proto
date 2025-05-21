@@ -12,7 +12,7 @@ message User {
   int32 age = 4;
   repeated string roles = 5;
   UserStatus status = 6;
-  
+
   // Address represents a physical address
   message Address {
     string street = 1;
@@ -21,7 +21,7 @@ message User {
     string zip = 4;
     string country = 5;
   }
-  
+
   repeated Address addresses = 7;
 }
 
@@ -40,10 +40,10 @@ message SomethingElse {
   int64 created_at = 3;
   float importance_score = 4;
   bool is_enabled = 5;
-  
+
   // Metadata contains additional information
   map<string, string> metadata = 6;
-  
+
   // Relationship with User
   string owner_user_id = 7;
 }
@@ -52,7 +52,7 @@ message SomethingElse {
 service UserService {
   // CreateUser creates a new user
   rpc CreateUser(CreateUserRequest) returns (CreateUserResponse);
-  
+
   // GetUser retrieves a user by ID
   rpc GetUser(GetUserRequest) returns (GetUserResponse);
 }

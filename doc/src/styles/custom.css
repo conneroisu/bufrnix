@@ -1,0 +1,46 @@
+/* Custom styles for Bufrnix documentation */
+
+:root {
+  --sl-color-accent-low: #1e3a8a15;
+  --sl-color-accent: #2563eb;
+  --sl-color-accent-high: #1e40af;
+}
+
+/* Enhance code blocks */
+.astro-code {
+  border-radius: 0.5rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+/* Custom styles for cards */
+.card {
+  transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+}
+
+.card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Improve table styling */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1em 0;
+}
+
+th {
+  background-color: var(--sl-color-accent-low);
+  font-weight: 600;
+  text-align: left;
+  padding: 0.75em 1em;
+}
+
+td {
+  padding: 0.75em 1em;
+  border-bottom: 1px solid var(--sl-color-gray-3);
+}
+
+tr:last-child td {
+  border-bottom: none;
+}

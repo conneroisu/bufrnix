@@ -1,54 +1,78 @@
-# Starlight Starter Kit: Basics
+# Bufrnix Documentation
 
-[![Built with Starlight](https://astro.badg.es/v2/built-with-starlight/tiny.svg)](https://starlight.astro.build)
+This directory contains the documentation website for Bufrnix, built with [Astro](https://astro.build) and [Starlight](https://starlight.astro.build).
 
-```
-npm create astro@latest -- --template starlight
-```
+## Development
 
-[![Open in StackBlitz](https://developer.stackblitz.com/img/open_in_stackblitz.svg)](https://stackblitz.com/github/withastro/starlight/tree/main/examples/basics)
-[![Open with CodeSandbox](https://assets.codesandbox.io/github/button-edit-lime.svg)](https://codesandbox.io/p/sandbox/github/withastro/starlight/tree/main/examples/basics)
-[![Deploy to Netlify](https://www.netlify.com/img/deploy/button.svg)](https://app.netlify.com/start/deploy?repository=https://github.com/withastro/starlight&create_from_path=examples/basics)
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fwithastro%2Fstarlight%2Ftree%2Fmain%2Fexamples%2Fbasics&project-name=my-starlight-docs&repository-name=my-starlight-docs)
+### Prerequisites
 
-> 🧑‍🚀 **Seasoned astronaut?** Delete this file. Have fun!
+- Node.js 16 or higher
+- [Bun](https://bun.sh/) (recommended)
 
-## 🚀 Project Structure
+### Getting Started
 
-Inside of your Astro + Starlight project, you'll see the following folders and files:
+With Nix (recommended):
 
-```
-.
-├── public/
-├── src/
-│   ├── assets/
-│   ├── content/
-│   │   ├── docs/
-│   └── content.config.ts
-├── astro.config.mjs
-├── package.json
-└── tsconfig.json
+```bash
+cd doc
+nix develop
+bun install
+bun run dev
 ```
 
-Starlight looks for `.md` or `.mdx` files in the `src/content/docs/` directory. Each file is exposed as a route based on its file name.
+Without Nix:
 
-Images can be added to `src/assets/` and embedded in Markdown with a relative link.
+```bash
+cd doc
+npm install
+npm run dev
+```
 
-Static assets, like favicons, can be placed in the `public/` directory.
+The documentation site will be available at http://localhost:4321
 
-## 🧞 Commands
+### Building
 
-All commands are run from the root of the project, from a terminal:
+```bash
+# With Nix
+nix develop
+bun run build
 
-| Command                   | Action                                           |
-| :------------------------ | :----------------------------------------------- |
-| `npm install`             | Installs dependencies                            |
-| `npm run dev`             | Starts local dev server at `localhost:4321`      |
-| `npm run build`           | Build your production site to `./dist/`          |
-| `npm run preview`         | Preview your build locally, before deploying     |
-| `npm run astro ...`       | Run CLI commands like `astro add`, `astro check` |
-| `npm run astro -- --help` | Get help using the Astro CLI                     |
+# Without Nix
+npm run build
+```
 
-## 👀 Want to learn more?
+The built site will be in the `dist` directory.
 
-Check out [Starlight’s docs](https://starlight.astro.build/), read [the Astro documentation](https://docs.astro.build), or jump into the [Astro Discord server](https://astro.build/chat).
+## Documentation Structure
+
+- `src/content/docs/` - Documentation content (Markdown and MDX files)
+- `src/content/docs/guides/` - How-to guides and tutorials
+- `src/content/docs/reference/` - API and configuration reference
+- `src/styles/` - Custom CSS styles
+- `public/` - Static assets like images and favicon
+- `astro.config.mjs` - Astro configuration (including navigation)
+
+## Adding Content
+
+1. Create a new Markdown or MDX file in the appropriate directory
+2. Add frontmatter with title and description:
+   ```md
+   ---
+   title: Your Page Title
+   description: A brief description of the page.
+   ---
+
+   # Your Page Title
+
+   Content goes here...
+   ```
+3. If needed, add the page to the navigation in `astro.config.mjs`
+
+## Deployment
+
+The documentation is automatically deployed when changes are pushed to the main branch.
+
+## Customization
+
+- Site configuration: `astro.config.mjs`
+- Custom CSS: `src/styles/custom.css`
