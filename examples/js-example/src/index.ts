@@ -12,8 +12,8 @@
 // import { UserService } from '../proto/gen/js/example/v1/example_connect';
 
 async function main() {
-  console.log('JavaScript Example for Bufrnix');
-  
+  console.log("JavaScript Example for Bufrnix");
+
   // Example code using CommonJS imports
   /*
   // Create a new user using CommonJS style

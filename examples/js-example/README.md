@@ -79,13 +79,13 @@ languages.js = {
   enable = true;
   outputPath = "proto/gen/js";
   packageName = "example-proto";
-  
+
   # Modern JavaScript with ECMAScript modules
   es.enable = true;
-  
+
   # Modern RPC with Connect-ES
   connect.enable = true;
-  
+
   # Browser-compatible RPC with gRPC-Web
   grpcWeb.enable = true;
 };
