@@ -1,13 +1,10 @@
 {
   pkgs,
-  lib, 
+  lib,
   cfg,
   ...
 }:
-
-with lib;
-
-let
+with lib; let
   enabled = cfg.enable;
   outputPath = cfg.outputPath;
   twirpOptions = cfg.options;

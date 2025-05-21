@@ -6,9 +6,14 @@
     bufrnix.url = "github:conneroisu/bufrnix/php";
   };
 
-  outputs = {  nixpkgs, flake-utils, bufrnix,... }:
-    flake-utils.lib.eachDefaultSystem (system:
-      let
+  outputs = {
+    nixpkgs,
+    flake-utils,
+    bufrnix,
+    ...
+  }:
+    flake-utils.lib.eachDefaultSystem (
+      system: let
         pkgs = import nixpkgs {
           inherit system;
           # Allow for unfree packages like PHP extensions

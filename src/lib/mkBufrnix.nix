@@ -30,29 +30,31 @@ with lib; let
 
   # Load language modules based on configuration
   languageNames = attrNames cfg.languages;
-  
+
   # Function to load a language module if enabled
   loadLanguageModule = language:
     if cfg.languages.${language}.enable
-    then import ../languages/${language} {
-      inherit pkgs lib;
-      config = cfg;
-      cfg = cfg.languages.${language};
-    }
+    then
+      import ../languages/${language}
+      {
+        inherit pkgs lib;
+        config = cfg;
+        cfg = cfg.languages.${language};
+      }
     else {};
-  
+
   # Load all enabled language modules
   loadedLanguageModules = map loadLanguageModule languageNames;
-  
+
   # Extract runtime inputs from language modules
   languageRuntimeInputs = concatMap (module: module.runtimeInputs or []) loadedLanguageModules;
-  
+
   # Extract protoc plugins from language modules
   languageProtocPlugins = concatMap (module: module.protocPlugins or []) loadedLanguageModules;
-  
+
   # Extract initialization hooks from language modules
   languageInitHooks = concatMapStrings (module: module.initHooks or "") loadedLanguageModules;
-  
+
   # Extract code generation hooks from language modules
   languageGenerateHooks = concatMapStrings (module: module.generateHooks or "") loadedLanguageModules;
 
@@ -207,18 +209,21 @@ in
       # Build the protoc command dynamically using language modules
       protoc_cmd="${pkgs.protobuf}/bin/protoc"
       protoc_args="--proto_path=${concatStringsSep " --proto_path=" cfg.protoc.includeDirectories}"
-      
+
       # Add language-specific protocol plugins from the loaded modules
-      ${concatMapStrings (module: 
-        if module ? protocPlugins 
-        then ''
-          # Add plugin options
-          ${concatMapStrings (plugin: ''
-            protoc_args="$protoc_args ${plugin}"
-          '') module.protocPlugins}
-        ''
-        else ""
-      ) loadedLanguageModules}
+      ${concatMapStrings (
+          module:
+            if module ? protocPlugins
+            then ''
+              # Add plugin options
+              ${concatMapStrings (plugin: ''
+                  protoc_args="$protoc_args ${plugin}"
+                '')
+                module.protocPlugins}
+            ''
+            else ""
+        )
+        loadedLanguageModules}
 
       # Execute protoc with expanded file list
       eval "$protoc_cmd $protoc_args $proto_files"

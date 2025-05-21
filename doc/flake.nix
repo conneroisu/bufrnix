@@ -7,7 +7,11 @@
     bun2nix.inputs.nixpkgs.follows = "nixpkgs";
   };
 
-  outputs = {nixpkgs,bun2nix, ...}: let
+  outputs = {
+    nixpkgs,
+    bun2nix,
+    ...
+  }: let
     systems = [
       "x86_64-linux"
       "x86_64-darwin"
@@ -24,7 +28,17 @@
         packages = with pkgs; [
           bun
           bun2nix.packages.${system}.default
+          # Include the treefmt wrapper
+          treefmtEval.${system}.config.build.wrapper
         ];
+      };
+    });
+
+    packages = forAllSystems (system: let
+      pkgs = nixpkgs.legacyPackages.${system};
+    in {
+      bufrnix-docs = pkgs.callPackage ./default.nix {
+        inherit (bun2nix.lib.${system}) mkBunDerivation;
       };
     });
   };

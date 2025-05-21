@@ -29,6 +29,7 @@ setup-twirp-php
 ```
 
 This will:
+
 - Generate PHP code from the Protocol Buffer definitions
 - Install PHP dependencies using Composer
 
