@@ -1,0 +1,12 @@
+version: v1
+name: github.com/conneroisu/bufrnix.dart-example
+deps: []
+build:
+  roots:
+    - proto
+lint:
+  use:
+    - DEFAULT
+breaking:
+  use:
+    - FILE

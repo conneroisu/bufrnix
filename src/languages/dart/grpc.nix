@@ -12,11 +12,15 @@ in {
   # Runtime dependencies for gRPC
   runtimeInputs = optionals enabled [
     # protoc-gen-dart includes both grpc and protobuf support
+    pkgs.dartPackages.protoc-gen-dart
   ];
 
   # Protoc plugin configuration for gRPC
-  # Note: gRPC generation is handled in the main dart module
-  protocPlugins = [];
+  # Note: The main dart plugin handles basic generation with the dart_out option
+  protocPlugins = optionals enabled [
+    # The protoc-gen-dart plugin handles both protobuf and gRPC code generation
+    # Additional gRPC options could be added here if needed
+  ];
 
   # Initialization hooks for gRPC
   initHooks = optionalString enabled ''
