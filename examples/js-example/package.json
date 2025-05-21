@@ -1,0 +1,18 @@
+{
+  "name": "js-example",
+  "version": "1.0.0",
+  "description": "JavaScript example for bufrnix",
+  "main": "index.js",
+  "scripts": {
+    "build": "tsc",
+    "start": "node ./dist/index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "google-protobuf": "^3.21.0",
+    "grpc-web": "^1.4.2"
+  },
+  "devDependencies": {
+    "typescript": "^5.0.0"
+  }
+}
