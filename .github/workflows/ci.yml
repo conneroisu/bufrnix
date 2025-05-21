@@ -28,7 +28,7 @@ jobs:
       - uses: DeterminateSystems/nix-installer-action@main
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
       - name: Run build
-        run: nix build -L --accept-flake-config '.#packages.x86_64-linux.doc'
+        run: cd doc/ && nix build -L --accept-flake-config '.#packages.x86_64-linux.doc'
       - name: Upload artifact
         uses: actions/upload-pages-artifact@56afc609e74202658d3ffba0e8f6dda462b719fa # v3.0.1
         with:
