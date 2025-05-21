@@ -42,14 +42,6 @@
               es = {
                 enable = true;
               };
-              # Modern RPC with Connect-ES
-              connect = {
-                enable = true;
-              };
-              # Browser-compatible RPC with gRPC-Web
-              grpcWeb = {
-                enable = true;
-              };
             };
           };
         };

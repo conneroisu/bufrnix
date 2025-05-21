@@ -45,7 +45,6 @@ in {
       pkgs.protoc-gen-js
       pkgs.protoc-gen-grpc-web
       pkgs.protoc-gen-es
-      pkgs.protoc-gen-connect-es
     ]
     ++ (combineModuleAttrs "runtimeInputs");
 
@@ -54,14 +53,10 @@ in {
     [
       # Use JavaScript output with CommonJS import style (standard for Node.js)
       "--js_out=import_style=commonjs,binary:${outputPath}"
-      
+
       # ECMAScript output for modern JavaScript if enabled
-      (optionalString cfg.es.enable 
+      (optionalString cfg.es.enable
         "--plugin=protoc-gen-es=${pkgs.protoc-gen-es}/bin/protoc-gen-es --es_out=${outputPath}")
-        
-      # Connect-ES output for RPC if enabled
-      (optionalString cfg.connect.enable 
-        "--plugin=protoc-gen-connect-es=${pkgs.protoc-gen-connect-es}/bin/protoc-gen-connect-es --connect-es_out=${outputPath}")
     ]
     ++ (combineModuleAttrs "protocPlugins");
 
