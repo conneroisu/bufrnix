@@ -21,7 +21,6 @@
       system: let
         pkgs = import inputs.nixpkgs {
           inherit system;
-          config.allowUnfree = true;
           overlays = [];
         };
       in
@@ -63,7 +62,6 @@
       system: let
         pkgs = import inputs.nixpkgs {
           inherit system;
-          config.allowUnfree = true;
           overlays = [];
         };
         scripts = {
