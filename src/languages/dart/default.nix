@@ -11,7 +11,7 @@ with lib; let
   dartOptions = cfg.options;
 
   # Determine the dart_out option based on whether gRPC is enabled
-  dartOutOption = 
+  dartOutOption =
     if (cfg.grpc.enable or false)
     then "grpc:${outputPath}"
     else "${outputPath}";
@@ -38,7 +38,7 @@ in {
       pkgs.protoc-gen-dart
     ]
     ++ (combineModuleAttrs "runtimeInputs");
-    
+
   protocPlugins =
     [
       "--dart_out=${dartOutOption}"

@@ -5,6 +5,7 @@ This example demonstrates how to use Bufrnix to generate Dart code from Protocol
 ## Features Demonstrated
 
 - **Complex Protobuf Messages**: Demonstrates various field types including:
+
   - Basic types (int32, string)
   - Repeated fields
   - Optional fields
@@ -12,6 +13,7 @@ This example demonstrates how to use Bufrnix to generate Dart code from Protocol
   - Timestamps
 
 - **gRPC Service Definition**: Shows a complete CRUD service with:
+
   - Unary RPCs (Create, Get, Delete)
   - Streaming RPCs (Watch)
   - Request/Response message patterns
@@ -50,11 +52,13 @@ dart-example/
 ### Generate Protobuf Code
 
 1. Build the project to generate Dart protobuf code:
+
    ```bash
    nix build
    ```
 
    This will:
+
    - Set up the development environment
    - Generate Dart protobuf and gRPC code in `proto/gen/dart/`
    - Create all necessary message classes and service stubs
@@ -67,11 +71,13 @@ dart-example/
 ### Run the Example
 
 1. Install Dart dependencies:
+
    ```bash
    dart pub get
    ```
 
 2. Run the main example:
+
    ```bash
    dart run lib/main.dart
    ```
@@ -127,6 +133,7 @@ languages.dart = {
 ### Protobuf Messages
 
 For each message in the `.proto` file, you get:
+
 - Dart class with typed fields
 - Constructors and factory methods
 - Serialization methods (`writeToBuffer()`, `fromBuffer()`)
@@ -137,6 +144,7 @@ For each message in the `.proto` file, you get:
 ### gRPC Services
 
 For each service in the `.proto` file, you get:
+
 - Client stub class for making RPC calls
 - Server base class for implementing services
 - Properly typed request/response methods
@@ -194,6 +202,7 @@ The example includes comprehensive tests covering:
 - Request/response message patterns
 
 Run tests with:
+
 ```bash
 dart test
 ```

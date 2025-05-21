@@ -101,6 +101,7 @@ languages = {
 ## Supported Languages
 
 ### Go
+
 - **Base support**: Standard protobuf message generation
 - **gRPC**: Full gRPC server and client generation
 - **Connect**: Connect-Go plugin support
@@ -108,16 +109,19 @@ languages = {
 - **Validate**: protoc-gen-validate for message validation
 
 ### Dart
+
 - **Base support**: Standard protobuf message generation with Dart classes
 - **gRPC**: gRPC client and server stub generation
 - **Features**: Supports all protobuf field types, nested messages, enums, and services
 
 ### JavaScript/TypeScript
+
 - **Base support**: Standard protobuf message generation (CommonJS and ES modules)
 - **gRPC-Web**: Browser-compatible gRPC client generation
 - **Twirp**: Twirp RPC framework support
 - **ECMAScript**: Modern JavaScript with ES modules
 
 ### PHP
+
 - **Base support**: Standard protobuf message generation
 - **Twirp**: Twirp RPC framework support for PHP
