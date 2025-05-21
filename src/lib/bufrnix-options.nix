@@ -179,6 +179,93 @@ with lib; {
           };
         };
       };
+
+      # JavaScript language options
+      js = {
+        enable = mkOption {
+          type = types.bool;
+          default = false;
+          description = "Enable JavaScript/TypeScript code generation";
+        };
+
+        outputPath = mkOption {
+          type = types.str;
+          default = "gen/js";
+          description = "Output directory for generated JavaScript code";
+        };
+
+        options = mkOption {
+          type = types.listOf types.str;
+          default = [];
+          description = "Options to pass to protoc JS plugins";
+        };
+
+        packageName = mkOption {
+          type = types.str;
+          default = "";
+          description = "JavaScript package name for generated code";
+        };
+
+        # ECMAScript modules support
+        es = {
+          enable = mkOption {
+            type = types.bool;
+            default = false;
+            description = "Enable ECMAScript modules generation (modern JavaScript)";
+          };
+
+          options = mkOption {
+            type = types.listOf types.str;
+            default = [];
+            description = "Options to pass to protoc-gen-es";
+          };
+        };
+
+        # Connect-ES for RPC
+        connect = {
+          enable = mkOption {
+            type = types.bool;
+            default = false;
+            description = "Enable Connect-ES code generation for JavaScript (modern RPC)";
+          };
+
+          options = mkOption {
+            type = types.listOf types.str;
+            default = [];
+            description = "Options to pass to protoc-gen-connect-es";
+          };
+        };
+
+        # gRPC-Web for browser-compatible RPC
+        grpcWeb = {
+          enable = mkOption {
+            type = types.bool;
+            default = false;
+            description = "Enable gRPC-Web code generation for JavaScript";
+          };
+
+          options = mkOption {
+            type = types.listOf types.str;
+            default = [];
+            description = "Options to pass to protoc-gen-grpc-web";
+          };
+        };
+
+        # Twirp RPC support
+        twirp = {
+          enable = mkOption {
+            type = types.bool;
+            default = false;
+            description = "Enable Twirp RPC framework code generation for JavaScript";
+          };
+
+          options = mkOption {
+            type = types.listOf types.str;
+            default = [];
+            description = "Options to pass to protoc-gen-twirp_js";
+          };
+        };
+      };
     };
   };
 }

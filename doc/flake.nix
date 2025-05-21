@@ -28,8 +28,6 @@
         packages = with pkgs; [
           bun
           bun2nix.packages.${system}.default
-          # Include the treefmt wrapper
-          treefmtEval.${system}.config.build.wrapper
         ];
       };
     });
