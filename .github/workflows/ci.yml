@@ -4,6 +4,11 @@ on:
   push:
     branches:
       - main
+
+permissions:
+  id-token: write
+  contents: read
+  checks: write
 env:
   RUST_BACKTRACE: 1
 concurrency:
@@ -12,10 +17,6 @@ concurrency:
 jobs:
   DeterminateCI:
     uses: conneroisu/ci/.github/workflows/workflow.yml@main
-    permissions:
-      id-token: write
-      contents: read
-      checks: write
     with:
       visibility: public
       fail-fast: true
