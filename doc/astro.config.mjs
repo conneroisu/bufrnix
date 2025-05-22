@@ -4,7 +4,8 @@ import starlight from '@astrojs/starlight';
 
 // https://astro.build/config
 export default defineConfig({
-  site: 'https://bufrnix.github.io',
+  site: 'https://conneroisu.github.io',
+  base: '/bufrnix',
   integrations: [
     starlight({
       title: 'Bufrnix',
