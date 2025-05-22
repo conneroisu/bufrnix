@@ -17,7 +17,7 @@ Go is fully supported with a rich set of plugins for different RPC frameworks.
 go = {
   enable = true;
   out = "gen/go"; # Default output directory
-  
+
   # Common options
   opt = {
     "paths=source_relative" = null;
@@ -91,7 +91,7 @@ Dart support is ideal for Flutter applications and Dart server code.
 dart = {
   enable = true;
   out = "gen/dart"; # Default output directory
-  
+
   # Common options
   opt = { /* options */ };
 };
@@ -121,7 +121,7 @@ JavaScript and TypeScript support includes modern ES modules and multiple RPC fr
 js = {
   enable = true;
   out = "gen/js"; # Default output directory
-  
+
   # Common options
   opt = {
     "import_style=commonjs" = null; # or "import_style=es6"
@@ -169,7 +169,7 @@ PHP support includes basic Protocol Buffer serialization and the Twirp RPC frame
 php = {
   enable = true;
   out = "gen/php"; # Default output directory
-  
+
   # Common options
   opt = { /* options */ };
 };
@@ -191,19 +191,19 @@ php = {
 
 ## Language Feature Matrix
 
-| Feature | Go | Dart | JS/TS | PHP |
-|---------|----|----- |-------|-----|
-| Basic Messages | ✅ | ✅ | ✅ | ✅ |
-| gRPC | ✅ | ✅ | ❌ | ❌ |
-| gRPC-Web | ❌ | ❌ | ✅ | ❌ |
-| Connect | ✅ | ❌ | ❌ | ❌ |
-| gRPC-Gateway | ✅ | ❌ | ❌ | ❌ |
-| Twirp | ❌ | ❌ | ✅ | ✅ |
-| Field Validation | ✅ | ❌ | ❌ | ❌ |
+| Feature          | Go  | Dart | JS/TS | PHP |
+| ---------------- | --- | ---- | ----- | --- |
+| Basic Messages   | ✅  | ✅   | ✅    | ✅  |
+| gRPC             | ✅  | ✅   | ❌    | ❌  |
+| gRPC-Web         | ❌  | ❌   | ✅    | ❌  |
+| Connect          | ✅  | ❌   | ❌    | ❌  |
+| gRPC-Gateway     | ✅  | ❌   | ❌    | ❌  |
+| Twirp            | ❌  | ❌   | ✅    | ✅  |
+| Field Validation | ✅  | ❌   | ❌    | ❌  |
 
 ## Adding Language Support
 
-Bufrnix is designed to be extensible. Each language is implemented as a module in the `src/languages/` directory. 
+Bufrnix is designed to be extensible. Each language is implemented as a module in the `src/languages/` directory.
 
 To add support for a new language:
 

@@ -12,6 +12,7 @@ Bufrnix is an open-source project, and contributions are welcome! This guide exp
 1. **Fork the repository**: Start by forking the [Bufrnix repository](https://github.com/conneroisu/bufrnix) on GitHub.
 
 2. **Clone your fork**: Clone your fork to your local machine:
+
    ```bash
    git clone https://github.com/your-username/bufrnix.git
    cd bufrnix
@@ -120,19 +121,19 @@ To add support for a new programming language to Bufrnix:
    # Add to the language options
    rust = {
      enable = mkEnableOption "Rust code generation";
-     
+
      out = mkOption {
        type = types.str;
        default = "gen/rust";
        description = "Output directory for Rust code";
      };
-     
+
      opt = mkOption {
        type = types.attrsOf types.nullOr;
        default = {};
        description = "Options for Rust code generation";
      };
-     
+
      # Additional plugin-specific options
      grpc = {
        enable = mkEnableOption "gRPC support for Rust";
@@ -153,6 +154,7 @@ To add support for a new programming language to Bufrnix:
 ## Pull Request Process
 
 1. **Create a branch**:
+
    ```bash
    git checkout -b feature/new-language-support
    ```
@@ -161,11 +163,13 @@ To add support for a new programming language to Bufrnix:
    Implement your feature or fix following the guidelines above.
 
 3. **Commit your changes**:
+
    ```bash
    git commit -m "Add Rust language support"
    ```
 
 4. **Push to your fork**:
+
    ```bash
    git push origin feature/new-language-support
    ```

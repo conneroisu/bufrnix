@@ -56,6 +56,7 @@ The built site will be in the `dist` directory.
 
 1. Create a new Markdown or MDX file in the appropriate directory
 2. Add frontmatter with title and description:
+
    ```md
    ---
    title: Your Page Title
@@ -66,6 +67,7 @@ The built site will be in the `dist` directory.
 
    Content goes here...
    ```
+
 3. If needed, add the page to the navigation in `astro.config.mjs`
 
 ## Deployment

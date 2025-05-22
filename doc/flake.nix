@@ -9,7 +9,12 @@
     };
   };
 
-  outputs = { self, nixpkgs, bun2nix, ... }: let
+  outputs = {
+    self,
+    nixpkgs,
+    bun2nix,
+    ...
+  }: let
     systems = [
       "x86_64-linux"
       "x86_64-darwin"
@@ -43,19 +48,19 @@
         version = "0.0.1";
         src = ./.;
         bunNix = ./bun.nix;
-        
+
         buildPhase = ''
           # Build the Astro site
           bun run build
         '';
-        
+
         installPhase = ''
           cp -r dist $out
         '';
       };
       default = bufrnix-docs;
     });
-    
+
     apps = forAllSystems (system: let
       pkgs = nixpkgs.legacyPackages.${system};
     in {
@@ -66,7 +71,7 @@
         ''}";
       };
     });
-    
+
     formatter = forAllSystems (system: nixpkgs.legacyPackages.${system}.nixpkgs-fmt);
   };
 }

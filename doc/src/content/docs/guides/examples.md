@@ -12,12 +12,14 @@ Bufrnix includes several example projects that demonstrate how to use Protocol B
 A basic example demonstrating Go gRPC server and client communication.
 
 ### Features
+
 - Simple gRPC server and client implementation
 - User service with create and get operations
 - In-memory storage for demonstration purposes
 - Error handling and validation
 
 ### Source Code
+
 Check out the [simple-flake example](https://github.com/conneroisu/bufrnix/tree/main/examples/simple-flake) on GitHub.
 
 ### Running the Example
@@ -38,12 +40,14 @@ go run main.go
 Demonstrates using Protocol Buffers with Node.js and TypeScript.
 
 ### Features
+
 - TypeScript support with type definitions
 - Modern ES modules
 - Simple client implementation
 - Integration with npm packages
 
 ### Source Code
+
 Check out the [js-example](https://github.com/conneroisu/bufrnix/tree/main/examples/js-example) on GitHub.
 
 ### Running the Example
@@ -67,12 +71,14 @@ npm start
 Shows how to use Protocol Buffers with Dart and gRPC for Flutter or server applications.
 
 ### Features
+
 - Dart class generation for Protocol Buffers
 - gRPC client implementation
 - Compatible with Flutter applications
 - Demo of async/await usage with gRPC
 
 ### Source Code
+
 Check out the [dart-example](https://github.com/conneroisu/bufrnix/tree/main/examples/dart-example) on GitHub.
 
 ### Running the Example
@@ -93,12 +99,14 @@ dart lib/main.dart
 Demonstrates using Protocol Buffers with PHP and the Twirp RPC framework.
 
 ### Features
+
 - PHP class generation for Protocol Buffers
 - Twirp HTTP server and client
 - Composer integration
 - Simple API implementation
 
 ### Source Code
+
 Check out the [php-twirp example](https://github.com/conneroisu/bufrnix/tree/main/examples/php-twirp) on GitHub.
 
 ### Running the Example
