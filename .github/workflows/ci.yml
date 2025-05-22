@@ -8,6 +8,7 @@ permissions:
   id-token: write
   contents: read
   checks: write
+  pages: write
 env:
   RUST_BACKTRACE: 1
 concurrency:
