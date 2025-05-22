@@ -1,10 +1,12 @@
 {
   description = "Protobuf Compiler/Codegen Declaratively from Nix";
+
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
     systems.url = "github:nix-systems/default";
     treefmt-nix.url = "github:numtide/treefmt-nix";
   };
+
   outputs = inputs: let
     eachSystem = f:
       builtins.listToAttrs (
