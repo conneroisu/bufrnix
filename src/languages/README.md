@@ -38,7 +38,7 @@ languages.go = {
     "paths=source_relative"
     "require_unimplemented_servers=false"
   ];
-  
+
   # gRPC service generation
   grpc = {
     enable = true;
@@ -47,7 +47,7 @@ languages.go = {
       "require_unimplemented_servers=false"
     ];
   };
-  
+
   # HTTP/JSON gateway
   gateway = {
     enable = true;
@@ -57,13 +57,13 @@ languages.go = {
       "allow_delete_body=true"
     ];
   };
-  
+
   # Message validation
   validate = {
     enable = true;
     options = ["lang=go"];
   };
-  
+
   # Modern Connect protocol
   connect = {
     enable = true;
@@ -103,7 +103,7 @@ languages.dart = {
   options = [
     "generate_kythe_info"  # Generate metadata for IDE support
   ];
-  
+
   # gRPC support
   grpc = {
     enable = true;
@@ -165,7 +165,7 @@ languages.js = {
     "import_style=commonjs"
     "binary"
   ];
-  
+
   # Modern ECMAScript modules
   es = {
     enable = true;
@@ -175,7 +175,7 @@ languages.js = {
       "json_types=true"              # JSON type definitions
     ];
   };
-  
+
   # Connect-ES for type-safe RPC
   connect = {
     enable = true;
@@ -184,7 +184,7 @@ languages.js = {
       "import_extension=.js"
     ];
   };
-  
+
   # gRPC-Web for browser compatibility
   grpcWeb = {
     enable = true;
@@ -194,7 +194,7 @@ languages.js = {
       "format=text"
     ];
   };
-  
+
   # Twirp RPC framework
   twirp = {
     enable = true;
@@ -219,30 +219,30 @@ For a proto file `user/v1/user.proto`:
 **ES Modules with Connect-ES:**
 
 ```typescript
-import { UserService } from './proto/user/v1/user_connect.js';
-import { createPromiseClient } from '@connectrpc/connect';
-import { createConnectTransport } from '@connectrpc/connect-web';
+import { UserService } from "./proto/user/v1/user_connect.js";
+import { createPromiseClient } from "@connectrpc/connect";
+import { createConnectTransport } from "@connectrpc/connect-web";
 
 const transport = createConnectTransport({
-  baseUrl: 'https://api.example.com',
+  baseUrl: "https://api.example.com",
 });
 
 const client = createPromiseClient(UserService, transport);
 
-const response = await client.getUser({ id: 'user123' });
+const response = await client.getUser({ id: "user123" });
 console.log(`User: ${response.user?.name}`);
 ```
 
 **gRPC-Web:**
 
 ```typescript
-import { UserServiceClient } from './proto/user/v1/user_grpc_web_pb';
-import { GetUserRequest } from './proto/user/v1/user_pb';
+import { UserServiceClient } from "./proto/user/v1/user_grpc_web_pb";
+import { GetUserRequest } from "./proto/user/v1/user_pb";
 
-const client = new UserServiceClient('https://api.example.com');
+const client = new UserServiceClient("https://api.example.com");
 
 const request = new GetUserRequest();
-request.setId('user123');
+request.setId("user123");
 
 client.getUser(request, {}, (err, response) => {
   if (err) {
@@ -274,7 +274,7 @@ languages.php = {
   options = [
     "aggregate_metadata"  # Single metadata file
   ];
-  
+
   # Twirp RPC support
   twirp = {
     enable = true;
@@ -561,10 +561,10 @@ For languages with multiple plugins:
 languages.complex = {
   enable = true;
   outputPath = "gen/complex";
-  
+
   grpc.enable = true;
   validate.enable = true;
-  
+
   customPlugin = {
     enable = true;
     options = ["custom_opt=value"];
@@ -593,21 +593,27 @@ in {
 ### Common Issues
 
 **Plugin Not Found**
+
 ```
 protoc: --newlang_out: Plugin not found or is not executable
 ```
+
 **Solution**: Ensure the plugin is in `runtimeInputs` and executable.
 
 **Output Directory Issues**
+
 ```
 protoc: newlang: directory does not exist
 ```
+
 **Solution**: Create output directories in `initHooks`.
 
 **Import Path Issues**
+
 ```
 Import "path/to/proto" was not found
 ```
+
 **Solution**: Verify `includeDirectories` configuration includes all necessary paths.
 
 ### Debug Mode
@@ -625,6 +631,7 @@ config = {
 ```
 
 This will show:
+
 - Protoc command line arguments
 - Plugin execution details
 - File generation progress

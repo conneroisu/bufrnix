@@ -26,13 +26,13 @@ Go support includes the complete Protocol Buffer ecosystem with all major plugin
 
 ### Available Plugins
 
-| Plugin | Description | Generated Files |
-|--------|-------------|-----------------|
-| **`protoc-gen-go`** | Base message generation | `*.pb.go` |
-| **`protoc-gen-go-grpc`** | gRPC services | `*_grpc.pb.go` |
-| **`protoc-gen-connect-go`** | Connect protocol | `*_connect.go` |
-| **`protoc-gen-grpc-gateway`** | HTTP/JSON gateway | `*.pb.gw.go` |
-| **`protoc-gen-validate`** | Message validation | `*.pb.validate.go` |
+| Plugin                        | Description             | Generated Files    |
+| ----------------------------- | ----------------------- | ------------------ |
+| **`protoc-gen-go`**           | Base message generation | `*.pb.go`          |
+| **`protoc-gen-go-grpc`**      | gRPC services           | `*_grpc.pb.go`     |
+| **`protoc-gen-connect-go`**   | Connect protocol        | `*_connect.go`     |
+| **`protoc-gen-grpc-gateway`** | HTTP/JSON gateway       | `*.pb.gw.go`       |
+| **`protoc-gen-validate`**     | Message validation      | `*.pb.validate.go` |
 
 ### Configuration
 
@@ -45,7 +45,7 @@ languages.go = {
     "paths=source_relative"
     "require_unimplemented_servers=false"
   ];
-  
+
   # gRPC service generation
   grpc = {
     enable = true;
@@ -54,7 +54,7 @@ languages.go = {
       "require_unimplemented_servers=false"
     ];
   };
-  
+
   # HTTP/JSON gateway for REST APIs
   gateway = {
     enable = true;
@@ -63,13 +63,13 @@ languages.go = {
       "generate_unbound_methods=true"
     ];
   };
-  
+
   # Message validation
   validate = {
     enable = true;
     options = ["lang=go"];
   };
-  
+
   # Modern Connect protocol
   connect = {
     enable = true;
@@ -96,7 +96,7 @@ message User {
   repeated string roles = 5;
   UserStatus status = 6;
   repeated Address addresses = 7;
-  
+
   message Address {
     string street = 1;
     string city = 2;
@@ -148,7 +148,7 @@ import (
     "context"
     "log"
     "net"
-    
+
     "google.golang.org/grpc"
     pb "github.com/myorg/myproject/gen/go/user/v1"
 )
@@ -162,7 +162,7 @@ type server struct {
 func (s *server) CreateUser(ctx context.Context, req *pb.CreateUserRequest) (*pb.CreateUserResponse, error) {
     user := req.GetUser()
     s.users[user.GetId()] = user
-    
+
     return &pb.CreateUserResponse{
         User:    user,
         Success: true,
@@ -212,8 +212,8 @@ Dart support provides complete Protocol Buffer and gRPC integration for Flutter 
 
 ### Available Plugins
 
-| Plugin | Description | Generated Files |
-|--------|-------------|-----------------|
+| Plugin                | Description          | Generated Files                                                |
+| --------------------- | -------------------- | -------------------------------------------------------------- |
 | **`protoc-gen-dart`** | Base messages & gRPC | `*.pb.dart`, `*.pbgrpc.dart`, `*.pbenum.dart`, `*.pbjson.dart` |
 
 ### Configuration
@@ -226,7 +226,7 @@ languages.dart = {
   options = [
     "generate_kythe_info"  # IDE support metadata
   ];
-  
+
   grpc = {
     enable = true;
     options = [
@@ -307,7 +307,7 @@ Future<void> main() async {
   // Create a gRPC client
   final channel = ClientChannel('localhost', port: 50051);
   final client = ExampleServiceClient(channel);
-  
+
   try {
     // Create a new example message
     final example = ExampleMessage()
@@ -316,30 +316,30 @@ Future<void> main() async {
       ..email = 'john@example.com'
       ..tags.addAll(['developer', 'dart'])
       ..description = 'Example user for testing';
-    
+
     // Make RPC call
     final request = CreateExampleRequest()..example = example;
     final response = await client.createExample(request);
-    
+
     if (response.success) {
       print('Created example: ${response.example.name}');
     }
-    
+
     // List examples with pagination
     final listRequest = ListExamplesRequest()
       ..pageSize = 10
       ..filter = 'developer';
-    
+
     final listResponse = await client.listExamples(listRequest);
     print('Found ${listResponse.examples.length} examples');
-    
+
     // Watch for streaming updates
     final watchRequest = ListExamplesRequest()..filter = 'live';
-    
+
     await for (final update in client.watchExamples(watchRequest)) {
       print('Received update: ${update.name}');
     }
-    
+
   } finally {
     await channel.shutdown();
   }
@@ -365,13 +365,13 @@ JavaScript/TypeScript support provides multiple output formats and RPC options f
 
 ### Available Plugins
 
-| Plugin | Description | Generated Files |
-|--------|-------------|-----------------|
-| **`protoc-gen-js`** | CommonJS messages | `*_pb.js`, `*_pb.d.ts` |
-| **`protoc-gen-es`** | ES modules | `*.js`, `*.d.ts` |
-| **`protoc-gen-connect-es`** | Connect-ES RPC | `*_connect.js` |
-| **`protoc-gen-grpc-web`** | gRPC-Web client | `*_grpc_web_pb.js` |
-| **`protoc-gen-twirp_js`** | Twirp RPC | `*_twirp.js` |
+| Plugin                      | Description       | Generated Files        |
+| --------------------------- | ----------------- | ---------------------- |
+| **`protoc-gen-js`**         | CommonJS messages | `*_pb.js`, `*_pb.d.ts` |
+| **`protoc-gen-es`**         | ES modules        | `*.js`, `*.d.ts`       |
+| **`protoc-gen-connect-es`** | Connect-ES RPC    | `*_connect.js`         |
+| **`protoc-gen-grpc-web`**   | gRPC-Web client   | `*_grpc_web_pb.js`     |
+| **`protoc-gen-twirp_js`**   | Twirp RPC         | `*_twirp.js`           |
 
 ### Configuration
 
@@ -384,7 +384,7 @@ languages.js = {
     "import_style=commonjs"
     "binary"
   ];
-  
+
   # Modern ECMAScript modules
   es = {
     enable = true;
@@ -394,7 +394,7 @@ languages.js = {
       "json_types=true"        # JSON type definitions
     ];
   };
-  
+
   # Connect-ES for type-safe RPC
   connect = {
     enable = true;
@@ -403,7 +403,7 @@ languages.js = {
       "import_extension=.js"
     ];
   };
-  
+
   # gRPC-Web for browser compatibility
   grpcWeb = {
     enable = true;
@@ -412,7 +412,7 @@ languages.js = {
       "mode=grpcwebtext"
     ];
   };
-  
+
   # Twirp RPC framework
   twirp = {
     enable = true;
@@ -474,14 +474,14 @@ message CreateUserResponse {
 **ES Modules with Connect-ES (Recommended):**
 
 ```typescript
-import { UserService } from './proto/example/v1/example_connect.js';
-import { createPromiseClient } from '@connectrpc/connect';
-import { createConnectTransport } from '@connectrpc/connect-web';
+import { UserService } from "./proto/example/v1/example_connect.js";
+import { createPromiseClient } from "@connectrpc/connect";
+import { createConnectTransport } from "@connectrpc/connect-web";
 
 // Create transport
 const transport = createConnectTransport({
-  baseUrl: 'https://api.example.com',
-  credentials: 'include',
+  baseUrl: "https://api.example.com",
+  credentials: "include",
 });
 
 // Create client
@@ -492,33 +492,32 @@ async function main() {
     // Create a new user
     const createResponse = await client.createUser({
       user: {
-        id: '1',
-        name: 'John Doe',
-        email: 'john@example.com',
+        id: "1",
+        name: "John Doe",
+        email: "john@example.com",
         age: 30,
       },
     });
-    
-    console.log('Created user:', createResponse.user);
-    
+
+    console.log("Created user:", createResponse.user);
+
     // Get the user
     const getResponse = await client.getUser({
-      id: '1',
+      id: "1",
     });
-    
-    console.log('Retrieved user:', getResponse.user);
-    
+
+    console.log("Retrieved user:", getResponse.user);
+
     // List users with pagination
     const listResponse = await client.listUsers({
       pageSize: 10,
-      pageToken: '',
+      pageToken: "",
     });
-    
+
     console.log(`Found ${listResponse.users.length} users`);
-    console.log('Next page token:', listResponse.nextPageToken);
-    
+    console.log("Next page token:", listResponse.nextPageToken);
   } catch (error) {
-    console.error('RPC failed:', error);
+    console.error("RPC failed:", error);
   }
 }
 
@@ -544,9 +543,9 @@ PHP support provides Protocol Buffer messages and Twirp RPC framework integratio
 
 ### Available Plugins
 
-| Plugin | Description | Generated Files |
-|--------|-------------|-----------------|
-| **`protoc-gen-php`** | Message classes | `*.php`, `GPBMetadata/*.php` |
+| Plugin                     | Description         | Generated Files              |
+| -------------------------- | ------------------- | ---------------------------- |
+| **`protoc-gen-php`**       | Message classes     | `*.php`, `GPBMetadata/*.php` |
 | **`protoc-gen-twirp_php`** | Twirp RPC framework | `*Client.php`, `*Server.php` |
 
 ### Configuration
@@ -559,7 +558,7 @@ languages.php = {
   options = [
     "aggregate_metadata"  # Single metadata file
   ];
-  
+
   twirp = {
     enable = true;
     options = [
@@ -656,19 +655,19 @@ php -S localhost:8080 -t .
 
 ## Language Comparison
 
-| Feature | Go | Dart | JavaScript/TypeScript | PHP |
-|---------|----|----|---------------------|-----|
-| **Base Messages** | ✅ | ✅ | ✅ | ✅ |
-| **gRPC Services** | ✅ | ✅ | ✅ (Web) | ❌ |
-| **Streaming RPC** | ✅ | ✅ | ✅ (Web) | ❌ |
-| **HTTP Gateway** | ✅ | ❌ | ❌ | ❌ |
-| **Validation** | ✅ | ❌ | ❌ | ❌ |
-| **Connect Protocol** | ✅ | ❌ | ✅ | ❌ |
-| **Twirp RPC** | ❌ | ❌ | ✅ | ✅ |
-| **JSON Mapping** | ✅ | ✅ | ✅ | ✅ |
-| **Type Safety** | ✅ | ✅ | ✅ | ⚠️ |
-| **Server Support** | ✅ | ✅ | ❌ | ✅ |
-| **Browser Support** | ❌ | ❌ | ✅ | ❌ |
+| Feature              | Go  | Dart | JavaScript/TypeScript | PHP |
+| -------------------- | --- | ---- | --------------------- | --- |
+| **Base Messages**    | ✅  | ✅   | ✅                    | ✅  |
+| **gRPC Services**    | ✅  | ✅   | ✅ (Web)              | ❌  |
+| **Streaming RPC**    | ✅  | ✅   | ✅ (Web)              | ❌  |
+| **HTTP Gateway**     | ✅  | ❌   | ❌                    | ❌  |
+| **Validation**       | ✅  | ❌   | ❌                    | ❌  |
+| **Connect Protocol** | ✅  | ❌   | ✅                    | ❌  |
+| **Twirp RPC**        | ❌  | ❌   | ✅                    | ✅  |
+| **JSON Mapping**     | ✅  | ✅   | ✅                    | ✅  |
+| **Type Safety**      | ✅  | ✅   | ✅                    | ⚠️  |
+| **Server Support**   | ✅  | ✅   | ❌                    | ✅  |
+| **Browser Support**  | ❌  | ❌   | ✅                    | ❌  |
 
 ## Multi-Language Projects
 
@@ -681,7 +680,7 @@ config = {
     sourceDirectories = ["./proto"];
     includeDirectories = ["./proto"];
   };
-  
+
   # Backend in Go
   languages.go = {
     enable = true;
@@ -689,14 +688,14 @@ config = {
     grpc.enable = true;
     gateway.enable = true;
   };
-  
+
   # Mobile app in Dart
   languages.dart = {
     enable = true;
     outputPath = "mobile/lib/proto";
     grpc.enable = true;
   };
-  
+
   # Web frontend in TypeScript
   languages.js = {
     enable = true;
@@ -704,7 +703,7 @@ config = {
     es.enable = true;
     connect.enable = true;
   };
-  
+
   # Legacy services in PHP
   languages.php = {
     enable = true;

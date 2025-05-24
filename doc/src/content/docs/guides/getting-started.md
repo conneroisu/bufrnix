@@ -27,7 +27,7 @@ Create a `flake.nix` file in your project root:
     bufrnix.inputs.nixpkgs.follows = "nixpkgs";
   };
 
-  outputs = { nixpkgs, bufrnix, ... }: 
+  outputs = { nixpkgs, bufrnix, ... }:
   let
     system = "x86_64-linux";  # Adjust for your system
     pkgs = nixpkgs.legacyPackages.${system};
@@ -79,7 +79,7 @@ option go_package = "github.com/yourorg/yourproject/gen/go/example/v1;examplev1"
 service GreetingService {
   // Sends a greeting
   rpc SayHello(HelloRequest) returns (HelloResponse);
-  
+
   // Sends multiple greetings
   rpc SayHelloStream(HelloRequest) returns (stream HelloResponse);
 }
@@ -106,6 +106,7 @@ nix build
 ```
 
 This will:
+
 1. Validate your proto files
 2. Generate Go protobuf messages in `gen/go/example/v1/example.pb.go`
 3. Generate Go gRPC service definitions in `gen/go/example/v1/example_grpc.pb.go`
@@ -137,7 +138,7 @@ func (s *server) SayHello(ctx context.Context, req *examplev1.HelloRequest) (*ex
     if req.GreetingType != nil {
         greeting = *req.GreetingType
     }
-    
+
     return &examplev1.HelloResponse{
         Message:   greeting + ", " + req.Name + "!",
         Timestamp: time.Now().Unix(),
@@ -229,7 +230,7 @@ Create a development environment with all necessary tools:
     bufrnix.inputs.nixpkgs.follows = "nixpkgs";
   };
 
-  outputs = { nixpkgs, bufrnix, ... }: 
+  outputs = { nixpkgs, bufrnix, ... }:
   let
     system = "x86_64-linux";
     pkgs = nixpkgs.legacyPackages.${system};
@@ -248,12 +249,12 @@ Create a development environment with all necessary tools:
         dart
         nodejs
         php
-        
+
         # Protocol Buffer tools
         protobuf
         protoc-gen-go
         protoc-gen-go-grpc
-        
+
         # Development tools
         buf  # Modern protobuf linter and build tool
         grpcurl  # Command-line gRPC client
@@ -408,7 +409,7 @@ npm install && npm run build
 Now that you have Bufrnix generating code:
 
 1. **Explore Language Features**: Check the [Language Support](/reference/languages/) guide for language-specific options
-2. **Advanced Configuration**: See [Configuration Reference](/reference/configuration/) for all available options  
+2. **Advanced Configuration**: See [Configuration Reference](/reference/configuration/) for all available options
 3. **Integration Patterns**: Study the [Examples](/guides/examples/) for real-world usage patterns
 4. **Troubleshooting**: Visit [Troubleshooting](/guides/troubleshooting/) if you encounter issues
 5. **Contributing**: See [Contributing](/guides/contributing/) to add support for new languages or features
@@ -416,16 +417,21 @@ Now that you have Bufrnix generating code:
 ## Common First-Time Issues
 
 ### Proto File Not Found
+
 ```
 Error: proto file not found: ./proto/example/v1/example.proto
 ```
+
 **Solution**: Ensure the file path in `protoc.files` matches your actual file location.
 
 ### Import Errors
+
 ```
 Error: Import "google/protobuf/timestamp.proto" was not found
 ```
+
 **Solution**: Add well-known types to your include directories:
+
 ```nix
 protoc.includeDirectories = [
   "./proto"
@@ -434,6 +440,7 @@ protoc.includeDirectories = [
 ```
 
 ### Generated Code Import Issues
+
 **Solution**: Check that your `go_package` option matches your actual Go module structure, and ensure generated code is within your Go module.
 
 For more detailed troubleshooting, see the [Troubleshooting Guide](/guides/troubleshooting/).
