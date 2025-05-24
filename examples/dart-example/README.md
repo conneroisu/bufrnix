@@ -240,7 +240,7 @@ To integrate this into your own Dart project:
 1. Use `nix develop` to ensure consistent development environment
 2. Re-run `nix build` after changing `.proto` files
 3. Use `dart analyze` to check for issues in generated code
-4. Enable hot reload in your IDE for faster development
+4. Use your IDE's Dart language server for better development experience
 
 ## Learn More
 

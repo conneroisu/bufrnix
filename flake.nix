@@ -98,6 +98,7 @@
               statix
               # Add the formatter to the devShell
               treefmtEval.${system}.config.build.wrapper
+              git-bug
             ]
             ++ builtins.attrValues scriptPackages;
         };
