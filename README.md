@@ -6,6 +6,8 @@ Nix powered Protocol Buffers with declarative code generation and comprehensive 
 
 Bufrnix provides a **declarative, reproducible way** to generate Protocol Buffer code for multiple languages through Nix flakes. It eliminates the complexity of managing protoc plugins, dependencies, and build environments by leveraging Nix's deterministic package management.
 
+See the [quick start guide](https://conneroisu.github.io/bufrnix/guides/getting-started/) for a quick introduction to Bufrnix.
+
 ### Key Features
 
 - 🚀 **Multi-language Support**: Go, Dart, JavaScript/TypeScript, PHP with more coming
