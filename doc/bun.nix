@@ -38,15 +38,15 @@
   };
   "@astrojs/starlight" = {
     out_path = "@astrojs/starlight";
-    name = "@astrojs/starlight@0.34.2";
-    url = "https://registry.npmjs.org/@astrojs/starlight/-/starlight-0.34.2.tgz";
-    hash = "sha512-/XwBXQ4ZyQBEETZIPw2pa+UsKawkpRVO7CF6QVpOmteGfUxCrsD3n26G0OsnWHh0Gfo67QkAqM0FsGmDuNUVHw==";
+    name = "@astrojs/starlight@0.34.3";
+    url = "https://registry.npmjs.org/@astrojs/starlight/-/starlight-0.34.3.tgz";
+    hash = "sha512-MAuD3NF+E+QXJJuVKofoR6xcPTP4BJmYWeOBd03udVdubNGVnPnSWVZAi+ZtnTofES4+mJdp8BNGf+ubUxkiiA==";
   };
   "@astrojs/telemetry" = {
     out_path = "@astrojs/telemetry";
-    name = "@astrojs/telemetry@3.2.1";
-    url = "https://registry.npmjs.org/@astrojs/telemetry/-/telemetry-3.2.1.tgz";
-    hash = "sha512-SSVM820Jqc6wjsn7qYfV9qfeQvePtVc1nSofhyap7l0/iakUKywj3hfy3UJAOV4sGV4Q/u450RD4AaCaFvNPlg==";
+    name = "@astrojs/telemetry@3.3.0";
+    url = "https://registry.npmjs.org/@astrojs/telemetry/-/telemetry-3.3.0.tgz";
+    hash = "sha512-UFBgfeldP06qu6khs/yY+q1cDAaArM2/7AEIqQ9Cuvf7B1hNLq0xDrZkct+QoIGyjq56y8IaE2I3CTvG99mlhQ==";
   };
   "@babel/helper-string-parser" = {
     out_path = "@babel/helper-string-parser";
@@ -639,6 +639,12 @@
     url = "https://registry.npmjs.org/@types/estree-jsx/-/estree-jsx-1.0.5.tgz";
     hash = "sha512-52CcUVNFyfb1A2ALocQw/Dd1BQFNmSdkuC3BkZ6iqhdMfQz7JWOFRuJFloOzjk+6WijU56m9oKXFAXc7o3Towg==";
   };
+  "@types/fontkit" = {
+    out_path = "@types/fontkit";
+    name = "@types/fontkit@2.0.8";
+    url = "https://registry.npmjs.org/@types/fontkit/-/fontkit-2.0.8.tgz";
+    hash = "sha512-wN+8bYxIpJf+5oZdrdtaX04qUuWHcKxcDEgRS9Qm9ZClSHjzEn13SxUC+5eRM+4yXIeTYk8mTzLAWGF64847ew==";
+  };
   "@types/hast" = {
     out_path = "@types/hast";
     name = "@types/hast@3.0.4";
@@ -806,15 +812,27 @@
     binaries = {
       "astro" = "../astro/astro.js";
     };
-    name = "astro@5.7.10";
-    url = "https://registry.npmjs.org/astro/-/astro-5.7.10.tgz";
-    hash = "sha512-9TQcFZqP2w6//JXXUHfw8/5PX7KUx9EkG5O3m+hISuyeUztvjY1q5+p7+C5HiXyg24Zs3KkpieoL5BGRXGCAGA==";
+    name = "astro@5.8.0";
+    url = "https://registry.npmjs.org/astro/-/astro-5.8.0.tgz";
+    hash = "sha512-G57ELkdIntDiSrucA5lQaRtBOjquaZ9b9NIwoz2f471ZuuJcynLjWgItgBzlrz5UMY4WqnFbVWUCKlJb7nt9bA==";
   };
   "astro-expressive-code" = {
     out_path = "astro-expressive-code";
     name = "astro-expressive-code@0.41.2";
     url = "https://registry.npmjs.org/astro-expressive-code/-/astro-expressive-code-0.41.2.tgz";
     hash = "sha512-HN0jWTnhr7mIV/2e6uu4PPRNNo/k4UEgTLZqbp3MrHU+caCARveG2yZxaZVBmxyiVdYqW5Pd3u3n2zjnshixbw==";
+  };
+  "astro/@astrojs/markdown-remark" = {
+    out_path = "astro/@astrojs/node_modules/markdown-remark";
+    name = "@astrojs/markdown-remark@6.3.2";
+    url = "https://registry.npmjs.org/@astrojs/markdown-remark/-/markdown-remark-6.3.2.tgz";
+    hash = "sha512-bO35JbWpVvyKRl7cmSJD822e8YA8ThR/YbUsciWNA7yTcqpIAL2hJDToWP5KcZBWxGT6IOdOkHSXARSNZc4l/Q==";
+  };
+  "astro/@astrojs/markdown-remark/@astrojs/prism" = {
+    out_path = "astro/@astrojs/node_modules/markdown-remark/node_modules/@astrojs/node_modules/prism";
+    name = "@astrojs/prism@3.3.0";
+    url = "https://registry.npmjs.org/@astrojs/prism/-/prism-3.3.0.tgz";
+    hash = "sha512-q8VwfU/fDZNoDOf+r7jUnMC2//H2l0TuQ6FkGJL8vD8nw/q5KiL3DS1KKBI3QhI9UQhpJ5dc7AtqfbXWuOgLCQ==";
   };
   "astro/sharp" = {
     out_path = "astro/node_modules/sharp";
@@ -1334,6 +1352,12 @@
     name = "flattie@1.1.1";
     url = "https://registry.npmjs.org/flattie/-/flattie-1.1.1.tgz";
     hash = "sha512-9UbaD6XdAL97+k/n+N7JwX46K/M6Zc6KcFYskrYL8wbBV/Uyk0CTAMY0VT+qiK5PM7AIc9aTWYtq65U7T+aCNQ==";
+  };
+  "fontace" = {
+    out_path = "fontace";
+    name = "fontace@0.3.0";
+    url = "https://registry.npmjs.org/fontace/-/fontace-0.3.0.tgz";
+    hash = "sha512-czoqATrcnxgWb/nAkfyIrRp6Q8biYj7nGnL6zfhTcX+JKKpWHFBnb8uNMw/kZr7u++3Y3wYSYoZgHkCcsuBpBg==";
   };
   "fontkit" = {
     out_path = "fontkit";
@@ -2772,9 +2796,9 @@
   };
   "unifont" = {
     out_path = "unifont";
-    name = "unifont@0.4.1";
-    url = "https://registry.npmjs.org/unifont/-/unifont-0.4.1.tgz";
-    hash = "sha512-zKSY9qO8svWYns+FGKjyVdLvpGPwqmsCjeJLN1xndMiqxHWBAhoWDMYMG960MxeV48clBmG+fDP59dHY1VoZvg==";
+    name = "unifont@0.5.0";
+    url = "https://registry.npmjs.org/unifont/-/unifont-0.5.0.tgz";
+    hash = "sha512-4DueXMP5Hy4n607sh+vJ+rajoLu778aU3GzqeTCqsD/EaUcvqZT9wPC8kgK6Vjh22ZskrxyRCR71FwNOaYn6jA==";
   };
   "unist-util-find-after" = {
     out_path = "unist-util-find-after";

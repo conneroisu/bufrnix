@@ -3,7 +3,7 @@ title: Language Support
 description: Complete guide to all languages supported by Bufrnix with examples and configuration options.
 ---
 
-# Language Support
+# Introduction
 
 Bufrnix supports code generation for multiple programming languages through a modular plugin system. Each language implementation provides comprehensive Protocol Buffer support with language-specific optimizations and ecosystem integrations.
 
