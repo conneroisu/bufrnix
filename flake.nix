@@ -3,7 +3,6 @@
 
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
-    systems.url = "github:nix-systems/default";
     treefmt-nix.url = "github:numtide/treefmt-nix";
   };
 
@@ -15,7 +14,12 @@
           name = system;
           value = f system;
         })
-        (import inputs.systems)
+        [
+          "x86_64-linux"
+          "aarch64-linux"
+          "x86_64-darwin"
+          "aarch64-darwin"
+        ]
       );
 
     # Evaluate the treefmt modules with an inline treefmt config
