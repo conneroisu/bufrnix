@@ -73,21 +73,29 @@
         };
         scripts = {
           dx = {
-            exec = ''$EDITOR $REPO_ROOT/flake.nix'';
+            exec = ''$EDITOR "$(git rev-parse --show-toplevel)"/flake.nix'';
             description = "Edit flake.nix";
           };
           lint = {
             exec = ''
-              REPO_ROOT=$(git rev-parse --show-toplevel)
-              ${pkgs.statix}/bin/statix check $REPO_ROOT/flake.nix
-              ${pkgs.deadnix}/bin/deadnix $REPO_ROOT/flake.nix
+              REPO_ROOT="$(git rev-parse --show-toplevel)"
+              statix check "$REPO_ROOT"/flake.nix
+              deadnix "$REPO_ROOT"/flake.nix
             '';
-            description = "Lint flake.nix";
+            deps = with pkgs; [statix deadnix];
+            description = "Lint nix files";
           };
         };
         scriptPackages =
           pkgs.lib.mapAttrs
-          (name: script: pkgs.writeShellScriptBin name script.exec)
+          (
+            name: script:
+              pkgs.writeShellApplication {
+                inherit name;
+                text = script.exec;
+                runtimeInputs = script.deps or [];
+              }
+          )
           scripts;
       in {
         default = pkgs.mkShell {
