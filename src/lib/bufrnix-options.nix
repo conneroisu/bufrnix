@@ -60,6 +60,12 @@ with lib; {
           description = "Enable Go code generation";
         };
 
+        package = mkOption {
+          type = types.package;
+          defaultText = literalExpression "pkgs.protoc-gen-go";
+          description = "The protoc-gen-go package to use";
+        };
+
         outputPath = mkOption {
           type = types.str;
           default = "gen/go";
@@ -85,6 +91,12 @@ with lib; {
             description = "Enable gRPC code generation for Go";
           };
 
+          package = mkOption {
+            type = types.package;
+            defaultText = literalExpression "pkgs.protoc-gen-go-grpc";
+            description = "The protoc-gen-go-grpc package to use";
+          };
+
           options = mkOption {
             type = types.listOf types.str;
             default = ["paths=source_relative"];
@@ -98,6 +110,12 @@ with lib; {
             type = types.bool;
             default = false;
             description = "Enable gRPC-Gateway code generation for Go";
+          };
+
+          package = mkOption {
+            type = types.package;
+            defaultText = literalExpression "pkgs.grpc-gateway";
+            description = "The grpc-gateway package to use";
           };
 
           options = mkOption {
@@ -114,6 +132,12 @@ with lib; {
             description = "Enable protoc-gen-validate for Go";
           };
 
+          package = mkOption {
+            type = types.package;
+            defaultText = literalExpression "pkgs.protoc-gen-validate";
+            description = "The protoc-gen-validate package to use";
+          };
+
           options = mkOption {
             type = types.listOf types.str;
             default = ["lang=go"];
@@ -126,6 +150,12 @@ with lib; {
             type = types.bool;
             default = false;
             description = "Enable Connect code generation for Go";
+          };
+
+          package = mkOption {
+            type = types.package;
+            defaultText = literalExpression "pkgs.protoc-gen-connect-go";
+            description = "The protoc-gen-connect-go package to use";
           };
 
           options = mkOption {
@@ -145,6 +175,12 @@ with lib; {
           type = types.bool;
           default = false;
           description = "Enable PHP code generation";
+        };
+
+        package = mkOption {
+          type = types.package;
+          defaultText = literalExpression "pkgs.protobuf";
+          description = "The protobuf package to use for PHP generation";
         };
 
         outputPath = mkOption {
@@ -172,6 +208,12 @@ with lib; {
             description = "Enable Twirp RPC framework code generation for PHP";
           };
 
+          package = mkOption {
+            type = types.package;
+            defaultText = literalExpression "pkgs.protoc-gen-twirp_php";
+            description = "The protoc-gen-twirp_php package to use";
+          };
+
           options = mkOption {
             type = types.listOf types.str;
             default = [];
@@ -186,6 +228,12 @@ with lib; {
           type = types.bool;
           default = false;
           description = "Enable JavaScript/TypeScript code generation";
+        };
+
+        package = mkOption {
+          type = types.package;
+          defaultText = literalExpression "pkgs.protoc-gen-js";
+          description = "The protoc-gen-js package to use";
         };
 
         outputPath = mkOption {
@@ -214,6 +262,12 @@ with lib; {
             description = "Enable ECMAScript modules generation (modern JavaScript)";
           };
 
+          package = mkOption {
+            type = types.package;
+            defaultText = literalExpression "pkgs.protoc-gen-es";
+            description = "The protoc-gen-es package to use";
+          };
+
           options = mkOption {
             type = types.listOf types.str;
             default = [];
@@ -227,6 +281,12 @@ with lib; {
             type = types.bool;
             default = false;
             description = "Enable Connect-ES code generation for JavaScript (modern RPC)";
+          };
+
+          package = mkOption {
+            type = types.package;
+            defaultText = literalExpression "pkgs.protoc-gen-connect-es";
+            description = "The protoc-gen-connect-es package to use";
           };
 
           options = mkOption {
@@ -244,6 +304,12 @@ with lib; {
             description = "Enable gRPC-Web code generation for JavaScript";
           };
 
+          package = mkOption {
+            type = types.package;
+            defaultText = literalExpression "pkgs.grpc-web";
+            description = "The protoc-gen-grpc-web package to use";
+          };
+
           options = mkOption {
             type = types.listOf types.str;
             default = [];
@@ -257,6 +323,12 @@ with lib; {
             type = types.bool;
             default = false;
             description = "Enable Twirp RPC framework code generation for JavaScript";
+          };
+
+          package = mkOption {
+            type = types.package;
+            defaultText = literalExpression "pkgs.protoc-gen-twirp_js";
+            description = "The protoc-gen-twirp_js package to use";
           };
 
           options = mkOption {
@@ -273,6 +345,12 @@ with lib; {
           type = types.bool;
           default = false;
           description = "Enable Dart code generation";
+        };
+
+        package = mkOption {
+          type = types.package;
+          defaultText = literalExpression "pkgs.protoc-gen-dart";
+          description = "The protoc-gen-dart package to use";
         };
 
         outputPath = mkOption {
@@ -300,11 +378,56 @@ with lib; {
             description = "Enable gRPC code generation for Dart";
           };
 
+          package = mkOption {
+            type = types.package;
+            defaultText = literalExpression "pkgs.protoc-gen-dart";
+            description = "The protoc-gen-dart package to use (same as parent for Dart)";
+          };
+
           options = mkOption {
             type = types.listOf types.str;
             default = [];
             description = "Options to pass to protoc-gen-dart for gRPC";
           };
+        };
+      };
+
+      # Documentation language options
+      doc = {
+        enable = mkOption {
+          type = types.bool;
+          default = false;
+          description = "Enable documentation generation with protoc-gen-doc";
+        };
+
+        package = mkOption {
+          type = types.package;
+          defaultText = literalExpression "pkgs.protoc-gen-doc";
+          description = "The protoc-gen-doc package to use";
+        };
+
+        outputPath = mkOption {
+          type = types.str;
+          default = "gen/doc";
+          description = "Output directory for generated documentation";
+        };
+
+        options = mkOption {
+          type = types.listOf types.str;
+          default = ["html,index.html"];
+          description = "Options to pass to protoc-gen-doc (format,output_file)";
+        };
+
+        format = mkOption {
+          type = types.enum ["html" "markdown" "json" "docbook"];
+          default = "html";
+          description = "Documentation output format";
+        };
+
+        outputFile = mkOption {
+          type = types.str;
+          default = "index.html";
+          description = "Output filename for the documentation";
         };
       };
     };

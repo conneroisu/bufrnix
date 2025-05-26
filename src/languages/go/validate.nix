@@ -11,7 +11,7 @@ with lib; let
 in {
   # Runtime dependencies for Validate
   runtimeInputs = optionals enabled [
-    pkgs.protoc-gen-validate or pkgs.go
+    cfg.package or pkgs.protoc-gen-validate
   ];
 
   # Protoc plugin configuration for Validate

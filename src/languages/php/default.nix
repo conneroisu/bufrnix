@@ -30,6 +30,7 @@ in {
   runtimeInputs =
     [
       # Base PHP dependencies
+      cfg.package
     ]
     ++ (combineModuleAttrs "runtimeInputs");
 

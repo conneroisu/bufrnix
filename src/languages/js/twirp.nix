@@ -12,7 +12,7 @@ with lib;
       # Runtime dependencies for Twirp
       runtimeInputs = [
         # Custom or community package for Twirp JS
-        pkgs.nodejs
+        cfg.package or pkgs.protoc-gen-twirp_js
       ];
 
       # Protoc plugin configuration (assuming a hypothetical Twirp JS plugin)

@@ -11,7 +11,7 @@ with lib; let
 in {
   # Runtime dependencies for Gateway
   runtimeInputs = optionals enabled [
-    pkgs.grpc-gateway or pkgs.go
+    cfg.package or pkgs.grpc-gateway
   ];
 
   # Protoc plugin configuration for Gateway

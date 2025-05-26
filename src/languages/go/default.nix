@@ -59,7 +59,7 @@ in {
   # Runtime dependencies for Go code generation
   runtimeInputs =
     [
-      pkgs.protoc-gen-go
+      cfg.package
     ]
     ++ (combineModuleAttrs "runtimeInputs");
 

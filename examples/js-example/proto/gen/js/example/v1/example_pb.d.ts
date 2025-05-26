@@ -2,11 +2,7 @@
 // @generated from file example/v1/example.proto (package example.v1, syntax proto3)
 /* eslint-disable */
 
-import type {
-  GenFile,
-  GenMessage,
-  GenService,
-} from "@bufbuild/protobuf/codegenv1";
+import type { GenFile, GenMessage, GenService } from "@bufbuild/protobuf/codegenv1";
 import type { Message } from "@bufbuild/protobuf";
 
 /**
@@ -82,18 +78,17 @@ export declare const GetUserResponseSchema: GenMessage<GetUserResponse>;
 /**
  * @generated from message example.v1.ListUsersRequest
  */
-export declare type ListUsersRequest =
-  Message<"example.v1.ListUsersRequest"> & {
-    /**
-     * @generated from field: int32 page_size = 1;
-     */
-    pageSize: number;
+export declare type ListUsersRequest = Message<"example.v1.ListUsersRequest"> & {
+  /**
+   * @generated from field: int32 page_size = 1;
+   */
+  pageSize: number;
 
-    /**
-     * @generated from field: string page_token = 2;
-     */
-    pageToken: string;
-  };
+  /**
+   * @generated from field: string page_token = 2;
+   */
+  pageToken: string;
+};
 
 /**
  * Describes the message example.v1.ListUsersRequest.
@@ -104,18 +99,17 @@ export declare const ListUsersRequestSchema: GenMessage<ListUsersRequest>;
 /**
  * @generated from message example.v1.ListUsersResponse
  */
-export declare type ListUsersResponse =
-  Message<"example.v1.ListUsersResponse"> & {
-    /**
-     * @generated from field: repeated example.v1.User users = 1;
-     */
-    users: User[];
+export declare type ListUsersResponse = Message<"example.v1.ListUsersResponse"> & {
+  /**
+   * @generated from field: repeated example.v1.User users = 1;
+   */
+  users: User[];
 
-    /**
-     * @generated from field: string next_page_token = 2;
-     */
-    nextPageToken: string;
-  };
+  /**
+   * @generated from field: string next_page_token = 2;
+   */
+  nextPageToken: string;
+};
 
 /**
  * Describes the message example.v1.ListUsersResponse.
@@ -126,13 +120,12 @@ export declare const ListUsersResponseSchema: GenMessage<ListUsersResponse>;
 /**
  * @generated from message example.v1.CreateUserRequest
  */
-export declare type CreateUserRequest =
-  Message<"example.v1.CreateUserRequest"> & {
-    /**
-     * @generated from field: example.v1.User user = 1;
-     */
-    user?: User;
-  };
+export declare type CreateUserRequest = Message<"example.v1.CreateUserRequest"> & {
+  /**
+   * @generated from field: example.v1.User user = 1;
+   */
+  user?: User;
+};
 
 /**
  * Describes the message example.v1.CreateUserRequest.
@@ -143,13 +136,12 @@ export declare const CreateUserRequestSchema: GenMessage<CreateUserRequest>;
 /**
  * @generated from message example.v1.CreateUserResponse
  */
-export declare type CreateUserResponse =
-  Message<"example.v1.CreateUserResponse"> & {
-    /**
-     * @generated from field: example.v1.User user = 1;
-     */
-    user?: User;
-  };
+export declare type CreateUserResponse = Message<"example.v1.CreateUserResponse"> & {
+  /**
+   * @generated from field: example.v1.User user = 1;
+   */
+  user?: User;
+};
 
 /**
  * Describes the message example.v1.CreateUserResponse.
@@ -170,7 +162,7 @@ export declare const UserService: GenService<{
     methodKind: "unary";
     input: typeof GetUserRequestSchema;
     output: typeof GetUserResponseSchema;
-  };
+  },
   /**
    * @generated from rpc example.v1.UserService.ListUsers
    */
@@ -178,7 +170,7 @@ export declare const UserService: GenService<{
     methodKind: "unary";
     input: typeof ListUsersRequestSchema;
     output: typeof ListUsersResponseSchema;
-  };
+  },
   /**
    * @generated from rpc example.v1.UserService.CreateUser
    */
@@ -186,5 +178,6 @@ export declare const UserService: GenService<{
     methodKind: "unary";
     input: typeof CreateUserRequestSchema;
     output: typeof CreateUserResponseSchema;
-  };
+  },
 }>;
+

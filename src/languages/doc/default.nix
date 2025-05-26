@@ -7,18 +7,21 @@
 }:
 with lib; let
   cfg = config.languages.doc;
+  # Build the doc_opt string from format and outputFile if options is empty
+  docOptions = if cfg.options == [] 
+    then "${cfg.format},${cfg.outputPath}/${cfg.outputFile}"
+    else concatStringsSep "," cfg.options;
 in {
   runtimeInputs = [
-    pkgs.protoc-gen-doc
+    cfg.package
   ];
 
   protocPlugins = [
     "--doc_out=${cfg.outputPath}"
+    "--doc_opt=${cfg.format},${cfg.outputFile}"
   ];
 
-  commandOptions = [
-    "--doc_opt=${concatStringsSep "," cfg.options}"
-  ];
+  commandOptions = [];
 
   initHooks = ''
     echo "Initializing doc code generation..."
@@ -26,6 +29,7 @@ in {
   '';
 
   generateHooks = ''
-    echo "Generated doc code in ${cfg.outputPath}"
+    mkdir -p "${cfg.outputPath}"
+    echo "Generating documentation to ${cfg.outputPath}/${cfg.outputFile}"
   '';
 }

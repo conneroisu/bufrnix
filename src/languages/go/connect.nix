@@ -11,7 +11,7 @@ with lib; let
 in {
   # Runtime dependencies for Connect
   runtimeInputs = optionals enabled [
-    pkgs.protoc-gen-connect-go or pkgs.go
+    cfg.package or pkgs.protoc-gen-connect-go
   ];
 
   # Protoc plugin configuration for Connect

@@ -60,9 +60,21 @@
         treefmtEval.${system}.config.build.wrapper
     );
 
-    # Add a check for formatting
+    # Add checks
     checks = eachSystem (system: {
       formatting = treefmtEval.${system}.config.build.check inputs.self;
+      
+      # Test all examples
+      examples = let
+        pkgs = import inputs.nixpkgs { inherit system; };
+      in pkgs.runCommand "test-examples" {
+        buildInputs = [ pkgs.bash ];
+      } ''
+        cp -r ${inputs.self} source
+        cd source
+        bash ./check-examples.sh
+        touch $out
+      '';
     });
 
     devShells = eachSystem (

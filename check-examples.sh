@@ -1,0 +1,207 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+# Colors for output
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+BLUE='\033[0;34m'
+NC='\033[0m' # No Color
+
+# Track test results
+FAILED_TESTS=()
+PASSED_TESTS=()
+
+# Parse command line arguments
+VERBOSE=false
+if [ "${1:-}" = "-v" ] || [ "${1:-}" = "--verbose" ]; then
+    VERBOSE=true
+fi
+
+echo -e "${YELLOW}Running bufrnix example tests...${NC}"
+
+# Check we're in the right directory
+if [ ! -f "flake.nix" ] || [ ! -d "examples" ]; then
+    echo -e "${RED}Error: This script must be run from the bufrnix root directory${NC}"
+    echo -e "${RED}Current directory: $(pwd)${NC}"
+    exit 1
+fi
+
+# Check for nix
+if ! command -v nix &> /dev/null; then
+    echo -e "${RED}Error: nix command not found. Please install Nix.${NC}"
+    exit 1
+fi
+
+echo -e "${BLUE}Working directory: $(pwd)${NC}\n"
+
+# Function to test an example
+test_example() {
+    local example_name=$1
+    local example_dir="examples/$example_name"
+    shift
+    local expected_files=("$@")
+    
+    echo -e "${YELLOW}Testing $example_name...${NC}"
+    
+    # Check if example directory exists
+    if [ ! -d "$example_dir" ]; then
+        echo -e "${RED}✗ Example directory $example_dir does not exist${NC}"
+        echo -e "${RED}   Current directory: $(pwd)${NC}"
+        echo -e "${RED}   Available examples:${NC}"
+        ls -la examples/ 2>/dev/null | grep '^d' | awk '{print $NF}' | grep -v '^\.$\|^\.\.$' | sed 's/^/     - /'
+        FAILED_TESTS+=("$example_name: directory not found")
+        return 1
+    fi
+    
+    # Clean generated files
+    echo "  Cleaning generated files..."
+    rm -rf "$example_dir/proto/gen" "$example_dir/gen" 2>/dev/null || true
+    
+    # Build the example
+    echo "  Building..."
+    local build_output
+    if ! build_output=$(nix build "./$example_dir#default" --no-link 2>&1); then
+        echo -e "${RED}✗ Build failed for $example_name${NC}"
+        echo -e "${RED}Build error output:${NC}"
+        echo "$build_output" | sed 's/^/    /'
+        FAILED_TESTS+=("$example_name: build failed")
+        return 1
+    fi
+    
+    # Get the output path
+    local output_path=$(nix build "./$example_dir#default" --print-out-paths 2>/dev/null)
+    
+    if [ "$VERBOSE" = true ]; then
+        echo -e "  ${BLUE}Output path: $output_path${NC}"
+        echo -e "  ${BLUE}Generated script content:${NC}"
+        cat "$output_path/bin/bufrnix" | grep -E "(protoc|--.*_out=)" | sed 's/^/    /'
+    fi
+    
+    # Run the generated script from the example directory
+    echo "  Running code generation..."
+    pushd "$example_dir" >/dev/null
+    local gen_output
+    local gen_exit_code
+    gen_output=$("$output_path/bin/bufrnix" 2>&1)
+    gen_exit_code=$?
+    
+    # Filter out known warnings
+    local filtered_output=$(echo "$gen_output" | grep -v "warning: directory does not exist" | grep -v "^$")
+    
+    if [ $gen_exit_code -ne 0 ]; then
+        echo -e "${RED}✗ Code generation failed for $example_name (exit code: $gen_exit_code)${NC}"
+        echo -e "${RED}Generation error output:${NC}"
+        echo "$gen_output" | sed 's/^/    /'
+        FAILED_TESTS+=("$example_name: generation failed with exit code $gen_exit_code")
+        popd >/dev/null
+        return 1
+    fi
+    
+    # Show generation output if not empty
+    if [ -n "$filtered_output" ]; then
+        echo "$filtered_output" | sed 's/^/    /'
+    fi
+    
+    popd >/dev/null
+    
+    # Check for expected generated files
+    echo "  Checking generated files..."
+    local all_found=true
+    local missing_files=()
+    for expected_file in "${expected_files[@]}"; do
+        if [ -f "$example_dir/$expected_file" ]; then
+            echo -e "    ${GREEN}✓${NC} Found: $expected_file"
+            # Show file size to confirm it's not empty
+            local file_size=$(stat -f%z "$example_dir/$expected_file" 2>/dev/null || stat -c%s "$example_dir/$expected_file" 2>/dev/null || echo "unknown")
+            echo -e "       Size: $file_size bytes"
+        else
+            echo -e "    ${RED}✗${NC} Missing: $expected_file"
+            missing_files+=("$expected_file")
+            all_found=false
+        fi
+    done
+    
+    # If files are missing, show what was actually generated
+    if [ "$all_found" = false ]; then
+        echo -e "  ${YELLOW}Actually generated files:${NC}"
+        if [ -d "$example_dir/proto/gen" ]; then
+            find "$example_dir/proto/gen" -type f -name "*" 2>/dev/null | sed "s|$example_dir/||" | sed 's/^/    - /' || echo "    (none found)"
+        elif [ -d "$example_dir/gen" ]; then
+            find "$example_dir/gen" -type f -name "*" 2>/dev/null | sed "s|$example_dir/||" | sed 's/^/    - /' || echo "    (none found)"
+        else
+            echo "    (no gen directory found)"
+        fi
+    fi
+    
+    if [ "$all_found" = true ]; then
+        echo -e "${GREEN}✓ $example_name passed${NC}\n"
+        PASSED_TESTS+=("$example_name")
+        return 0
+    else
+        echo -e "${RED}✗ $example_name failed - missing expected files${NC}\n"
+        FAILED_TESTS+=("$example_name: missing files")
+        return 1
+    fi
+}
+
+# Test Go example
+test_example "simple-flake" \
+    "proto/gen/go/simple/v1/simple.pb.go" \
+    "proto/gen/go/simple/v1/simple_grpc.pb.go"
+
+# Test Dart example
+test_example "dart-example" \
+    "proto/gen/dart/example/v1/example.pb.dart" \
+    "proto/gen/dart/example/v1/example.pbenum.dart" \
+    "proto/gen/dart/example/v1/example.pbgrpc.dart" \
+    "proto/gen/dart/example/v1/example.pbjson.dart"
+
+# Test JavaScript example
+# On macOS, protoc-gen-js is disabled, so we check for ES module output
+if [[ "$OSTYPE" == "darwin"* ]]; then
+    echo -e "${YELLOW}Note: protoc-gen-js is disabled on macOS, checking for ES module output${NC}"
+    test_example "js-example" \
+        "proto/gen/js/example/v1/example_pb.js" \
+        "proto/gen/js/example/v1/example_pb.d.ts"
+else
+    test_example "js-example" \
+        "proto/gen/js/example/v1/example_pb.js" \
+        "proto/gen/js/example/v1/example_pb.d.ts"
+fi
+
+# Test PHP Twirp example
+test_example "php-twirp" \
+    "proto/gen/php/Example/V1/HelloRequest.php" \
+    "proto/gen/php/Example/V1/HelloResponse.php" \
+    "proto/gen/php/Example/V1/HelloService.php" \
+    "proto/gen/php/Example/V1/HelloServiceClient.php" \
+    "proto/gen/php/GPBMetadata/Example/V1/Service.php"
+
+# Test Documentation example
+test_example "doc-example" \
+    "proto/gen/doc/index.html"
+
+# Summary
+echo -e "\n${YELLOW}Test Summary:${NC}"
+echo -e "${GREEN}Passed: ${#PASSED_TESTS[@]}${NC}"
+echo -e "${RED}Failed: ${#FAILED_TESTS[@]}${NC}"
+
+if [ ${#PASSED_TESTS[@]} -gt 0 ]; then
+    echo -e "\n${GREEN}Passed tests:${NC}"
+    for test in "${PASSED_TESTS[@]}"; do
+        echo -e "  ${GREEN}✓${NC} $test"
+    done
+fi
+
+if [ ${#FAILED_TESTS[@]} -gt 0 ]; then
+    echo -e "\n${RED}Failed tests:${NC}"
+    for test in "${FAILED_TESTS[@]}"; do
+        echo -e "  ${RED}✗${NC} $test"
+    done
+    echo -e "\n${RED}Some tests failed!${NC}"
+    exit 1
+else
+    echo -e "\n${GREEN}All tests passed!${NC}"
+    exit 0
+fi

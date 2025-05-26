@@ -11,7 +11,7 @@ with lib; let
 in {
   # Runtime dependencies for gRPC
   runtimeInputs = optionals enabled [
-    pkgs.protoc-gen-go-grpc
+    cfg.package or pkgs.protoc-gen-go-grpc
   ];
 
   # Protoc plugin configuration for gRPC

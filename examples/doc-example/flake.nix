@@ -1,5 +1,5 @@
 {
-  description = "JavaScript example for bufrnix";
+  description = "Documentation example for bufrnix";
 
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
@@ -19,8 +19,7 @@
     in {
       devShells.default = pkgs.mkShell {
         packages = [
-          pkgs.nodejs
-          pkgs.nodePackages.typescript
+          # No specific packages needed for doc generation
         ];
       };
       packages = {
@@ -28,7 +27,7 @@
           inherit (pkgs) lib;
           inherit pkgs;
           config = {
-            root = ./.;
+            root = ".";
             protoc = {
               sourceDirectories = ["./proto"];
               includeDirectories = ["./proto"];
@@ -37,6 +36,8 @@
             languages.doc = {
               enable = true;
               outputPath = "proto/gen/doc";
+              format = "html";
+              outputFile = "index.html";
             };
           };
         };

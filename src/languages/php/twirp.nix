@@ -11,7 +11,7 @@ with lib; let
 in {
   # Runtime dependencies for Twirp PHP
   runtimeInputs = optionals enabled [
-    pkgs.protoc-gen-twirp_php
+    cfg.package or pkgs.protoc-gen-twirp_php
   ];
 
   # Protoc plugin configuration for Twirp PHP
