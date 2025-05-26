@@ -62,6 +62,9 @@ with lib; let
         betterproto.package = pkgs.python3Packages.betterproto;
         mypy.package = pkgs.python3Packages.mypy-protobuf;
       };
+      swift = {
+        package = pkgs.protoc-gen-swift;
+      };
     };
   };
 

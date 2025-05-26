@@ -1,0 +1,11 @@
+# Swift
+.build/
+.swiftpm/
+Package.resolved
+*.xcodeproj
+
+# Generated files
+proto/gen/
+
+# macOS
+.DS_Store

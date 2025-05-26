@@ -63,16 +63,16 @@ message DeleteExampleResponse {
 service ExampleService {
   // Create a new example
   rpc CreateExample(CreateExampleRequest) returns (CreateExampleResponse);
-  
+
   // Get an example by ID
   rpc GetExample(GetExampleRequest) returns (GetExampleResponse);
-  
+
   // List examples with pagination
   rpc ListExamples(ListExamplesRequest) returns (ListExamplesResponse);
-  
+
   // Delete an example
   rpc DeleteExample(DeleteExampleRequest) returns (DeleteExampleResponse);
-  
+
   // Streaming example - watch for example updates
   rpc WatchExamples(ListExamplesRequest) returns (stream ExampleMessage);
 }
