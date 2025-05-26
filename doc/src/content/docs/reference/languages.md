@@ -935,21 +935,21 @@ swift run
 
 ## Language Comparison
 
-| Feature              | Go  | Dart | JavaScript/TypeScript | PHP | Python |
-| -------------------- | --- | ---- | --------------------- | --- | ------ |
-| **Base Messages**    | ✅  | ✅   | ✅                    | ✅  | ✅     |
-| **gRPC Services**    | ✅  | ✅   | ✅ (Web)              | ❌  | ✅     |
-| **Streaming RPC**    | ✅  | ✅   | ✅ (Web)              | ❌  | ✅     |
-| **HTTP Gateway**     | ✅  | ❌   | ❌                    | ❌  | ❌     |
-| **Validation**       | ✅  | ❌   | ❌                    | ❌  | ❌     |
-| **Connect Protocol** | ✅  | ❌   | ✅                    | ❌  | ❌     |
-| **Twirp RPC**        | ❌  | ❌   | ✅                    | ✅  | ❌     |
-| **JSON Mapping**     | ✅  | ✅   | ✅                    | ✅  | ✅     |
-| **Type Safety**      | ✅  | ✅   | ✅                    | ⚠️  | ✅     |
-| **Server Support**   | ✅  | ✅   | ❌                    | ✅  | ✅     |
-| **Browser Support**  | ❌  | ❌   | ✅                    | ❌  | ❌     |
-| **Type Stubs**       | ❌  | ❌   | ✅                    | ❌  | ✅     |
-| **Async Support**    | ✅  | ✅   | ✅                    | ❌  | ✅     |
+| Feature              | Go  | Dart | JavaScript/TypeScript | PHP | Python | Swift |
+| -------------------- | --- | ---- | --------------------- | --- | ------ | ----- |
+| **Base Messages**    | ✅  | ✅   | ✅                    | ✅  | ✅     | ✅    |
+| **gRPC Services**    | ✅  | ✅   | ✅ (Web)              | ❌  | ✅     | ❌    |
+| **Streaming RPC**    | ✅  | ✅   | ✅ (Web)              | ❌  | ✅     | ❌    |
+| **HTTP Gateway**     | ✅  | ❌   | ❌                    | ❌  | ❌     | ❌    |
+| **Validation**       | ✅  | ❌   | ❌                    | ❌  | ❌     | ❌    |
+| **Connect Protocol** | ✅  | ❌   | ✅                    | ❌  | ❌     | ❌    |
+| **Twirp RPC**        | ❌  | ❌   | ✅                    | ✅  | ❌     | ❌    |
+| **JSON Mapping**     | ✅  | ✅   | ✅                    | ✅  | ✅     | ✅    |
+| **Type Safety**      | ✅  | ✅   | ✅                    | ⚠️  | ✅     | ✅    |
+| **Server Support**   | ✅  | ✅   | ❌                    | ✅  | ✅     | ❌    |
+| **Browser Support**  | ❌  | ❌   | ✅                    | ❌  | ❌     | ❌    |
+| **Type Stubs**       | ❌  | ❌   | ✅                    | ❌  | ✅     | ❌    |
+| **Async Support**    | ✅  | ✅   | ✅                    | ❌  | ✅     | ✅    |
 
 ## Multi-Language Projects
 
