@@ -430,6 +430,39 @@ with lib; {
           description = "Output filename for the documentation";
         };
       };
+
+      # Swift language options
+      swift = {
+        enable = mkOption {
+          type = types.bool;
+          default = false;
+          description = "Enable Swift code generation";
+        };
+
+        package = mkOption {
+          type = types.package;
+          defaultText = literalExpression "pkgs.protoc-gen-swift";
+          description = "The protoc-gen-swift package to use";
+        };
+
+        outputPath = mkOption {
+          type = types.str;
+          default = "gen/swift";
+          description = "Output directory for generated Swift code";
+        };
+
+        options = mkOption {
+          type = types.listOf types.str;
+          default = [];
+          description = "Options to pass to protoc-gen-swift";
+        };
+
+        packageName = mkOption {
+          type = types.str;
+          default = "";
+          description = "Swift package name for generated code";
+        };
+      };
     };
   };
 }
