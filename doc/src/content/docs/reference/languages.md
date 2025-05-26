@@ -356,6 +356,177 @@ dart run lib/main.dart
 dart test
 ```
 
+## Python
+
+**Status**: ✅ Full Support  
+**Example**: [`examples/python-example/`](https://github.com/conneroisu/bufr.nix/tree/main/examples/python-example)
+
+Python support provides comprehensive Protocol Buffer integration with multiple output options including gRPC, type stubs, and modern dataclass alternatives.
+
+### Available Plugins
+
+| Plugin                              | Description                | Generated Files               |
+| ----------------------------------- | -------------------------- | ----------------------------- |
+| **`protoc-gen-python`**             | Base message generation    | `*_pb2.py`                    |
+| **`protoc-gen-grpc_python`**        | gRPC services              | `*_pb2_grpc.py`               |
+| **`protoc-gen-pyi`**                | Type stubs for IDE support | `*_pb2.pyi`                   |
+| **`protoc-gen-mypy`**               | Mypy type checking stubs   | `*_pb2.pyi`, `*_pb2_grpc.pyi` |
+| **`protoc-gen-python_betterproto`** | Modern dataclass approach  | `*.py` (with @dataclass)      |
+
+### Configuration
+
+```nix
+languages.python = {
+  enable = true;
+  outputPath = "proto/gen/python";
+  options = [];
+
+  # gRPC service generation
+  grpc = {
+    enable = true;
+    options = [];
+  };
+
+  # Type stubs for better IDE support
+  pyi = {
+    enable = true;
+    options = [];
+  };
+
+  # Mypy type checking support
+  mypy = {
+    enable = true;
+    options = [];
+  };
+
+  # Modern Python dataclasses (alternative to standard protobuf)
+  betterproto = {
+    enable = false;  # Opt-in due to performance considerations
+    options = [];
+  };
+};
+```
+
+### Proto Example
+
+```protobuf
+// proto/example/v1/example.proto
+syntax = "proto3";
+
+package example.v1;
+
+message Greeting {
+  string id = 1;
+  string content = 2;
+  int64 created_at = 3;
+  repeated string tags = 4;
+  map<string, string> metadata = 5;
+}
+
+message CreateGreetingRequest {
+  string content = 1;
+  repeated string tags = 2;
+}
+
+message CreateGreetingResponse {
+  Greeting greeting = 1;
+}
+
+service GreetingService {
+  rpc CreateGreeting(CreateGreetingRequest) returns (CreateGreetingResponse);
+  rpc ListGreetings(ListGreetingsRequest) returns (ListGreetingsResponse);
+  rpc StreamGreetings(ListGreetingsRequest) returns (stream Greeting);
+}
+```
+
+### Generated Code Usage
+
+**Standard Protobuf with gRPC:**
+
+```python
+import grpc
+from proto.gen.python.example.v1 import example_pb2
+from proto.gen.python.example.v1 import example_pb2_grpc
+
+# Client usage
+async def main():
+    # Create channel and stub
+    channel = grpc.insecure_channel('localhost:50051')
+    stub = example_pb2_grpc.GreetingServiceStub(channel)
+
+    # Create a greeting
+    request = example_pb2.CreateGreetingRequest(
+        content="Hello from Python!",
+        tags=["python", "grpc", "example"]
+    )
+
+    response = stub.CreateGreeting(request)
+    print(f"Created greeting: {response.greeting.id}")
+
+    # Serialize to bytes
+    data = response.greeting.SerializeToString()
+
+    # Deserialize from bytes
+    greeting = example_pb2.Greeting()
+    greeting.ParseFromString(data)
+
+    # JSON support
+    from google.protobuf.json_format import MessageToJson
+    json_str = MessageToJson(greeting)
+    print(f"JSON: {json_str}")
+```
+
+**Server Implementation:**
+
+```python
+import grpc
+from concurrent import futures
+from proto.gen.python.example.v1 import example_pb2
+from proto.gen.python.example.v1 import example_pb2_grpc
+
+class GreetingServicer(example_pb2_grpc.GreetingServiceServicer):
+    def CreateGreeting(self, request, context):
+        greeting = example_pb2.Greeting(
+            id=f"greeting-{int(time.time())}",
+            content=request.content,
+            created_at=int(time.time())
+        )
+        greeting.tags.extend(request.tags)
+
+        return example_pb2.CreateGreetingResponse(greeting=greeting)
+
+    def StreamGreetings(self, request, context):
+        # Stream greetings as they arrive
+        while True:
+            greeting = example_pb2.Greeting(
+                id=f"stream-{int(time.time())}",
+                content="Streamed greeting",
+                created_at=int(time.time())
+            )
+            yield greeting
+            time.sleep(1)
+
+# Start server
+server = grpc.server(futures.ThreadPoolExecutor(max_workers=10))
+example_pb2_grpc.add_GreetingServiceServicer_to_server(
+    GreetingServicer(), server
+)
+server.add_insecure_port('[::]:50051')
+server.start()
+server.wait_for_termination()
+```
+
+### Try the Example
+
+```bash
+cd examples/python-example
+nix develop
+bufrnix_init
+bufrnix
+python main.py
+pytest -v
+```
+
 ## JavaScript/TypeScript
 
 **Status**: ✅ Full Support  
@@ -764,20 +935,21 @@ swift run
 
 ## Language Comparison
 
-| Feature              | Go  | Dart | JavaScript/TypeScript | PHP | Swift |
-| -------------------- | --- | ---- | --------------------- | --- | ----- |
-| **Base Messages**    | ✅  | ✅   | ✅                    | ✅  | ✅    |
-| **gRPC Services**    | ✅  | ✅   | ✅ (Web)              | ❌  | ❌    |
-| **Streaming RPC**    | ✅  | ✅   | ✅ (Web)              | ❌  | ❌    |
-| **HTTP Gateway**     | ✅  | ❌   | ❌                    | ❌  | ❌    |
-| **Validation**       | ✅  | ❌   | ❌                    | ❌  | ❌    |
-| **Connect Protocol** | ✅  | ❌   | ✅                    | ❌  | ❌    |
-| **Twirp RPC**        | ❌  | ❌   | ✅                    | ✅  | ❌    |
-| **JSON Mapping**     | ✅  | ✅   | ✅                    | ✅  | ✅    |
-| **Type Safety**      | ✅  | ✅   | ✅                    | ⚠️  | ✅    |
-| **Server Support**   | ✅  | ✅   | ❌                    | ✅  | ✅    |
-| **Browser Support**  | ❌  | ❌   | ✅                    | ❌  | ❌    |
-| **Codable Support**  | ❌  | ❌   | ❌                    | ❌  | ✅    |
+| Feature              | Go  | Dart | JavaScript/TypeScript | PHP | Python | Swift |
+| -------------------- | --- | ---- | --------------------- | --- | ------ | ----- |
+| **Base Messages**    | ✅  | ✅   | ✅                    | ✅  | ✅     | ✅    |
+| **gRPC Services**    | ✅  | ✅   | ✅ (Web)              | ❌  | ✅     | ❌    |
+| **Streaming RPC**    | ✅  | ✅   | ✅ (Web)              | ❌  | ✅     | ❌    |
+| **HTTP Gateway**     | ✅  | ❌   | ❌                    | ❌  | ❌     | ❌    |
+| **Validation**       | ✅  | ❌   | ❌                    | ❌  | ❌     | ❌    |
+| **Connect Protocol** | ✅  | ❌   | ✅                    | ❌  | ❌     | ❌    |
+| **Twirp RPC**        | ❌  | ❌   | ✅                    | ✅  | ❌     | ❌    |
+| **JSON Mapping**     | ✅  | ✅   | ✅                    | ✅  | ✅     | ✅    |
+| **Type Safety**      | ✅  | ✅   | ✅                    | ⚠️  | ✅     | ✅    |
+| **Server Support**   | ✅  | ✅   | ❌                    | ✅  | ✅     | ❌    |
+| **Browser Support**  | ❌  | ❌   | ✅                    | ❌  | ❌     | ❌    |
+| **Type Stubs**       | ❌  | ❌   | ✅                    | ❌  | ✅     | ❌    |
+| **Async Support**    | ✅  | ✅   | ✅                    | ❌  | ✅     | ✅    |
 
 ## Multi-Language Projects
 
@@ -821,6 +993,14 @@ config = {
     twirp.enable = true;
   };
 
+  # Data processing in Python
+  languages.python = {
+    enable = true;
+    outputPath = "analytics/gen/python";
+    grpc.enable = true;
+    mypy.enable = true;
+  };
+
   # iOS/macOS app in Swift
   languages.swift = {
     enable = true;
@@ -838,6 +1018,7 @@ All examples are available in the [`examples/`](https://github.com/conneroisu/bu
 - **`dart-example/`** - Comprehensive Dart protobuf usage with testing
 - **`js-example/`** - Multiple JavaScript output formats and RPC options
 - **`php-twirp/`** - PHP Twirp RPC server and client implementation
+- **`python-example/`** - Python protobuf with gRPC, type stubs, and mypy integration
 - **`swift-example/`** - Swift Protocol Buffers with SwiftProtobuf integration
 
 Each example includes detailed README files with setup instructions and usage patterns.

@@ -1,0 +1,47 @@
+syntax = "proto3";
+
+package example.v1;
+
+// Example message for demonstrating Python protobuf generation
+message Greeting {
+  string id = 1;
+  string content = 2;
+  int64 created_at = 3;
+  repeated string tags = 4;
+  map<string, string> metadata = 5;
+}
+
+// Request message for the greeting service
+message CreateGreetingRequest {
+  string content = 1;
+  repeated string tags = 2;
+}
+
+// Response message for the greeting service
+message CreateGreetingResponse {
+  Greeting greeting = 1;
+}
+
+// List request with pagination
+message ListGreetingsRequest {
+  int32 page_size = 1;
+  string page_token = 2;
+}
+
+// List response with greetings
+message ListGreetingsResponse {
+  repeated Greeting greetings = 1;
+  string next_page_token = 2;
+}
+
+// Example service demonstrating gRPC capabilities
+service GreetingService {
+  // Create a new greeting
+  rpc CreateGreeting(CreateGreetingRequest) returns (CreateGreetingResponse);
+
+  // List all greetings with pagination
+  rpc ListGreetings(ListGreetingsRequest) returns (ListGreetingsResponse);
+
+  // Stream greetings as they are created
+  rpc StreamGreetings(ListGreetingsRequest) returns (stream Greeting);
+}

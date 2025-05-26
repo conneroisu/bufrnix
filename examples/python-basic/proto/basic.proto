@@ -1,0 +1,13 @@
+syntax = "proto3";
+
+package basic;
+
+message Person {
+  string name = 1;
+  int32 age = 2;
+  string email = 3;
+}
+
+message AddressBook {
+  repeated Person people = 1;
+}
