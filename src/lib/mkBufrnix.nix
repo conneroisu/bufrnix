@@ -20,8 +20,46 @@ with lib; let
 
   defaultConfig = extractDefaults optionsDef.options;
 
+  # Add package defaults
+  # For protoc-gen-js on macOS, we have build issues
+  # Set to null on Darwin to avoid build failures
+  jsPackage =
+    if pkgs.stdenv.isDarwin
+    then null
+    else pkgs.protoc-gen-js;
+
+  packageDefaults = {
+    languages = {
+      go = {
+        package = pkgs.protoc-gen-go;
+        grpc.package = pkgs.protoc-gen-go-grpc;
+        gateway.package = pkgs.grpc-gateway;
+        validate.package = pkgs.protoc-gen-validate;
+        connect.package = pkgs.protoc-gen-connect-go;
+      };
+      php = {
+        package = pkgs.protobuf;
+        twirp.package = pkgs.protoc-gen-twirp_php;
+      };
+      js = {
+        package = jsPackage;
+        es.package = pkgs.protoc-gen-es;
+        connect.package = pkgs.protoc-gen-connect-es;
+        grpcWeb.package = pkgs.grpc-web;
+        twirp.package = pkgs.protoc-gen-twirp_js;
+      };
+      dart = {
+        package = pkgs.protoc-gen-dart;
+        grpc.package = pkgs.protoc-gen-dart;
+      };
+      doc = {
+        package = pkgs.protoc-gen-doc;
+      };
+    };
+  };
+
   # Merge defaults with user config
-  cfg = recursiveUpdate defaultConfig config;
+  cfg = recursiveUpdate (recursiveUpdate defaultConfig packageDefaults) config;
 
   # Create module system with our configuration
   modSys = moduleSystem.createModuleSystem {

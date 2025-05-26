@@ -42,21 +42,21 @@ in {
       # Base JS dependencies
       pkgs.protobuf
       pkgs.nodePackages.typescript
-      pkgs.protoc-gen-js
-      pkgs.protoc-gen-grpc-web
-      pkgs.protoc-gen-es
     ]
+    ++ (optional (cfg.package != null) cfg.package)
+    ++ (optionals cfg.es.enable [cfg.es.package])
+    ++ (optionals cfg.connect.enable [cfg.connect.package])
     ++ (combineModuleAttrs "runtimeInputs");
 
   # Protoc plugin configuration for JS
   protocPlugins =
-    [
-      # Use JavaScript output with CommonJS import style (standard for Node.js)
-      "--js_out=import_style=commonjs,binary:${outputPath}"
-
+    # Only add JS output if package is available
+    (optional (cfg.package != null)
+      "--js_out=import_style=commonjs,binary:${outputPath}")
+    ++ [
       # ECMAScript output for modern JavaScript if enabled
       (optionalString cfg.es.enable
-        "--plugin=protoc-gen-es=${pkgs.protoc-gen-es}/bin/protoc-gen-es --es_out=${outputPath}")
+        "--plugin=protoc-gen-es=${cfg.es.package}/bin/protoc-gen-es --es_out=${outputPath}")
     ]
     ++ (combineModuleAttrs "protocPlugins");
 
@@ -80,6 +80,10 @@ in {
       # JS-specific code generation steps
       echo "Generating JavaScript code..."
       mkdir -p ${outputPath}
+      ${optionalString (cfg.package == null && pkgs.stdenv.isDarwin) ''
+        echo "Note: protoc-gen-js is not available on macOS due to build issues."
+        echo "Using ES modules (protoc-gen-es) or other alternatives instead."
+      ''}
     ''
     + concatStrings (catAttrs "generateHooks" [
       grpcWebModule

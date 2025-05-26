@@ -11,7 +11,7 @@ with lib;
     then {
       # Runtime dependencies for gRPC-Web
       runtimeInputs = [
-        pkgs.protoc-gen-grpc-web
+        cfg.package or pkgs.grpc-web
       ];
 
       # Protoc plugin configuration

@@ -3,7 +3,6 @@
 
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
-    systems.url = "github:nix-systems/default";
     treefmt-nix.url = "github:numtide/treefmt-nix";
   };
 
@@ -15,7 +14,12 @@
           name = system;
           value = f system;
         })
-        (import inputs.systems)
+        [
+          "x86_64-linux"
+          "aarch64-linux"
+          "x86_64-darwin"
+          "aarch64-darwin"
+        ]
       );
 
     # Evaluate the treefmt modules with an inline treefmt config
@@ -56,7 +60,7 @@
         treefmtEval.${system}.config.build.wrapper
     );
 
-    # Add a check for formatting
+    # Add checks
     checks = eachSystem (system: {
       formatting = treefmtEval.${system}.config.build.check inputs.self;
     });
@@ -69,21 +73,29 @@
         };
         scripts = {
           dx = {
-            exec = ''$EDITOR $REPO_ROOT/flake.nix'';
+            exec = ''$EDITOR "$(git rev-parse --show-toplevel)"/flake.nix'';
             description = "Edit flake.nix";
           };
           lint = {
             exec = ''
-              REPO_ROOT=$(git rev-parse --show-toplevel)
-              ${pkgs.statix}/bin/statix check $REPO_ROOT/flake.nix
-              ${pkgs.deadnix}/bin/deadnix $REPO_ROOT/flake.nix
+              REPO_ROOT="$(git rev-parse --show-toplevel)"
+              statix check "$REPO_ROOT"/flake.nix
+              deadnix "$REPO_ROOT"/flake.nix
             '';
-            description = "Lint flake.nix";
+            deps = with pkgs; [statix deadnix];
+            description = "Lint nix files";
           };
         };
         scriptPackages =
           pkgs.lib.mapAttrs
-          (name: script: pkgs.writeShellScriptBin name script.exec)
+          (
+            name: script:
+              pkgs.writeShellApplication {
+                inherit name;
+                text = script.exec;
+                runtimeInputs = script.deps or [];
+              }
+          )
           scripts;
       in {
         default = pkgs.mkShell {
@@ -98,6 +110,7 @@
               statix
               # Add the formatter to the devShell
               treefmtEval.${system}.config.build.wrapper
+              git-bug
             ]
             ++ builtins.attrValues scriptPackages;
         };

@@ -48,6 +48,7 @@
         devShells.default = pkgs.mkShell {
           buildInputs = [
             pkgs.php
+            pkgs.phpactor
             bufrnixPackage
           ];
         };

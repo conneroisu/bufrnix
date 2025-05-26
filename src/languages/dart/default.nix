@@ -35,7 +35,7 @@ in {
   # Runtime dependencies for Dart code generation
   runtimeInputs =
     [
-      pkgs.protoc-gen-dart
+      cfg.package
     ]
     ++ (combineModuleAttrs "runtimeInputs");
 
