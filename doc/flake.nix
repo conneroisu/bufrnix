@@ -32,6 +32,8 @@
           bun
           nodePackages.typescript
           bun2nix.packages.${system}.default
+          typescript-language-server
+          astro-language-server
         ];
         shellHook = ''
           # Setup the environment
