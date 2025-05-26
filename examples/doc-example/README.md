@@ -5,6 +5,7 @@ This example demonstrates how to use bufrnix to generate documentation from Prot
 ## Usage
 
 1. Generate the documentation:
+
    ```bash
    nix build
    ```
@@ -30,6 +31,7 @@ languages.doc = {
 ## Supported Formats
 
 The `format` option supports:
+
 - `html` - HTML documentation (default)
 - `markdown` - Markdown documentation
 - `json` - JSON representation
@@ -38,6 +40,7 @@ The `format` option supports:
 ## Example Output
 
 The generated documentation includes:
+
 - Message definitions with field descriptions
 - Service definitions with RPC methods
 - Enumerations and their values

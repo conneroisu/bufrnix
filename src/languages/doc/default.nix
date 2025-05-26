@@ -8,7 +8,8 @@
 with lib; let
   cfg = config.languages.doc;
   # Build the doc_opt string from format and outputFile if options is empty
-  docOptions = if cfg.options == [] 
+  docOptions =
+    if cfg.options == []
     then "${cfg.format},${cfg.outputPath}/${cfg.outputFile}"
     else concatStringsSep "," cfg.options;
 in {

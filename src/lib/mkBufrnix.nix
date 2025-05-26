@@ -23,8 +23,11 @@ with lib; let
   # Add package defaults
   # For protoc-gen-js on macOS, we have build issues
   # Set to null on Darwin to avoid build failures
-  jsPackage = if pkgs.stdenv.isDarwin then null else pkgs.protoc-gen-js;
-    
+  jsPackage =
+    if pkgs.stdenv.isDarwin
+    then null
+    else pkgs.protoc-gen-js;
+
   packageDefaults = {
     languages = {
       go = {
