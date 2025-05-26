@@ -662,9 +662,9 @@ Swift support provides Protocol Buffer message generation for iOS, macOS, and se
 
 ### Available Plugins
 
-| Plugin                     | Description         | Generated Files |
-| -------------------------- | ------------------- | --------------- |
-| **`protoc-gen-swift`**     | Message generation  | `*.pb.swift`    |
+| Plugin                 | Description        | Generated Files |
+| ---------------------- | ------------------ | --------------- |
+| **`protoc-gen-swift`** | Message generation | `*.pb.swift`    |
 
 ### Configuration
 

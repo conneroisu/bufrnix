@@ -18,11 +18,13 @@ in {
     cfg.package
   ];
 
-  protocPlugins = [
-    "--swift_out=${swiftOutOption}"
-  ] ++ (optionals (swiftOptions != []) [
-    "--swift_opt=${concatStringsSep " --swift_opt=" swiftOptions}"
-  ]);
+  protocPlugins =
+    [
+      "--swift_out=${swiftOutOption}"
+    ]
+    ++ (optionals (swiftOptions != []) [
+      "--swift_opt=${concatStringsSep " --swift_opt=" swiftOptions}"
+    ]);
 
   # Initialization hook for Swift
   initHooks = ''

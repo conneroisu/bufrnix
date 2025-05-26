@@ -10,16 +10,19 @@ This example demonstrates how to use bufrnix to generate Swift code from Protoco
 ## Usage
 
 1. Enter the development shell:
+
    ```bash
    nix develop
    ```
 
 2. Initialize the proto structure:
+
    ```bash
    bufrnix_init
    ```
 
 3. Generate Swift code from proto files:
+
    ```bash
    bufrnix
    ```

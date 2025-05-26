@@ -13,7 +13,7 @@
   }: let
     system = "aarch64-darwin";
     pkgs = import nixpkgs {inherit system;};
-    
+
     # Create our bufrnix package with Swift language support
     bufrnixPkg = bufrnix.lib.mkBufrnixPackage {
       inherit pkgs;
@@ -36,7 +36,7 @@
         swift
         protoc-gen-swift
       ];
-      
+
       shellHook = ''
         echo "Swift protobuf example development environment"
         echo "Available commands:"
