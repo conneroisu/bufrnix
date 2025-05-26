@@ -318,6 +318,70 @@ try {
 }
 ```
 
+### Swift
+
+**Location**: `src/languages/swift/`
+
+Swift support provides Protocol Buffer message generation for iOS, macOS, and server applications.
+
+#### Available Plugins
+
+- **`default.nix`** - Protocol Buffer message generation (`protoc-gen-swift`)
+
+#### Configuration Example
+
+```nix
+languages.swift = {
+  enable = true;
+  outputPath = "Sources/Generated";
+  packageName = "MyAppProto";
+  options = [
+    "Visibility=Public"              # Make generated types public
+    "FileNaming=PathToUnderscores"   # Use underscores in file names
+  ];
+};
+```
+
+#### Generated Files
+
+For a proto file `user/v1/user.proto`:
+
+- `user_v1_user.pb.swift` - Protocol Buffer message types with Codable support
+
+#### Integration Example
+
+```swift
+import Foundation
+import SwiftProtobuf
+
+// Import generated code
+import MyAppProto
+
+// Create a user message
+var user = User_V1_User()
+user.id = "user123"
+user.name = "John Doe"
+user.email = "john@example.com"
+user.createdAt = Int64(Date().timeIntervalSince1970)
+
+// Serialize to binary
+let binaryData = try user.serializedData()
+print("Binary size: \(binaryData.count) bytes")
+
+// Serialize to JSON
+let jsonData = try user.jsonUTF8Data()
+let jsonString = String(data: jsonData, encoding: .utf8)!
+print("JSON: \(jsonString)")
+
+// Deserialize from binary
+let decodedUser = try User_V1_User(serializedData: binaryData)
+print("Decoded user: \(decodedUser.name)")
+
+// Deserialize from JSON
+let jsonUser = try User_V1_User(jsonUTF8Data: jsonData)
+print("JSON user: \(jsonUser.name)")
+```
+
 ## Module Structure
 
 Each language module follows this structure:
@@ -340,6 +404,8 @@ languages/
 ├── php/
 │   ├── default.nix       # Main entry point for PHP code generation
 │   └── twirp.nix         # Twirp plugin for PHP
+├── swift/
+│   └── default.nix       # Main entry point for Swift code generation
 └── module-template.nix   # Template for new language modules
 ```
 
@@ -520,6 +586,7 @@ Available in nixpkgs:
 - `protoc-gen-js` - JavaScript message generation
 - `protoc-gen-grpc-web` - gRPC-Web for browsers
 - `protoc-gen-php` - PHP message generation
+- `protoc-gen-swift` - Swift message generation
 
 ### Custom Plugins
 

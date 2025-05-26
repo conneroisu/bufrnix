@@ -653,21 +653,131 @@ composer install
 php -S localhost:8080 -t .
 ```
 
+## Swift
+
+**Status**: ✅ Full Support  
+**Example**: [`examples/swift-example/`](https://github.com/conneroisu/bufr.nix/tree/main/examples/swift-example)
+
+Swift support provides Protocol Buffer message generation for iOS, macOS, and server applications.
+
+### Available Plugins
+
+| Plugin                     | Description         | Generated Files |
+| -------------------------- | ------------------- | --------------- |
+| **`protoc-gen-swift`**     | Message generation  | `*.pb.swift`    |
+
+### Configuration
+
+```nix
+languages.swift = {
+  enable = true;
+  outputPath = "Sources/Generated";
+  packageName = "MyAppProto";
+  options = [
+    "Visibility=Public"              # Make generated types public
+    "FileNaming=PathToUnderscores"   # Use underscores in file names
+  ];
+};
+```
+
+### Proto Example
+
+```protobuf
+// proto/example/v1/example.proto
+syntax = "proto3";
+
+package example.v1;
+
+message Example {
+  string id = 1;
+  string name = 2;
+  int32 value = 3;
+}
+
+service ExampleService {
+  rpc GetExample(GetExampleRequest) returns (GetExampleResponse);
+}
+
+message GetExampleRequest {
+  string id = 1;
+}
+
+message GetExampleResponse {
+  Example example = 1;
+}
+```
+
+### Generated Code Usage
+
+```swift
+import Foundation
+import SwiftProtobuf
+
+// Import generated code
+// import Example_V1
+
+// Create an Example message
+var example = Example_V1_Example()
+example.id = "123"
+example.name = "Test Example"
+example.value = 42
+
+// Serialize to binary
+let binaryData = try example.serializedData()
+print("Serialized binary size: \(binaryData.count) bytes")
+
+// Serialize to JSON
+let jsonData = try example.jsonUTF8Data()
+if let jsonString = String(data: jsonData, encoding: .utf8) {
+    print("JSON representation:")
+    print(jsonString)
+}
+
+// Deserialize from binary
+let decodedExample = try Example_V1_Example(serializedData: binaryData)
+print("Decoded example: \(decodedExample.name)")
+
+// Create a service request
+var request = Example_V1_GetExampleRequest()
+request.id = "123"
+
+// Create a service response
+var response = Example_V1_GetExampleResponse()
+response.example = example
+
+print("\nExample message created successfully!")
+print("ID: \(example.id)")
+print("Name: \(example.name)")
+print("Value: \(example.value)")
+```
+
+### Try the Example
+
+```bash
+cd examples/swift-example
+nix develop
+bufrnix_init
+bufrnix
+swift build
+swift run
+```
+
 ## Language Comparison
 
-| Feature              | Go  | Dart | JavaScript/TypeScript | PHP |
-| -------------------- | --- | ---- | --------------------- | --- |
-| **Base Messages**    | ✅  | ✅   | ✅                    | ✅  |
-| **gRPC Services**    | ✅  | ✅   | ✅ (Web)              | ❌  |
-| **Streaming RPC**    | ✅  | ✅   | ✅ (Web)              | ❌  |
-| **HTTP Gateway**     | ✅  | ❌   | ❌                    | ❌  |
-| **Validation**       | ✅  | ❌   | ❌                    | ❌  |
-| **Connect Protocol** | ✅  | ❌   | ✅                    | ❌  |
-| **Twirp RPC**        | ❌  | ❌   | ✅                    | ✅  |
-| **JSON Mapping**     | ✅  | ✅   | ✅                    | ✅  |
-| **Type Safety**      | ✅  | ✅   | ✅                    | ⚠️  |
-| **Server Support**   | ✅  | ✅   | ❌                    | ✅  |
-| **Browser Support**  | ❌  | ❌   | ✅                    | ❌  |
+| Feature              | Go  | Dart | JavaScript/TypeScript | PHP | Swift |
+| -------------------- | --- | ---- | --------------------- | --- | ----- |
+| **Base Messages**    | ✅  | ✅   | ✅                    | ✅  | ✅    |
+| **gRPC Services**    | ✅  | ✅   | ✅ (Web)              | ❌  | ❌    |
+| **Streaming RPC**    | ✅  | ✅   | ✅ (Web)              | ❌  | ❌    |
+| **HTTP Gateway**     | ✅  | ❌   | ❌                    | ❌  | ❌    |
+| **Validation**       | ✅  | ❌   | ❌                    | ❌  | ❌    |
+| **Connect Protocol** | ✅  | ❌   | ✅                    | ❌  | ❌    |
+| **Twirp RPC**        | ❌  | ❌   | ✅                    | ✅  | ❌    |
+| **JSON Mapping**     | ✅  | ✅   | ✅                    | ✅  | ✅    |
+| **Type Safety**      | ✅  | ✅   | ✅                    | ⚠️  | ✅    |
+| **Server Support**   | ✅  | ✅   | ❌                    | ✅  | ✅    |
+| **Browser Support**  | ❌  | ❌   | ✅                    | ❌  | ❌    |
+| **Codable Support**  | ❌  | ❌   | ❌                    | ❌  | ✅    |
 
 ## Multi-Language Projects
 
@@ -710,6 +820,13 @@ config = {
     outputPath = "legacy/gen/php";
     twirp.enable = true;
   };
+
+  # iOS/macOS app in Swift
+  languages.swift = {
+    enable = true;
+    outputPath = "ios/Sources/Generated";
+    packageName = "AppProto";
+  };
 };
 ```
 
@@ -721,6 +838,7 @@ All examples are available in the [`examples/`](https://github.com/conneroisu/bu
 - **`dart-example/`** - Comprehensive Dart protobuf usage with testing
 - **`js-example/`** - Multiple JavaScript output formats and RPC options
 - **`php-twirp/`** - PHP Twirp RPC server and client implementation
+- **`swift-example/`** - Swift Protocol Buffers with SwiftProtobuf integration
 
 Each example includes detailed README files with setup instructions and usage patterns.
 

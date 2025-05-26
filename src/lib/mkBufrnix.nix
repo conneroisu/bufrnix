@@ -55,6 +55,9 @@ with lib; let
       doc = {
         package = pkgs.protoc-gen-doc;
       };
+      swift = {
+        package = pkgs.protoc-gen-swift;
+      };
     };
   };
 

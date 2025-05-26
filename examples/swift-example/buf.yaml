@@ -1,0 +1,8 @@
+version: v1
+name: bufrnix/swift-example
+build:
+  roots:
+    - ./proto
+lint:
+  use:
+    - DEFAULT

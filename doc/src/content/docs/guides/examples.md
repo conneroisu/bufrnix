@@ -138,9 +138,39 @@ To create your own example:
 
 You can use any of the existing examples as a starting point for your own project.
 
+## Swift Example
+
+Demonstrates using Protocol Buffers with Swift for iOS, macOS, and server applications.
+
+### Features
+
+- Swift struct generation with Codable support
+- Type-safe Protocol Buffer messages
+- SwiftProtobuf integration
+- Compatible with SwiftPM and Xcode projects
+
+### Source Code
+
+Check out the [swift-example](https://github.com/conneroisu/bufrnix/tree/main/examples/swift-example) on GitHub.
+
+### Running the Example
+
+```bash
+# Navigate to the example directory
+cd examples/swift-example
+
+# Generate the proto code
+nix develop -c bufrnix_init && bufrnix
+
+# Build and run the example
+swift build
+swift run
+```
+
 ## Additional Resources
 
 - [Simple-flake README](https://github.com/conneroisu/bufrnix/blob/main/examples/simple-flake/README.md) - More details on the Go example
 - [JS Example README](https://github.com/conneroisu/bufrnix/blob/main/examples/js-example/README.md) - JavaScript integration details
 - [Dart Example README](https://github.com/conneroisu/bufrnix/blob/main/examples/dart-example/README.md) - Dart and Flutter integration
 - [PHP Twirp README](https://github.com/conneroisu/bufrnix/blob/main/examples/php-twirp/README.md) - PHP and Twirp integration
+- [Swift Example README](https://github.com/conneroisu/bufrnix/blob/main/examples/swift-example/README.md) - Swift and SwiftProtobuf integration

@@ -10,7 +10,7 @@ See the [quick start guide](https://conneroisu.github.io/bufrnix/guides/getting-
 
 ### Key Features
 
-- 🚀 **Multi-language Support**: Go, Dart, JavaScript/TypeScript, PHP with more coming
+- 🚀 **Multi-language Support**: Go, Dart, JavaScript/TypeScript, PHP, Swift with more coming
 - 🔧 **Rich Plugin Ecosystem**: gRPC, Connect, gRPC-Web, gRPC-Gateway, Twirp, and validation
 - 📦 **Zero Setup**: All dependencies managed through Nix
 - 🎯 **Declarative Configuration**: Type-safe configuration with clear error messages  
@@ -170,6 +170,13 @@ Generate code for multiple languages simultaneously:
           namespace = "MyApp\\Proto";
           twirp.enable = true;
         };
+        
+        # Swift for iOS/macOS applications
+        languages.swift = {
+          enable = true;
+          outputPath = "Sources/Generated";
+          packageName = "MyAppProto";
+        };
       };
     };
   };
@@ -283,6 +290,11 @@ languages.js = {
 - **Features**: Standard protobuf messages and Twirp RPC framework
 - **Output**: PSR-4 compatible PHP classes
 
+### Swift
+- **Plugins**: `protoc-gen-swift`
+- **Features**: Complete protobuf support for iOS/macOS applications
+- **Output**: Swift classes with full type safety and Codable support
+
 ## Working Examples
 
 Explore complete working examples in the `examples/` directory:
@@ -329,6 +341,18 @@ php -S localhost:8080 -t src/
 - Twirp RPC server and client
 - PSR-4 autoloading
 - JSON-over-HTTP communication
+
+### [Swift Example](examples/swift-example/)
+```bash
+cd examples/swift-example
+nix develop
+bufrnix_init
+bufrnix
+swift build && swift run
+```
+- Protocol Buffer messages for iOS/macOS
+- Type-safe Swift code generation
+- SwiftProtobuf integration
 
 ## Development Environment
 
