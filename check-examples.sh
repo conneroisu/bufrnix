@@ -182,6 +182,10 @@ test_example "php-twirp" \
 test_example "doc-example" \
     "proto/gen/doc/index.html"
 
+# Test Swift example
+test_example "swift-example" \
+    "proto/gen/swift/example/v1/example.pb.swift"
+
 # Summary
 echo -e "\n${YELLOW}Test Summary:${NC}"
 echo -e "${GREEN}Passed: ${#PASSED_TESTS[@]}${NC}"
