@@ -537,7 +537,7 @@ with lib; {
           };
         };
       };
-      
+
       # Swift language options
       swift = {
         enable = mkOption {

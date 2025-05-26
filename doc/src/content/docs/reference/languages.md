@@ -951,7 +951,6 @@ swift run
 | **Type Stubs**       | ❌  | ❌   | ✅                    | ❌  | ✅     |
 | **Async Support**    | ✅  | ✅   | ✅                    | ❌  | ✅     |
 
-
 ## Multi-Language Projects
 
 Generate code for multiple languages simultaneously:
@@ -1001,7 +1000,7 @@ config = {
     grpc.enable = true;
     mypy.enable = true;
   };
-  
+
   # iOS/macOS app in Swift
   languages.swift = {
     enable = true;
