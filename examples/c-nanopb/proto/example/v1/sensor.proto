@@ -1,0 +1,55 @@
+syntax = "proto3";
+
+package sensor.v1;
+
+// Example sensor data message optimized for embedded systems
+message SensorReading {
+  uint32 timestamp = 1; // Unix timestamp
+  float temperature = 2; // Temperature in Celsius
+  float humidity = 3; // Humidity percentage
+  uint32 pressure = 4; // Pressure in Pa
+
+  // Fixed-size array for multiple sensor values
+  repeated float values = 5; // Will be configured as fixed array in nanopb
+
+  SensorStatus status = 6;
+}
+
+enum SensorStatus {
+  SENSOR_STATUS_UNKNOWN = 0;
+  SENSOR_STATUS_OK = 1;
+  SENSOR_STATUS_WARNING = 2;
+  SENSOR_STATUS_ERROR = 3;
+}
+
+// Device configuration message
+message DeviceConfig {
+  string device_id = 1; // Will have max_size constraint
+  uint32 sample_rate = 2; // Sampling rate in Hz
+  bool enable_logging = 3;
+
+  // Calibration data
+  message Calibration {
+    float offset = 1;
+    float scale = 2;
+  }
+
+  Calibration temperature_cal = 4;
+  Calibration humidity_cal = 5;
+}
+
+// Command message for device control
+message DeviceCommand {
+  oneof command {
+    bool reset_device = 1;
+    uint32 set_sample_rate = 2;
+    DeviceConfig update_config = 3;
+  }
+}
+
+// Telemetry batch for efficient transmission
+message TelemetryBatch {
+  string device_id = 1;
+  repeated SensorReading readings = 2; // Will have max_count in nanopb
+  uint32 batch_number = 3;
+}

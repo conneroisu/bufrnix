@@ -58,6 +58,10 @@ with lib; let
       swift = {
         package = pkgs.protoc-gen-swift;
       };
+      c = {
+        protobuf-c.package = pkgs.protobuf-c;
+        nanopb.package = pkgs.nanopb;
+      };
     };
   };
 

@@ -1,0 +1,17 @@
+# Generated protobuf files
+proto/gen/
+
+# Compiled binaries
+sensor_example
+*.o
+*.a
+*.so
+
+# Build artifacts
+build/
+*.dSYM/
+
+# Editor files
+.vscode/
+*.swp
+*~
