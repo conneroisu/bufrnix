@@ -186,6 +186,16 @@ test_example "doc-example" \
 test_example "swift-example" \
     "proto/gen/swift/example/v1/example.pb.swift"
 
+# Test C protobuf-c example
+test_example "c-protobuf-c" \
+    "proto/gen/c/protobuf-c/example/v1/example.pb-c.h" \
+    "proto/gen/c/protobuf-c/example/v1/example.pb-c.c"
+
+# Test C nanopb example
+test_example "c-nanopb" \
+    "proto/gen/c/nanopb/sensor/v1/sensor.pb.h" \
+    "proto/gen/c/nanopb/sensor/v1/sensor.pb.c"
+
 # Summary
 echo -e "\n${YELLOW}Test Summary:${NC}"
 echo -e "${GREEN}Passed: ${#PASSED_TESTS[@]}${NC}"

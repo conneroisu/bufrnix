@@ -570,6 +570,127 @@ with lib; {
           description = "Swift package name for generated code";
         };
       };
+
+      # C language options
+      c = {
+        enable = mkOption {
+          type = types.bool;
+          default = false;
+          description = "Enable C code generation";
+        };
+
+        outputPath = mkOption {
+          type = types.str;
+          default = "gen/c";
+          description = "Output directory for generated C code";
+        };
+
+        # protobuf-c support
+        protobuf-c = {
+          enable = mkOption {
+            type = types.bool;
+            default = false;
+            description = "Enable protobuf-c code generation (standard C implementation)";
+          };
+
+          package = mkOption {
+            type = types.package;
+            defaultText = literalExpression "pkgs.protobuf-c";
+            description = "The protobuf-c package to use";
+          };
+
+          outputPath = mkOption {
+            type = types.str;
+            default = "gen/c/protobuf-c";
+            description = "Output directory for generated protobuf-c code";
+          };
+
+          options = mkOption {
+            type = types.listOf types.str;
+            default = [];
+            description = "Options to pass to protoc-gen-c";
+          };
+        };
+
+        # nanopb support
+        nanopb = {
+          enable = mkOption {
+            type = types.bool;
+            default = false;
+            description = "Enable nanopb code generation (embedded/lightweight C implementation)";
+          };
+
+          package = mkOption {
+            type = types.package;
+            defaultText = literalExpression "pkgs.nanopb";
+            description = "The nanopb package to use";
+          };
+
+          outputPath = mkOption {
+            type = types.str;
+            default = "gen/c/nanopb";
+            description = "Output directory for generated nanopb code";
+          };
+
+          options = mkOption {
+            type = types.listOf types.str;
+            default = [];
+            description = "Options to pass to protoc-gen-nanopb";
+          };
+
+          # Nanopb-specific configuration
+          maxSize = mkOption {
+            type = types.int;
+            default = 1024;
+            description = "Maximum size for dynamic allocation in nanopb";
+          };
+
+          fixedLength = mkOption {
+            type = types.bool;
+            default = false;
+            description = "Use fixed length arrays in nanopb";
+          };
+
+          noUnions = mkOption {
+            type = types.bool;
+            default = false;
+            description = "Disable union support in nanopb";
+          };
+
+          msgidType = mkOption {
+            type = types.str;
+            default = "";
+            description = "Message ID type for nanopb";
+          };
+        };
+
+        # upb support (future - not yet in nixpkgs)
+        upb = {
+          enable = mkOption {
+            type = types.bool;
+            default = false;
+            description = "Enable upb code generation (Google's C implementation) - not yet available";
+          };
+
+          package = mkOption {
+            type = types.package;
+            defaultText = literalExpression "pkgs.protoc-gen-upb";
+            description = "The protoc-gen-upb package to use";
+          };
+
+          outputPath = mkOption {
+            type = types.str;
+            default = "gen/c/upb";
+            description = "Output directory for generated upb code";
+          };
+
+          options = mkOption {
+            type = types.listOf types.str;
+            default = [];
+            description = "Options to pass to protoc-gen-upb";
+          };
+        };
+      };
     };
   };
 }

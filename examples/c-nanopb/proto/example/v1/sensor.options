@@ -1,0 +1,18 @@
+# Nanopb options file for sensor.proto
+# This file defines constraints for embedded systems
+
+# Limit string sizes
+sensor.v1.DeviceConfig.device_id max_size:32
+sensor.v1.TelemetryBatch.device_id max_size:32
+
+# Fixed array size for sensor values
+sensor.v1.SensorReading.values max_count:10 fixed_count:true
+
+# Limit the number of readings in a batch
+sensor.v1.TelemetryBatch.readings max_count:20
+
+# Use fixed-point representation for some fields (optional)
+# sensor.v1.SensorReading.temperature type:FT_SFIXED32
+
+# Enable static allocation for all messages
+* type:FT_STATIC

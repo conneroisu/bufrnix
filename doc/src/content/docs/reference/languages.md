@@ -824,6 +824,265 @@ composer install
 php -S localhost:8080 -t .
 ```
 
+## C
+
+**Status**: ✅ Full Support  
+**Examples**: [`examples/c-protobuf-c/`](https://github.com/conneroisu/bufr.nix/tree/main/examples/c-protobuf-c), [`examples/c-nanopb/`](https://github.com/conneroisu/bufr.nix/tree/main/examples/c-nanopb)
+
+C support provides multiple Protocol Buffer implementations optimized for different use cases, from standard systems to embedded microcontrollers.
+
+### Available Implementations
+
+| Implementation | Description                | Target Use Case                    | Generated Files        |
+| -------------- | -------------------------- | ---------------------------------- | ---------------------- |
+| **protobuf-c** | Standard C implementation  | General purpose C applications     | `*.pb-c.h`, `*.pb-c.c` |
+| **nanopb**     | Lightweight implementation | Embedded systems, microcontrollers | `*.pb.h`, `*.pb.c`     |
+| **upb**        | Google's C implementation  | High-performance parsing (future)  | `*.upb.h`, `*.upb.c`   |
+
+### Configuration
+
+```nix
+languages.c = {
+  enable = true;
+  outputPath = "gen/c";
+
+  # Standard C implementation
+  protobuf-c = {
+    enable = true;
+    outputPath = "gen/c/protobuf-c";
+    options = [];  # protoc-gen-c options
+  };
+
+  # Embedded systems implementation
+  nanopb = {
+    enable = true;
+    outputPath = "gen/c/nanopb";
+    options = [];
+
+    # Nanopb-specific configuration
+    maxSize = 256;        # Max size for dynamic allocation
+    fixedLength = true;   # Use fixed-length arrays
+    noUnions = false;     # Allow union (oneof) support
+    msgidType = "";       # Message ID type for RPC
+  };
+
+  # Google's upb (future support)
+  upb = {
+    enable = false;  # Not yet available in nixpkgs
+    outputPath = "gen/c/upb";
+    options = [];
+  };
+};
+```
+
+### Proto Example (protobuf-c)
+
+```protobuf
+// proto/example/v1/example.proto
+syntax = "proto3";
+
+package example.v1;
+
+message Example {
+  string id = 1;
+  string name = 2;
+  int32 value = 3;
+  repeated string tags = 4;
+  ExampleType type = 5;
+}
+
+enum ExampleType {
+  EXAMPLE_TYPE_UNSPECIFIED = 0;
+  EXAMPLE_TYPE_BASIC = 1;
+  EXAMPLE_TYPE_ADVANCED = 2;
+}
+
+message NestedExample {
+  Example example = 1;
+  map<string, string> metadata = 2;
+  bytes data = 3;
+}
+```
+
+### Generated Code Usage (protobuf-c)
+
+```c
+#include "proto/gen/c/protobuf-c/example/v1/example.pb-c.h"
+#include <stdio.h>
+#include <stdlib.h>
+
+int main() {
+    // Create and initialize a message
+    Example__V1__Example example = EXAMPLE__V1__EXAMPLE__INIT;
+    example.id = "test-123";
+    example.name = "Test Example";
+    example.value = 42;
+    example.type = EXAMPLE__V1__EXAMPLE_TYPE__BASIC;
+
+    // Add tags
+    char *tags[] = {"important", "test"};
+    example.tags = tags;
+    example.n_tags = 2;
+
+    // Serialize the message
+    size_t size = example__v1__example__get_packed_size(&example);
+    uint8_t *buffer = malloc(size);
+    example__v1__example__pack(&example, buffer);
+
+    printf("Serialized %zu bytes\n", size);
+
+    // Deserialize the message
+    Example__V1__Example *unpacked =
+        example__v1__example__unpack(NULL, size, buffer);
+
+    if (unpacked) {
+        printf("Unpacked: %s\n", unpacked->name);
+        example__v1__example__free_unpacked(unpacked, NULL);
+    }
+
+    free(buffer);
+    return 0;
+}
+```
+
+### Proto Example (nanopb)
+
+```protobuf
+// proto/example/v1/sensor.proto
+syntax = "proto3";
+
+package sensor.v1;
+
+// Optimized for embedded systems
+message SensorReading {
+  uint32 timestamp = 1;
+  float temperature = 2;
+  float humidity = 3;
+  uint32 pressure = 4;
+  repeated float values = 5;  // Fixed array in nanopb
+  SensorStatus status = 6;
+}
+
+enum SensorStatus {
+  SENSOR_STATUS_UNKNOWN = 0;
+  SENSOR_STATUS_OK = 1;
+  SENSOR_STATUS_ERROR = 2;
+}
+
+message DeviceConfig {
+  string device_id = 1;     // Max 32 chars in nanopb
+  uint32 sample_rate = 2;
+  bool enable_logging = 3;
+}
+```
+
+### Nanopb Options File
+
+```options
+# sensor.options - Constraints for embedded systems
+sensor.v1.DeviceConfig.device_id max_size:32
+sensor.v1.SensorReading.values max_count:10 fixed_count:true
+* type:FT_STATIC  # Use static allocation
+```
+
+### Generated Code Usage (nanopb)
+
+```c
+#include "proto/gen/c/nanopb/sensor/v1/sensor.pb.h"
+#include <pb_encode.h>
+#include <pb_decode.h>
+
+bool encode_sensor_reading(uint8_t *buffer, size_t buffer_size, size_t *length) {
+    sensor_v1_SensorReading reading = sensor_v1_SensorReading_init_zero;
+
+    // Fill sensor data
+    reading.timestamp = 1234567890;
+    reading.temperature = 23.5f;
+    reading.humidity = 65.2f;
+    reading.status = sensor_v1_SensorStatus_SENSOR_STATUS_OK;
+
+    // Fixed array - no dynamic allocation
+    reading.values_count = 3;
+    reading.values[0] = 1.23f;
+    reading.values[1] = 4.56f;
+    reading.values[2] = 7.89f;
+
+    // Encode to buffer
+    pb_ostream_t stream = pb_ostream_from_buffer(buffer, buffer_size);
+    bool status = pb_encode(&stream, sensor_v1_SensorReading_fields, &reading);
+    *length = stream.bytes_written;
+
+    return status;
+}
+
+bool decode_sensor_reading(const uint8_t *buffer, size_t length) {
+    sensor_v1_SensorReading reading = sensor_v1_SensorReading_init_zero;
+
+    pb_istream_t stream = pb_istream_from_buffer(buffer, length);
+    bool status = pb_decode(&stream, sensor_v1_SensorReading_fields, &reading);
+
+    if (status) {
+        printf("Temperature: %.2f°C\n", reading.temperature);
+    }
+
+    return status;
+}
+```
+
+### Try the Examples
+
+**protobuf-c Example:**
+
+```bash
+cd examples/c-protobuf-c
+nix build
+nix develop
+make
+./example
+```
+
+**nanopb Example:**
+
+```bash
+cd examples/c-nanopb
+nix build
+nix develop
+make
+./sensor_example
+```
+
+### C Implementation Comparison
+
+| Feature                | protobuf-c | nanopb | upb (future) |
+| ---------------------- | ---------- | ------ | ------------ |
+| **Dynamic Allocation** | ✅         | ❌     | ✅           |
+| **Fixed Arrays**       | ❌         | ✅     | ❌           |
+| **Code Size**          | Medium     | Small  | Small        |
+| **Memory Usage**       | Dynamic    | Static | Arena        |
+| **Embedded Systems**   | ⚠️         | ✅     | ⚠️           |
+| **Full Proto3**        | ✅         | ⚠️     | ✅           |
+| **Services/RPC**       | Basic      | ❌     | ✅           |
+| **Extensions**         | ✅         | ❌     | ✅           |
+| **Options Files**      | ❌         | ✅     | ❌           |
+| **Zero-Copy**          | ❌         | ✅     | ✅           |
+
+### Use Case Guidelines
+
+**Use protobuf-c when:**
+
+- Building standard C applications
+- Need full Protocol Buffers compatibility
+- Dynamic memory allocation is acceptable
+- Integrating with existing C projects
+
+**Use nanopb when:**
+
+- Targeting microcontrollers (Arduino, STM32, etc.)
+- Memory is severely constrained (<100KB RAM)
+- Need predictable memory usage
+- Building real-time systems
+- Want zero dynamic allocation
+
 ## Swift
 
 **Status**: ✅ Full Support  
@@ -935,21 +1194,25 @@ swift run
 
 ## Language Comparison
 
-| Feature              | Go  | Dart | JavaScript/TypeScript | PHP | Python | Swift |
-| -------------------- | --- | ---- | --------------------- | --- | ------ | ----- |
-| **Base Messages**    | ✅  | ✅   | ✅                    | ✅  | ✅     | ✅    |
-| **gRPC Services**    | ✅  | ✅   | ✅ (Web)              | ❌  | ✅     | ❌    |
-| **Streaming RPC**    | ✅  | ✅   | ✅ (Web)              | ❌  | ✅     | ❌    |
-| **HTTP Gateway**     | ✅  | ❌   | ❌                    | ❌  | ❌     | ❌    |
-| **Validation**       | ✅  | ❌   | ❌                    | ❌  | ❌     | ❌    |
-| **Connect Protocol** | ✅  | ❌   | ✅                    | ❌  | ❌     | ❌    |
-| **Twirp RPC**        | ❌  | ❌   | ✅                    | ✅  | ❌     | ❌    |
-| **JSON Mapping**     | ✅  | ✅   | ✅                    | ✅  | ✅     | ✅    |
-| **Type Safety**      | ✅  | ✅   | ✅                    | ⚠️  | ✅     | ✅    |
-| **Server Support**   | ✅  | ✅   | ❌                    | ✅  | ✅     | ❌    |
-| **Browser Support**  | ❌  | ❌   | ✅                    | ❌  | ❌     | ❌    |
-| **Type Stubs**       | ❌  | ❌   | ✅                    | ❌  | ✅     | ❌    |
-| **Async Support**    | ✅  | ✅   | ✅                    | ❌  | ✅     | ✅    |
+| Feature              | Go  | Dart | JavaScript/TypeScript | PHP | Python | Swift | C (protobuf-c) | C (nanopb) |
+| -------------------- | --- | ---- | --------------------- | --- | ------ | ----- | -------------- | ---------- |
+| **Base Messages**    | ✅  | ✅   | ✅                    | ✅  | ✅     | ✅    | ✅             | ✅         |
+| **gRPC Services**    | ✅  | ✅   | ✅ (Web)              | ❌  | ✅     | ❌    | ⚠️ (Basic)     | ❌         |
+| **Streaming RPC**    | ✅  | ✅   | ✅ (Web)              | ❌  | ✅     | ❌    | ❌             | ❌         |
+| **HTTP Gateway**     | ✅  | ❌   | ❌                    | ❌  | ❌     | ❌    | ❌             | ❌         |
+| **Validation**       | ✅  | ❌   | ❌                    | ❌  | ❌     | ❌    | ❌             | ❌         |
+| **Connect Protocol** | ✅  | ❌   | ✅                    | ❌  | ❌     | ❌    | ❌             | ❌         |
+| **Twirp RPC**        | ❌  | ❌   | ✅                    | ✅  | ❌     | ❌    | ❌             | ❌         |
+| **JSON Mapping**     | ✅  | ✅   | ✅                    | ✅  | ✅     | ✅    | ❌             | ❌         |
+| **Type Safety**      | ✅  | ✅   | ✅                    | ⚠️  | ✅     | ✅    | ⚠️             | ⚠️         |
+| **Server Support**   | ✅  | ✅   | ❌                    | ✅  | ✅     | ✅    | ✅             | ✅         |
+| **Browser Support**  | ❌  | ❌   | ✅                    | ❌  | ❌     | ❌    | ❌             | ❌         |
+| **Codable Support**  | ❌  | ❌   | ❌                    | ❌  | ❌     | ✅    | ❌             | ❌         |
+| **Dynamic Memory**   | ✅  | ✅   | ✅                    | ✅  | ✅     | ✅    | ✅             | ❌         |
+| **Embedded Systems** | ❌  | ❌   | ❌                    | ❌  | ❌     | ❌    | ⚠️             | ✅         |
+| **Zero Allocation**  | ❌  | ❌   | ❌                    | ❌  | ❌     | ❌    | ❌             | ✅         |
+| **Type Stubs**       | ❌  | ❌   | ✅                    | ❌  | ✅     | ❌    | ❌             | ❌         |
+| **Async Support**    | ✅  | ✅   | ✅                    | ❌  | ✅     | ✅    | ❌             | ❌         |
 
 ## Multi-Language Projects
 
@@ -1007,6 +1270,24 @@ config = {
     outputPath = "ios/Sources/Generated";
     packageName = "AppProto";
   };
+
+  # Embedded devices in C
+  languages.c = {
+    enable = true;
+    outputPath = "embedded/gen/c";
+
+    # Standard C for Linux gateways
+    protobuf-c = {
+      enable = true;
+    };
+
+    # Microcontroller firmware
+    nanopb = {
+      enable = true;
+      maxSize = 128;
+      fixedLength = true;
+    };
+  };
 };
 ```
 
@@ -1020,6 +1301,8 @@ All examples are available in the [`examples/`](https://github.com/conneroisu/bu
 - **`php-twirp/`** - PHP Twirp RPC server and client implementation
 - **`python-example/`** - Python protobuf with gRPC, type stubs, and mypy integration
 - **`swift-example/`** - Swift Protocol Buffers with SwiftProtobuf integration
+- **`c-protobuf-c/`** - Standard C implementation with protobuf-c
+- **`c-nanopb/`** - Embedded C implementation with nanopb for microcontrollers
 
 Each example includes detailed README files with setup instructions and usage patterns.
 
