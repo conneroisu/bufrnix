@@ -1,0 +1,47 @@
+syntax = "proto3";
+
+package typed;
+
+enum Status {
+  UNKNOWN = 0;
+  ACTIVE = 1;
+  INACTIVE = 2;
+}
+
+message User {
+  string id = 1;
+  string name = 2;
+  optional string email = 3;
+  Status status = 4;
+  repeated string tags = 5;
+  map<string, string> metadata = 6;
+
+  oneof contact {
+    string phone = 7;
+    string discord = 8;
+  }
+}
+
+message GetUserRequest {
+  string user_id = 1;
+}
+
+message GetUserResponse {
+  User user = 1;
+  bool found = 2;
+}
+
+service UserService {
+  rpc GetUser(GetUserRequest) returns (GetUserResponse);
+  rpc ListUsers(ListUsersRequest) returns (ListUsersResponse);
+}
+
+message ListUsersRequest {
+  int32 page_size = 1;
+  string page_token = 2;
+}
+
+message ListUsersResponse {
+  repeated User users = 1;
+  string next_page_token = 2;
+}

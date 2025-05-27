@@ -55,6 +55,13 @@ with lib; let
       doc = {
         package = pkgs.protoc-gen-doc;
       };
+      python = {
+        package = pkgs.protobuf;
+        grpc.package = pkgs.python3Packages.grpcio-tools;
+        pyi.package = pkgs.protobuf;
+        betterproto.package = pkgs.python3Packages.betterproto;
+        mypy.package = pkgs.python3Packages.mypy-protobuf;
+      };
       swift = {
         package = pkgs.protoc-gen-swift;
       };

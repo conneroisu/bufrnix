@@ -431,6 +431,113 @@ with lib; {
         };
       };
 
+      # Python language options
+      python = {
+        enable = mkOption {
+          type = types.bool;
+          default = false;
+          description = "Enable Python code generation";
+        };
+
+        package = mkOption {
+          type = types.package;
+          defaultText = literalExpression "pkgs.protobuf";
+          description = "The protobuf package to use for Python generation";
+        };
+
+        outputPath = mkOption {
+          type = types.str;
+          default = "gen/python";
+          description = "Output directory for generated Python code";
+        };
+
+        options = mkOption {
+          type = types.listOf types.str;
+          default = [];
+          description = "Options to pass to protoc Python plugins";
+        };
+
+        grpc = {
+          enable = mkOption {
+            type = types.bool;
+            default = false;
+            description = "Enable gRPC code generation for Python";
+          };
+
+          package = mkOption {
+            type = types.package;
+            defaultText = literalExpression "pkgs.python3Packages.grpcio-tools";
+            description = "The grpcio-tools package to use";
+          };
+
+          options = mkOption {
+            type = types.listOf types.str;
+            default = [];
+            description = "Options to pass to grpc_python plugin";
+          };
+        };
+
+        pyi = {
+          enable = mkOption {
+            type = types.bool;
+            default = false;
+            description = "Enable Python type stub (.pyi) generation";
+          };
+
+          package = mkOption {
+            type = types.package;
+            defaultText = literalExpression "pkgs.protobuf";
+            description = "The protobuf package to use for pyi generation";
+          };
+
+          options = mkOption {
+            type = types.listOf types.str;
+            default = [];
+            description = "Options to pass to pyi plugin";
+          };
+        };
+
+        betterproto = {
+          enable = mkOption {
+            type = types.bool;
+            default = false;
+            description = "Enable betterproto (modern Python dataclasses) generation";
+          };
+
+          package = mkOption {
+            type = types.package;
+            defaultText = literalExpression "pkgs.python3Packages.betterproto";
+            description = "The betterproto package to use";
+          };
+
+          options = mkOption {
+            type = types.listOf types.str;
+            default = [];
+            description = "Options to pass to betterproto plugin";
+          };
+        };
+
+        mypy = {
+          enable = mkOption {
+            type = types.bool;
+            default = false;
+            description = "Enable mypy stub generation";
+          };
+
+          package = mkOption {
+            type = types.package;
+            defaultText = literalExpression "pkgs.python3Packages.mypy-protobuf";
+            description = "The mypy-protobuf package to use";
+          };
+
+          options = mkOption {
+            type = types.listOf types.str;
+            default = [];
+            description = "Options to pass to mypy plugin";
+          };
+        };
+      };
+
       # Swift language options
       swift = {
         enable = mkOption {
