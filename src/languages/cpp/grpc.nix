@@ -20,11 +20,10 @@ in {
   ];
 
   # Protoc plugin configuration for gRPC C++
-  protocPlugins = optionals enabled [
+  protocPlugins = optionals enabled ([
     "--grpc_out=${outputPath}"
-    "--grpc_opt=${concatStringsSep " --grpc_opt=" options}"
     "--plugin=protoc-gen-grpc=${grpcPkg}/bin/grpc_cpp_plugin"
-  ];
+  ] ++ optional (length options > 0) "--grpc_opt=${concatStringsSep "," options}");
 
   # Initialization hooks for gRPC C++
   initHooks = optionalString enabled ''

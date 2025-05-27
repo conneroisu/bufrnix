@@ -6,7 +6,7 @@
 
 #include <grpcpp/grpcpp.h>
 #include <google/protobuf/util/time_util.h>
-#include "proto/gen/cpp/example/v1/greeter.grpc.pb.h"
+#include "example/v1/greeter.grpc.pb.h"
 
 using grpc::Channel;
 using grpc::ClientContext;

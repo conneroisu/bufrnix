@@ -310,7 +310,7 @@ with lib; {
 
         options = mkOption {
           type = types.listOf types.str;
-          default = ["paths=source_relative"];
+          default = [];
           description = "Options to pass to protoc C++ plugins";
         };
 
@@ -371,7 +371,7 @@ with lib; {
 
           options = mkOption {
             type = types.listOf types.str;
-            default = ["paths=source_relative"];
+            default = [];
             description = "Options to pass to protoc-gen-grpc-cpp";
           };
 

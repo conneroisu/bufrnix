@@ -4,7 +4,7 @@
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-24.05";
     flake-utils.url = "github:numtide/flake-utils";
-    bufrnix.url = "github:conneroisu/bufrnix";
+    bufrnix.url = "path:../..";
   };
 
   outputs = {
@@ -40,14 +40,7 @@
               grpc = {
                 enable = true;
                 generateMockCode = true;
-                options = [
-                  "paths=source_relative"
-                ];
               };
-
-              options = [
-                "paths=source_relative"
-              ];
             };
           };
         };
@@ -130,8 +123,11 @@
             protobuf
             grpc
             abseil-cpp
+            openssl
             pkg-config
             grpcurl
+            generated
+          ] ++ lib.optionals pkgs.stdenv.isLinux [
             gdb
             valgrind
           ];

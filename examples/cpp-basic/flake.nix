@@ -4,7 +4,7 @@
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-24.05";
     flake-utils.url = "github:numtide/flake-utils";
-    bufrnix.url = "github:conneroisu/bufrnix";
+    bufrnix.url = "path:../..";
   };
 
   outputs = {
@@ -34,9 +34,6 @@
               optimizeFor = "SPEED";
               cmakeIntegration = true;
               outputPath = "proto/gen/cpp";
-              options = [
-                "paths=source_relative"
-              ];
             };
           };
         };
@@ -47,7 +44,10 @@
             ninja
             gcc
             protobuf
+            abseil-cpp
             pkg-config
+            generated
+          ] ++ lib.optionals pkgs.stdenv.isLinux [
             gdb
             valgrind
           ];

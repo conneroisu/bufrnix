@@ -3,7 +3,7 @@
 #include <string>
 #include <google/protobuf/util/time_util.h>
 #include <google/protobuf/util/json_util.h>
-#include "proto/gen/cpp/example/v1/person.pb.h"
+#include "example/v1/person.pb.h"
 
 using example::v1::Person;
 using example::v1::AddressBook;

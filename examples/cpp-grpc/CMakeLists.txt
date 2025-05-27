@@ -14,56 +14,27 @@ option(BUILD_CLIENT "Build the gRPC client" ON)
 find_package(Protobuf REQUIRED)
 find_package(gRPC REQUIRED)
 find_package(PkgConfig REQUIRED)
+find_package(OpenSSL REQUIRED)
 
 # Find abseil (required by newer gRPC)
 find_package(absl REQUIRED)
 
-# Add protobuf files
-set(PROTO_FILES
-    proto/example/v1/greeter.proto
+# Use pre-generated protobuf files from bufrnix
+set(PROTO_SRCS
+    ${CMAKE_CURRENT_SOURCE_DIR}/proto/gen/cpp/example/v1/greeter.pb.cc
 )
 
-# Generate protobuf and gRPC C++ files
-protobuf_generate_cpp(PROTO_SRCS PROTO_HDRS ${PROTO_FILES})
-
-# Find the gRPC plugin
-find_program(GRPC_CPP_PLUGIN grpc_cpp_plugin REQUIRED)
-
-# Generate gRPC files
-set(GRPC_SRCS)
-set(GRPC_HDRS)
-foreach(proto_file ${PROTO_FILES})
-    get_filename_component(proto_name ${proto_file} NAME_WE)
-    get_filename_component(proto_path ${proto_file} PATH)
-    
-    set(grpc_src "${CMAKE_CURRENT_BINARY_DIR}/${proto_path}/${proto_name}.grpc.pb.cc")
-    set(grpc_hdr "${CMAKE_CURRENT_BINARY_DIR}/${proto_path}/${proto_name}.grpc.pb.h")
-    
-    list(APPEND GRPC_SRCS ${grpc_src})
-    list(APPEND GRPC_HDRS ${grpc_hdr})
-    
-    add_custom_command(
-        OUTPUT ${grpc_src} ${grpc_hdr}
-        COMMAND protobuf::protoc
-        ARGS --grpc_out=${CMAKE_CURRENT_BINARY_DIR}
-             --cpp_out=${CMAKE_CURRENT_BINARY_DIR}
-             --plugin=protoc-gen-grpc=${GRPC_CPP_PLUGIN}
-             -I${CMAKE_CURRENT_SOURCE_DIR}
-             ${CMAKE_CURRENT_SOURCE_DIR}/${proto_file}
-        DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/${proto_file}
-        COMMENT "Generating gRPC C++ files for ${proto_file}"
-    )
-endforeach()
+set(GRPC_SRCS
+    ${CMAKE_CURRENT_SOURCE_DIR}/proto/gen/cpp/example/v1/greeter.grpc.pb.cc
+)
 
 # Include generated headers
-include_directories(${CMAKE_CURRENT_BINARY_DIR})
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/proto/gen/cpp)
 
 # Create library for protobuf and gRPC files
 add_library(grpc_proto_lib STATIC 
     ${PROTO_SRCS} 
-    ${PROTO_HDRS}
     ${GRPC_SRCS} 
-    ${GRPC_HDRS}
 )
 
 target_link_libraries(grpc_proto_lib
@@ -74,6 +45,9 @@ target_link_libraries(grpc_proto_lib
         absl::base
         absl::memory
         absl::strings
+        absl::log_internal_check_op
+        absl::log_internal_message
+        absl::status
 )
 
 # Server executable

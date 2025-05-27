@@ -70,7 +70,6 @@ in {
   protocPlugins =
     [
       "--cpp_out=${outputPath}"
-      "--cpp_opt=${concatStringsSep " --cpp_opt=" cppOptions}"
     ]
     ++ (combineModuleAttrs "protocPlugins");
 

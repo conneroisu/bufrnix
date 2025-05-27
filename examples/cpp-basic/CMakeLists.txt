@@ -8,24 +8,25 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 
 # Find required packages
 find_package(Protobuf REQUIRED)
-find_package(PkgConfig REQUIRED)
+find_package(absl REQUIRED)
 
-# Add protobuf files
-set(PROTO_FILES
-    proto/example/v1/person.proto
+# Include generated headers directory
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/proto/gen/cpp)
+
+# Add generated protobuf sources
+set(PROTO_SRCS
+    proto/gen/cpp/example/v1/person.pb.cc
 )
 
-# Generate protobuf C++ files
-protobuf_generate_cpp(PROTO_SRCS PROTO_HDRS ${PROTO_FILES})
-
-# Include generated headers
-include_directories(${CMAKE_CURRENT_BINARY_DIR})
-
 # Create library for protobuf files
-add_library(proto_lib STATIC ${PROTO_SRCS} ${PROTO_HDRS})
+add_library(proto_lib STATIC ${PROTO_SRCS})
 target_link_libraries(proto_lib
     PUBLIC
         protobuf::libprotobuf
+        absl::log_internal_check_op
+        absl::log_internal_message
+        absl::status
+        absl::statusor
 )
 
 # Main executable
@@ -36,7 +37,6 @@ add_executable(cpp-basic-example
 target_link_libraries(cpp-basic-example
     PRIVATE
         proto_lib
-        protobuf::libprotobuf
 )
 
 # Compiler specific options

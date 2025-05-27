@@ -18,13 +18,11 @@ with lib; let
     if(NOT BUFRNIX_PROTO_FOUND)
       set(BUFRNIX_PROTO_ROOT "''${CMAKE_CURRENT_LIST_DIR}/../../../")
 
-      find_path(BUFRNIX_PROTO_INCLUDE_DIR
-        NAMES google/protobuf/descriptor.pb.h
-        PATHS "''${BUFRNIX_PROTO_ROOT}/${outputPath}"
-        NO_DEFAULT_PATH
-      )
-
-      if(BUFRNIX_PROTO_INCLUDE_DIR)
+      # Set include directory to generated proto path
+      set(BUFRNIX_PROTO_INCLUDE_DIR "''${BUFRNIX_PROTO_ROOT}/${outputPath}")
+      
+      # Check if directory exists
+      if(EXISTS "''${BUFRNIX_PROTO_INCLUDE_DIR}")
         set(BUFRNIX_PROTO_FOUND TRUE)
 
         # Create imported target for protobuf
@@ -32,7 +30,11 @@ with lib; let
           add_library(Bufrnix::Protobuf INTERFACE IMPORTED)
           set_target_properties(Bufrnix::Protobuf PROPERTIES
             INTERFACE_INCLUDE_DIRECTORIES "''${BUFRNIX_PROTO_INCLUDE_DIR}"
-            INTERFACE_LINK_LIBRARIES "${protobufPkg}/lib/libprotobuf.so"
+            INTERFACE_LINK_LIBRARIES 
+              "${protobufPkg}/lib/libprotobuf${pkgs.stdenv.hostPlatform.extensions.sharedLibrary}"
+              "${pkgs.abseil-cpp}/lib/libabsl_log_internal_check_op${pkgs.stdenv.hostPlatform.extensions.sharedLibrary}"
+              "${pkgs.abseil-cpp}/lib/libabsl_log_internal_message${pkgs.stdenv.hostPlatform.extensions.sharedLibrary}"
+              "${pkgs.abseil-cpp}/lib/libabsl_status${pkgs.stdenv.hostPlatform.extensions.sharedLibrary}"
           )
         endif()
 
@@ -42,7 +44,7 @@ with lib; let
         add_library(Bufrnix::GRPC INTERFACE IMPORTED)
         set_target_properties(Bufrnix::GRPC PROPERTIES
           INTERFACE_INCLUDE_DIRECTORIES "''${BUFRNIX_PROTO_INCLUDE_DIR}/grpc"
-          INTERFACE_LINK_LIBRARIES "${grpcPkg}/lib/libgrpc++.so"
+          INTERFACE_LINK_LIBRARIES "${grpcPkg}/lib/libgrpc++${pkgs.stdenv.hostPlatform.extensions.sharedLibrary}"
         )
       endif()
     ''}
@@ -129,7 +131,6 @@ in {
   # Initialization hooks for CMake
   initHooks = optionalString enabled ''
     echo "Setting up CMake integration for C++..."
-    mkdir -p cmake/modules
   '';
 
   # Generation hooks for CMake - create the CMake files
@@ -137,16 +138,16 @@ in {
         echo "Generating CMake integration files..."
 
         # Create FindBufrnixProto.cmake
-        cat > cmake/modules/FindBufrnixProto.cmake << 'CMAKE_EOF'
+        cat > ${outputPath}/FindBufrnixProto.cmake << 'CMAKE_EOF'
     ${findModuleContent}
     CMAKE_EOF
 
         # Create BufrnixHelpers.cmake
-        cat > cmake/modules/BufrnixHelpers.cmake << 'CMAKE_EOF'
+        cat > ${outputPath}/BufrnixHelpers.cmake << 'CMAKE_EOF'
     ${helpersContent}
     CMAKE_EOF
 
-        echo "CMake modules created in cmake/modules/"
+        echo "CMake modules created in ${outputPath}/"
   '';
 }
 
