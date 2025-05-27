@@ -1,0 +1,125 @@
+syntax = "proto3";
+
+package example.v1;
+
+import "google/protobuf/field_mask.proto";
+import "google/protobuf/timestamp.proto";
+
+option go_package = "github.com/example/proto/gen/go/example/v1;examplev1";
+
+// User represents a user in our system
+message User {
+  string id = 1;
+  string name = 2;
+  string email = 3;
+  repeated Phone phones = 4;
+  Address address = 5;
+  UserStatus status = 6;
+  google.protobuf.Timestamp created_at = 7;
+  google.protobuf.Timestamp updated_at = 8;
+}
+
+// Phone represents a phone number
+message Phone {
+  string number = 1;
+  PhoneType type = 2;
+  bool is_primary = 3;
+}
+
+// Address represents a physical address
+message Address {
+  string street = 1;
+  string city = 2;
+  string state = 3;
+  string zip_code = 4;
+  string country = 5;
+}
+
+// UserStatus represents the status of a user
+enum UserStatus {
+  USER_STATUS_UNSPECIFIED = 0;
+  USER_STATUS_ACTIVE = 1;
+  USER_STATUS_INACTIVE = 2;
+  USER_STATUS_SUSPENDED = 3;
+}
+
+// PhoneType represents the type of phone number
+enum PhoneType {
+  PHONE_TYPE_UNSPECIFIED = 0;
+  PHONE_TYPE_MOBILE = 1;
+  PHONE_TYPE_HOME = 2;
+  PHONE_TYPE_WORK = 3;
+}
+
+// GetUserRequest is the request for GetUser
+message GetUserRequest {
+  string id = 1;
+}
+
+// GetUserResponse is the response for GetUser
+message GetUserResponse {
+  User user = 1;
+}
+
+// CreateUserRequest is the request for CreateUser
+message CreateUserRequest {
+  User user = 1;
+}
+
+// CreateUserResponse is the response for CreateUser
+message CreateUserResponse {
+  User user = 1;
+}
+
+// ListUsersRequest is the request for ListUsers
+message ListUsersRequest {
+  int32 page_size = 1;
+  string page_token = 2;
+  UserStatus status_filter = 3;
+}
+
+// ListUsersResponse is the response for ListUsers
+message ListUsersResponse {
+  repeated User users = 1;
+  string next_page_token = 2;
+  int32 total_count = 3;
+}
+
+// UserService provides operations on users
+service UserService {
+  // GetUser retrieves a user by ID
+  rpc GetUser(GetUserRequest) returns (GetUserResponse) {}
+
+  // CreateUser creates a new user
+  rpc CreateUser(CreateUserRequest) returns (CreateUserResponse) {}
+
+  // ListUsers lists all users with pagination
+  rpc ListUsers(ListUsersRequest) returns (ListUsersResponse) {}
+
+  // UpdateUser updates an existing user
+  rpc UpdateUser(UpdateUserRequest) returns (UpdateUserResponse) {}
+
+  // DeleteUser deletes a user
+  rpc DeleteUser(DeleteUserRequest) returns (DeleteUserResponse) {}
+}
+
+// UpdateUserRequest is the request for UpdateUser
+message UpdateUserRequest {
+  User user = 1;
+  google.protobuf.FieldMask update_mask = 2;
+}
+
+// UpdateUserResponse is the response for UpdateUser
+message UpdateUserResponse {
+  User user = 1;
+}
+
+// DeleteUserRequest is the request for DeleteUser
+message DeleteUserRequest {
+  string id = 1;
+}
+
+// DeleteUserResponse is the response for DeleteUser
+message DeleteUserResponse {
+  bool success = 1;
+}

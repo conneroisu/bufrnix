@@ -1,0 +1,476 @@
+---
+title: Dart Language Support
+description: Complete Protocol Buffer and gRPC support for Flutter and server-side Dart applications.
+---
+
+import { Tabs, TabItem } from "@astrojs/starlight/components";
+
+# Dart Language Support
+
+**Status**: ✅ Full Support  
+**Example**: [`examples/dart-example/`](https://github.com/conneroisu/bufr.nix/tree/main/examples/dart-example)
+
+Dart support provides complete Protocol Buffer and gRPC integration for Flutter and server applications.
+
+## Available Plugins
+
+| Plugin                | Description          | Generated Files                                                |
+| --------------------- | -------------------- | -------------------------------------------------------------- |
+| **`protoc-gen-dart`** | Base messages & gRPC | `*.pb.dart`, `*.pbgrpc.dart`, `*.pbenum.dart`, `*.pbjson.dart` |
+
+## Configuration
+
+### Basic Configuration
+
+```nix
+languages.dart = {
+  enable = true;
+  outputPath = "lib/proto";
+};
+```
+
+### Full Configuration
+
+```nix
+languages.dart = {
+  enable = true;
+  outputPath = "lib/proto";
+  packageName = "my_app_proto";
+  options = [
+    "generate_kythe_info"  # IDE support metadata
+  ];
+
+  grpc = {
+    enable = true;
+    options = [
+      "generate_metadata"
+    ];
+  };
+};
+```
+
+## Proto Example
+
+```protobuf
+// proto/example/v1/example.proto
+syntax = "proto3";
+
+package example.v1;
+
+message ExampleMessage {
+  int32 id = 1;
+  string name = 2;
+  string email = 3;
+  repeated string tags = 4;
+  optional string description = 5;
+  TimestampMessage created_at = 6;
+}
+
+message TimestampMessage {
+  int64 seconds = 1;
+  int32 nanos = 2;
+}
+
+service ExampleService {
+  rpc CreateExample(CreateExampleRequest) returns (CreateExampleResponse);
+  rpc GetExample(GetExampleRequest) returns (GetExampleResponse);
+  rpc ListExamples(ListExamplesRequest) returns (ListExamplesResponse);
+  rpc WatchExamples(ListExamplesRequest) returns (stream ExampleMessage);
+}
+
+message CreateExampleRequest {
+  ExampleMessage example = 1;
+}
+
+message CreateExampleResponse {
+  ExampleMessage example = 1;
+  bool success = 2;
+  string message = 3;
+}
+
+message GetExampleRequest {
+  int32 id = 1;
+}
+
+message GetExampleResponse {
+  ExampleMessage example = 1;
+  bool found = 2;
+}
+
+message ListExamplesRequest {
+  int32 page_size = 1;
+  string page_token = 2;
+  string filter = 3;
+}
+
+message ListExamplesResponse {
+  repeated ExampleMessage examples = 1;
+  string next_page_token = 2;
+  int32 total_count = 3;
+}
+```
+
+## Generated Code Usage
+
+<Tabs>
+  <TabItem label="gRPC Client">
+    ```dart
+    import 'package:grpc/grpc.dart';
+    import 'lib/proto/example/v1/example.pbgrpc.dart';
+
+    Future<void> main() async {
+      // Create a gRPC client
+      final channel = ClientChannel('localhost',
+        port: 50051,
+        options: const ChannelOptions(
+          credentials: ChannelCredentials.insecure(),
+        ),
+      );
+
+      final client = ExampleServiceClient(channel);
+
+      try {
+        // Create a new example message
+        final example = ExampleMessage()
+          ..id = 1
+          ..name = 'John Doe'
+          ..email = 'john@example.com'
+          ..tags.addAll(['developer', 'dart'])
+          ..description = 'Example user for testing';
+
+        // Make RPC call
+        final request = CreateExampleRequest()..example = example;
+        final response = await client.createExample(request);
+
+        if (response.success) {
+          print('Created example: ${response.example.name}');
+        }
+
+        // List examples with pagination
+        final listRequest = ListExamplesRequest()
+          ..pageSize = 10
+          ..filter = 'developer';
+
+        final listResponse = await client.listExamples(listRequest);
+        print('Found ${listResponse.examples.length} examples');
+
+        // Watch for streaming updates
+        final watchRequest = ListExamplesRequest()..filter = 'live';
+
+        await for (final update in client.watchExamples(watchRequest)) {
+          print('Received update: ${update.name}');
+        }
+
+      } finally {
+        await channel.shutdown();
+      }
+    }
+    ```
+
+  </TabItem>
+
+  <TabItem label="gRPC Server">
+    ```dart
+    import 'package:grpc/grpc.dart';
+    import 'lib/proto/example/v1/example.pbgrpc.dart';
+
+    class ExampleServiceImpl extends ExampleServiceBase {
+      final Map<int, ExampleMessage> _examples = {};
+      int _nextId = 1;
+
+      @override
+      Future<CreateExampleResponse> createExample(
+        ServiceCall call,
+        CreateExampleRequest request,
+      ) async {
+        final example = request.example
+          ..id = _nextId++;
+
+        _examples[example.id] = example;
+
+        return CreateExampleResponse()
+          ..example = example
+          ..success = true
+          ..message = 'Example created successfully';
+      }
+
+      @override
+      Future<GetExampleResponse> getExample(
+        ServiceCall call,
+        GetExampleRequest request,
+      ) async {
+        final example = _examples[request.id];
+
+        return GetExampleResponse()
+          ..found = example != null
+          ..example = example ?? ExampleMessage();
+      }
+
+      @override
+      Future<ListExamplesResponse> listExamples(
+        ServiceCall call,
+        ListExamplesRequest request,
+      ) async {
+        final examples = _examples.values
+          .where((e) => request.filter.isEmpty ||
+                       e.tags.contains(request.filter))
+          .skip(request.pageToken.isEmpty ? 0 : int.parse(request.pageToken))
+          .take(request.pageSize)
+          .toList();
+
+        return ListExamplesResponse()
+          ..examples.addAll(examples)
+          ..totalCount = _examples.length
+          ..nextPageToken = examples.length == request.pageSize
+              ? '${request.pageToken.isEmpty ? 0 : int.parse(request.pageToken) + request.pageSize}'
+              : '';
+      }
+
+      @override
+      Stream<ExampleMessage> watchExamples(
+        ServiceCall call,
+        ListExamplesRequest request,
+      ) async* {
+        // Send initial examples
+        for (final example in _examples.values) {
+          if (request.filter.isEmpty || example.tags.contains(request.filter)) {
+            yield example;
+          }
+        }
+
+        // In a real app, you'd watch for changes and yield updates
+        // For demo, we'll just send a few updates
+        await Future.delayed(Duration(seconds: 1));
+        yield ExampleMessage()
+          ..id = 999
+          ..name = 'Live Update'
+          ..tags.add(request.filter);
+      }
+    }
+
+    Future<void> main() async {
+      final server = Server.create(
+        services: [ExampleServiceImpl()],
+        interceptors: [],
+        codecRegistry: CodecRegistry(codecs: const [GzipCodec(), IdentityCodec()]),
+      );
+
+      await server.serve(port: 50051);
+      print('Server listening on port ${server.port}...');
+    }
+    ```
+
+  </TabItem>
+
+  <TabItem label="Flutter Widget">
+    ```dart
+    import 'package:flutter/material.dart';
+    import 'package:grpc/grpc.dart';
+    import 'lib/proto/example/v1/example.pbgrpc.dart';
+
+    class ExampleListWidget extends StatefulWidget {
+      @override
+      _ExampleListWidgetState createState() => _ExampleListWidgetState();
+    }
+
+    class _ExampleListWidgetState extends State<ExampleListWidget> {
+      late ClientChannel channel;
+      late ExampleServiceClient client;
+      List<ExampleMessage> examples = [];
+      bool loading = true;
+
+      @override
+      void initState() {
+        super.initState();
+        channel = ClientChannel('localhost', port: 50051);
+        client = ExampleServiceClient(channel);
+        _loadExamples();
+      }
+
+      @override
+      void dispose() {
+        channel.shutdown();
+        super.dispose();
+      }
+
+      Future<void> _loadExamples() async {
+        try {
+          final response = await client.listExamples(
+            ListExamplesRequest()..pageSize = 20,
+          );
+
+          setState(() {
+            examples = response.examples;
+            loading = false;
+          });
+        } catch (e) {
+          setState(() {
+            loading = false;
+          });
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Error: $e')),
+          );
+        }
+      }
+
+      @override
+      Widget build(BuildContext context) {
+        if (loading) {
+          return Center(child: CircularProgressIndicator());
+        }
+
+        return ListView.builder(
+          itemCount: examples.length,
+          itemBuilder: (context, index) {
+            final example = examples[index];
+            return ListTile(
+              title: Text(example.name),
+              subtitle: Text(example.email),
+              trailing: Wrap(
+                spacing: 8,
+                children: example.tags.map((tag) =>
+                  Chip(label: Text(tag))
+                ).toList(),
+              ),
+            );
+          },
+        );
+      }
+    }
+    ```
+
+  </TabItem>
+
+  <TabItem label="JSON Serialization">
+    ```dart
+    import 'dart:convert';
+    import 'lib/proto/example/v1/example.pb.dart';
+    import 'lib/proto/example/v1/example.pbjson.dart';
+
+    void main() {
+      // Create a message
+      final example = ExampleMessage()
+        ..id = 1
+        ..name = 'John Doe'
+        ..email = 'john@example.com'
+        ..tags.addAll(['developer', 'dart']);
+
+      // Serialize to JSON
+      final jsonString = jsonEncode(example.toProto3Json());
+      print('JSON: $jsonString');
+
+      // Deserialize from JSON
+      final jsonData = jsonDecode(jsonString);
+      final decoded = ExampleMessage()
+        ..mergeFromProto3Json(jsonData);
+
+      print('Decoded: ${decoded.name}');
+
+      // Binary serialization
+      final bytes = example.writeToBuffer();
+      print('Binary size: ${bytes.length} bytes');
+
+      // Binary deserialization
+      final fromBinary = ExampleMessage.fromBuffer(bytes);
+      print('From binary: ${fromBinary.name}');
+    }
+    ```
+
+  </TabItem>
+</Tabs>
+
+## Generated Files
+
+For each `.proto` file, Dart generates:
+
+- **`*.pb.dart`** - Message classes with getters/setters
+- **`*.pbenum.dart`** - Enum definitions
+- **`*.pbgrpc.dart`** - gRPC client and server stubs (if services defined)
+- **`*.pbjson.dart`** - JSON serialization support
+
+## Flutter Integration
+
+### pubspec.yaml
+
+```yaml
+name: my_app
+dependencies:
+  protobuf: ^3.1.0
+  grpc: ^3.2.4
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+# Generated proto files location
+# Assuming outputPath = "lib/proto"
+```
+
+### Build Configuration
+
+Add to your `build.yaml` if using build_runner:
+
+```yaml
+targets:
+  $default:
+    sources:
+      exclude:
+        - lib/proto/**
+```
+
+## Best Practices
+
+1. **Output Path**: Use `lib/proto` for Flutter apps to ensure proper imports
+2. **Package Name**: Match your Dart package name for consistency
+3. **IDE Support**: Enable `generate_kythe_info` for better IDE integration
+4. **Error Handling**: Always wrap gRPC calls in try-catch blocks
+5. **Channel Management**: Reuse channels and close them properly
+6. **Streaming**: Use async generators for server-side streaming
+
+## Try the Example
+
+```bash
+cd examples/dart-example
+nix develop
+dart pub get
+dart run lib/main.dart
+dart test
+```
+
+## Troubleshooting
+
+### Import Issues
+
+Ensure your import paths match the output directory:
+
+```dart
+// If outputPath = "lib/proto"
+import 'package:my_app/proto/example/v1/example.pb.dart';
+```
+
+### gRPC Connection Errors
+
+For local development, use insecure credentials:
+
+```dart
+final channel = ClientChannel(
+  'localhost',
+  port: 50051,
+  options: const ChannelOptions(
+    credentials: ChannelCredentials.insecure(),
+  ),
+);
+```
+
+### Flutter Web Support
+
+For Flutter web, use gRPC-Web instead:
+
+```dart
+final channel = GrpcOrGrpcWebClientChannel.toSeparateEndpoints(
+  grpcHost: 'localhost',
+  grpcPort: 50051,
+  grpcWebHost: 'localhost',
+  grpcWebPort: 8080,
+  grpcTransportSecure: false,
+);
+```

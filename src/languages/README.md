@@ -17,15 +17,48 @@ Bufrnix supports a rich ecosystem of Protocol Buffer plugins and code generators
 
 **Location**: `src/languages/go/`
 
-Go support includes the complete Protocol Buffer ecosystem with modern tooling.
+Go support includes the complete Protocol Buffer ecosystem with modern tooling and performance optimizations.
 
 #### Available Plugins
+
+##### Core Plugins
 
 - **`default.nix`** - Base Protocol Buffer message generation (`protoc-gen-go`)
 - **`grpc.nix`** - gRPC service generation (`protoc-gen-go-grpc`)
 - **`connect.nix`** - Connect-Go protocol support (`protoc-gen-connect-go`)
 - **`gateway.nix`** - gRPC-Gateway for HTTP/JSON transcoding (`protoc-gen-grpc-gateway`)
-- **`validate.nix`** - Message validation (`protoc-gen-validate`)
+
+##### Validation Plugins
+
+- **`validate.nix`** - Legacy message validation (`protoc-gen-validate`)
+- **`protovalidate.nix`** - Modern CEL-based validation (`protovalidate-go`)
+
+##### Performance & Feature Plugins
+
+- **`vtprotobuf.nix`** - High-performance serialization (`protoc-gen-go-vtproto`) - 3.8x faster
+- **`json.nix`** - JSON integration with `encoding/json` (`protoc-gen-go-json`)
+- **`openapiv2.nix`** - OpenAPI v2 documentation generation (`protoc-gen-openapiv2`)
+- **`federation.nix`** - gRPC Federation for BFF servers (`protoc-gen-grpc-federation`)
+
+#### Buf Registry Plugin Support
+
+Bufrnix supports using Buf registry plugin names directly:
+
+```nix
+languages.go = {
+  enable = true;
+  plugins = [
+    "buf.build/protocolbuffers/go"
+    "buf.build/grpc/go"
+    {
+      plugin = "buf.build/community/planetscale-vtprotobuf";
+      opt = ["features=marshal+unmarshal+size+pool"];
+    }
+    "buf.build/community/mfridman-go-json"
+    "buf.build/bufbuild/validate-go"
+  ];
+};
+```
 
 #### Configuration Example
 
@@ -58,7 +91,12 @@ languages.go = {
     ];
   };
 
-  # Message validation
+  # Modern validation (recommended over validate)
+  protovalidate = {
+    enable = true;
+  };
+
+  # Legacy validation (use protovalidate for new projects)
   validate = {
     enable = true;
     options = ["lang=go"];
@@ -66,6 +104,33 @@ languages.go = {
 
   # Modern Connect protocol
   connect = {
+    enable = true;
+    options = ["paths=source_relative"];
+  };
+
+  # High-performance serialization
+  vtprotobuf = {
+    enable = true;
+    options = [
+      "paths=source_relative"
+      "features=marshal+unmarshal+size+pool"
+    ];
+  };
+
+  # JSON integration
+  json = {
+    enable = true;
+    options = ["paths=source_relative" "orig_name=true"];
+  };
+
+  # OpenAPI documentation
+  openapiv2 = {
+    enable = true;
+    options = ["logtostderr=true"];
+  };
+
+  # gRPC Federation (experimental)
+  federation = {
     enable = true;
     options = ["paths=source_relative"];
   };
@@ -79,8 +144,181 @@ For a proto file `user/v1/user.proto`:
 - `user.pb.go` - Protocol Buffer messages
 - `user_grpc.pb.go` - gRPC service interfaces (if grpc.enable = true)
 - `user.pb.gw.go` - HTTP gateway handlers (if gateway.enable = true)
-- `user.pb.validate.go` - Validation functions (if validate.enable = true)
+- `user.pb.validate.go` - Legacy validation functions (if validate.enable = true)
 - `user_connect.go` - Connect service definitions (if connect.enable = true)
+- `user_vtproto.pb.go` - High-performance marshal/unmarshal (if vtprotobuf.enable = true)
+- `user.pb.json.go` - JSON marshal/unmarshal methods (if json.enable = true)
+- `user.swagger.json` - OpenAPI v2 specification (if openapiv2.enable = true)
+- `user_federation.pb.go` - Federation BFF code (if federation.enable = true)
+
+### C++
+
+**Location**: `src/languages/cpp/`
+
+C++ support provides comprehensive Protocol Buffer and gRPC integration with modern C++ features, CMake integration, and high-performance optimizations.
+
+#### Available Plugins
+
+##### Core Plugins
+
+- **`default.nix`** - Base Protocol Buffer message generation (built-in `protoc` C++ generator)
+- **`grpc.nix`** - gRPC service generation (`grpc_cpp_plugin`)
+- **`cmake.nix`** - CMake integration and build support
+
+##### Alternative Implementations
+
+- **`nanopb.nix`** - Ultra-lightweight C implementation for embedded systems
+- **`protobuf-c.nix`** - Pure C implementation for system programming
+- **`plugins.nix`** - FlatBuffers support for zero-copy serialization
+
+#### Configuration Example
+
+```nix
+languages.cpp = {
+  enable = true;
+  protobufVersion = "latest";  # or "3.21", "3.25", "3.27", "4.25", "5.29"
+  standard = "c++20";          # or "c++17", "c++23"
+  optimizeFor = "SPEED";       # or "CODE_SIZE", "LITE_RUNTIME"
+  runtime = "full";            # or "lite"
+  outputPath = "gen/cpp";
+
+  # Performance optimizations
+  arenaAllocation = true;      # Enable arena allocation for better performance
+
+  # Build system integration
+  cmakeIntegration = true;     # Generate CMake integration files
+  pkgConfigIntegration = true; # Generate pkg-config files
+
+  # Additional include paths
+  includePaths = [
+    "/usr/local/include"
+    "third_party/include"
+  ];
+
+  options = [
+    "paths=source_relative"
+    "annotate_headers"
+  ];
+
+  # gRPC service generation
+  grpc = {
+    enable = true;
+    generateMockCode = true;   # Generate mock classes for testing
+    options = [
+      "paths=source_relative"
+      "services_namespace=rpc"
+    ];
+  };
+
+  # Embedded C/C++ with nanopb
+  nanopb = {
+    enable = false;
+    options = [
+      "max_size=1024"
+      "max_count=16"
+    ];
+  };
+
+  # Pure C implementation
+  protobuf-c = {
+    enable = false;
+    options = [];
+  };
+};
+```
+
+#### Generated Files
+
+For a proto file `user/v1/user.proto`:
+
+- `user.pb.h` - C++ message class declarations
+- `user.pb.cc` - C++ message class implementations
+- `user.grpc.pb.h` - gRPC service declarations (if grpc.enable = true)
+- `user.grpc.pb.cc` - gRPC service implementations (if grpc.enable = true)
+- `cmake/modules/FindBufrnixProto.cmake` - CMake integration (if cmakeIntegration = true)
+- `cmake/modules/BufrnixHelpers.cmake` - CMake helper functions
+
+#### CMake Integration
+
+Bufrnix generates CMake modules for seamless integration:
+
+```cmake
+# In your CMakeLists.txt
+find_package(BufrnixProto REQUIRED)
+include(BufrnixHelpers)
+
+# Collect generated sources automatically
+bufrnix_collect_proto_sources(PROTO_SOURCES)
+
+# Create executable with protobuf support
+bufrnix_add_proto_executable(my_app
+  SOURCES src/main.cpp src/app.cpp
+  PROTO_SOURCES ${PROTO_SOURCES}
+)
+
+# Enable modern C++ features and optimizations
+bufrnix_enable_cpp_features(my_app)
+```
+
+#### Integration Examples
+
+**Basic Protobuf Usage:**
+
+```cpp
+#include "user.pb.h"
+#include <google/protobuf/util/json_util.h>
+
+// Create and populate message
+User user;
+user.set_name("John Doe");
+user.set_email("john@example.com");
+
+// Serialize to binary
+std::string binary_data;
+user.SerializeToString(&binary_data);
+
+// Serialize to JSON
+std::string json_data;
+google::protobuf::util::MessageToJsonString(user, &json_data);
+```
+
+**gRPC Service Implementation:**
+
+```cpp
+#include "user.grpc.pb.h"
+#include <grpcpp/grpcpp.h>
+
+class UserServiceImpl : public UserService::Service {
+public:
+  Status GetUser(ServerContext* context,
+                 const GetUserRequest* request,
+                 GetUserResponse* response) override {
+    // Implementation
+    return Status::OK;
+  }
+};
+
+// Client usage
+auto channel = grpc::CreateChannel("localhost:50051",
+                                   grpc::InsecureChannelCredentials());
+auto stub = UserService::NewStub(channel);
+```
+
+#### Performance Features
+
+- **Arena Allocation**: Automatic memory pooling for high-throughput scenarios
+- **C++17/20/23 Support**: Modern language features and optimizations
+- **Lite Runtime**: Reduced memory footprint for resource-constrained environments
+- **Zero-Copy Operations**: With FlatBuffers alternative
+- **Optimized Generated Code**: Speed or size optimization modes
+
+#### Supported Protobuf Versions
+
+- **Latest (5.29+)**: Full feature support with modern C++
+- **4.25**: Stable release with Abseil dependency
+- **3.27**: LTS release with broad compatibility
+- **3.25**: Legacy support for older systems
+- **3.21**: Minimum supported version
 
 ### Dart
 
@@ -318,6 +556,74 @@ try {
 }
 ```
 
+### Documentation
+
+**Location**: `src/languages/doc/`
+
+Documentation support provides generated documentation from Protocol Buffer files in various formats.
+
+#### Available Plugins
+
+- **`default.nix`** - Documentation generation (`protoc-gen-doc`)
+
+#### Configuration Example
+
+```nix
+languages.doc = {
+  enable = true;
+  outputPath = "gen/doc";
+  format = "html";  # html, markdown, json, or docbook
+  outputFile = "index.html";
+  options = [];  # or custom options like ["html,index.html"]
+};
+```
+
+#### Generated Files
+
+For a proto file collection:
+
+- `index.html` - Complete API documentation (if format = "html")
+- `index.md` - Markdown documentation (if format = "markdown")
+- `index.json` - Structured JSON documentation (if format = "json")
+- `index.xml` - DocBook XML documentation (if format = "docbook")
+
+### SVG Diagrams
+
+**Location**: `src/languages/svg/`
+
+SVG support provides visual diagrams of Protocol Buffer schemas using protoc-gen-d2.
+
+#### Available Plugins
+
+- **`default.nix`** - SVG diagram generation (`protoc-gen-d2`)
+
+#### Configuration Example
+
+```nix
+languages.svg = {
+  enable = true;
+  outputPath = "gen/svg";
+  options = [];  # protoc-gen-d2 specific options
+};
+```
+
+#### Generated Files
+
+For a proto file `user/v1/user.proto`:
+
+- SVG diagrams showing:
+  - Message structures and relationships
+  - Service definitions and RPC methods
+  - Enum types and their values
+  - Field types and connections between messages
+
+#### Features
+
+- Visual representation of complex proto schemas
+- Automatic relationship detection
+- Service method visualization
+- Clear hierarchy and structure display
+
 ### Swift
 
 **Location**: `src/languages/swift/`
@@ -388,15 +694,33 @@ Each language module follows this structure:
 
 ```
 languages/
+├── c/
+│   ├── default.nix       # Main entry point for C code generation
+│   ├── nanopb.nix        # Nanopb plugin for embedded C
+│   └── protobuf-c.nix    # Protobuf-c standard implementation
+├── cpp/
+│   ├── default.nix       # Main entry point for C++ code generation
+│   ├── grpc.nix          # gRPC plugin for C++
+│   ├── cmake.nix         # CMake integration and build support
+│   └── plugins.nix       # Plugin definitions and registry
+├── dart/
+│   ├── default.nix       # Main entry point for Dart code generation
+│   └── grpc.nix          # gRPC plugin for Dart
+├── doc/
+│   └── default.nix       # Documentation generation (HTML, Markdown, etc.)
 ├── go/
 │   ├── default.nix       # Main entry point for Go code generation
 │   ├── grpc.nix          # gRPC plugin for Go
 │   ├── connect.nix       # Connect plugin for Go
 │   ├── gateway.nix       # gRPC-Gateway plugin for Go
-│   └── validate.nix      # Validate plugin for Go
-├── dart/
-│   ├── default.nix       # Main entry point for Dart code generation
-│   └── grpc.nix          # gRPC plugin for Dart
+│   ├── validate.nix      # Legacy validate plugin for Go
+│   ├── protovalidate.nix # Modern CEL-based validation
+│   ├── vtprotobuf.nix    # High-performance serialization
+│   ├── json.nix          # JSON integration plugin
+│   ├── openapiv2.nix     # OpenAPI v2 documentation
+│   ├── federation.nix    # gRPC Federation for BFF
+│   ├── plugin-registry.nix # Buf registry plugin mappings
+│   └── plugins.nix       # Dynamic plugin configuration
 ├── js/
 │   ├── default.nix       # Main entry point for JavaScript code generation
 │   ├── grpc-web.nix      # gRPC-Web plugin for JS
@@ -404,6 +728,14 @@ languages/
 ├── php/
 │   ├── default.nix       # Main entry point for PHP code generation
 │   └── twirp.nix         # Twirp plugin for PHP
+├── python/
+│   ├── default.nix       # Main entry point for Python code generation
+│   ├── betterproto.nix   # Betterproto modern dataclasses
+│   ├── grpc.nix          # gRPC plugin for Python
+│   ├── mypy.nix          # Mypy type stubs
+│   └── pyi.nix           # Python type stub generation
+├── svg/
+│   └── default.nix       # SVG diagram generation with protoc-gen-d2
 ├── swift/
 │   └── default.nix       # Main entry point for Swift code generation
 └── module-template.nix   # Template for new language modules
@@ -580,13 +912,21 @@ Available in nixpkgs:
 - `protoc-gen-go` - Go message generation
 - `protoc-gen-go-grpc` - Go gRPC generation
 - `protoc-gen-grpc-gateway` - gRPC to HTTP/JSON gateway
-- `protoc-gen-validate` - Message validation
+- `protoc-gen-validate` - Legacy message validation
 - `protoc-gen-connect-go` - Connect protocol for Go
 - `protoc-gen-dart` - Dart message and gRPC generation
 - `protoc-gen-js` - JavaScript message generation
 - `protoc-gen-grpc-web` - gRPC-Web for browsers
 - `protoc-gen-php` - PHP message generation
 - `protoc-gen-swift` - Swift message generation
+
+Plugins requiring custom packaging (not yet in nixpkgs):
+
+- `protovalidate-go` - Modern CEL-based validation runtime
+- `protoc-gen-openapiv2` - OpenAPI v2 documentation
+- `protoc-gen-go-vtproto` - High-performance Go serialization
+- `protoc-gen-go-json` - JSON integration for Go
+- `protoc-gen-grpc-federation` - gRPC Federation for BFF
 
 ### Custom Plugins
 

@@ -1,0 +1,519 @@
+---
+title: SVG Diagrams
+description: Generate visual Protocol Buffer documentation with SVG diagrams
+sidebar:
+  order: 7
+---
+
+import { Tabs, TabItem } from '@astrojs/starlight/components';
+import { Code } from '@astrojs/starlight/components';
+
+SVG support in bufrnix enables generation of visual diagrams from Protocol Buffer definitions using protoc-gen-d2 and the D2 diagram language. This creates clear, visual documentation of your data structures and service relationships.
+
+## Configuration
+
+<Tabs>
+  <TabItem label="Basic">
+```nix
+{
+  languages = {
+    svg = {
+      enable = true;
+    };
+  };
+}
+```
+  </TabItem>
+  <TabItem label="Advanced">
+```nix
+{
+  languages = {
+    svg = {
+      enable = true;
+      outputPath = "proto/gen/svg";
+      package = pkgs.protoc-gen-d2;
+      options = [];
+    };
+  };
+}
+```
+  </TabItem>
+</Tabs>
+
+## Options
+
+### `svg.enable`
+- **Type**: `bool`
+- **Default**: `false`
+- **Description**: Enable SVG diagram generation with protoc-gen-d2
+
+### `svg.outputPath`
+- **Type**: `string`
+- **Default**: `"gen/svg"`
+- **Description**: Output directory for generated SVG diagrams
+
+### `svg.package`
+- **Type**: `package`
+- **Default**: `pkgs.protoc-gen-d2 or null`
+- **Description**: The protoc-gen-d2 package to use (must be provided until available in nixpkgs)
+
+### `svg.options`
+- **Type**: `list of strings`
+- **Default**: `[]`
+- **Description**: Additional options to pass to protoc-gen-d2
+
+## Examples
+
+### Complete Documentation Setup
+
+<Tabs>
+  <TabItem label="flake.nix">
+```nix
+{
+  description = "API documentation with visual diagrams";
+
+  inputs = {
+    nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
+    flake-utils.url = "github:numtide/flake-utils";
+    bufrnix.url = "github:your-org/bufrnix";
+  };
+
+  outputs = { self, nixpkgs, flake-utils, bufrnix }:
+    flake-utils.lib.eachDefaultSystem (system:
+      let
+        pkgs = nixpkgs.legacyPackages.${system};
+        
+        # Build protoc-gen-d2 until available in nixpkgs
+        protoc-gen-d2 = pkgs.buildGoModule rec {
+          pname = "protoc-gen-d2";
+          version = "unstable-2024-01-01";
+          
+          src = pkgs.fetchFromGitHub {
+            owner = "mvrilo";
+            repo = "protoc-gen-d2";
+            rev = "main";
+            sha256 = "sha256-oP9oohemj1dvYVePXunPfDw9gaRF4vcbIn8pKy+tp+4=";
+          };
+          
+          vendorHash = "sha256-befhSI1kYAhWoKcD4eg+ByFGgmOGgMmITHgKkBkZnY8=";
+        };
+        
+        protoDocs = bufrnix.lib.mkBufrnixPackage {
+          inherit pkgs;
+          inherit (pkgs) lib;
+          config = {
+            languages = {
+              # Visual diagrams
+              svg = {
+                enable = true;
+                outputPath = "docs/diagrams";
+                package = protoc-gen-d2;
+              };
+              
+              # HTML documentation
+              doc = {
+                enable = true;
+                outputPath = "docs/html";
+                format = "html";
+                outputFile = "index.html";
+              };
+              
+              # Markdown documentation
+              docMarkdown = {
+                enable = true;
+                outputPath = "docs/markdown";
+                format = "markdown";
+                outputFile = "api.md";
+              };
+            };
+          };
+        };
+      in {
+        packages = {
+          default = protoDocs;
+          documentation = protoDocs;
+        };
+        
+        devShells.default = pkgs.mkShell {
+          packages = with pkgs; [
+            protoDocs
+            d2  # For custom diagram editing
+            python3  # For serving docs locally
+          ];
+          
+          shellHook = ''
+            echo "Documentation generation environment"
+            echo "Commands:"
+            echo "  bufrnix         - Generate all documentation"
+            echo "  python3 -m http.server -d docs/html  - Serve HTML docs"
+          '';
+        };
+      });
+}
+```
+  </TabItem>
+  <TabItem label="Proto Structure">
+```protobuf
+// proto/user/v1/user.proto
+syntax = "proto3";
+
+package user.v1;
+
+import "google/protobuf/timestamp.proto";
+
+// User represents a system user
+message User {
+  string id = 1;
+  string email = 2;
+  string name = 3;
+  UserRole role = 4;
+  google.protobuf.Timestamp created_at = 5;
+  UserStatus status = 6;
+}
+
+// UserRole defines access levels
+enum UserRole {
+  USER_ROLE_UNSPECIFIED = 0;
+  USER_ROLE_VIEWER = 1;
+  USER_ROLE_EDITOR = 2;
+  USER_ROLE_ADMIN = 3;
+}
+
+// UserStatus tracks user state
+enum UserStatus {
+  USER_STATUS_UNSPECIFIED = 0;
+  USER_STATUS_ACTIVE = 1;
+  USER_STATUS_INACTIVE = 2;
+  USER_STATUS_SUSPENDED = 3;
+}
+
+// UserService manages users
+service UserService {
+  rpc GetUser(GetUserRequest) returns (GetUserResponse);
+  rpc ListUsers(ListUsersRequest) returns (ListUsersResponse);
+  rpc CreateUser(CreateUserRequest) returns (CreateUserResponse);
+  rpc UpdateUser(UpdateUserRequest) returns (UpdateUserResponse);
+  rpc DeleteUser(DeleteUserRequest) returns (DeleteUserResponse);
+}
+```
+  </TabItem>
+  <TabItem label="Generated Diagram">
+```d2
+# Generated D2 diagram (example output)
+user.v1.User: {
+  shape: class
+  id: string
+  email: string
+  name: string
+  role: UserRole
+  created_at: timestamp
+  status: UserStatus
+}
+
+user.v1.UserRole: {
+  shape: enum
+  UNSPECIFIED
+  VIEWER
+  EDITOR
+  ADMIN
+}
+
+user.v1.UserStatus: {
+  shape: enum
+  UNSPECIFIED
+  ACTIVE
+  INACTIVE
+  SUSPENDED
+}
+
+user.v1.UserService: {
+  shape: service
+  GetUser(GetUserRequest): GetUserResponse
+  ListUsers(ListUsersRequest): ListUsersResponse
+  CreateUser(CreateUserRequest): CreateUserResponse
+  UpdateUser(UpdateUserRequest): UpdateUserResponse
+  DeleteUser(DeleteUserRequest): DeleteUserResponse
+}
+
+# Relationships
+user.v1.User -> user.v1.UserRole: has role
+user.v1.User -> user.v1.UserStatus: has status
+user.v1.UserService -> user.v1.User: manages
+```
+  </TabItem>
+</Tabs>
+
+### Multi-Service Architecture Visualization
+
+<Tabs>
+  <TabItem label="Configuration">
+```nix
+{
+  languages = {
+    svg = {
+      enable = true;
+      outputPath = "architecture/diagrams";
+      package = protoc-gen-d2;
+    };
+  };
+  
+  protoc = {
+    sourceDirectories = ["./proto"];
+    files = [
+      "proto/user/v1/*.proto"
+      "proto/order/v1/*.proto"
+      "proto/payment/v1/*.proto"
+      "proto/notification/v1/*.proto"
+    ];
+  };
+}
+```
+  </TabItem>
+  <TabItem label="Service Relationships">
+```protobuf
+// proto/order/v1/order.proto
+syntax = "proto3";
+
+package order.v1;
+
+import "user/v1/user.proto";
+import "payment/v1/payment.proto";
+
+message Order {
+  string id = 1;
+  user.v1.User customer = 2;
+  repeated OrderItem items = 3;
+  payment.v1.PaymentMethod payment_method = 4;
+  OrderStatus status = 5;
+}
+
+service OrderService {
+  rpc CreateOrder(CreateOrderRequest) returns (CreateOrderResponse);
+  rpc ProcessPayment(ProcessPaymentRequest) returns (ProcessPaymentResponse);
+  rpc NotifyCustomer(NotifyCustomerRequest) returns (NotifyCustomerResponse);
+}
+```
+  </TabItem>
+  <TabItem label="Generated Overview">
+The SVG generation creates visual diagrams showing:
+
+1. **Service Dependencies**: Clear visualization of which services depend on others
+2. **Message Relationships**: How different message types reference each other
+3. **API Surface**: All RPC methods and their request/response types
+4. **Data Flow**: Visual representation of how data moves through the system
+
+The generated SVG files can be:
+- Embedded in documentation sites
+- Used in architecture reviews
+- Included in API reference materials
+- Exported for presentations
+  </TabItem>
+</Tabs>
+
+### Documentation Site Integration
+
+<Tabs>
+  <TabItem label="Static Site">
+```html
+<!-- docs/index.html -->
+<!DOCTYPE html>
+<html>
+<head>
+    <title>API Documentation</title>
+    <style>
+        .diagram-container {
+            max-width: 100%;
+            overflow: auto;
+            margin: 20px 0;
+        }
+        .diagram-container img {
+            max-width: 100%;
+            height: auto;
+        }
+    </style>
+</head>
+<body>
+    <h1>API Architecture</h1>
+    
+    <section>
+        <h2>User Service</h2>
+        <div class="diagram-container">
+            <img src="diagrams/user_service.svg" alt="User Service Diagram">
+        </div>
+        <p>The User Service manages user accounts and authentication.</p>
+    </section>
+    
+    <section>
+        <h2>Order Service</h2>
+        <div class="diagram-container">
+            <img src="diagrams/order_service.svg" alt="Order Service Diagram">
+        </div>
+        <p>The Order Service handles order processing and fulfillment.</p>
+    </section>
+    
+    <section>
+        <h2>System Overview</h2>
+        <div class="diagram-container">
+            <img src="diagrams/system_overview.svg" alt="System Overview">
+        </div>
+        <p>Complete system architecture showing all service interactions.</p>
+    </section>
+</body>
+</html>
+```
+  </TabItem>
+  <TabItem label="Markdown Docs">
+```markdown
+# API Documentation
+
+## Service Architecture
+
+### User Service
+![User Service](./diagrams/user_service.svg)
+
+The User Service provides:
+- User registration and authentication
+- Profile management
+- Role-based access control
+
+### Order Service  
+![Order Service](./diagrams/order_service.svg)
+
+The Order Service handles:
+- Order creation and processing
+- Inventory management
+- Payment integration
+
+### System Overview
+![System Overview](./diagrams/system_overview.svg)
+
+The complete system architecture shows how services interact:
+- User Service authenticates all requests
+- Order Service depends on User and Payment services
+- Notification Service handles all async communications
+```
+  </TabItem>
+</Tabs>
+
+## Best Practices
+
+### Proto Organization for Diagrams
+```
+proto/
+├── common/           # Shared types generate cleaner diagrams
+│   └── v1/
+│       └── types.proto
+├── user/
+│   └── v1/
+│       └── user.proto
+├── order/
+│   └── v1/
+│       └── order.proto
+└── buf.yaml         # Lint rules ensure consistent diagrams
+```
+
+### Diagram Optimization
+
+1. **Message Naming**: Clear, descriptive names improve diagram readability
+2. **Service Grouping**: Related RPCs should be in the same service
+3. **Import Structure**: Minimize cross-service imports for cleaner diagrams
+4. **Documentation Comments**: Proto comments may appear in diagrams
+
+### Integration Tips
+
+#### CI/CD Pipeline
+```yaml
+# .github/workflows/docs.yml
+name: Generate Documentation
+on:
+  push:
+    paths:
+      - 'proto/**'
+      
+jobs:
+  generate-docs:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      
+      - name: Install Nix
+        uses: cachix/install-nix-action@v22
+        
+      - name: Generate diagrams
+        run: nix build .#documentation
+        
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: api-diagrams
+          path: result/docs/diagrams/
+```
+
+#### Documentation Automation
+```nix
+# Generate diagrams and deploy to GitHub Pages
+{
+  packages.docs-site = pkgs.stdenv.mkDerivation {
+    name = "api-docs-site";
+    src = protoDocs;
+    
+    buildPhase = ''
+      mkdir -p $out
+      cp -r ${protoDocs}/docs/* $out/
+      
+      # Generate index with all diagrams
+      cat > $out/index.html <<EOF
+      <!DOCTYPE html>
+      <html>
+      <head><title>API Diagrams</title></head>
+      <body>
+      <h1>API Documentation</h1>
+      EOF
+      
+      for svg in $out/diagrams/*.svg; do
+        basename=$(basename $svg .svg)
+        echo "<h2>$basename</h2>" >> $out/index.html
+        echo "<img src=\"diagrams/$svg\" />" >> $out/index.html
+      done
+      
+      echo "</body></html>" >> $out/index.html
+    '';
+  };
+}
+```
+
+## Limitations and Considerations
+
+1. **Complex Schemas**: Very large proto files may generate cluttered diagrams
+2. **Custom Styling**: D2 styling options are limited through protoc-gen-d2
+3. **Performance**: Large codebases may take time to process
+4. **Dependencies**: Requires both protoc-gen-d2 and d2 runtime
+
+## Future Enhancements
+
+The SVG generation feature is continuously improving. Planned enhancements include:
+
+- Custom D2 themes for branded documentation
+- Interactive SVG features
+- Diagram filtering options
+- Service dependency graphs
+- Data flow visualizations
+
+## Troubleshooting
+
+### Common Issues
+
+1. **No SVG files generated**
+   - Ensure d2 is available in runtime inputs
+   - Check that .d2 files are being generated first
+   - Verify write permissions on output directory
+
+2. **Diagrams too large**
+   - Consider splitting large proto files
+   - Use separate diagrams per service
+   - Apply D2 layout options if available
+
+3. **Missing relationships**
+   - Ensure proto imports are correct
+   - Check that message types are properly referenced
+   - Verify protoc-gen-d2 version supports your proto features

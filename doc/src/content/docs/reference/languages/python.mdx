@@ -1,0 +1,473 @@
+---
+title: Python Language Support
+description: Comprehensive Protocol Buffer support for Python with gRPC, type stubs, and modern dataclass alternatives.
+---
+
+import { Tabs, TabItem } from "@astrojs/starlight/components";
+
+# Python Language Support
+
+**Status**: ✅ Full Support  
+**Example**: [`examples/python-example/`](https://github.com/conneroisu/bufr.nix/tree/main/examples/python-example)
+
+Python support provides comprehensive Protocol Buffer integration with multiple output options including gRPC, type stubs, and modern dataclass alternatives.
+
+## Available Plugins
+
+| Plugin                              | Description                | Generated Files               |
+| ----------------------------------- | -------------------------- | ----------------------------- |
+| **`protoc-gen-python`**             | Base message generation    | `*_pb2.py`                    |
+| **`protoc-gen-grpc_python`**        | gRPC services              | `*_pb2_grpc.py`               |
+| **`protoc-gen-pyi`**                | Type stubs for IDE support | `*_pb2.pyi`                   |
+| **`protoc-gen-mypy`**               | Mypy type checking stubs   | `*_pb2.pyi`, `*_pb2_grpc.pyi` |
+| **`protoc-gen-python_betterproto`** | Modern dataclass approach  | `*.py` (with @dataclass)      |
+
+## Configuration
+
+### Basic Configuration
+
+```nix
+languages.python = {
+  enable = true;
+  outputPath = "proto/gen/python";
+};
+```
+
+### Full Configuration
+
+```nix
+languages.python = {
+  enable = true;
+  outputPath = "proto/gen/python";
+  options = [];
+
+  # gRPC service generation
+  grpc = {
+    enable = true;
+    options = [];
+  };
+
+  # Type stubs for better IDE support
+  pyi = {
+    enable = true;
+    options = [];
+  };
+
+  # Mypy type checking support
+  mypy = {
+    enable = true;
+    options = [];
+  };
+
+  # Modern Python dataclasses (alternative to standard protobuf)
+  betterproto = {
+    enable = false;  # Opt-in due to different API
+    options = [];
+  };
+};
+```
+
+## Proto Example
+
+```protobuf
+// proto/example/v1/example.proto
+syntax = "proto3";
+
+package example.v1;
+
+message Greeting {
+  string id = 1;
+  string content = 2;
+  int64 created_at = 3;
+  repeated string tags = 4;
+  map<string, string> metadata = 5;
+  oneof optional_field {
+    string text_value = 6;
+    int32 numeric_value = 7;
+  }
+}
+
+enum GreetingType {
+  GREETING_TYPE_UNSPECIFIED = 0;
+  GREETING_TYPE_HELLO = 1;
+  GREETING_TYPE_GOODBYE = 2;
+  GREETING_TYPE_WELCOME = 3;
+}
+
+message CreateGreetingRequest {
+  string content = 1;
+  repeated string tags = 2;
+  GreetingType type = 3;
+}
+
+message CreateGreetingResponse {
+  Greeting greeting = 1;
+}
+
+message ListGreetingsRequest {
+  int32 page_size = 1;
+  string page_token = 2;
+  GreetingType type_filter = 3;
+}
+
+message ListGreetingsResponse {
+  repeated Greeting greetings = 1;
+  string next_page_token = 2;
+}
+
+service GreetingService {
+  rpc CreateGreeting(CreateGreetingRequest) returns (CreateGreetingResponse);
+  rpc ListGreetings(ListGreetingsRequest) returns (ListGreetingsResponse);
+  rpc StreamGreetings(ListGreetingsRequest) returns (stream Greeting);
+  rpc BidirectionalStream(stream CreateGreetingRequest) returns (stream Greeting);
+}
+```
+
+## Generated Code Usage
+
+<Tabs>
+  <TabItem label="Standard Protobuf">
+    ```python
+    import grpc
+    from proto.gen.python.example.v1 import example_pb2
+    from proto.gen.python.example.v1 import example_pb2_grpc
+    
+    # Client usage
+    async def main():
+        # Create channel and stub
+        channel = grpc.insecure_channel('localhost:50051')
+        stub = example_pb2_grpc.GreetingServiceStub(channel)
+    
+        # Create a greeting
+        request = example_pb2.CreateGreetingRequest(
+            content="Hello from Python!",
+            tags=["python", "grpc", "example"],
+            type=example_pb2.GREETING_TYPE_HELLO
+        )
+    
+        response = stub.CreateGreeting(request)
+        print(f"Created greeting: {response.greeting.id}")
+    
+        # Work with the message
+        greeting = response.greeting
+        print(f"Content: {greeting.content}")
+        print(f"Tags: {list(greeting.tags)}")
+        
+        # Access map fields
+        greeting.metadata["author"] = "Python Client"
+        greeting.metadata["version"] = "1.0"
+    
+        # Serialize to bytes
+        data = greeting.SerializeToString()
+        print(f"Serialized size: {len(data)} bytes")
+    
+        # Deserialize from bytes
+        new_greeting = example_pb2.Greeting()
+        new_greeting.ParseFromString(data)
+    
+        # JSON support
+        from google.protobuf.json_format import MessageToJson, Parse
+        json_str = MessageToJson(greeting)
+        print(f"JSON: {json_str}")
+        
+        # Parse from JSON
+        from_json = Parse(json_str, example_pb2.Greeting())
+    ```
+  </TabItem>
+
+  <TabItem label="Async gRPC Server">
+    ```python
+    import grpc
+    import asyncio
+    from concurrent import futures
+    import time
+    from proto.gen.python.example.v1 import example_pb2
+    from proto.gen.python.example.v1 import example_pb2_grpc
+    
+    class GreetingServicer(example_pb2_grpc.GreetingServiceServicer):
+        def __init__(self):
+            self.greetings = {}
+            self.counter = 0
+        
+        def CreateGreeting(self, request, context):
+            self.counter += 1
+            greeting = example_pb2.Greeting(
+                id=f"greeting-{self.counter}",
+                content=request.content,
+                created_at=int(time.time())
+            )
+            greeting.tags.extend(request.tags)
+            
+            # Set optional field based on type
+            if request.type == example_pb2.GREETING_TYPE_HELLO:
+                greeting.text_value = "Hello variant"
+            else:
+                greeting.numeric_value = request.type
+            
+            self.greetings[greeting.id] = greeting
+            
+            return example_pb2.CreateGreetingResponse(greeting=greeting)
+        
+        def ListGreetings(self, request, context):
+            filtered = [
+                g for g in self.greetings.values()
+                if request.type_filter == 0 or 
+                   self._get_type(g) == request.type_filter
+            ]
+            
+            # Simple pagination
+            start = 0 if not request.page_token else int(request.page_token)
+            end = start + request.page_size
+            
+            page = filtered[start:end]
+            next_token = str(end) if end < len(filtered) else ""
+            
+            return example_pb2.ListGreetingsResponse(
+                greetings=page,
+                next_page_token=next_token
+            )
+        
+        def StreamGreetings(self, request, context):
+            """Server streaming RPC"""
+            while context.is_active():
+                for greeting in self.greetings.values():
+                    if request.type_filter == 0 or \
+                       self._get_type(greeting) == request.type_filter:
+                        yield greeting
+                        time.sleep(1)
+        
+        def BidirectionalStream(self, request_iterator, context):
+            """Bidirectional streaming RPC"""
+            for request in request_iterator:
+                # Process each request and yield response
+                response = self.CreateGreeting(request, context)
+                yield response.greeting
+        
+        def _get_type(self, greeting):
+            # Helper to determine greeting type
+            if greeting.HasField("text_value"):
+                return example_pb2.GREETING_TYPE_HELLO
+            elif greeting.HasField("numeric_value"):
+                return greeting.numeric_value
+            return example_pb2.GREETING_TYPE_UNSPECIFIED
+    
+    # Start server
+    async def serve():
+        server = grpc.aio.server()
+        example_pb2_grpc.add_GreetingServiceServicer_to_server(
+            GreetingServicer(), server
+        )
+        server.add_insecure_port('[::]:50051')
+        await server.start()
+        print("Server started on port 50051")
+        await server.wait_for_termination()
+    
+    if __name__ == '__main__':
+        asyncio.run(serve())
+    ```
+  </TabItem>
+
+  <TabItem label="Betterproto">
+    ```python
+    # When betterproto is enabled, you get modern dataclasses
+    import asyncio
+    import grpclib
+    from proto.gen.python.example.v1 import Greeting, CreateGreetingRequest
+    from proto.gen.python.example.v1 import GreetingServiceStub
+    
+    async def main():
+        # Betterproto uses dataclasses
+        greeting = Greeting(
+            id="greeting-1",
+            content="Hello from betterproto!",
+            created_at=int(time.time()),
+            tags=["python", "betterproto"],
+            metadata={"author": "Python Client"},
+            text_value="Hello variant"  # Oneof fields are normal attributes
+        )
+        
+        # Clean pythonic API
+        print(f"Greeting: {greeting}")
+        print(f"Has text value: {greeting.text_value is not None}")
+        
+        # Async/await native support
+        async with grpclib.client.Channel('localhost', 50051) as channel:
+            client = GreetingServiceStub(channel)
+            
+            # Create greeting
+            request = CreateGreetingRequest(
+                content="Hello betterproto!",
+                tags=["modern", "async"]
+            )
+            response = await client.create_greeting(request)
+            
+            # Stream greetings
+            async for greeting in client.stream_greetings(
+                ListGreetingsRequest(page_size=10)
+            ):
+                print(f"Streamed: {greeting.content}")
+        
+        # Serialization
+        data = bytes(greeting)  # Clean serialization
+        new_greeting = Greeting().parse(data)  # Clean parsing
+        
+        # JSON support
+        json_str = greeting.to_json()
+        from_json = Greeting().from_json(json_str)
+    ```
+  </TabItem>
+
+  <TabItem label="Type Hints">
+    ```python
+    # With mypy/pyi enabled, you get full type hints
+    from typing import Optional, List, Dict
+    from proto.gen.python.example.v1 import example_pb2
+    
+    def process_greeting(greeting: example_pb2.Greeting) -> Dict[str, any]:
+        """Process a greeting with full type safety"""
+        result: Dict[str, any] = {
+            "id": greeting.id,
+            "content": greeting.content,
+            "tags": list(greeting.tags),
+            "metadata": dict(greeting.metadata),
+            "created_at": greeting.created_at
+        }
+        
+        # Type checker knows about oneof fields
+        if greeting.HasField("text_value"):
+            result["text"] = greeting.text_value
+        elif greeting.HasField("numeric_value"):
+            result["number"] = greeting.numeric_value
+        
+        return result
+    
+    def create_greeting(
+        content: str,
+        tags: Optional[List[str]] = None,
+        metadata: Optional[Dict[str, str]] = None
+    ) -> example_pb2.Greeting:
+        """Create a greeting with optional parameters"""
+        greeting = example_pb2.Greeting(
+            id=f"greeting-{int(time.time())}",
+            content=content,
+            created_at=int(time.time())
+        )
+        
+        if tags:
+            greeting.tags.extend(tags)
+        
+        if metadata:
+            greeting.metadata.update(metadata)
+        
+        return greeting
+    
+    # IDE will provide autocompletion and type checking
+    greeting = create_greeting(
+        "Hello",
+        tags=["python", "typed"],
+        metadata={"author": "Type Safe"}
+    )
+    ```
+  </TabItem>
+</Tabs>
+
+## Testing
+
+```python
+import pytest
+from proto.gen.python.example.v1 import example_pb2
+
+def test_greeting_creation():
+    """Test creating and serializing a greeting"""
+    greeting = example_pb2.Greeting(
+        id="test-1",
+        content="Test greeting",
+        created_at=1234567890
+    )
+    greeting.tags.extend(["test", "unit"])
+    greeting.metadata["test"] = "true"
+
+    # Test serialization
+    data = greeting.SerializeToString()
+    assert len(data) > 0
+
+    # Test deserialization
+    new_greeting = example_pb2.Greeting()
+    new_greeting.ParseFromString(data)
+
+    assert new_greeting.id == "test-1"
+    assert new_greeting.content == "Test greeting"
+    assert list(new_greeting.tags) == ["test", "unit"]
+    assert dict(new_greeting.metadata) == {"test": "true"}
+
+@pytest.mark.asyncio
+async def test_grpc_service():
+    """Test gRPC service calls"""
+    # Mock or integration test your service
+    pass
+```
+
+## Best Practices
+
+1. **Use Type Stubs**: Enable `pyi` or `mypy` for better IDE support
+2. **Async Support**: Use `grpc.aio` for async/await support
+3. **Error Handling**: Always handle `grpc.RpcError` exceptions
+4. **Streaming**: Use generators efficiently for streaming RPCs
+5. **Betterproto**: Consider for new projects wanting modern Python APIs
+6. **Package Structure**: Follow Python package conventions
+
+## Package Structure
+
+```
+proto/
+└── gen/
+    └── python/
+        └── example/
+            └── v1/
+                ├── __init__.py
+                ├── example_pb2.py
+                ├── example_pb2.pyi      # If pyi enabled
+                ├── example_pb2_grpc.py
+                └── example_pb2_grpc.pyi # If mypy enabled
+```
+
+## Performance Considerations
+
+- **Standard protobuf**: Best performance, C++ implementation
+- **Betterproto**: Pure Python, slower but cleaner API
+- **Serialization**: Binary format is much smaller than JSON
+- **Streaming**: More efficient for large datasets
+
+## Try the Example
+
+```bash
+cd examples/python-example
+nix develop
+bufrnix_init
+bufrnix
+python main.py
+pytest -v
+```
+
+## Troubleshooting
+
+### Import Errors
+
+Ensure the generated code directory is in your Python path:
+
+```python
+import sys
+sys.path.append('./proto/gen/python')
+```
+
+### Type Checking
+
+For mypy to work correctly, use:
+
+```bash
+mypy --follow-imports=skip proto/gen/python/
+```
+
+### Betterproto Compatibility
+
+Betterproto generates different code than standard protobuf. Don't mix them in the same project.
