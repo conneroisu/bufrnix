@@ -2,22 +2,22 @@ syntax = "proto3";
 
 package example.v1;
 
-option php_namespace = "App\\Proto\\Example\\V1";
 option php_metadata_namespace = "App\\Proto\\Metadata\\Example\\V1";
+option php_namespace = "App\\Proto\\Example\\V1";
 
 // The greeting service definition
 service GreeterService {
   // Simple unary RPC
-  rpc SayHello (HelloRequest) returns (HelloResponse);
-  
+  rpc SayHello(HelloRequest) returns (HelloResponse);
+
   // Server streaming RPC
-  rpc SayHelloStream (HelloRequest) returns (stream HelloResponse);
-  
+  rpc SayHelloStream(HelloRequest) returns (stream HelloResponse);
+
   // Client streaming RPC
-  rpc SayHelloClientStream (stream HelloRequest) returns (HelloResponse);
-  
+  rpc SayHelloClientStream(stream HelloRequest) returns (HelloResponse);
+
   // Bidirectional streaming RPC
-  rpc SayHelloBidirectional (stream HelloRequest) returns (stream HelloResponse);
+  rpc SayHelloBidirectional(stream HelloRequest) returns (stream HelloResponse);
 }
 
 // The request message containing the user's name
@@ -36,11 +36,11 @@ message HelloResponse {
 
 // Example of a more complex service
 service UserService {
-  rpc GetUser (GetUserRequest) returns (GetUserResponse);
-  rpc ListUsers (ListUsersRequest) returns (ListUsersResponse);
-  rpc CreateUser (CreateUserRequest) returns (CreateUserResponse);
-  rpc UpdateUser (UpdateUserRequest) returns (UpdateUserResponse);
-  rpc DeleteUser (DeleteUserRequest) returns (DeleteUserResponse);
+  rpc GetUser(GetUserRequest) returns (GetUserResponse);
+  rpc ListUsers(ListUsersRequest) returns (ListUsersResponse);
+  rpc CreateUser(CreateUserRequest) returns (CreateUserResponse);
+  rpc UpdateUser(UpdateUserRequest) returns (UpdateUserResponse);
+  rpc DeleteUser(DeleteUserRequest) returns (DeleteUserResponse);
 }
 
 message User {

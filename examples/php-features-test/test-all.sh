@@ -31,13 +31,13 @@ test_config() {
     
     print_header "$description"
     
-    # Enter the shell and run buf generate
-    echo "Entering shell and generating code..."
-    if nix develop .#$config -c bash -c "buf generate" 2>/dev/null; then
-        print_success "Code generation successful"
-    else
+    # Build the package which runs code generation
+    echo "Building package and generating code..."
+    if nix build .#$config 2>&1 | grep -E "(error:|error:)" > /dev/null; then
         print_error "Code generation failed"
         return 1
+    else
+        print_success "Code generation successful"
     fi
     
     # Check if files were generated

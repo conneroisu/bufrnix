@@ -714,11 +714,11 @@ PHP support provides comprehensive Protocol Buffer and gRPC development with hig
 
 ### Available Plugins
 
-| Plugin                        | Description                    | Generated Files                           |
-| ----------------------------- | ------------------------------ | ----------------------------------------- |
-| **`protoc-gen-php`**          | Message classes                | `*.php`, `GPBMetadata/*.php`              |
-| **`grpc_php_plugin`**         | gRPC client/server stubs       | `*Client.php`, `*Interface.php`           |
-| **`protoc-gen-twirp_php`**    | Twirp RPC (deprecated)         | `*Client.php`, `*Server.php`              |
+| Plugin                     | Description              | Generated Files                 |
+| -------------------------- | ------------------------ | ------------------------------- |
+| **`protoc-gen-php`**       | Message classes          | `*.php`, `GPBMetadata/*.php`    |
+| **`grpc_php_plugin`**      | gRPC client/server stubs | `*Client.php`, `*Interface.php` |
+| **`protoc-gen-twirp_php`** | Twirp RPC (deprecated)   | `*Client.php`, `*Server.php`    |
 
 ### Configuration
 
@@ -726,25 +726,25 @@ PHP support provides comprehensive Protocol Buffer and gRPC development with hig
 languages.php = {
   enable = true;
   outputPath = "gen/php";
-  
+
   # Namespace configuration
   namespace = "App\\Proto";
   metadataNamespace = "GPBMetadata";
   classPrefix = "";  # Optional prefix
-  
+
   # Composer integration
   composer = {
     enable = true;
     autoInstall = false;
   };
-  
+
   # gRPC support
   grpc = {
     enable = true;
     serviceNamespace = "Services";
     clientOnly = false;
   };
-  
+
   # High-performance RoadRunner server
   roadrunner = {
     enable = true;
@@ -753,7 +753,7 @@ languages.php = {
     maxMemory = 128;
     tlsEnabled = false;
   };
-  
+
   # Framework integration
   frameworks = {
     laravel = {
@@ -761,26 +761,26 @@ languages.php = {
       serviceProvider = true;
       artisanCommands = true;
     };
-    
+
     symfony = {
       enable = false;
       bundle = true;
       messengerIntegration = true;
     };
   };
-  
+
   # Async PHP support
   async = {
     reactphp = {
       enable = false;
       version = "^1.0";
     };
-    
+
     swoole = {
       enable = false;
       coroutines = true;
     };
-    
+
     fibers = {
       enable = false;  # PHP 8.1+
     };
@@ -802,13 +802,13 @@ option php_metadata_namespace = "App\\Proto\\Metadata\\Example\\V1";
 service GreeterService {
   // Unary RPC
   rpc SayHello (HelloRequest) returns (HelloResponse);
-  
+
   // Server streaming RPC
   rpc SayHelloStream (HelloRequest) returns (stream HelloResponse);
-  
+
   // Client streaming RPC
   rpc SayHelloClientStream (stream HelloRequest) returns (HelloResponse);
-  
+
   // Bidirectional streaming RPC
   rpc SayHelloBidirectional (stream HelloRequest) returns (stream HelloResponse);
 }
@@ -897,10 +897,10 @@ class GreeterService implements GreeterServiceInterface
         $response->setMessage("Hello, " . $request->getName() . "!");
         $response->setTimestamp(time());
         $response->setSuccess(true);
-        
+
         return $response;
     }
-    
+
     public function SayHelloStream(
         ContextInterface $ctx,
         HelloRequest $request
@@ -909,7 +909,7 @@ class GreeterService implements GreeterServiceInterface
             $response = new HelloResponse();
             $response->setMessage("Stream #$i: Hello, " . $request->getName());
             $response->setTimestamp(time());
-            
+
             yield $response;
             usleep(500000); // 500ms delay
         }
@@ -927,9 +927,9 @@ public function greet(Request $request, GreeterServiceClient $client)
 {
     $grpcRequest = new HelloRequest();
     $grpcRequest->setName($request->input('name'));
-    
+
     [$response, $status] = $client->SayHello($grpcRequest)->wait();
-    
+
     return response()->json([
         'message' => $response->getMessage(),
     ]);
@@ -945,9 +945,9 @@ public function greet(string $name, GreeterServiceClient $client): JsonResponse
 {
     $request = new HelloRequest();
     $request->setName($name);
-    
+
     [$response, $status] = $client->SayHello($request)->wait();
-    
+
     return $this->json([
         'message' => $response->getMessage(),
     ]);
@@ -1383,26 +1383,26 @@ swift run
 
 ## Language Comparison
 
-| Feature              | Go  | Dart | JavaScript/TypeScript | PHP | Python | Swift | C (protobuf-c) | C (nanopb) |
-| -------------------- | --- | ---- | --------------------- | --- | ------ | ----- | -------------- | ---------- |
-| **Base Messages**    | ✅  | ✅   | ✅                    | ✅  | ✅     | ✅    | ✅             | ✅         |
-| **gRPC Services**    | ✅  | ✅   | ✅ (Web)              | ✅  | ✅     | ❌    | ⚠️ (Basic)     | ❌         |
-| **Streaming RPC**    | ✅  | ✅   | ✅ (Web)              | ✅  | ✅     | ❌    | ❌             | ❌         |
-| **HTTP Gateway**     | ✅  | ❌   | ❌                    | ❌  | ❌     | ❌    | ❌             | ❌         |
-| **Validation**       | ✅  | ❌   | ❌                    | ❌  | ❌     | ❌    | ❌             | ❌         |
-| **Connect Protocol** | ✅  | ❌   | ✅                    | ❌  | ❌     | ❌    | ❌             | ❌         |
-| **Twirp RPC**        | ❌  | ❌   | ✅                    | ✅  | ❌     | ❌    | ❌             | ❌         |
-| **JSON Mapping**     | ✅  | ✅   | ✅                    | ✅  | ✅     | ✅    | ❌             | ❌         |
-| **Type Safety**      | ✅  | ✅   | ✅                    | ⚠️  | ✅     | ✅    | ⚠️             | ⚠️         |
-| **Server Support**   | ✅  | ✅   | ❌                    | ✅  | ✅     | ✅    | ✅             | ✅         |
-| **Browser Support**  | ❌  | ❌   | ✅                    | ❌  | ❌     | ❌    | ❌             | ❌         |
-| **High-Perf Server** | ✅  | ❌   | ❌                    | ✅  | ❌     | ❌    | ❌             | ❌         |
-| **Framework Support**| ⚠️  | ❌   | ⚠️                    | ✅  | ⚠️     | ❌    | ❌             | ❌         |
-| **Dynamic Memory**   | ✅  | ✅   | ✅                    | ✅  | ✅     | ✅    | ✅             | ❌         |
-| **Embedded Systems** | ❌  | ❌   | ❌                    | ❌  | ❌     | ❌    | ⚠️             | ✅         |
-| **Zero Allocation**  | ❌  | ❌   | ❌                    | ❌  | ❌     | ❌    | ❌             | ✅         |
-| **Type Stubs**       | ❌  | ❌   | ✅                    | ❌  | ✅     | ❌    | ❌             | ❌         |
-| **Async Support**    | ✅  | ✅   | ✅                    | ✅  | ✅     | ✅    | ❌             | ❌         |
+| Feature               | Go  | Dart | JavaScript/TypeScript | PHP | Python | Swift | C (protobuf-c) | C (nanopb) |
+| --------------------- | --- | ---- | --------------------- | --- | ------ | ----- | -------------- | ---------- |
+| **Base Messages**     | ✅  | ✅   | ✅                    | ✅  | ✅     | ✅    | ✅             | ✅         |
+| **gRPC Services**     | ✅  | ✅   | ✅ (Web)              | ✅  | ✅     | ❌    | ⚠️ (Basic)     | ❌         |
+| **Streaming RPC**     | ✅  | ✅   | ✅ (Web)              | ✅  | ✅     | ❌    | ❌             | ❌         |
+| **HTTP Gateway**      | ✅  | ❌   | ❌                    | ❌  | ❌     | ❌    | ❌             | ❌         |
+| **Validation**        | ✅  | ❌   | ❌                    | ❌  | ❌     | ❌    | ❌             | ❌         |
+| **Connect Protocol**  | ✅  | ❌   | ✅                    | ❌  | ❌     | ❌    | ❌             | ❌         |
+| **Twirp RPC**         | ❌  | ❌   | ✅                    | ✅  | ❌     | ❌    | ❌             | ❌         |
+| **JSON Mapping**      | ✅  | ✅   | ✅                    | ✅  | ✅     | ✅    | ❌             | ❌         |
+| **Type Safety**       | ✅  | ✅   | ✅                    | ⚠️  | ✅     | ✅    | ⚠️             | ⚠️         |
+| **Server Support**    | ✅  | ✅   | ❌                    | ✅  | ✅     | ✅    | ✅             | ✅         |
+| **Browser Support**   | ❌  | ❌   | ✅                    | ❌  | ❌     | ❌    | ❌             | ❌         |
+| **High-Perf Server**  | ✅  | ❌   | ❌                    | ✅  | ❌     | ❌    | ❌             | ❌         |
+| **Framework Support** | ⚠️  | ❌   | ⚠️                    | ✅  | ⚠️     | ❌    | ❌             | ❌         |
+| **Dynamic Memory**    | ✅  | ✅   | ✅                    | ✅  | ✅     | ✅    | ✅             | ❌         |
+| **Embedded Systems**  | ❌  | ❌   | ❌                    | ❌  | ❌     | ❌    | ⚠️             | ✅         |
+| **Zero Allocation**   | ❌  | ❌   | ❌                    | ❌  | ❌     | ❌    | ❌             | ✅         |
+| **Type Stubs**        | ❌  | ❌   | ✅                    | ❌  | ✅     | ❌    | ❌             | ❌         |
+| **Async Support**     | ✅  | ✅   | ✅                    | ✅  | ✅     | ✅    | ❌             | ❌         |
 
 ## Multi-Language Projects
 
@@ -1444,13 +1444,13 @@ config = {
     enable = true;
     outputPath = "backend/gen/php";
     namespace = "Backend\\Proto";
-    
+
     grpc.enable = true;
     roadrunner = {
       enable = true;
       workers = 8;
     };
-    
+
     frameworks.laravel.enable = true;
   };
 

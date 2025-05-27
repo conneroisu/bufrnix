@@ -2,10 +2,10 @@ syntax = "proto3";
 
 package test.v1;
 
+option php_class_prefix = "";
+option php_metadata_namespace = "Test\\Metadata\\V1";
 // Test various PHP namespace options
 option php_namespace = "Test\\V1";
-option php_metadata_namespace = "Test\\Metadata\\V1";
-option php_class_prefix = "";
 
 // Test message with various field types
 message TestMessage {
@@ -13,27 +13,27 @@ message TestMessage {
   string name = 2;
   int32 value = 3;
   bool active = 4;
-  
+
   // Repeated fields
   repeated string tags = 5;
   repeated int32 numbers = 6;
-  
+
   // Map field
   map<string, string> metadata = 7;
-  
+
   // Nested message
   NestedMessage nested = 8;
-  
+
   // Enum field
   TestEnum status = 9;
-  
+
   // Optional fields
   optional string description = 10;
   optional int64 timestamp = 11;
-  
+
   // Bytes field
   bytes data = 12;
-  
+
   // Oneof field
   oneof test_oneof {
     string string_value = 13;
@@ -60,16 +60,16 @@ enum TestEnum {
 // Service definition for gRPC testing
 service TestService {
   // Unary RPC
-  rpc GetTest (GetTestRequest) returns (GetTestResponse);
-  
+  rpc GetTest(GetTestRequest) returns (GetTestResponse);
+
   // Server streaming RPC
-  rpc ListTests (ListTestsRequest) returns (stream TestMessage);
-  
+  rpc ListTests(ListTestsRequest) returns (stream TestMessage);
+
   // Client streaming RPC
-  rpc CreateTests (stream CreateTestRequest) returns (CreateTestsResponse);
-  
+  rpc CreateTests(stream CreateTestRequest) returns (CreateTestsResponse);
+
   // Bidirectional streaming RPC
-  rpc StreamTests (stream TestMessage) returns (stream TestMessage);
+  rpc StreamTests(stream TestMessage) returns (stream TestMessage);
 }
 
 // Request/Response messages for service methods
@@ -112,40 +112,40 @@ message ComplexMessage {
   fixed64 fixed64_field = 10;
   sfixed32 sfixed32_field = 11;
   sfixed64 sfixed64_field = 12;
-  
+
   // String and bytes
   string string_field = 13;
   bytes bytes_field = 14;
-  
+
   // Boolean
   bool bool_field = 15;
-  
+
   // Repeated fields of various types
   repeated string repeated_strings = 16;
   repeated int32 repeated_ints = 17;
   repeated TestMessage repeated_messages = 18;
-  
+
   // Maps of various types
   map<string, string> string_map = 19;
   map<int32, string> int_map = 20;
   map<string, TestMessage> message_map = 21;
-  
+
   // Multiple oneofs
   oneof first_choice {
     string choice_string = 22;
     int32 choice_int = 23;
     TestMessage choice_message = 24;
   }
-  
+
   oneof second_choice {
     bool choice_bool = 25;
     bytes choice_bytes = 26;
   }
-  
+
   // Nested enums and messages
   TestEnum enum_field = 27;
   NestedMessage nested_field = 28;
-  
+
   // Reserved fields
   reserved 29, 30, 31;
   reserved "old_field1", "old_field2";

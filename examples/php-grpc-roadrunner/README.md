@@ -1,6 +1,7 @@
 # PHP gRPC with RoadRunner Example
 
 This example demonstrates Bufrnix's comprehensive PHP support including:
+
 - gRPC client and server generation
 - High-performance RoadRunner server
 - Async PHP with ReactPHP, Swoole, and Fibers
@@ -23,6 +24,7 @@ nix develop
 ```
 
 This will:
+
 - Set up PHP with gRPC and protobuf extensions
 - Install RoadRunner
 - Configure all development tools
@@ -64,6 +66,7 @@ buf generate
 ```
 
 This generates:
+
 - Message classes in `gen/php/App/Proto/Example/V1/`
 - gRPC service interfaces and clients
 - RoadRunner-compatible server stubs
@@ -100,10 +103,10 @@ class GreeterService implements GreeterServiceInterface
         $response = new HelloResponse();
         $response->setMessage("Hello, " . $request->getName() . "!");
         $response->setTimestamp(time());
-        
+
         return $response;
     }
-    
+
     public function SayHelloStream(
         ContextInterface $ctx,
         HelloRequest $request
@@ -112,13 +115,13 @@ class GreeterService implements GreeterServiceInterface
             $response = new HelloResponse();
             $response->setMessage("Hello #$i, " . $request->getName() . "!");
             $response->setTimestamp(time());
-            
+
             yield $response;
-            
+
             usleep(500000); // 500ms delay
         }
     }
-    
+
     public function SayHelloBidirectional(
         ContextInterface $ctx,
         \Iterator $requests
@@ -127,7 +130,7 @@ class GreeterService implements GreeterServiceInterface
             $response = new HelloResponse();
             $response->setMessage("Echo: Hello, " . $request->getName() . "!");
             $response->setTimestamp(time());
-            
+
             yield $response;
         }
     }
@@ -284,10 +287,10 @@ Edit `.rr.yaml` to tune performance:
 ```yaml
 grpc:
   pool:
-    num_workers: 8      # Increase for more concurrency
-    max_jobs: 500       # Jobs before worker restart
+    num_workers: 8 # Increase for more concurrency
+    max_jobs: 500 # Jobs before worker restart
     supervisor:
-      max_worker_memory: 256  # MB per worker
+      max_worker_memory: 256 # MB per worker
 ```
 
 ### PHP Extensions
@@ -345,10 +348,12 @@ bin/console grpc:worker
 ### Common Issues
 
 1. **Extension not loaded**
+
    - Check `php -m | grep grpc`
    - Ensure extensions are enabled in php.ini
 
 2. **RoadRunner workers crashing**
+
    - Check logs: `./roadrunner-dev.sh workers`
    - Increase memory limit in .rr.yaml
 

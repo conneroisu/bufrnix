@@ -35,7 +35,7 @@ Bufrnix provides comprehensive PHP support for Protocol Buffers and gRPC develop
   languages.php = {
     enable = true;
     namespace = "App\\Proto";
-    
+
     grpc = {
       enable = true;
       serviceNamespace = "Services";
@@ -50,28 +50,28 @@ Bufrnix provides comprehensive PHP support for Protocol Buffers and gRPC develop
 {
   languages.php = {
     enable = true;
-    
+
     # Namespace configuration
     namespace = "App\\Proto";
     metadataNamespace = "Metadata";
     classPrefix = ""; # Optional prefix for all classes
-    
+
     # Output directory
     outputPath = "gen/php";
-    
+
     # Composer integration
     composer = {
       enable = true;
       autoInstall = false; # Auto-run composer install
     };
-    
+
     # gRPC client generation
     grpc = {
       enable = true;
       serviceNamespace = "Services";
       clientOnly = false; # Generate both client and server
     };
-    
+
     # RoadRunner server
     roadrunner = {
       enable = true;
@@ -80,7 +80,7 @@ Bufrnix provides comprehensive PHP support for Protocol Buffers and gRPC develop
       maxMemory = 128;
       tlsEnabled = false;
     };
-    
+
     # Framework support
     frameworks = {
       laravel = {
@@ -88,26 +88,26 @@ Bufrnix provides comprehensive PHP support for Protocol Buffers and gRPC develop
         serviceProvider = true;
         artisanCommands = true;
       };
-      
+
       symfony = {
         enable = false;
         bundle = true;
         messengerIntegration = true;
       };
     };
-    
+
     # Async PHP support
     async = {
       reactphp = {
         enable = false;
         version = "^1.0";
       };
-      
+
       swoole = {
         enable = false;
         coroutines = true;
       };
-      
+
       fibers = {
         enable = false;
       };
@@ -120,39 +120,39 @@ Bufrnix provides comprehensive PHP support for Protocol Buffers and gRPC develop
 
 ### Core Options
 
-| Option | Type | Default | Description |
-|--------|------|---------|-------------|
-| `enable` | bool | false | Enable PHP code generation |
-| `package` | package | php with extensions | PHP package to use |
-| `outputPath` | string | "gen/php" | Output directory for generated code |
-| `namespace` | string | "Generated" | Base PHP namespace |
-| `metadataNamespace` | string | "GPBMetadata" | Metadata namespace |
-| `classPrefix` | string | "" | Prefix for generated classes |
+| Option              | Type    | Default             | Description                         |
+| ------------------- | ------- | ------------------- | ----------------------------------- |
+| `enable`            | bool    | false               | Enable PHP code generation          |
+| `package`           | package | php with extensions | PHP package to use                  |
+| `outputPath`        | string  | "gen/php"           | Output directory for generated code |
+| `namespace`         | string  | "Generated"         | Base PHP namespace                  |
+| `metadataNamespace` | string  | "GPBMetadata"       | Metadata namespace                  |
+| `classPrefix`       | string  | ""                  | Prefix for generated classes        |
 
 ### Composer Options
 
-| Option | Type | Default | Description |
-|--------|------|---------|-------------|
-| `composer.enable` | bool | true | Enable Composer integration |
-| `composer.autoInstall` | bool | false | Auto-install dependencies |
+| Option                 | Type | Default | Description                 |
+| ---------------------- | ---- | ------- | --------------------------- |
+| `composer.enable`      | bool | true    | Enable Composer integration |
+| `composer.autoInstall` | bool | false   | Auto-install dependencies   |
 
 ### gRPC Options
 
-| Option | Type | Default | Description |
-|--------|------|---------|-------------|
-| `grpc.enable` | bool | false | Enable gRPC generation |
-| `grpc.clientOnly` | bool | false | Generate only client code |
-| `grpc.serviceNamespace` | string | "Services" | Service namespace suffix |
+| Option                  | Type   | Default    | Description               |
+| ----------------------- | ------ | ---------- | ------------------------- |
+| `grpc.enable`           | bool   | false      | Enable gRPC generation    |
+| `grpc.clientOnly`       | bool   | false      | Generate only client code |
+| `grpc.serviceNamespace` | string | "Services" | Service namespace suffix  |
 
 ### RoadRunner Options
 
-| Option | Type | Default | Description |
-|--------|------|---------|-------------|
-| `roadrunner.enable` | bool | false | Enable RoadRunner server |
-| `roadrunner.workers` | int | 4 | Number of worker processes |
-| `roadrunner.maxJobs` | int | 64 | Jobs before worker restart |
-| `roadrunner.maxMemory` | int | 128 | Memory limit per worker (MB) |
-| `roadrunner.tlsEnabled` | bool | false | Enable TLS support |
+| Option                  | Type | Default | Description                  |
+| ----------------------- | ---- | ------- | ---------------------------- |
+| `roadrunner.enable`     | bool | false   | Enable RoadRunner server     |
+| `roadrunner.workers`    | int  | 4       | Number of worker processes   |
+| `roadrunner.maxJobs`    | int  | 64      | Jobs before worker restart   |
+| `roadrunner.maxMemory`  | int  | 128     | Memory limit per worker (MB) |
+| `roadrunner.tlsEnabled` | bool | false   | Enable TLS support           |
 
 ## Generated Files
 
@@ -268,11 +268,11 @@ public function greet(Request $request)
 {
     $grpcRequest = new HelloRequest();
     $grpcRequest->setName($request->input('name'));
-    
+
     [$response, $status] = $this->greeterClient
         ->SayHello($grpcRequest)
         ->wait();
-    
+
     return response()->json([
         'message' => $response->getMessage(),
     ]);
@@ -290,9 +290,9 @@ public function greet(
 ): JsonResponse {
     $request = new HelloRequest();
     $request->setName($name);
-    
+
     [$response, $status] = $client->SayHello($request)->wait();
-    
+
     return $this->json([
         'message' => $response->getMessage(),
     ]);
@@ -359,10 +359,10 @@ pecl install grpc
 # .rr.yaml
 grpc:
   pool:
-    num_workers: 8      # Increase for more concurrency
-    max_jobs: 500       # More jobs before restart
+    num_workers: 8 # Increase for more concurrency
+    max_jobs: 500 # More jobs before restart
     supervisor:
-      max_worker_memory: 256  # Increase memory limit
+      max_worker_memory: 256 # Increase memory limit
 ```
 
 ### OPcache Configuration
@@ -380,11 +380,13 @@ opcache.max_accelerated_files=20000
 ### Common Issues
 
 **Extension not loaded**
+
 ```bash
 php -m | grep -E '(grpc|protobuf)'
 ```
 
 **RoadRunner workers crashing**
+
 ```bash
 # Check worker status
 ./roadrunner-dev.sh workers
@@ -394,6 +396,7 @@ php -m | grep -E '(grpc|protobuf)'
 ```
 
 **Class not found errors**
+
 ```bash
 # Regenerate autoloader
 composer dump-autoload
