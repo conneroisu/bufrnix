@@ -179,8 +179,8 @@ with lib; {
 
         package = mkOption {
           type = types.package;
-          defaultText = literalExpression "pkgs.protobuf";
-          description = "The protobuf package to use for PHP generation";
+          defaultText = literalExpression "pkgs.php.withExtensions ({ enabled, all }: enabled ++ [ all.grpc all.protobuf ])";
+          description = "PHP package with required extensions";
         };
 
         outputPath = mkOption {
@@ -197,15 +197,202 @@ with lib; {
 
         namespace = mkOption {
           type = types.str;
-          default = "";
-          description = "PHP namespace for generated code";
+          default = "Generated";
+          description = "Base namespace for generated PHP code";
         };
 
+        metadataNamespace = mkOption {
+          type = types.str;
+          default = "GPBMetadata";
+          description = "Namespace for protobuf metadata";
+        };
+
+        classPrefix = mkOption {
+          type = types.str;
+          default = "";
+          description = "Prefix for generated PHP classes";
+        };
+
+        composer = {
+          enable = mkOption {
+            type = types.bool;
+            default = true;
+            description = "Enable Composer dependency management";
+          };
+
+          autoInstall = mkOption {
+            type = types.bool;
+            default = false;
+            description = "Automatically install Composer dependencies";
+          };
+        };
+
+        # gRPC support
+        grpc = {
+          enable = mkOption {
+            type = types.bool;
+            default = false;
+            description = "Enable gRPC client generation";
+          };
+
+          package = mkOption {
+            type = types.package;
+            defaultText = literalExpression "pkgs.grpc";
+            description = "The gRPC package to use";
+          };
+
+          options = mkOption {
+            type = types.listOf types.str;
+            default = [];
+            description = "Options to pass to grpc PHP plugin";
+          };
+
+          clientOnly = mkOption {
+            type = types.bool;
+            default = false;
+            description = "Generate only client code (no server stubs)";
+          };
+
+          serviceNamespace = mkOption {
+            type = types.str;
+            default = "Services";
+            description = "Namespace suffix for service classes";
+          };
+        };
+
+        # RoadRunner support
+        roadrunner = {
+          enable = mkOption {
+            type = types.bool;
+            default = false;
+            description = "Enable RoadRunner gRPC server generation";
+          };
+
+          package = mkOption {
+            type = types.package;
+            defaultText = literalExpression "pkgs.roadrunner";
+            description = "The RoadRunner package to use";
+          };
+
+          options = mkOption {
+            type = types.listOf types.str;
+            default = [];
+            description = "Options to pass to RoadRunner plugin";
+          };
+
+          workers = mkOption {
+            type = types.int;
+            default = 4;
+            description = "Number of worker processes";
+          };
+
+          maxJobs = mkOption {
+            type = types.int;
+            default = 64;
+            description = "Maximum jobs per worker before restart";
+          };
+
+          maxMemory = mkOption {
+            type = types.int;
+            default = 128;
+            description = "Maximum memory per worker (MB)";
+          };
+
+          tlsEnabled = mkOption {
+            type = types.bool;
+            default = false;
+            description = "Enable TLS for gRPC server";
+          };
+        };
+
+        # Framework integrations
+        frameworks = {
+          laravel = {
+            enable = mkOption {
+              type = types.bool;
+              default = false;
+              description = "Enable Laravel framework integration";
+            };
+
+            serviceProvider = mkOption {
+              type = types.bool;
+              default = true;
+              description = "Generate Laravel service provider";
+            };
+
+            artisanCommands = mkOption {
+              type = types.bool;
+              default = true;
+              description = "Generate Artisan commands for protobuf";
+            };
+          };
+
+          symfony = {
+            enable = mkOption {
+              type = types.bool;
+              default = false;
+              description = "Enable Symfony framework integration";
+            };
+
+            bundle = mkOption {
+              type = types.bool;
+              default = true;
+              description = "Generate Symfony bundle";
+            };
+
+            messengerIntegration = mkOption {
+              type = types.bool;
+              default = true;
+              description = "Integrate with Symfony Messenger";
+            };
+          };
+        };
+
+        # Async PHP support
+        async = {
+          reactphp = {
+            enable = mkOption {
+              type = types.bool;
+              default = false;
+              description = "Enable ReactPHP integration";
+            };
+
+            version = mkOption {
+              type = types.str;
+              default = "^1.0";
+              description = "ReactPHP version constraint";
+            };
+          };
+
+          swoole = {
+            enable = mkOption {
+              type = types.bool;
+              default = false;
+              description = "Enable Swoole/OpenSwoole integration";
+            };
+
+            coroutines = mkOption {
+              type = types.bool;
+              default = true;
+              description = "Enable coroutine support";
+            };
+          };
+
+          fibers = {
+            enable = mkOption {
+              type = types.bool;
+              default = false;
+              description = "Enable PHP 8.1+ Fiber support";
+            };
+          };
+        };
+
+        # Legacy Twirp support (deprecated)
         twirp = {
           enable = mkOption {
             type = types.bool;
             default = false;
-            description = "Enable Twirp RPC framework code generation for PHP";
+            description = "Enable Twirp RPC framework code generation for PHP (deprecated - use gRPC instead)";
           };
 
           package = mkOption {
