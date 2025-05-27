@@ -34,7 +34,7 @@ in {
       "--nanopb_out=${outputPath}"
     ]
     ++ optionals (length nanopbOptions > 0) [
-      "--nanopb_opt=${concatStringsSep " --nanopb_opt=" nanopbOptions}"
+      "--nanopb_opt=${concatStringsSep "," nanopbOptions}"
     ];
 
   initHooks = optionalString enabled ''
