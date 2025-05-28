@@ -27,7 +27,7 @@ config = {
     verbosity = 3;           # 1-3, higher = more verbose
     logFile = "debug.log";   # Save to file for analysis
   };
-  
+
   # Your other configuration...
 };
 ```
@@ -39,6 +39,7 @@ config = {
 #### Error: Proto file not found
 
 **Error Message:**
+
 ```
 error: proto file not found: ./proto/example/v1/example.proto
 ```
@@ -46,11 +47,13 @@ error: proto file not found: ./proto/example/v1/example.proto
 **Causes and Solutions:**
 
 1. **File doesn't exist**: Verify the file exists at the specified path
+
    ```bash
    ls -la proto/example/v1/example.proto
    ```
 
 2. **Incorrect path**: Check the path in your configuration
+
    ```nix
    protoc.files = [
      "./proto/example/v1/example.proto"  # Relative to config.root
@@ -67,11 +70,13 @@ error: proto file not found: ./proto/example/v1/example.proto
 #### Error: Import not found
 
 **Error Message:**
+
 ```
 Import "google/protobuf/timestamp.proto" was not found
 ```
 
 **Solution:** Add well-known types to include directories
+
 ```nix
 protoc.includeDirectories = [
   "./proto"
@@ -83,6 +88,7 @@ protoc.includeDirectories = [
 #### Error: Package import issues in Go
 
 **Error Message:**
+
 ```
 package github.com/yourorg/yourproject/gen/go/example/v1 is not in GOROOT or GOPATH
 ```
@@ -90,11 +96,13 @@ package github.com/yourorg/yourproject/gen/go/example/v1 is not in GOROOT or GOP
 **Solutions:**
 
 1. **Check go_package option in proto file:**
+
    ```protobuf
    option go_package = "github.com/yourorg/yourproject/gen/go/example/v1;examplev1";
    ```
 
 2. **Ensure generated code is in Go module:**
+
    ```bash
    go mod tidy
    ```
@@ -108,6 +116,7 @@ package github.com/yourorg/yourproject/gen/go/example/v1 is not in GOROOT or GOP
 #### Error: Nix build failures
 
 **Error Message:**
+
 ```
 error: builder for '/nix/store/...' failed with exit code 1
 ```
@@ -115,6 +124,7 @@ error: builder for '/nix/store/...' failed with exit code 1
 **Troubleshooting steps:**
 
 1. **Enable debug mode** for detailed logs:
+
    ```nix
    debug = {
      enable = true;
@@ -123,11 +133,13 @@ error: builder for '/nix/store/...' failed with exit code 1
    ```
 
 2. **Check build dependencies** are available:
+
    ```bash
    nix-shell -p protobuf protoc-gen-go
    ```
 
 3. **Verify system architecture** matches configuration:
+
    ```nix
    let
      system = builtins.currentSystem; # Use this instead of hardcoding
@@ -144,11 +156,13 @@ error: builder for '/nix/store/...' failed with exit code 1
 #### Go Issues
 
 **Error: Undefined gRPC methods**
+
 ```
 undefined: examplev1.UnimplementedGreetingServiceServer
 ```
 
 **Solution:** Ensure gRPC generation is enabled
+
 ```nix
 languages.go = {
   enable = true;
@@ -157,11 +171,13 @@ languages.go = {
 ```
 
 **Error: Validation functions not found**
+
 ```
 undefined: req.Validate
 ```
 
 **Solution:** Enable validation plugin
+
 ```nix
 languages.go = {
   enable = true;
@@ -174,6 +190,7 @@ languages.go = {
 #### JavaScript/TypeScript Issues
 
 **Error: Module not found**
+
 ```
 Cannot find module '@myorg/proto'
 ```
@@ -181,6 +198,7 @@ Cannot find module '@myorg/proto'
 **Solutions:**
 
 1. **Check package.json generation:**
+
    ```nix
    languages.js = {
      enable = true;
@@ -198,11 +216,13 @@ Cannot find module '@myorg/proto'
    ```
 
 **Error: TypeScript type errors**
+
 ```
 Property 'myField' does not exist on type 'MyMessage'
 ```
 
 **Solution:** Ensure TypeScript target is enabled
+
 ```nix
 languages.js = {
   enable = true;
@@ -216,11 +236,13 @@ languages.js = {
 #### Dart Issues
 
 **Error: Package import issues**
+
 ```
 Target of URI doesn't exist: 'package:my_app_proto/...'
 ```
 
 **Solution:** Run `dart pub get` in the project directory
+
 ```bash
 cd path/to/dart/project
 dart pub get
@@ -229,6 +251,7 @@ dart pub get
 #### PHP Issues
 
 **Error: Class not found**
+
 ```
 Class 'MyApp\Proto\MyMessage' not found
 ```
@@ -236,6 +259,7 @@ Class 'MyApp\Proto\MyMessage' not found
 **Solutions:**
 
 1. **Check namespace configuration:**
+
    ```nix
    languages.php = {
      enable = true;
@@ -244,6 +268,7 @@ Class 'MyApp\Proto\MyMessage' not found
    ```
 
 2. **Ensure Composer autoloading:**
+
    ```json
    {
      "autoload": {
@@ -262,11 +287,13 @@ Class 'MyApp\Proto\MyMessage' not found
 #### C# Issues
 
 **Error: Package reference issues**
+
 ```
 The type or namespace name 'Google' could not be found
 ```
 
 **Solution:** Ensure project file generation is enabled
+
 ```nix
 languages.csharp = {
   enable = true;
@@ -276,6 +303,7 @@ languages.csharp = {
 ```
 
 Then restore packages:
+
 ```bash
 dotnet restore gen/csharp/
 ```
@@ -285,12 +313,14 @@ dotnet restore gen/csharp/
 #### Slow Code Generation
 
 **Symptoms:**
+
 - `nix build` takes a long time
 - Large number of proto files cause timeouts
 
 **Solutions:**
 
 1. **Use specific file lists** instead of globbing:
+
    ```nix
    protoc.files = [
      "./proto/user/v1/user.proto"
@@ -300,6 +330,7 @@ dotnet restore gen/csharp/
    ```
 
 2. **Enable parallel builds:**
+
    ```bash
    # Add to ~/.config/nix/nix.conf
    max-jobs = auto
@@ -315,12 +346,14 @@ dotnet restore gen/csharp/
 #### Large Generated Code Size
 
 **Symptoms:**
+
 - Generated code is much larger than expected
 - Build artifacts are consuming too much disk space
 
 **Solutions:**
 
 1. **Use lite runtime** for C++:
+
    ```nix
    languages.cpp = {
      enable = true;
@@ -330,6 +363,7 @@ dotnet restore gen/csharp/
    ```
 
 2. **Optimize JavaScript output:**
+
    ```nix
    languages.js = {
      enable = true;
@@ -356,11 +390,13 @@ dotnet restore gen/csharp/
 #### Nix Flakes Not Enabled
 
 **Error Message:**
+
 ```
 error: experimental Nix feature 'flakes' is disabled
 ```
 
 **Solution:** Enable flakes in Nix configuration
+
 ```bash
 # For NixOS, add to /etc/nixos/configuration.nix:
 nix.settings.experimental-features = [ "nix-command" "flakes" ];
@@ -372,6 +408,7 @@ experimental-features = nix-command flakes
 #### Permission Issues
 
 **Error Message:**
+
 ```
 Permission denied: cannot write to gen/go/
 ```
@@ -379,12 +416,14 @@ Permission denied: cannot write to gen/go/
 **Solutions:**
 
 1. **Check directory permissions:**
+
    ```bash
    ls -la gen/
    chmod -R u+w gen/
    ```
 
 2. **Ensure output directory is writable:**
+
    ```bash
    mkdir -p gen/go
    chmod u+w gen/go
@@ -397,14 +436,43 @@ Permission denied: cannot write to gen/go/
    sudo launchctl start org.nixos.nix-daemon
    ```
 
+#### macOS ARM64 (Apple Silicon) Support
+
+**Kotlin gRPC on Apple Silicon:**
+
+Bufrnix automatically handles gRPC Java plugin compatibility on Apple Silicon Macs by using Rosetta 2 for x86_64 binaries. If you encounter issues:
+
+1. **Install Rosetta 2** (if not already installed):
+
+   ```bash
+   /usr/sbin/softwareupdate --install-rosetta --agree-to-license
+   ```
+
+2. **Verify the plugin wrapper is working:**
+
+   ```bash
+   nix build .#proto
+   ./result/bin/bufrnix
+   ```
+
+3. **If you see "Bad CPU type" errors:**
+   ```bash
+   # Check if Rosetta 2 is properly installed
+   /usr/bin/arch -x86_64 /usr/bin/true && echo "Rosetta 2 is working"
+   ```
+
+The gRPC Java plugin is automatically wrapped to use Rosetta 2 when running on ARM64 systems, ensuring compatibility without requiring manual intervention.
+
 #### System Architecture Mismatch
 
 **Error Message:**
+
 ```
 error: a 'x86_64-linux' with features {} is required to build...
 ```
 
 **Solution:** Use correct system identifier
+
 ```nix
 let
   system = builtins.currentSystem; # Auto-detect
@@ -420,6 +488,7 @@ let
 #### Invalid Configuration Options
 
 **Error Message:**
+
 ```
 error: attribute 'invalidOption' missing
 ```
@@ -429,16 +498,18 @@ error: attribute 'invalidOption' missing
 #### Conflicting Plugin Options
 
 **Error Message:**
+
 ```
 error: conflicting options for protoc-gen-go
 ```
 
 **Solution:** Check for conflicting options in different plugins
+
 ```nix
 languages.go = {
   enable = true;
   options = ["paths=source_relative"];
-  
+
   grpc = {
     enable = true;
     options = ["paths=source_relative"]; # Consistent with parent
@@ -451,11 +522,13 @@ languages.go = {
 #### Missing Language Runtimes
 
 **Error Message:**
+
 ```
 command not found: go
 ```
 
 **Solution:** Add language runtimes to development shell
+
 ```nix
 devShells.default = pkgs.mkShell {
   packages = with pkgs; [
@@ -476,6 +549,7 @@ devShells.default = pkgs.mkShell {
 **Solutions:**
 
 1. **For VS Code with Go:**
+
    ```json
    {
      "go.toolsEnvVars": {
@@ -485,6 +559,7 @@ devShells.default = pkgs.mkShell {
    ```
 
 2. **For IntelliJ with Kotlin:**
+
    - Mark `gen/kotlin` as source directory
    - Ensure Gradle sync is enabled
 
@@ -497,6 +572,7 @@ devShells.default = pkgs.mkShell {
 #### gRPC Server Connection Issues
 
 **Error Message:**
+
 ```
 rpc error: code = Unavailable desc = connection error
 ```
@@ -504,20 +580,23 @@ rpc error: code = Unavailable desc = connection error
 **Solutions:**
 
 1. **Check server is running:**
+
    ```bash
    netstat -ln | grep :50051
    ```
 
 2. **Test with grpcurl:**
+
    ```bash
    grpcurl -plaintext localhost:50051 list
    ```
 
 3. **Check firewall settings:**
+
    ```bash
    # On Linux
    sudo ufw allow 50051
-   
+
    # On macOS
    sudo pfctl -f /etc/pf.conf
    ```
@@ -525,11 +604,13 @@ rpc error: code = Unavailable desc = connection error
 #### Test File Import Issues
 
 **Error Message:**
+
 ```
 cannot import name 'user_pb2' from 'proto'
 ```
 
 **Solution:** Ensure Python path includes generated code
+
 ```python
 import sys
 sys.path.append('gen/python')
@@ -606,7 +687,7 @@ Create a debug build with maximum verbosity:
         verbosity = 3;
         logFile = "bufrnix-debug.log";
       };
-      
+
       # Minimal configuration to isolate issues
       languages.go = {
         enable = true;

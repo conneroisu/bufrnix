@@ -15,13 +15,13 @@ bufrnix.lib.mkBufrnixPackage {
   config = {
     # Root configuration
     root = "./proto";
-    
+
     # Protocol buffer compilation settings
     protoc = { ... };
-    
+
     # Debug settings
     debug = { ... };
-    
+
     # Language-specific configurations
     languages = {
       go = { ... };
@@ -45,8 +45,8 @@ bufrnix.lib.mkBufrnixPackage {
 
 ### Basic Options
 
-| Option | Type | Default | Description |
-|--------|------|---------|-------------|
+| Option | Type   | Default     | Description                    |
+| ------ | ------ | ----------- | ------------------------------ |
 | `root` | string | `"./proto"` | Root directory for proto files |
 
 ### Debug Configuration
@@ -59,11 +59,11 @@ debug = {
 };
 ```
 
-| Option | Type | Default | Description |
-|--------|------|---------|-------------|
-| `debug.enable` | boolean | `false` | Enable debug mode with verbose output |
-| `debug.verbosity` | integer | `1` | Debug verbosity level (1-3, higher = more verbose) |
-| `debug.logFile` | string | `""` | Path to debug log file. If empty, logs to stdout |
+| Option            | Type    | Default | Description                                        |
+| ----------------- | ------- | ------- | -------------------------------------------------- |
+| `debug.enable`    | boolean | `false` | Enable debug mode with verbose output              |
+| `debug.verbosity` | integer | `1`     | Debug verbosity level (1-3, higher = more verbose) |
+| `debug.logFile`   | string  | `""`    | Path to debug log file. If empty, logs to stdout   |
 
 ### Protoc Configuration
 
@@ -81,11 +81,11 @@ protoc = {
 };
 ```
 
-| Option | Type | Default | Description |
-|--------|------|---------|-------------|
-| `protoc.sourceDirectories` | list of strings | `["./proto"]` | Directories containing proto files to compile |
-| `protoc.includeDirectories` | list of strings | `["./proto"]` | Directories to include in the include path for imports |
-| `protoc.files` | list of strings | `[]` | Specific proto files to compile (leave empty to compile all .proto files in source directories) |
+| Option                      | Type            | Default       | Description                                                                                     |
+| --------------------------- | --------------- | ------------- | ----------------------------------------------------------------------------------------------- |
+| `protoc.sourceDirectories`  | list of strings | `["./proto"]` | Directories containing proto files to compile                                                   |
+| `protoc.includeDirectories` | list of strings | `["./proto"]` | Directories to include in the include path for imports                                          |
+| `protoc.files`              | list of strings | `[]`          | Specific proto files to compile (leave empty to compile all .proto files in source directories) |
 
 ## Language Support
 
@@ -99,54 +99,54 @@ languages.go = {
   outputPath = "gen/go";
   packagePrefix = "github.com/myorg/myproject";
   options = ["paths=source_relative"];
-  
+
   # Core gRPC support
   grpc = {
     enable = true;
     options = ["paths=source_relative"];
   };
-  
+
   # HTTP/JSON gateway
   gateway = {
     enable = true;
     options = ["paths=source_relative" "generate_unbound_methods=true"];
   };
-  
+
   # Message validation (legacy)
   validate = {
     enable = true;
     options = ["lang=go"];
   };
-  
+
   # Modern validation with CEL expressions
   protovalidate = {
     enable = true;
   };
-  
+
   # Modern Connect protocol
   connect = {
     enable = true;
     options = ["paths=source_relative"];
   };
-  
+
   # OpenAPI v2 documentation
   openapiv2 = {
     enable = true;
     options = ["logtostderr=true"];
   };
-  
+
   # High-performance serialization (3.8x faster)
   vtprotobuf = {
     enable = true;
     options = ["paths=source_relative" "features=marshal+unmarshal+size"];
   };
-  
+
   # JSON integration with encoding/json
   json = {
     enable = true;
     options = ["paths=source_relative" "orig_name=true"];
   };
-  
+
   # gRPC Federation for BFF servers (experimental)
   federation = {
     enable = true;
@@ -157,16 +157,17 @@ languages.go = {
 
 #### Go Configuration Options
 
-| Option | Type | Default | Description |
-|--------|------|---------|-------------|
-| `enable` | boolean | `false` | Enable Go code generation |
-| `outputPath` | string | `"gen/go"` | Output directory for generated Go code |
-| `packagePrefix` | string | `""` | Go package prefix for generated code |
-| `options` | list of strings | `["paths=source_relative"]` | Options to pass to protoc-gen-go |
+| Option          | Type            | Default                     | Description                            |
+| --------------- | --------------- | --------------------------- | -------------------------------------- |
+| `enable`        | boolean         | `false`                     | Enable Go code generation              |
+| `outputPath`    | string          | `"gen/go"`                  | Output directory for generated Go code |
+| `packagePrefix` | string          | `""`                        | Go package prefix for generated code   |
+| `options`       | list of strings | `["paths=source_relative"]` | Options to pass to protoc-gen-go       |
 
 #### Go Plugin Options
 
 Each Go plugin (grpc, gateway, validate, etc.) supports:
+
 - `enable`: Boolean to enable the plugin
 - `options`: List of strings for plugin-specific options
 - `package`: Nix package to use (usually auto-detected)
@@ -180,7 +181,7 @@ languages.js = {
   enable = true;
   outputPath = "src/proto";
   packageName = "@myorg/proto";
-  
+
   # Modern ECMAScript modules with TypeScript (recommended)
   es = {
     enable = true;
@@ -189,32 +190,32 @@ languages.js = {
     generatePackageJson = true;
     packageName = "@myorg/proto-es";
   };
-  
+
   # Connect-ES for modern RPC
   connect = {
     enable = true;
     generatePackageJson = true;
     packageName = "@myorg/proto-connect";
   };
-  
+
   # gRPC-Web for browser compatibility
   grpcWeb = {
     enable = true;
     options = ["import_style=typescript" "mode=grpcwebtext"];
   };
-  
+
   # Twirp RPC framework
   twirp = {
     enable = true;
   };
-  
+
   # Modern validation
   protovalidate = {
     enable = true;
     target = "ts";
     generateValidationHelpers = true;
   };
-  
+
   # ts-proto for idiomatic TypeScript
   tsProto = {
     enable = true;
@@ -227,12 +228,12 @@ languages.js = {
 
 #### JavaScript Configuration Options
 
-| Option | Type | Default | Description |
-|--------|------|---------|-------------|
-| `enable` | boolean | `false` | Enable JavaScript/TypeScript code generation |
-| `outputPath` | string | `"gen/js"` | Output directory for generated code |
-| `packageName` | string | `""` | JavaScript package name |
-| `options` | list of strings | `[]` | Options to pass to protoc JS plugins |
+| Option        | Type            | Default    | Description                                  |
+| ------------- | --------------- | ---------- | -------------------------------------------- |
+| `enable`      | boolean         | `false`    | Enable JavaScript/TypeScript code generation |
+| `outputPath`  | string          | `"gen/js"` | Output directory for generated code          |
+| `packageName` | string          | `""`       | JavaScript package name                      |
+| `options`     | list of strings | `[]`       | Options to pass to protoc JS plugins         |
 
 ### Dart Configuration
 
@@ -243,18 +244,18 @@ languages.dart = {
   enable = true;
   outputPath = "lib/proto";
   packageName = "my_app_proto";
-  
+
   grpc = {
     enable = true;
   };
 };
 ```
 
-| Option | Type | Default | Description |
-|--------|------|---------|-------------|
-| `enable` | boolean | `false` | Enable Dart code generation |
-| `outputPath` | string | `"lib/proto"` | Output directory for generated Dart code |
-| `packageName` | string | `""` | Dart package name for generated code |
+| Option        | Type    | Default       | Description                              |
+| ------------- | ------- | ------------- | ---------------------------------------- |
+| `enable`      | boolean | `false`       | Enable Dart code generation              |
+| `outputPath`  | string  | `"lib/proto"` | Output directory for generated Dart code |
+| `packageName` | string  | `""`          | Dart package name for generated code     |
 
 ### PHP Configuration
 
@@ -267,20 +268,20 @@ languages.php = {
   namespace = "MyApp\\Proto";
   metadataNamespace = "GPBMetadata";
   classPrefix = "";
-  
+
   # Composer integration
   composer = {
     enable = true;
     autoInstall = false;
   };
-  
+
   # gRPC support
   grpc = {
     enable = true;
     clientOnly = false;
     serviceNamespace = "Services";
   };
-  
+
   # RoadRunner for high-performance gRPC servers
   roadrunner = {
     enable = true;
@@ -289,7 +290,7 @@ languages.php = {
     maxMemory = 128; # MB
     tlsEnabled = false;
   };
-  
+
   # Framework integrations
   frameworks = {
     laravel = {
@@ -297,31 +298,31 @@ languages.php = {
       serviceProvider = true;
       artisanCommands = true;
     };
-    
+
     symfony = {
       enable = true;
       bundle = true;
       messengerIntegration = true;
     };
   };
-  
+
   # Async PHP patterns
   async = {
     reactphp = {
       enable = true;
       version = "^1.0";
     };
-    
+
     swoole = {
       enable = true;
       coroutines = true;
     };
-    
+
     fibers = {
       enable = true; # PHP 8.1+ Fiber support
     };
   };
-  
+
   # Legacy Twirp support (deprecated)
   twirp = {
     enable = false; # Use gRPC instead
@@ -337,22 +338,22 @@ Python support with multiple generation styles and async support.
 languages.python = {
   enable = true;
   outputPath = "gen/python";
-  
+
   # gRPC support
   grpc = {
     enable = true;
   };
-  
+
   # Type stubs for mypy
   pyi = {
     enable = true;
   };
-  
+
   # Modern dataclasses with betterproto
   betterproto = {
     enable = true;
   };
-  
+
   # mypy stub generation
   mypy = {
     enable = true;
@@ -384,19 +385,19 @@ languages.csharp = {
   targetFramework = "net8.0";
   langVersion = "latest";
   nullable = true;
-  
+
   # Project file generation
   generateProjectFile = true;
   projectName = "MyApp.Proto";
   packageId = "MyApp.Proto";
   packageVersion = "1.0.0";
   generatePackageOnBuild = false;
-  
+
   # Assembly configuration
   generateAssemblyInfo = true;
   assemblyVersion = "1.0.0.0";
   protobufVersion = "3.31.0";
-  
+
   # gRPC support
   grpc = {
     enable = true;
@@ -418,17 +419,17 @@ languages.kotlin = {
   outputPath = "gen/kotlin";
   javaOutputPath = "gen/kotlin/java";    # Required for Kotlin
   kotlinOutputPath = "gen/kotlin/kotlin";
-  
+
   # Project configuration
   projectName = "MyProtos";
   kotlinVersion = "2.1.20";
   protobufVersion = "4.28.2";
   jvmTarget = 17;
   coroutinesVersion = "1.8.0";
-  
+
   generateBuildFile = true;
   generatePackageInfo = false;
-  
+
   # gRPC with coroutines
   grpc = {
     enable = true;
@@ -436,7 +437,7 @@ languages.kotlin = {
     grpcKotlinVersion = "1.4.2";
     generateServiceImpl = false;
   };
-  
+
   # Connect RPC
   connect = {
     enable = true;
@@ -459,29 +460,29 @@ languages.cpp = {
   standard = "c++20";
   optimizeFor = "SPEED";  # SPEED, CODE_SIZE, LITE_RUNTIME
   runtime = "full";       # full or lite
-  
+
   # Build system integration
   cmakeIntegration = true;
   pkgConfigIntegration = true;
-  
+
   # Performance options
   arenaAllocation = true;
-  
+
   # Additional include paths
   includePaths = ["/usr/local/include"];
-  
+
   # gRPC support
   grpc = {
     enable = true;
     generateMockCode = true;
   };
-  
+
   # Embedded systems with nanopb
   nanopb = {
     enable = true;
     options = ["max_size=1024" "max_count=16"];
   };
-  
+
   # Pure C with protobuf-c
   protobuf-c = {
     enable = true;
@@ -497,13 +498,13 @@ Pure C support for embedded and system programming.
 languages.c = {
   enable = true;
   outputPath = "gen/c";
-  
+
   # Standard C implementation
   protobuf-c = {
     enable = true;
     outputPath = "gen/c/protobuf-c";
   };
-  
+
   # Embedded/lightweight implementation
   nanopb = {
     enable = true;
@@ -513,7 +514,7 @@ languages.c = {
     noUnions = false;
     msgidType = "";
   };
-  
+
   # Future: Google's upb (not yet available)
   upb = {
     enable = false;
@@ -568,14 +569,14 @@ Here's a comprehensive example showing multiple languages configured together:
       inherit (pkgs) lib pkgs;
       config = {
         root = ./.;
-        
+
         # Enhanced debugging
         debug = {
           enable = true;
           verbosity = 2;
           logFile = "bufrnix-debug.log";
         };
-        
+
         protoc = {
           sourceDirectories = ["./proto"];
           includeDirectories = [
@@ -597,7 +598,7 @@ Here's a comprehensive example showing multiple languages configured together:
             outputPath = "gen/go";
             packagePrefix = "github.com/myorg/myproject";
             options = ["paths=source_relative"];
-            
+
             grpc.enable = true;
             gateway.enable = true;
             connect.enable = true;
@@ -612,13 +613,13 @@ Here's a comprehensive example showing multiple languages configured together:
             enable = true;
             outputPath = "web/src/proto";
             packageName = "@myorg/proto";
-            
+
             es = {
               enable = true;
               target = "ts";
               generatePackageJson = true;
             };
-            
+
             connect.enable = true;
             grpcWeb.enable = true;
             protovalidate.enable = true;
@@ -637,10 +638,10 @@ Here's a comprehensive example showing multiple languages configured together:
             enable = true;
             outputPath = "services/php/gen";
             namespace = "MyOrg\\Proto";
-            
+
             grpc.enable = true;
             roadrunner.enable = true;
-            
+
             frameworks.laravel.enable = true;
             async.swoole.enable = true;
           };
@@ -658,7 +659,7 @@ Here's a comprehensive example showing multiple languages configured together:
             outputPath = "dotnet/src/Proto";
             namespace = "MyOrg.Proto";
             targetFramework = "net8.0";
-            
+
             grpc.enable = true;
             generateProjectFile = true;
             projectName = "MyOrg.Proto";
@@ -671,7 +672,7 @@ Here's a comprehensive example showing multiple languages configured together:
             format = "html";
             outputFile = "api-docs.html";
           };
-          
+
           svg = {
             enable = true;
             outputPath = "docs/diagrams";
@@ -686,7 +687,7 @@ Here's a comprehensive example showing multiple languages configured together:
         go dart nodejs php83 swift dotnet-sdk_8
         protobuf buf grpcurl protoc-gen-doc
       ];
-      
+
       shellHook = ''
         echo "🚀 Multi-language protobuf development environment ready!"
         echo ""
@@ -820,7 +821,7 @@ Configure for maximum performance:
 ```nix
 languages.go = {
   enable = true;
-  
+
   # Use vtprotobuf for 3.8x faster serialization
   vtprotobuf = {
     enable = true;
@@ -829,7 +830,7 @@ languages.go = {
       "features=marshal+unmarshal+size+pool" # Enable all optimizations
     ];
   };
-  
+
   # Optimize protoc options
   options = [
     "paths=source_relative"
@@ -859,7 +860,7 @@ config = {
     verbosity = 3;           # Maximum verbosity
     logFile = "debug.log";   # Save to file for analysis
   };
-  
+
   # Your other configuration...
 };
 ```
@@ -867,6 +868,7 @@ config = {
 ### Common Configuration Errors
 
 1. **Missing include directories**: Add protobuf well-known types
+
    ```nix
    protoc.includeDirectories = [
      "./proto"
@@ -875,6 +877,7 @@ config = {
    ```
 
 2. **Package import issues**: Ensure correct package prefixes
+
    ```nix
    languages.go.packagePrefix = "github.com/yourorg/yourproject";
    ```

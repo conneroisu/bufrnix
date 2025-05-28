@@ -108,18 +108,29 @@ Enable modern HTTP-based RPC with Connect:
 ```nix
 # flake.nix
 {
-  inputs.bufrnix.url = "github:bufrnix/bufrnix";
+  inputs = {
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
+    bufrnix.url = "github:bufrnix/bufrnix";
+  };
 
-  outputs = { self, nixpkgs, bufrnix }: {
-    packages.x86_64-linux.default = bufrnix.lib.x86_64-linux.mkBufrnix {
-      root = ./proto;
-      languages.kotlin = {
-        enable = true;
-        generateBuildFile = true;
-        projectName = "MyKotlinProtos";
+  outputs = { self, nixpkgs, bufrnix }:
+    let
+      system = "x86_64-linux";
+      pkgs = nixpkgs.legacyPackages.${system};
+    in {
+      packages.${system}.default = bufrnix.lib.mkBufrnixPackage {
+        inherit (pkgs) lib;
+        inherit pkgs;
+        config = {
+          root = ./proto;
+          languages.kotlin = {
+            enable = true;
+            generateBuildFile = true;
+            projectName = "MyKotlinProtos";
+          };
+        };
       };
     };
-  };
 }
 ```
 
@@ -131,7 +142,8 @@ Enable modern HTTP-based RPC with Connect:
     enable = true;
     grpc = {
       enable = true;
-      grpcKotlinJar = ./path/to/protoc-gen-grpc-kotlin.jar;
+      # JAR will be downloaded automatically
+      # grpcKotlinJar = ./path/to/protoc-gen-grpc-kotlin.jar; # Optional manual path
     };
   };
 }
@@ -192,6 +204,26 @@ gen/kotlin/
 ├── build.gradle.kts         # Gradle build file
 └── settings.gradle.kts      # Gradle settings
 ```
+
+## Usage
+
+After building the package, run the generated script to create the protobuf files:
+
+```bash
+# Build the package
+nix build
+
+# Generate the protobuf code
+./result/bin/bufrnix
+```
+
+This will create the generated Kotlin files in the `gen/kotlin/` directory according to your configuration.
+
+## Platform Support
+
+### macOS ARM64 (Apple Silicon)
+
+On macOS ARM64 systems, Bufrnix automatically handles the gRPC Java plugin compatibility by using Rosetta 2 for x86_64 binaries. This ensures compatibility across all Apple Silicon machines.
 
 ## Using Generated Code
 

@@ -72,20 +72,31 @@ Enable gRPC code generation:
 ```nix
 # flake.nix
 {
-  inputs.bufrnix.url = "github:bufrnix/bufrnix";
+  inputs = {
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
+    bufrnix.url = "github:bufrnix/bufrnix";
+  };
 
-  outputs = { self, nixpkgs, bufrnix }: {
-    packages.x86_64-linux.default = bufrnix.lib.x86_64-linux.mkBufrnix {
-      root = ./proto;
-      languages.csharp = {
-        enable = true;
-        namespace = "MyApp.Models";
-        generatePackageOnBuild = true;
-        packageId = "MyApp.Protos";
-        packageVersion = "1.0.0";
+  outputs = { self, nixpkgs, bufrnix }:
+    let
+      system = "x86_64-linux";
+      pkgs = nixpkgs.legacyPackages.${system};
+    in {
+      packages.${system}.default = bufrnix.lib.mkBufrnixPackage {
+        inherit (pkgs) lib;
+        inherit pkgs;
+        config = {
+          root = ./proto;
+          languages.csharp = {
+            enable = true;
+            namespace = "MyApp.Models";
+            generatePackageOnBuild = true;
+            packageId = "MyApp.Protos";
+            packageVersion = "1.0.0";
+          };
+        };
       };
     };
-  };
 }
 ```
 
@@ -151,6 +162,20 @@ gen/csharp/
 ├── MyServiceGrpc.cs      # gRPC client/server stubs
 └── GeneratedProtos.csproj # Project file (if enabled)
 ```
+
+## Usage
+
+After building the package, run the generated script to create the protobuf files:
+
+```bash
+# Build the package
+nix build
+
+# Generate the protobuf code
+./result/bin/bufrnix
+```
+
+This will create the generated C# files in the `gen/csharp/` directory according to your configuration.
 
 ## Integration with .NET Projects
 

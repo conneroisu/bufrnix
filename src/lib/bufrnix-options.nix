@@ -969,7 +969,7 @@ with lib; {
         };
 
         format = mkOption {
-          type = types.enum ["html" "markdown" "json" "docbook"];
+          type = types.enum ["html" "markdown" "json" "docbook" "mdx"];
           default = "html";
           description = "Documentation output format";
         };
@@ -978,6 +978,57 @@ with lib; {
           type = types.str;
           default = "index.html";
           description = "Output filename for the documentation";
+        };
+
+        customTemplate = mkOption {
+          type = types.nullOr types.str;
+          default = null;
+          description = "Path to custom template file for documentation generation";
+        };
+
+        mdx = {
+          enable = mkOption {
+            type = types.bool;
+            default = false;
+            description = "Enable MDX format generation for Astro documentation site";
+          };
+
+          outputFile = mkOption {
+            type = types.str;
+            default = "api-reference.mdx";
+            description = "Output filename for MDX documentation";
+          };
+
+          title = mkOption {
+            type = types.str;
+            default = "API Reference";
+            description = "Title for the MDX documentation";
+          };
+
+          description = mkOption {
+            type = types.str;
+            default = "Generated API documentation from Protocol Buffers";
+            description = "Description for the MDX documentation";
+          };
+
+          frontmatter = mkOption {
+            type = types.attrs;
+            default = {};
+            example = literalExpression ''
+              {
+                title = "API Reference";
+                description = "Protocol Buffer API documentation";
+                sidebar.order = 3;
+              }
+            '';
+            description = "Additional frontmatter attributes for MDX files";
+          };
+
+          outputPath = mkOption {
+            type = types.str;
+            default = "./doc/src/content/docs/reference";
+            description = "Output directory for MDX documentation (relative to project root)";
+          };
         };
       };
 

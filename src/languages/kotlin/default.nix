@@ -22,6 +22,8 @@ with lib; let
         jdk = cfg.jdk;
         grpcKotlinJar = cfg.grpc.grpcKotlinJar or null;
         grpcKotlinVersion = cfg.grpc.grpcKotlinVersion or "1.4.2";
+        grpcJavaJar = cfg.grpc.grpcJavaJar or null;
+        grpcVersion = cfg.grpc.grpcVersion or "1.62.2";
       };
   };
 

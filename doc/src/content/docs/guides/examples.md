@@ -161,9 +161,10 @@ cd examples/csharp-basic
 
 # Generate the proto code
 nix build .#proto
+./result/bin/bufrnix
 
-# Run the example
-nix develop -c dotnet run
+# Build and run the example
+nix run
 ```
 
 ## C# gRPC Example
@@ -189,12 +190,13 @@ cd examples/csharp-grpc
 
 # Generate the proto code
 nix build .#proto
+./result/bin/bufrnix
 
 # Run the server (in one terminal)
-nix develop -c sh -c "cd Server && dotnet run"
+nix run .#server
 
 # Run the client (in another terminal)
-nix develop -c sh -c "cd Client && dotnet run"
+nix run .#client
 ```
 
 ## Kotlin Basic Example
@@ -220,6 +222,7 @@ cd examples/kotlin-basic
 
 # Generate the proto code
 nix build .#proto
+./result/bin/bufrnix
 
 # Build and run with Gradle
 cd gen/kotlin
@@ -249,6 +252,7 @@ cd examples/kotlin-grpc
 
 # Generate the proto code
 nix build .#proto
+./result/bin/bufrnix
 
 # Run the server (in one terminal)
 cd gen/kotlin && gradle runServer

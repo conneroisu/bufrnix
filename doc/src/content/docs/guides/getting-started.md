@@ -108,7 +108,7 @@ service GreetingService {
   // Client streaming RPC
   rpc SayManyHellos(stream HelloRequest) returns (HelloResponse);
 
-  // Bidirectional streaming RPC  
+  // Bidirectional streaming RPC
   rpc SayHelloBidi(stream HelloRequest) returns (stream HelloResponse);
 }
 
@@ -117,7 +117,7 @@ message HelloRequest {
   string name = 1;
   optional string greeting_type = 2;
   repeated string languages = 3;
-  
+
   // Nested message example
   UserInfo user_info = 4;
 }
@@ -142,7 +142,7 @@ message HelloResponse {
   string message = 1;
   int64 timestamp = 2;
   bool success = 3;
-  
+
   // Using well-known types
   google.protobuf.Duration processing_time = 4;
 }
@@ -189,7 +189,7 @@ type server struct {
 
 func (s *server) SayHello(ctx context.Context, req *examplev1.HelloRequest) (*examplev1.HelloResponse, error) {
     start := time.Now()
-    
+
     greeting := "Hello"
     if req.GreetingType != nil {
         greeting = *req.GreetingType
@@ -198,8 +198,8 @@ func (s *server) SayHello(ctx context.Context, req *examplev1.HelloRequest) (*ex
     // Handle optional user info
     var userSuffix string
     if req.UserInfo != nil {
-        userSuffix = fmt.Sprintf(" (User: %s, Type: %s)", 
-            req.UserInfo.Email, 
+        userSuffix = fmt.Sprintf(" (User: %s, Type: %s)",
+            req.UserInfo.Email,
             req.UserInfo.Type.String())
     }
 
@@ -224,11 +224,11 @@ func (s *server) SayHelloStream(req *examplev1.HelloRequest, stream examplev1.Gr
             Timestamp: time.Now().Unix(),
             Success:   true,
         }
-        
+
         if err := stream.Send(response); err != nil {
             return err
         }
-        
+
         time.Sleep(1 * time.Second)
     }
     return nil
@@ -370,7 +370,7 @@ Create a development environment with all necessary tools:
         grpcurl      # Command-line gRPC client
         protoc-gen-grpc-web
         protoc-gen-connect-go
-        
+
         # Optional: language-specific tools
         golangci-lint
         gopls
@@ -553,11 +553,13 @@ composer install
 ### Proto File Not Found
 
 **Error:**
+
 ```
 Error: proto file not found: ./proto/example/v1/example.proto
 ```
 
 **Solutions:**
+
 1. Ensure the file path in `protoc.files` matches your actual file location
 2. Check that the file exists and has the correct permissions
 3. Use relative paths from the `root` directory
@@ -565,6 +567,7 @@ Error: proto file not found: ./proto/example/v1/example.proto
 ### Import Errors
 
 **Error:**
+
 ```
 Import "google/protobuf/timestamp.proto" was not found
 ```
@@ -581,11 +584,13 @@ protoc.includeDirectories = [
 ### Generated Code Import Issues
 
 **Error:**
+
 ```
 package github.com/yourorg/yourproject/gen/go/example/v1 is not in GOROOT or GOPATH
 ```
 
 **Solutions:**
+
 1. Check that your `go_package` option matches your actual Go module structure
 2. Ensure generated code is within your Go module
 3. Run `go mod tidy` after generation
@@ -594,11 +599,13 @@ package github.com/yourorg/yourproject/gen/go/example/v1 is not in GOROOT or GOP
 ### Nix Build Failures
 
 **Error:**
+
 ```
 error: builder for '/nix/store/...' failed with exit code 1
 ```
 
 **Troubleshooting steps:**
+
 1. Enable debug mode in your configuration:
    ```nix
    debug = {
@@ -613,11 +620,13 @@ error: builder for '/nix/store/...' failed with exit code 1
 ### Permission Issues
 
 **Error:**
+
 ```
 Permission denied: cannot write to gen/go/
 ```
 
 **Solutions:**
+
 1. Ensure the output directory is writable
 2. Check that no files are currently open in editors
 3. On macOS, verify that Nix has the necessary permissions
@@ -625,11 +634,13 @@ Permission denied: cannot write to gen/go/
 ### System Architecture Issues
 
 **Error:**
+
 ```
 error: a 'x86_64-linux' with features {} is required to build...
 ```
 
 **Solution:** Ensure your `system` variable matches your actual system:
+
 ```nix
 let
   # Use the correct system identifier
@@ -640,6 +651,7 @@ let
 ## Performance Tips
 
 1. **Use specific file lists** instead of globbing for faster builds:
+
    ```nix
    protoc.files = [
      "./proto/user/v1/user.proto"
@@ -648,6 +660,7 @@ let
    ```
 
 2. **Enable parallel builds** in your Nix configuration:
+
    ```bash
    # Add to ~/.config/nix/nix.conf
    max-jobs = auto
