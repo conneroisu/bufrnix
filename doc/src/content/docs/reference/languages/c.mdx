@@ -469,7 +469,7 @@ sensor.v1.DeviceConfig.calibration max_count:8 fixed_count:true
 ### Use nanopb when:
 
 - Targeting microcontrollers (Arduino, STM32, ESP32, etc.)
-- Memory is severely constrained (<100KB RAM)
+- Memory is severely constrained (ie less than 100KB RAM)
 - Need predictable memory usage
 - Building real-time systems
 - Want zero dynamic allocation
@@ -574,7 +574,7 @@ pb_ostream_t stream = pb_ostream_from_buffer(buffer, sizeof(buffer));
 
 **Field Size Errors**: Update .options files for string/array limits:
 
-```options
+```txt
 MyMessage.my_string max_size:64
 MyMessage.my_array max_count:10
 ```
