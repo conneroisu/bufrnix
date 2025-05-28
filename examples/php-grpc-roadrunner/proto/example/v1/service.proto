@@ -1,0 +1,112 @@
+syntax = "proto3";
+
+package example.v1;
+
+option php_metadata_namespace = "App\\Proto\\Metadata\\Example\\V1";
+option php_namespace = "App\\Proto\\Example\\V1";
+
+// The greeting service definition
+service GreeterService {
+  // Simple unary RPC
+  rpc SayHello(HelloRequest) returns (HelloResponse);
+
+  // Server streaming RPC
+  rpc SayHelloStream(HelloRequest) returns (stream HelloResponse);
+
+  // Client streaming RPC
+  rpc SayHelloClientStream(stream HelloRequest) returns (HelloResponse);
+
+  // Bidirectional streaming RPC
+  rpc SayHelloBidirectional(stream HelloRequest) returns (stream HelloResponse);
+}
+
+// The request message containing the user's name
+message HelloRequest {
+  string name = 1;
+  int32 count = 2;
+  map<string, string> metadata = 3;
+}
+
+// The response message containing the greetings
+message HelloResponse {
+  string message = 1;
+  int64 timestamp = 2;
+  bool success = 3;
+}
+
+// Example of a more complex service
+service UserService {
+  rpc GetUser(GetUserRequest) returns (GetUserResponse);
+  rpc ListUsers(ListUsersRequest) returns (ListUsersResponse);
+  rpc CreateUser(CreateUserRequest) returns (CreateUserResponse);
+  rpc UpdateUser(UpdateUserRequest) returns (UpdateUserResponse);
+  rpc DeleteUser(DeleteUserRequest) returns (DeleteUserResponse);
+}
+
+message User {
+  string id = 1;
+  string email = 2;
+  string name = 3;
+  int64 created_at = 4;
+  int64 updated_at = 5;
+  UserStatus status = 6;
+}
+
+enum UserStatus {
+  USER_STATUS_UNSPECIFIED = 0;
+  USER_STATUS_ACTIVE = 1;
+  USER_STATUS_INACTIVE = 2;
+  USER_STATUS_SUSPENDED = 3;
+}
+
+message GetUserRequest {
+  string id = 1;
+}
+
+message GetUserResponse {
+  User user = 1;
+}
+
+message ListUsersRequest {
+  int32 page = 1;
+  int32 page_size = 2;
+  string search = 3;
+  UserStatus status_filter = 4;
+}
+
+message ListUsersResponse {
+  repeated User users = 1;
+  int32 total_count = 2;
+  int32 page = 3;
+  int32 page_size = 4;
+}
+
+message CreateUserRequest {
+  string email = 1;
+  string name = 2;
+  string password = 3;
+}
+
+message CreateUserResponse {
+  User user = 1;
+}
+
+message UpdateUserRequest {
+  string id = 1;
+  optional string email = 2;
+  optional string name = 3;
+  optional UserStatus status = 4;
+}
+
+message UpdateUserResponse {
+  User user = 1;
+}
+
+message DeleteUserRequest {
+  string id = 1;
+}
+
+message DeleteUserResponse {
+  bool success = 1;
+  string message = 2;
+}

@@ -671,16 +671,17 @@ npm run client  # In another terminal
 ## PHP
 
 **Status**: ✅ Full Support  
-**Example**: [`examples/php-twirp/`](https://github.com/conneroisu/bufr.nix/tree/main/examples/php-twirp)
+**Examples**: [`examples/php-grpc-roadrunner/`](https://github.com/conneroisu/bufr.nix/tree/main/examples/php-grpc-roadrunner), [`examples/php-twirp/`](https://github.com/conneroisu/bufr.nix/tree/main/examples/php-twirp)
 
-PHP support provides Protocol Buffer messages and Twirp RPC framework integration.
+PHP support provides comprehensive Protocol Buffer and gRPC development with high-performance server options and modern async patterns.
 
 ### Available Plugins
 
-| Plugin                     | Description         | Generated Files              |
-| -------------------------- | ------------------- | ---------------------------- |
-| **`protoc-gen-php`**       | Message classes     | `*.php`, `GPBMetadata/*.php` |
-| **`protoc-gen-twirp_php`** | Twirp RPC framework | `*Client.php`, `*Server.php` |
+| Plugin                     | Description              | Generated Files                 |
+| -------------------------- | ------------------------ | ------------------------------- |
+| **`protoc-gen-php`**       | Message classes          | `*.php`, `GPBMetadata/*.php`    |
+| **`grpc_php_plugin`**      | gRPC client/server stubs | `*Client.php`, `*Interface.php` |
+| **`protoc-gen-twirp_php`** | Twirp RPC (deprecated)   | `*Client.php`, `*Server.php`    |
 
 ### Configuration
 
@@ -688,17 +689,64 @@ PHP support provides Protocol Buffer messages and Twirp RPC framework integratio
 languages.php = {
   enable = true;
   outputPath = "gen/php";
-  namespace = "MyApp\\Proto";
-  options = [
-    "aggregate_metadata"  # Single metadata file
-  ];
 
-  twirp = {
+  # Namespace configuration
+  namespace = "App\\Proto";
+  metadataNamespace = "GPBMetadata";
+  classPrefix = "";  # Optional prefix
+
+  # Composer integration
+  composer = {
     enable = true;
-    options = [
-      "generate_client=true"
-      "generate_server=true"
-    ];
+    autoInstall = false;
+  };
+
+  # gRPC support
+  grpc = {
+    enable = true;
+    serviceNamespace = "Services";
+    clientOnly = false;
+  };
+
+  # High-performance RoadRunner server
+  roadrunner = {
+    enable = true;
+    workers = 4;
+    maxJobs = 100;
+    maxMemory = 128;
+    tlsEnabled = false;
+  };
+
+  # Framework integration
+  frameworks = {
+    laravel = {
+      enable = false;
+      serviceProvider = true;
+      artisanCommands = true;
+    };
+
+    symfony = {
+      enable = false;
+      bundle = true;
+      messengerIntegration = true;
+    };
+  };
+
+  # Async PHP support
+  async = {
+    reactphp = {
+      enable = false;
+      version = "^1.0";
+    };
+
+    swoole = {
+      enable = false;
+      coroutines = true;
+    };
+
+    fibers = {
+      enable = false;  # PHP 8.1+
+    };
   };
 };
 ```
@@ -711,74 +759,215 @@ syntax = "proto3";
 
 package example.v1;
 
-service HelloService {
-  rpc Hello(HelloRequest) returns (HelloResponse);
+option php_namespace = "App\\Proto\\Example\\V1";
+option php_metadata_namespace = "App\\Proto\\Metadata\\Example\\V1";
+
+service GreeterService {
+  // Unary RPC
+  rpc SayHello (HelloRequest) returns (HelloResponse);
+
+  // Server streaming RPC
+  rpc SayHelloStream (HelloRequest) returns (stream HelloResponse);
+
+  // Client streaming RPC
+  rpc SayHelloClientStream (stream HelloRequest) returns (HelloResponse);
+
+  // Bidirectional streaming RPC
+  rpc SayHelloBidirectional (stream HelloRequest) returns (stream HelloResponse);
 }
 
 message HelloRequest {
   string name = 1;
+  int32 count = 2;
+  map<string, string> metadata = 3;
 }
 
 message HelloResponse {
-  string greeting = 1;
+  string message = 1;
+  int64 timestamp = 2;
+  bool success = 3;
 }
 ```
 
 ### Generated Code Usage
 
-**Twirp Server:**
+**gRPC Client:**
 
 ```php
 <?php
-require_once 'vendor/autoload.php';
-
-use MyApp\Proto\Example\V1\HelloServiceServer;
-use MyApp\Proto\Example\V1\HelloRequest;
-use MyApp\Proto\Example\V1\HelloResponse;
-
-class HelloServiceImpl
-{
-    public function Hello(HelloRequest $request): HelloResponse
-    {
-        $response = new HelloResponse();
-        $response->setGreeting("Hello, " . $request->getName() . "!");
-        return $response;
-    }
-}
-
-// Create and serve
-$impl = new HelloServiceImpl();
-$server = new HelloServiceServer($impl);
-
-// Handle HTTP request
-$server->handle($_SERVER['REQUEST_METHOD'], $_SERVER['REQUEST_URI'], getallheaders(), file_get_contents('php://input'));
-```
-
-**Twirp Client:**
-
-```php
-<?php
-require_once 'vendor/autoload.php';
-
-use MyApp\Proto\Example\V1\HelloServiceClient;
-use MyApp\Proto\Example\V1\HelloRequest;
+use App\Proto\Example\V1\HelloRequest;
+use App\Proto\Example\V1\Services\GreeterServiceClient;
+use Grpc\ChannelCredentials;
 
 // Create client
-$client = new HelloServiceClient('https://api.example.com');
+$client = new GreeterServiceClient('localhost:9001', [
+    'credentials' => ChannelCredentials::createInsecure(),
+]);
 
-// Make request
+// Unary call
 $request = new HelloRequest();
-$request->setName('World');
+$request->setName('Bufrnix');
+[$response, $status] = $client->SayHello($request)->wait();
 
-try {
-    $response = $client->Hello($request);
-    echo "Response: " . $response->getGreeting() . "\n";
-} catch (Exception $e) {
-    echo "Error: " . $e->getMessage() . "\n";
+if ($status->code === \Grpc\STATUS_OK) {
+    echo $response->getMessage();
+}
+
+// Server streaming
+$call = $client->SayHelloStream($request);
+foreach ($call->responses() as $response) {
+    echo $response->getMessage() . "\n";
 }
 ```
 
-### Try the Example
+**RoadRunner Server:**
+
+```php
+<?php
+// worker.php
+use Spiral\RoadRunner\GRPC\Server;
+use Spiral\RoadRunner\Worker;
+use App\Services\GreeterService;
+use App\Proto\Example\V1\Services\GreeterServiceInterface;
+
+require __DIR__ . '/vendor/autoload.php';
+
+$server = new Server();
+$server->registerService(
+    GreeterServiceInterface::class,
+    new GreeterService()
+);
+
+$server->serve(Worker::create());
+```
+
+**Service Implementation:**
+
+```php
+<?php
+use App\Proto\Example\V1\HelloRequest;
+use App\Proto\Example\V1\HelloResponse;
+use App\Proto\Example\V1\Services\GreeterServiceInterface;
+use Spiral\RoadRunner\GRPC\ContextInterface;
+
+class GreeterService implements GreeterServiceInterface
+{
+    public function SayHello(
+        ContextInterface $ctx,
+        HelloRequest $request
+    ): HelloResponse {
+        $response = new HelloResponse();
+        $response->setMessage("Hello, " . $request->getName() . "!");
+        $response->setTimestamp(time());
+        $response->setSuccess(true);
+
+        return $response;
+    }
+
+    public function SayHelloStream(
+        ContextInterface $ctx,
+        HelloRequest $request
+    ): \Generator {
+        for ($i = 0; $i < $request->getCount(); $i++) {
+            $response = new HelloResponse();
+            $response->setMessage("Stream #$i: Hello, " . $request->getName());
+            $response->setTimestamp(time());
+
+            yield $response;
+            usleep(500000); // 500ms delay
+        }
+    }
+}
+```
+
+### Framework Integration
+
+**Laravel:**
+
+```php
+// app/Http/Controllers/GreeterController.php
+public function greet(Request $request, GreeterServiceClient $client)
+{
+    $grpcRequest = new HelloRequest();
+    $grpcRequest->setName($request->input('name'));
+
+    [$response, $status] = $client->SayHello($grpcRequest)->wait();
+
+    return response()->json([
+        'message' => $response->getMessage(),
+    ]);
+}
+```
+
+**Symfony:**
+
+```php
+// src/Controller/GreeterController.php
+#[Route('/greet/{name}')]
+public function greet(string $name, GreeterServiceClient $client): JsonResponse
+{
+    $request = new HelloRequest();
+    $request->setName($name);
+
+    [$response, $status] = $client->SayHello($request)->wait();
+
+    return $this->json([
+        'message' => $response->getMessage(),
+    ]);
+}
+```
+
+### Async PHP Examples
+
+**ReactPHP:**
+
+```php
+use App\Proto\Async\ReactPHPClient;
+
+$client = new ReactPHPClient('localhost:9001');
+$client->sendRequestAsync($request)->then(
+    function ($response) {
+        echo "Async: " . $response->getMessage();
+    }
+);
+$client->run();
+```
+
+**Swoole:**
+
+```php
+use App\Proto\Async\SwooleGrpcServer;
+
+$server = new SwooleGrpcServer('0.0.0.0', 9501);
+$server->registerService(GreeterServiceInterface::class, new GreeterService());
+$server->start();
+```
+
+**PHP Fibers (8.1+):**
+
+```php
+use App\Proto\Async\FiberProtobufHandler;
+
+$handler = new FiberProtobufHandler();
+$results = $handler->processConcurrent([
+    'req1' => $request1->serializeToString(),
+    'req2' => $request2->serializeToString(),
+]);
+```
+
+### Try the Examples
+
+**gRPC + RoadRunner:**
+
+```bash
+cd examples/php-grpc-roadrunner
+nix develop
+composer install
+./roadrunner-dev.sh start
+php test-client.php
+```
+
+**Legacy Twirp:**
 
 ```bash
 cd examples/php-twirp
@@ -1177,6 +1366,7 @@ swift run
 | **Type Stubs**       | ❌  | ❌   | ✅                    | ❌  | ✅     | ❌    | ❌             | ❌         |
 | **Async Support**    | ✅  | ✅   | ✅                    | ❌  | ✅     | ✅    | ❌             | ❌         |
 
+
 ## Multi-Language Projects
 
 Generate code for multiple languages simultaneously:
@@ -1212,11 +1402,19 @@ config = {
     connect.enable = true;
   };
 
-  # Legacy services in PHP
+  # Backend services in PHP
   languages.php = {
     enable = true;
-    outputPath = "legacy/gen/php";
-    twirp.enable = true;
+    outputPath = "backend/gen/php";
+    namespace = "Backend\\Proto";
+
+    grpc.enable = true;
+    roadrunner = {
+      enable = true;
+      workers = 8;
+    };
+
+    frameworks.laravel.enable = true;
   };
 
   # Data processing in Python
