@@ -1,0 +1,99 @@
+syntax = "proto3";
+
+package example.v1;
+
+import "google/api/annotations.proto";
+import "google/protobuf/timestamp.proto";
+
+option go_package = "github.com/example/proto/gen/go/example/v1;examplev1";
+
+// User represents a system user
+message User {
+  string id = 1;
+  string email = 2;
+  string name = 3;
+
+  // High-performance serialization benefits from these repeated fields
+  repeated string roles = 4;
+  map<string, string> metadata = 5;
+
+  google.protobuf.Timestamp created_at = 6;
+  google.protobuf.Timestamp updated_at = 7;
+
+  // Nested message to demonstrate vtprotobuf optimization
+  Profile profile = 8;
+
+  message Profile {
+    string bio = 1;
+    string avatar_url = 2;
+    repeated string interests = 3;
+  }
+}
+
+// UserService provides user management operations
+service UserService {
+  // GetUser retrieves a user by ID
+  rpc GetUser(GetUserRequest) returns (GetUserResponse) {
+    option (google.api.http) = {get: "/v1/users/{id}"};
+  }
+
+  // ListUsers retrieves a list of users
+  rpc ListUsers(ListUsersRequest) returns (ListUsersResponse) {
+    option (google.api.http) = {get: "/v1/users"};
+  }
+
+  // CreateUser creates a new user
+  rpc CreateUser(CreateUserRequest) returns (CreateUserResponse) {
+    option (google.api.http) = {
+      post: "/v1/users"
+      body: "user"
+    };
+  }
+
+  // UpdateUser updates an existing user
+  rpc UpdateUser(UpdateUserRequest) returns (UpdateUserResponse) {
+    option (google.api.http) = {
+      put: "/v1/users/{user.id}"
+      body: "user"
+    };
+  }
+}
+
+message GetUserRequest {
+  string id = 1;
+}
+
+message GetUserResponse {
+  User user = 1;
+}
+
+message ListUsersRequest {
+  int32 page_size = 1;
+  string page_token = 2;
+
+  // Filter by role for demonstration
+  repeated string roles = 3;
+}
+
+message ListUsersResponse {
+  repeated User users = 1;
+  string next_page_token = 2;
+  int32 total_count = 3;
+}
+
+message CreateUserRequest {
+  User user = 1;
+}
+
+message CreateUserResponse {
+  User user = 1;
+}
+
+message UpdateUserRequest {
+  User user = 1;
+  // Field mask would be used in production
+}
+
+message UpdateUserResponse {
+  User user = 1;
+}

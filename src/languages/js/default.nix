@@ -29,11 +29,46 @@ with lib; let
       };
   };
 
+  # protovalidate-es support for runtime validation
+  # Note: This doesn't add a separate code generator, but configures
+  # protoc-gen-es to properly handle buf.validate options in proto files
+  protovalidateModule = import ./protovalidate.nix {
+    inherit pkgs lib;
+    cfg =
+      cfg.protovalidate
+      // {
+        outputPath = outputPath;
+      };
+  };
+
+  # Connect-ES for modern RPC support
+  connectModule = import ./connect.nix {
+    inherit pkgs lib;
+    cfg =
+      cfg.connect
+      // {
+        outputPath = outputPath;
+      };
+  };
+
+  # ts-proto for TypeScript-first development
+  tsProtoModule = import ./ts-proto.nix {
+    inherit pkgs lib;
+    cfg =
+      cfg.tsProto
+      // {
+        outputPath = outputPath;
+      };
+  };
+
   # Combine all sub-modules
   combineModuleAttrs = attr:
     concatLists (catAttrs attr [
       grpcWebModule
       twirpModule
+      protovalidateModule
+      connectModule
+      tsProtoModule
     ]);
 in {
   # Runtime dependencies for JS code generation
@@ -45,7 +80,7 @@ in {
     ]
     ++ (optional (cfg.package != null) cfg.package)
     ++ (optionals cfg.es.enable [cfg.es.package])
-    ++ (optionals cfg.connect.enable [cfg.connect.package])
+    ++ (optionals cfg.tsProto.enable (tsProtoModule.runtimeInputs or []))
     ++ (combineModuleAttrs "runtimeInputs");
 
   # Protoc plugin configuration for JS
@@ -53,11 +88,18 @@ in {
     # Only add JS output if package is available
     (optional (cfg.package != null)
       "--js_out=import_style=commonjs,binary:${outputPath}")
-    ++ [
-      # ECMAScript output for modern JavaScript if enabled
-      (optionalString cfg.es.enable
-        "--plugin=protoc-gen-es=${cfg.es.package}/bin/protoc-gen-es --es_out=${outputPath}")
-    ]
+    ++ (optionals cfg.es.enable (let
+      esOptions =
+        cfg.es.options
+        ++ (optional (cfg.es.target != "") "target=${cfg.es.target}")
+        ++ (optional (cfg.es.importExtension != "") "import_extension=${cfg.es.importExtension}")
+        ++ (optional cfg.connect.enable "plugin=@connectrpc/protoc-gen-connect-es");
+    in [
+      "--plugin=protoc-gen-es=${cfg.es.package}/bin/protoc-gen-es"
+      "--es_out=${outputPath}"
+      (optionalString (esOptions != []) "--es_opt=${concatStringsSep "," esOptions}")
+    ]))
+    ++ (optionals cfg.tsProto.enable (tsProtoModule.protocPlugins or []))
     ++ (combineModuleAttrs "protocPlugins");
 
   # Initialization hook for JS
@@ -72,6 +114,7 @@ in {
     + concatStrings (catAttrs "initHooks" [
       grpcWebModule
       twirpModule
+      protovalidateModule
     ]);
 
   # Code generation hook for JS
@@ -84,9 +127,46 @@ in {
         echo "Note: protoc-gen-js is not available on macOS due to build issues."
         echo "Using ES modules (protoc-gen-es) or other alternatives instead."
       ''}
+
+      # Generate package.json for ES modules if requested
+      ${optionalString (cfg.es.enable && cfg.es.generatePackageJson) ''
+                cat > ${outputPath}/package.json <<EOF
+        {
+          "name": "${
+          if cfg.es.packageName != ""
+          then cfg.es.packageName
+          else "generated-protobuf-es"
+        }",
+          "version": "1.0.0",
+          "type": "module",
+          "main": "./index.js",
+          "types": "./index.d.ts",
+          "exports": {
+            ".": {
+              "import": "./index.js",
+              "types": "./index.d.ts"
+            },
+            "./*": {
+              "import": "./*.js",
+              "types": "./*.d.ts"
+            }
+          },
+          "dependencies": {
+            "@bufbuild/protobuf": "^1.10.0"
+          },
+          "devDependencies": {
+            "typescript": "^5.3.0"
+          }
+        }
+        EOF
+                echo "Generated package.json for ES modules"
+      ''}
     ''
     + concatStrings (catAttrs "generateHooks" [
       grpcWebModule
       twirpModule
+      protovalidateModule
+      connectModule
+      tsProtoModule
     ]);
 }

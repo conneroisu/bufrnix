@@ -1,0 +1,602 @@
+---
+title: PHP Language Support
+description: Protocol Buffer messages and Twirp RPC framework integration for PHP applications.
+---
+
+import { Tabs, TabItem } from "@astrojs/starlight/components";
+
+# PHP Language Support
+
+**Status**: ✅ Full Support  
+**Example**: [`examples/php-twirp/`](https://github.com/conneroisu/bufr.nix/tree/main/examples/php-twirp)
+
+PHP support provides Protocol Buffer messages and Twirp RPC framework integration for building modern PHP APIs.
+
+## Available Plugins
+
+| Plugin                     | Description         | Generated Files              |
+| -------------------------- | ------------------- | ---------------------------- |
+| **`protoc-gen-php`**       | Message classes     | `*.php`, `GPBMetadata/*.php` |
+| **`protoc-gen-twirp_php`** | Twirp RPC framework | `*Client.php`, `*Server.php` |
+
+## Configuration
+
+### Basic Configuration
+
+```nix
+languages.php = {
+  enable = true;
+  outputPath = "gen/php";
+  namespace = "MyApp\\Proto";
+};
+```
+
+### Full Configuration
+
+```nix
+languages.php = {
+  enable = true;
+  outputPath = "gen/php";
+  namespace = "MyApp\\Proto";
+  options = [
+    "aggregate_metadata"  # Single metadata file
+  ];
+
+  twirp = {
+    enable = true;
+    options = [
+      "generate_client=true"
+      "generate_server=true"
+    ];
+  };
+};
+```
+
+## Proto Example
+
+```protobuf
+// proto/example/v1/service.proto
+syntax = "proto3";
+
+package example.v1;
+
+service HelloService {
+  rpc Hello(HelloRequest) returns (HelloResponse);
+  rpc ListGreetings(ListGreetingsRequest) returns (ListGreetingsResponse);
+  rpc CreateUser(CreateUserRequest) returns (CreateUserResponse);
+}
+
+message HelloRequest {
+  string name = 1;
+  string language = 2;
+}
+
+message HelloResponse {
+  string greeting = 1;
+  string language = 2;
+}
+
+message User {
+  string id = 1;
+  string name = 2;
+  string email = 3;
+  repeated string roles = 4;
+  map<string, string> metadata = 5;
+  UserStatus status = 6;
+}
+
+enum UserStatus {
+  USER_STATUS_UNSPECIFIED = 0;
+  USER_STATUS_ACTIVE = 1;
+  USER_STATUS_INACTIVE = 2;
+  USER_STATUS_SUSPENDED = 3;
+}
+
+message CreateUserRequest {
+  User user = 1;
+}
+
+message CreateUserResponse {
+  User user = 1;
+  bool success = 2;
+  string message = 3;
+}
+
+message ListGreetingsRequest {
+  int32 limit = 1;
+  string language = 2;
+}
+
+message ListGreetingsResponse {
+  repeated HelloResponse greetings = 1;
+  int32 total_count = 2;
+}
+```
+
+## Generated Code Usage
+
+<Tabs>
+  <TabItem label="Twirp Server">
+    ```php
+    <?php
+    require_once 'vendor/autoload.php';
+
+    use MyApp\Proto\Example\V1\HelloServiceServer;
+    use MyApp\Proto\Example\V1\HelloRequest;
+    use MyApp\Proto\Example\V1\HelloResponse;
+    use MyApp\Proto\Example\V1\CreateUserRequest;
+    use MyApp\Proto\Example\V1\CreateUserResponse;
+    use MyApp\Proto\Example\V1\User;
+    use MyApp\Proto\Example\V1\UserStatus;
+
+    class HelloServiceImpl
+    {
+        private array $users = [];
+        private array $greetings = [
+            'en' => 'Hello',
+            'es' => 'Hola',
+            'fr' => 'Bonjour',
+            'de' => 'Guten Tag'
+        ];
+
+        public function Hello(HelloRequest $request): HelloResponse
+        {
+            $language = $request->getLanguage() ?: 'en';
+            $greeting = $this->greetings[$language] ?? $this->greetings['en'];
+
+            $response = new HelloResponse();
+            $response->setGreeting($greeting . ', ' . $request->getName() . '!');
+            $response->setLanguage($language);
+
+            return $response;
+        }
+
+        public function CreateUser(CreateUserRequest $request): CreateUserResponse
+        {
+            $user = $request->getUser();
+            $userId = $user->getId() ?: uniqid('user_');
+
+            // Set ID if not provided
+            $user->setId($userId);
+            $user->setStatus(UserStatus::USER_STATUS_ACTIVE);
+
+            // Store user
+            $this->users[$userId] = $user;
+
+            $response = new CreateUserResponse();
+            $response->setUser($user);
+            $response->setSuccess(true);
+            $response->setMessage('User created successfully');
+
+            return $response;
+        }
+
+        public function ListGreetings(ListGreetingsRequest $request): ListGreetingsResponse
+        {
+            $language = $request->getLanguage() ?: 'en';
+            $limit = $request->getLimit() ?: 10;
+
+            $greetings = [];
+            $names = ['World', 'PHP', 'Protobuf', 'Twirp'];
+
+            for ($i = 0; $i < min($limit, count($names)); $i++) {
+                $greeting = new HelloResponse();
+                $greeting->setGreeting($this->greetings[$language] . ', ' . $names[$i] . '!');
+                $greeting->setLanguage($language);
+                $greetings[] = $greeting;
+            }
+
+            $response = new ListGreetingsResponse();
+            foreach ($greetings as $greeting) {
+                $response->getGreetings()[] = $greeting;
+            }
+            $response->setTotalCount(count($greetings));
+
+            return $response;
+        }
+    }
+
+    // Create and serve
+    $impl = new HelloServiceImpl();
+    $server = new HelloServiceServer($impl);
+
+    // Handle HTTP request
+    $method = $_SERVER['REQUEST_METHOD'];
+    $uri = $_SERVER['REQUEST_URI'];
+    $headers = getallheaders();
+    $body = file_get_contents('php://input');
+
+    try {
+        $server->handle($method, $uri, $headers, $body);
+    } catch (Exception $e) {
+        http_response_code(500);
+        echo json_encode(['error' => $e->getMessage()]);
+    }
+    ```
+
+  </TabItem>
+
+  <TabItem label="Twirp Client">
+    ```php
+    <?php
+    require_once 'vendor/autoload.php';
+
+    use MyApp\Proto\Example\V1\HelloServiceClient;
+    use MyApp\Proto\Example\V1\HelloRequest;
+    use MyApp\Proto\Example\V1\CreateUserRequest;
+    use MyApp\Proto\Example\V1\User;
+    use MyApp\Proto\Example\V1\ListGreetingsRequest;
+
+    // Create client
+    $client = new HelloServiceClient('http://localhost:8080');
+
+    // Set custom headers
+    $client->setHeaders([
+        'Authorization' => 'Bearer your-token',
+        'X-Client-Version' => '1.0.0'
+    ]);
+
+    try {
+        // Simple hello request
+        $helloRequest = new HelloRequest();
+        $helloRequest->setName('PHP Developer');
+        $helloRequest->setLanguage('en');
+
+        $helloResponse = $client->Hello($helloRequest);
+        echo "Greeting: " . $helloResponse->getGreeting() . "\n";
+
+        // Create a user
+        $user = new User();
+        $user->setName('John Doe');
+        $user->setEmail('john@example.com');
+        $user->setRoles(['developer', 'admin']);
+
+        // Set metadata
+        $metadata = $user->getMetadata();
+        $metadata['department'] = 'Engineering';
+        $metadata['location'] = 'Remote';
+
+        $createRequest = new CreateUserRequest();
+        $createRequest->setUser($user);
+
+        $createResponse = $client->CreateUser($createRequest);
+        if ($createResponse->getSuccess()) {
+            echo "Created user: " . $createResponse->getUser()->getName() . "\n";
+            echo "User ID: " . $createResponse->getUser()->getId() . "\n";
+        }
+
+        // List greetings
+        $listRequest = new ListGreetingsRequest();
+        $listRequest->setLimit(5);
+        $listRequest->setLanguage('es');
+
+        $listResponse = $client->ListGreetings($listRequest);
+        echo "Found " . $listResponse->getTotalCount() . " greetings:\n";
+
+        foreach ($listResponse->getGreetings() as $greeting) {
+            echo "- " . $greeting->getGreeting() . "\n";
+        }
+
+    } catch (TwirpError $e) {
+        echo "Twirp Error (" . $e->getCode() . "): " . $e->getMessage() . "\n";
+        echo "Details: " . json_encode($e->getDetails()) . "\n";
+    } catch (Exception $e) {
+        echo "Error: " . $e->getMessage() . "\n";
+    }
+    ```
+
+  </TabItem>
+
+  <TabItem label="Message Usage">
+    ```php
+    <?php
+    require_once 'vendor/autoload.php';
+
+    use MyApp\Proto\Example\V1\User;
+    use MyApp\Proto\Example\V1\UserStatus;
+
+    // Create a new user
+    $user = new User();
+    $user->setId('user123');
+    $user->setName('Jane Smith');
+    $user->setEmail('jane@example.com');
+    $user->setRoles(['developer', 'team_lead']);
+    $user->setStatus(UserStatus::USER_STATUS_ACTIVE);
+
+    // Work with map fields
+    $metadata = $user->getMetadata();
+    $metadata['department'] = 'Engineering';
+    $metadata['team'] = 'Backend';
+    $metadata['start_date'] = '2024-01-15';
+
+    // Serialize to binary format
+    $binaryData = $user->serializeToString();
+    echo "Binary size: " . strlen($binaryData) . " bytes\n";
+
+    // Deserialize from binary
+    $newUser = new User();
+    $newUser->mergeFromString($binaryData);
+    echo "Deserialized user: " . $newUser->getName() . "\n";
+
+    // JSON serialization
+    $jsonData = $user->serializeToJsonString();
+    echo "JSON: " . $jsonData . "\n";
+
+    // JSON deserialization
+    $fromJsonUser = new User();
+    $fromJsonUser->mergeFromJsonString($jsonData);
+    echo "From JSON: " . $fromJsonUser->getEmail() . "\n";
+
+    // Work with repeated fields
+    echo "User roles:\n";
+    foreach ($user->getRoles() as $role) {
+        echo "- $role\n";
+    }
+
+    // Work with map fields
+    echo "User metadata:\n";
+    foreach ($user->getMetadata() as $key => $value) {
+        echo "- $key: $value\n";
+    }
+
+    // Check enum values
+    switch ($user->getStatus()) {
+        case UserStatus::USER_STATUS_ACTIVE:
+            echo "User is active\n";
+            break;
+        case UserStatus::USER_STATUS_INACTIVE:
+            echo "User is inactive\n";
+            break;
+        case UserStatus::USER_STATUS_SUSPENDED:
+            echo "User is suspended\n";
+            break;
+        default:
+            echo "Unknown user status\n";
+    }
+    ```
+
+  </TabItem>
+
+  <TabItem label="Laravel Integration">
+    ```php
+    <?php
+    // app/Http/Controllers/UserController.php
+    namespace App\Http\Controllers;
+
+    use Illuminate\Http\Request;
+    use MyApp\Proto\Example\V1\HelloServiceClient;
+    use MyApp\Proto\Example\V1\CreateUserRequest;
+    use MyApp\Proto\Example\V1\User;
+
+    class UserController extends Controller
+    {
+        private HelloServiceClient $protoClient;
+
+        public function __construct()
+        {
+            $this->protoClient = new HelloServiceClient(
+                config('services.proto.url')
+            );
+        }
+
+        public function store(Request $request)
+        {
+            $validated = $request->validate([
+                'name' => 'required|string|max:255',
+                'email' => 'required|email|unique:users',
+                'roles' => 'array'
+            ]);
+
+            try {
+                // Create protobuf user
+                $protoUser = new User();
+                $protoUser->setName($validated['name']);
+                $protoUser->setEmail($validated['email']);
+                $protoUser->setRoles($validated['roles'] ?? []);
+
+                $createRequest = new CreateUserRequest();
+                $createRequest->setUser($protoUser);
+
+                $response = $this->protoClient->CreateUser($createRequest);
+
+                if ($response->getSuccess()) {
+                    return response()->json([
+                        'success' => true,
+                        'user' => [
+                            'id' => $response->getUser()->getId(),
+                            'name' => $response->getUser()->getName(),
+                            'email' => $response->getUser()->getEmail(),
+                        ]
+                    ]);
+                }
+
+                return response()->json([
+                    'success' => false,
+                    'message' => $response->getMessage()
+                ], 400);
+
+            } catch (\Exception $e) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Failed to create user: ' . $e->getMessage()
+                ], 500);
+            }
+        }
+    }
+
+    // config/services.php
+    return [
+        'proto' => [
+            'url' => env('PROTO_SERVICE_URL', 'http://localhost:8080'),
+        ],
+    ];
+    ```
+
+  </TabItem>
+</Tabs>
+
+## Testing
+
+```php
+<?php
+// tests/ProtoTest.php
+use PHPUnit\Framework\TestCase;
+use MyApp\Proto\Example\V1\User;
+use MyApp\Proto\Example\V1\UserStatus;
+
+class ProtoTest extends TestCase
+{
+    public function testUserCreation()
+    {
+        $user = new User();
+        $user->setId('test123');
+        $user->setName('Test User');
+        $user->setEmail('test@example.com');
+        $user->setStatus(UserStatus::USER_STATUS_ACTIVE);
+
+        $this->assertEquals('test123', $user->getId());
+        $this->assertEquals('Test User', $user->getName());
+        $this->assertEquals('test@example.com', $user->getEmail());
+        $this->assertEquals(UserStatus::USER_STATUS_ACTIVE, $user->getStatus());
+    }
+
+    public function testSerialization()
+    {
+        $user = new User();
+        $user->setName('Serialization Test');
+        $user->setEmail('serialize@test.com');
+
+        // Test binary serialization
+        $binary = $user->serializeToString();
+        $this->assertNotEmpty($binary);
+
+        $decoded = new User();
+        $decoded->mergeFromString($binary);
+        $this->assertEquals($user->getName(), $decoded->getName());
+
+        // Test JSON serialization
+        $json = $user->serializeToJsonString();
+        $this->assertJson($json);
+
+        $fromJson = new User();
+        $fromJson->mergeFromJsonString($json);
+        $this->assertEquals($user->getEmail(), $fromJson->getEmail());
+    }
+
+    public function testMapFields()
+    {
+        $user = new User();
+        $metadata = $user->getMetadata();
+        $metadata['key1'] = 'value1';
+        $metadata['key2'] = 'value2';
+
+        $this->assertCount(2, $user->getMetadata());
+        $this->assertEquals('value1', $user->getMetadata()['key1']);
+    }
+}
+```
+
+## Composer Configuration
+
+```json
+{
+  "name": "myapp/proto-example",
+  "require": {
+    "php": "^8.1",
+    "google/protobuf": "^3.25"
+  },
+  "require-dev": {
+    "phpunit/phpunit": "^10.0"
+  },
+  "autoload": {
+    "psr-4": {
+      "MyApp\\Proto\\": "gen/php/"
+    }
+  },
+  "scripts": {
+    "proto": "bufrnix",
+    "test": "phpunit tests/"
+  }
+}
+```
+
+## Best Practices
+
+1. **Namespaces**: Use proper PSR-4 namespaces matching your project structure
+2. **Error Handling**: Always catch TwirpError for RPC-specific errors
+3. **Validation**: Validate data before creating protobuf messages
+4. **Serialization**: Use binary format for performance, JSON for debugging
+5. **Testing**: Test both message creation and serialization/deserialization
+6. **Autoloading**: Configure Composer autoloading for generated classes
+
+## Generated Files Structure
+
+```
+gen/php/
+└── MyApp/
+    └── Proto/
+        └── Example/
+            └── V1/
+                ├── User.php
+                ├── UserStatus.php
+                ├── HelloRequest.php
+                ├── HelloResponse.php
+                ├── HelloServiceClient.php
+                ├── HelloServiceServer.php
+                └── GPBMetadata/
+                    └── Example/
+                        └── V1/
+                            └── Service.php
+```
+
+## Try the Example
+
+```bash
+cd examples/php-twirp
+nix develop
+composer install
+php -S localhost:8080 -t .
+
+# In another terminal
+php client.php
+```
+
+## Troubleshooting
+
+### Autoloading Issues
+
+Ensure your composer.json includes the generated namespace:
+
+```json
+{
+  "autoload": {
+    "psr-4": {
+      "MyApp\\Proto\\": "gen/php/"
+    }
+  }
+}
+```
+
+### Twirp Errors
+
+Handle Twirp-specific errors properly:
+
+```php
+try {
+    $response = $client->SomeMethod($request);
+} catch (TwirpError $e) {
+    // Handle Twirp protocol errors
+    echo "Twirp Error: " . $e->getCode() . " - " . $e->getMessage();
+} catch (Exception $e) {
+    // Handle other errors
+    echo "General Error: " . $e->getMessage();
+}
+```
+
+### Memory Usage
+
+For large messages, be aware of PHP's memory limits:
+
+```php
+ini_set('memory_limit', '256M');
+```

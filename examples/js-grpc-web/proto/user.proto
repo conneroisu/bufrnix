@@ -1,0 +1,120 @@
+syntax = "proto3";
+
+package example.user.v1;
+
+import "google/protobuf/timestamp.proto";
+
+option go_package = "example/user/v1;userv1";
+
+// User represents a user in the system
+message User {
+  string id = 1;
+  string name = 2;
+  string email = 3;
+  int32 age = 4;
+  repeated string interests = 5;
+  UserStatus status = 6;
+  google.protobuf.Timestamp created_at = 7;
+  google.protobuf.Timestamp updated_at = 8;
+}
+
+// UserStatus represents the status of a user
+enum UserStatus {
+  USER_STATUS_UNSPECIFIED = 0;
+  USER_STATUS_ACTIVE = 1;
+  USER_STATUS_INACTIVE = 2;
+  USER_STATUS_SUSPENDED = 3;
+}
+
+// CreateUserRequest is the request message for CreateUser
+message CreateUserRequest {
+  string name = 1;
+  string email = 2;
+  int32 age = 3;
+  repeated string interests = 4;
+}
+
+// CreateUserResponse is the response message for CreateUser
+message CreateUserResponse {
+  User user = 1;
+}
+
+// GetUserRequest is the request message for GetUser
+message GetUserRequest {
+  string id = 1;
+}
+
+// GetUserResponse is the response message for GetUser
+message GetUserResponse {
+  User user = 1;
+}
+
+// ListUsersRequest is the request message for ListUsers
+message ListUsersRequest {
+  int32 page_size = 1;
+  string page_token = 2;
+  UserStatus status_filter = 3;
+}
+
+// ListUsersResponse is the response message for ListUsers
+message ListUsersResponse {
+  repeated User users = 1;
+  string next_page_token = 2;
+  int32 total_count = 3;
+}
+
+// UpdateUserRequest is the request message for UpdateUser
+message UpdateUserRequest {
+  string id = 1;
+  string name = 2;
+  string email = 3;
+  int32 age = 4;
+  repeated string interests = 5;
+  UserStatus status = 6;
+}
+
+// UpdateUserResponse is the response message for UpdateUser
+message UpdateUserResponse {
+  User user = 1;
+}
+
+// DeleteUserRequest is the request message for DeleteUser
+message DeleteUserRequest {
+  string id = 1;
+}
+
+// DeleteUserResponse is the response message for DeleteUser
+message DeleteUserResponse {
+  bool success = 1;
+}
+
+// StreamUsersRequest is the request message for StreamUsers
+message StreamUsersRequest {
+  UserStatus status_filter = 1;
+}
+
+// StreamUsersResponse is the response message for StreamUsers
+message StreamUsersResponse {
+  User user = 1;
+}
+
+// UserService provides operations for managing users
+service UserService {
+  // CreateUser creates a new user
+  rpc CreateUser(CreateUserRequest) returns (CreateUserResponse) {}
+
+  // GetUser retrieves a user by ID
+  rpc GetUser(GetUserRequest) returns (GetUserResponse) {}
+
+  // ListUsers lists all users with pagination
+  rpc ListUsers(ListUsersRequest) returns (ListUsersResponse) {}
+
+  // UpdateUser updates an existing user
+  rpc UpdateUser(UpdateUserRequest) returns (UpdateUserResponse) {}
+
+  // DeleteUser deletes a user
+  rpc DeleteUser(DeleteUserRequest) returns (DeleteUserResponse) {}
+
+  // StreamUsers streams users matching the filter
+  rpc StreamUsers(StreamUsersRequest) returns (stream StreamUsersResponse) {}
+}

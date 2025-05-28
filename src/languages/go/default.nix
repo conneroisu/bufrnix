@@ -47,6 +47,51 @@ with lib; let
       };
   };
 
+  protovalidateModule = import ./protovalidate.nix {
+    inherit pkgs lib;
+    cfg =
+      (cfg.protovalidate or {enable = false;})
+      // {
+        outputPath = outputPath;
+      };
+  };
+
+  openapiv2Module = import ./openapiv2.nix {
+    inherit pkgs lib;
+    cfg =
+      (cfg.openapiv2 or {enable = false;})
+      // {
+        outputPath = outputPath;
+      };
+  };
+
+  vtprotobufModule = import ./vtprotobuf.nix {
+    inherit pkgs lib;
+    cfg =
+      (cfg.vtprotobuf or {enable = false;})
+      // {
+        outputPath = outputPath;
+      };
+  };
+
+  jsonModule = import ./json.nix {
+    inherit pkgs lib;
+    cfg =
+      (cfg.json or {enable = false;})
+      // {
+        outputPath = outputPath;
+      };
+  };
+
+  federationModule = import ./federation.nix {
+    inherit pkgs lib;
+    cfg =
+      (cfg.federation or {enable = false;})
+      // {
+        outputPath = outputPath;
+      };
+  };
+
   # Combine all sub-modules
   combineModuleAttrs = attr:
     concatLists (catAttrs attr [
@@ -54,6 +99,11 @@ with lib; let
       connectModule
       gatewayModule
       validateModule
+      protovalidateModule
+      openapiv2Module
+      vtprotobufModule
+      jsonModule
+      federationModule
     ]);
 in {
   # Runtime dependencies for Go code generation
@@ -85,6 +135,11 @@ in {
       connectModule
       gatewayModule
       validateModule
+      protovalidateModule
+      openapiv2Module
+      vtprotobufModule
+      jsonModule
+      federationModule
     ]);
 
   # Code generation hook for Go
@@ -99,5 +154,10 @@ in {
       connectModule
       gatewayModule
       validateModule
+      protovalidateModule
+      openapiv2Module
+      vtprotobufModule
+      jsonModule
+      federationModule
     ]);
 }

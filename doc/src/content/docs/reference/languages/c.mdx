@@ -1,0 +1,580 @@
+---
+title: C Language Support
+description: Multiple Protocol Buffer implementations for C, from standard systems to embedded microcontrollers.
+---
+
+import { Tabs, TabItem } from "@astrojs/starlight/components";
+
+# C Language Support
+
+**Status**: ✅ Full Support  
+**Examples**: [`examples/c-protobuf-c/`](https://github.com/conneroisu/bufr.nix/tree/main/examples/c-protobuf-c), [`examples/c-nanopb/`](https://github.com/conneroisu/bufr.nix/tree/main/examples/c-nanopb)
+
+C support provides multiple Protocol Buffer implementations optimized for different use cases, from standard systems to embedded microcontrollers.
+
+## Available Implementations
+
+| Implementation | Description                | Target Use Case                    | Generated Files        |
+| -------------- | -------------------------- | ---------------------------------- | ---------------------- |
+| **protobuf-c** | Standard C implementation  | General purpose C applications     | `*.pb-c.h`, `*.pb-c.c` |
+| **nanopb**     | Lightweight implementation | Embedded systems, microcontrollers | `*.pb.h`, `*.pb.c`     |
+| **upb**        | Google's C implementation  | High-performance parsing (future)  | `*.upb.h`, `*.upb.c`   |
+
+## Configuration
+
+### Basic Configuration
+
+```nix
+languages.c = {
+  enable = true;
+  outputPath = "gen/c";
+
+  # Choose your implementation
+  protobuf-c.enable = true;  # For general C applications
+  # OR
+  nanopb.enable = true;      # For embedded systems
+};
+```
+
+### Full Configuration
+
+```nix
+languages.c = {
+  enable = true;
+  outputPath = "gen/c";
+
+  # Standard C implementation
+  protobuf-c = {
+    enable = true;
+    outputPath = "gen/c/protobuf-c";
+    options = [];  # protoc-gen-c options
+  };
+
+  # Embedded systems implementation
+  nanopb = {
+    enable = true;
+    outputPath = "gen/c/nanopb";
+    options = [];
+
+    # Nanopb-specific configuration
+    maxSize = 256;        # Max size for dynamic allocation
+    fixedLength = true;   # Use fixed-length arrays
+    noUnions = false;     # Allow union (oneof) support
+    msgidType = "";       # Message ID type for RPC
+  };
+
+  # Google's upb (future support)
+  upb = {
+    enable = false;  # Not yet available in nixpkgs
+    outputPath = "gen/c/upb";
+    options = [];
+  };
+};
+```
+
+## Proto Examples
+
+### Standard Example (protobuf-c)
+
+```protobuf
+// proto/example/v1/example.proto
+syntax = "proto3";
+
+package example.v1;
+
+message Example {
+  string id = 1;
+  string name = 2;
+  int32 value = 3;
+  repeated string tags = 4;
+  ExampleType type = 5;
+  bytes data = 6;
+}
+
+enum ExampleType {
+  EXAMPLE_TYPE_UNSPECIFIED = 0;
+  EXAMPLE_TYPE_BASIC = 1;
+  EXAMPLE_TYPE_ADVANCED = 2;
+}
+
+message NestedExample {
+  Example example = 1;
+  map<string, string> metadata = 2;
+  repeated Example examples = 3;
+}
+```
+
+### Embedded Example (nanopb)
+
+```protobuf
+// proto/sensor/v1/sensor.proto
+syntax = "proto3";
+
+package sensor.v1;
+
+// Optimized for embedded systems
+message SensorReading {
+  uint32 timestamp = 1;
+  float temperature = 2;
+  float humidity = 3;
+  uint32 pressure = 4;
+  repeated float values = 5;  // Fixed array in nanopb
+  SensorStatus status = 6;
+}
+
+enum SensorStatus {
+  SENSOR_STATUS_UNKNOWN = 0;
+  SENSOR_STATUS_OK = 1;
+  SENSOR_STATUS_ERROR = 2;
+  SENSOR_STATUS_MAINTENANCE = 3;
+}
+
+message DeviceConfig {
+  string device_id = 1;     // Max 32 chars in nanopb
+  uint32 sample_rate = 2;
+  bool enable_logging = 3;
+  repeated uint32 calibration = 4;  // Fixed size array
+}
+```
+
+### Nanopb Options File
+
+```options
+# sensor.options - Constraints for embedded systems
+sensor.v1.DeviceConfig.device_id max_size:32
+sensor.v1.SensorReading.values max_count:10 fixed_count:true
+sensor.v1.DeviceConfig.calibration max_count:8 fixed_count:true
+* type:FT_STATIC  # Use static allocation
+```
+
+## Generated Code Usage
+
+<Tabs>
+  <TabItem label="protobuf-c">
+    ```c
+    #include "proto/gen/c/protobuf-c/example/v1/example.pb-c.h"
+    #include <stdio.h>
+    #include <stdlib.h>
+    #include <string.h>
+
+    int main() {
+        // Create and initialize a message
+        Example__V1__Example example = EXAMPLE__V1__EXAMPLE__INIT;
+        example.id = "test-123";
+        example.name = "Test Example";
+        example.value = 42;
+        example.type = EXAMPLE__V1__EXAMPLE_TYPE__BASIC;
+
+        // Add tags (dynamic allocation)
+        char *tags[] = {"important", "test", "production"};
+        example.tags = malloc(3 * sizeof(char*));
+        for (int i = 0; i < 3; i++) {
+            example.tags[i] = strdup(tags[i]);
+        }
+        example.n_tags = 3;
+
+        // Add binary data
+        uint8_t binary_data[] = {0x01, 0x02, 0x03, 0x04};
+        example.data.data = binary_data;
+        example.data.len = sizeof(binary_data);
+
+        // Serialize the message
+        size_t size = example__v1__example__get_packed_size(&example);
+        uint8_t *buffer = malloc(size);
+        size_t packed_size = example__v1__example__pack(&example, buffer);
+
+        printf("Serialized %zu bytes (expected %zu)\n", packed_size, size);
+
+        // Deserialize the message
+        Example__V1__Example *unpacked =
+            example__v1__example__unpack(NULL, packed_size, buffer);
+
+        if (unpacked) {
+            printf("Unpacked message:\n");
+            printf("  ID: %s\n", unpacked->id);
+            printf("  Name: %s\n", unpacked->name);
+            printf("  Value: %d\n", unpacked->value);
+            printf("  Type: %d\n", unpacked->type);
+            printf("  Tags (%zu):\n", unpacked->n_tags);
+
+            for (size_t i = 0; i < unpacked->n_tags; i++) {
+                printf("    - %s\n", unpacked->tags[i]);
+            }
+
+            // Free the unpacked message
+            example__v1__example__free_unpacked(unpacked, NULL);
+        }
+
+        // Cleanup
+        for (int i = 0; i < 3; i++) {
+            free(example.tags[i]);
+        }
+        free(example.tags);
+        free(buffer);
+
+        return 0;
+    }
+    ```
+
+  </TabItem>
+
+  <TabItem label="nanopb">
+    ```c
+    #include "proto/gen/c/nanopb/sensor/v1/sensor.pb.h"
+    #include <pb_encode.h>
+    #include <pb_decode.h>
+    #include <stdio.h>
+    #include <stdint.h>
+
+    bool encode_sensor_reading(uint8_t *buffer, size_t buffer_size, size_t *message_length) {
+        sensor_v1_SensorReading reading = sensor_v1_SensorReading_init_zero;
+
+        // Fill sensor data
+        reading.timestamp = 1634567890;
+        reading.temperature = 23.5f;
+        reading.humidity = 65.2f;
+        reading.pressure = 1013;
+        reading.status = sensor_v1_SensorStatus_SENSOR_STATUS_OK;
+
+        // Fixed array - no dynamic allocation
+        reading.values_count = 3;
+        reading.values[0] = 1.23f;
+        reading.values[1] = 4.56f;
+        reading.values[2] = 7.89f;
+
+        // Encode to buffer
+        pb_ostream_t stream = pb_ostream_from_buffer(buffer, buffer_size);
+        bool status = pb_encode(&stream, sensor_v1_SensorReading_fields, &reading);
+        *message_length = stream.bytes_written;
+
+        return status;
+    }
+
+    bool decode_sensor_reading(const uint8_t *buffer, size_t message_length) {
+        sensor_v1_SensorReading reading = sensor_v1_SensorReading_init_zero;
+
+        pb_istream_t stream = pb_istream_from_buffer(buffer, message_length);
+        bool status = pb_decode(&stream, sensor_v1_SensorReading_fields, &reading);
+
+        if (status) {
+            printf("Sensor Reading:\n");
+            printf("  Timestamp: %u\n", reading.timestamp);
+            printf("  Temperature: %.2f°C\n", reading.temperature);
+            printf("  Humidity: %.1f%%\n", reading.humidity);
+            printf("  Pressure: %u hPa\n", reading.pressure);
+            printf("  Status: %d\n", reading.status);
+            printf("  Values (%d):\n", reading.values_count);
+
+            for (int i = 0; i < reading.values_count; i++) {
+                printf("    [%d]: %.3f\n", i, reading.values[i]);
+            }
+        } else {
+            printf("Decoding failed!\n");
+        }
+
+        return status;
+    }
+
+    int main() {
+        uint8_t buffer[256];  // Fixed size buffer
+        size_t message_length;
+
+        // Encode message
+        if (encode_sensor_reading(buffer, sizeof(buffer), &message_length)) {
+            printf("Encoded %zu bytes\n", message_length);
+
+            // Decode message
+            decode_sensor_reading(buffer, message_length);
+        } else {
+            printf("Encoding failed!\n");
+            return 1;
+        }
+
+        return 0;
+    }
+    ```
+
+  </TabItem>
+
+  <TabItem label="Device Config">
+    ```c
+    #include "proto/gen/c/nanopb/sensor/v1/sensor.pb.h"
+    #include <pb_encode.h>
+    #include <pb_decode.h>
+    #include <stdio.h>
+    #include <string.h>
+
+    typedef struct {
+        char device_id[32];
+        uint32_t sample_rate;
+        bool enable_logging;
+        uint32_t calibration[8];
+        size_t calibration_count;
+    } device_config_t;
+
+    bool save_device_config(const device_config_t *config, uint8_t *buffer, size_t buffer_size, size_t *length) {
+        sensor_v1_DeviceConfig pb_config = sensor_v1_DeviceConfig_init_zero;
+
+        // Copy device ID (nanopb handles the size constraint)
+        strncpy(pb_config.device_id, config->device_id, sizeof(pb_config.device_id) - 1);
+        pb_config.device_id[sizeof(pb_config.device_id) - 1] = '\0';
+
+        pb_config.sample_rate = config->sample_rate;
+        pb_config.enable_logging = config->enable_logging;
+
+        // Copy calibration data (fixed array)
+        pb_config.calibration_count = config->calibration_count;
+        for (size_t i = 0; i < config->calibration_count && i < 8; i++) {
+            pb_config.calibration[i] = config->calibration[i];
+        }
+
+        pb_ostream_t stream = pb_ostream_from_buffer(buffer, buffer_size);
+        bool status = pb_encode(&stream, sensor_v1_DeviceConfig_fields, &pb_config);
+        *length = stream.bytes_written;
+
+        return status;
+    }
+
+    bool load_device_config(device_config_t *config, const uint8_t *buffer, size_t length) {
+        sensor_v1_DeviceConfig pb_config = sensor_v1_DeviceConfig_init_zero;
+
+        pb_istream_t stream = pb_istream_from_buffer(buffer, length);
+        bool status = pb_decode(&stream, sensor_v1_DeviceConfig_fields, &pb_config);
+
+        if (status) {
+            strncpy(config->device_id, pb_config.device_id, sizeof(config->device_id) - 1);
+            config->device_id[sizeof(config->device_id) - 1] = '\0';
+
+            config->sample_rate = pb_config.sample_rate;
+            config->enable_logging = pb_config.enable_logging;
+            config->calibration_count = pb_config.calibration_count;
+
+            for (size_t i = 0; i < pb_config.calibration_count; i++) {
+                config->calibration[i] = pb_config.calibration[i];
+            }
+        }
+
+        return status;
+    }
+
+    int main() {
+        device_config_t config = {
+            .device_id = "SENSOR_001",
+            .sample_rate = 1000,
+            .enable_logging = true,
+            .calibration = {100, 200, 300, 400},
+            .calibration_count = 4
+        };
+
+        uint8_t buffer[128];
+        size_t length;
+
+        // Save configuration
+        if (save_device_config(&config, buffer, sizeof(buffer), &length)) {
+            printf("Saved config (%zu bytes)\n", length);
+
+            // Load configuration
+            device_config_t loaded_config = {0};
+            if (load_device_config(&loaded_config, buffer, length)) {
+                printf("Loaded config:\n");
+                printf("  Device ID: %s\n", loaded_config.device_id);
+                printf("  Sample Rate: %u Hz\n", loaded_config.sample_rate);
+                printf("  Logging: %s\n", loaded_config.enable_logging ? "enabled" : "disabled");
+                printf("  Calibration (%zu values):\n", loaded_config.calibration_count);
+
+                for (size_t i = 0; i < loaded_config.calibration_count; i++) {
+                    printf("    [%zu]: %u\n", i, loaded_config.calibration[i]);
+                }
+            }
+        }
+
+        return 0;
+    }
+    ```
+
+  </TabItem>
+
+  <TabItem label="Build Integration">
+    ```makefile
+    # Makefile for C protobuf examples
+
+    # Common settings
+    CC = gcc
+    CFLAGS = -Wall -Wextra -std=c99 -O2
+    INCLUDES = -I. -I./proto/gen/c
+
+    # protobuf-c example
+    PROTOBUF_C_LIBS = -lprotobuf-c
+    PROTOBUF_C_SOURCES = main.c proto/gen/c/protobuf-c/example/v1/example.pb-c.c
+
+    # nanopb example
+    NANOPB_INCLUDES = -I$(NANOPB_DIR)
+    NANOPB_SOURCES = main.c proto/gen/c/nanopb/sensor/v1/sensor.pb.c $(NANOPB_DIR)/pb_encode.c $(NANOPB_DIR)/pb_decode.c $(NANOPB_DIR)/pb_common.c
+
+    .PHONY: all clean protobuf-c nanopb
+
+    all: protobuf-c nanopb
+
+    protobuf-c: example_protobuf_c
+    nanopb: sensor_nanopb
+
+    example_protobuf_c: $(PROTOBUF_C_SOURCES)
+    	$(CC) $(CFLAGS) $(INCLUDES) -o $@ $^ $(PROTOBUF_C_LIBS)
+
+    sensor_nanopb: $(NANOPB_SOURCES)
+    	$(CC) $(CFLAGS) $(INCLUDES) $(NANOPB_INCLUDES) -o $@ $^
+
+    clean:
+    	rm -f example_protobuf_c sensor_nanopb
+
+    # Generate proto files (run through bufrnix)
+    proto:
+    	bufrnix
+
+    test: all
+    	./example_protobuf_c
+    	./sensor_nanopb
+    ```
+
+  </TabItem>
+</Tabs>
+
+## Implementation Comparison
+
+| Feature                | protobuf-c | nanopb       | upb (future) |
+| ---------------------- | ---------- | ------------ | ------------ |
+| **Dynamic Allocation** | ✅         | ❌           | ✅           |
+| **Fixed Arrays**       | ❌         | ✅           | ❌           |
+| **Code Size**          | Medium     | Small        | Small        |
+| **Memory Usage**       | Dynamic    | Static       | Arena        |
+| **Embedded Systems**   | ⚠️ Limited | ✅ Excellent | ⚠️ Limited   |
+| **Full Proto3**        | ✅         | ⚠️ Subset    | ✅           |
+| **Services/RPC**       | Basic      | ❌           | ✅           |
+| **Extensions**         | ✅         | ❌           | ✅           |
+| **Options Files**      | ❌         | ✅           | ❌           |
+| **Zero-Copy**          | ❌         | ✅           | ✅           |
+| **JSON Support**       | ❌         | ❌           | ✅           |
+
+## Use Case Guidelines
+
+### Use protobuf-c when:
+
+- Building standard C applications
+- Need full Protocol Buffers compatibility
+- Dynamic memory allocation is acceptable
+- Integrating with existing C projects
+- Working with complex message structures
+- Need map support and all Proto3 features
+
+### Use nanopb when:
+
+- Targeting microcontrollers (Arduino, STM32, ESP32, etc.)
+- Memory is severely constrained (<100KB RAM)
+- Need predictable memory usage
+- Building real-time systems
+- Want zero dynamic allocation
+- Code size matters more than features
+- Working with simple message structures
+
+### Use upb when (future):
+
+- Need high-performance parsing
+- Want zero-copy operations
+- Building high-throughput systems
+- Need both performance and full features
+
+## Memory Considerations
+
+### protobuf-c Memory Usage
+
+```c
+// Dynamic allocation for repeated fields
+message->n_items = 3;
+message->items = malloc(3 * sizeof(Item*));
+for (int i = 0; i < 3; i++) {
+    message->items[i] = malloc(sizeof(Item));
+}
+
+// Remember to free everything
+for (int i = 0; i < message->n_items; i++) {
+    free(message->items[i]);
+}
+free(message->items);
+```
+
+### nanopb Memory Usage
+
+```c
+// Fixed allocation at compile time
+MyMessage msg = MyMessage_init_zero;
+msg.items_count = 3;  // Max defined in .options file
+msg.items[0] = 1;
+msg.items[1] = 2;
+msg.items[2] = 3;
+// No free() needed - stack allocated
+```
+
+## Try the Examples
+
+### protobuf-c Example
+
+```bash
+cd examples/c-protobuf-c
+nix build
+nix develop
+make
+./example
+```
+
+### nanopb Example
+
+```bash
+cd examples/c-nanopb
+nix build
+nix develop
+make
+./sensor_example
+```
+
+## Best Practices
+
+1. **Choose the Right Implementation**: protobuf-c for general use, nanopb for embedded
+2. **Memory Management**: Always free protobuf-c allocations, nanopb is stack-based
+3. **Error Handling**: Check return values from encode/decode functions
+4. **Buffer Sizing**: Size buffers appropriately for your message sizes
+5. **Options Files**: Use .options files with nanopb to control memory usage
+6. **Testing**: Test with real data sizes and memory constraints
+
+## Troubleshooting
+
+### protobuf-c Issues
+
+**Memory Leaks**: Always use `*_free_unpacked()` functions:
+
+```c
+Message *msg = message__unpack(NULL, len, data);
+// Use message...
+message__free_unpacked(msg, NULL);
+```
+
+**Segmentation Faults**: Initialize messages properly:
+
+```c
+Message msg = MESSAGE__INIT;  // Always initialize
+```
+
+### nanopb Issues
+
+**Buffer Overflow**: Ensure buffers are sized correctly:
+
+```c
+uint8_t buffer[256];  // Size based on your message
+pb_ostream_t stream = pb_ostream_from_buffer(buffer, sizeof(buffer));
+```
+
+**Field Size Errors**: Update .options files for string/array limits:
+
+```options
+MyMessage.my_string max_size:64
+MyMessage.my_array max_count:10
+```

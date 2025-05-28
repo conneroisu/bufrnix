@@ -1,0 +1,510 @@
+---
+title: Go Language Support
+description: Complete Protocol Buffer support for Go with gRPC, Connect, Gateway, and validation plugins.
+---
+
+import { Tabs, TabItem } from "@astrojs/starlight/components";
+
+# Go Language Support
+
+**Status**: ✅ Full Support  
+**Example**: [`examples/simple-flake/`](https://github.com/conneroisu/bufr.nix/tree/main/examples/simple-flake)
+
+Go support includes the complete Protocol Buffer ecosystem with all major plugins and performance optimizations.
+
+## Available Plugins
+
+### Core Plugins
+
+| Plugin                        | Description             | Generated Files |
+| ----------------------------- | ----------------------- | --------------- |
+| **`protoc-gen-go`**           | Base message generation | `*.pb.go`       |
+| **`protoc-gen-go-grpc`**      | gRPC services           | `*_grpc.pb.go`  |
+| **`protoc-gen-connect-go`**   | Connect protocol        | `*_connect.go`  |
+| **`protoc-gen-grpc-gateway`** | HTTP/JSON gateway       | `*.pb.gw.go`    |
+
+### Validation Plugins
+
+| Plugin                    | Description           | Generated Files    |
+| ------------------------- | --------------------- | ------------------ |
+| **`protoc-gen-validate`** | Legacy validation     | `*.pb.validate.go` |
+| **`protovalidate`**       | Modern CEL validation | Runtime validation |
+
+### Performance & Feature Plugins
+
+| Plugin                           | Description               | Generated Files      |
+| -------------------------------- | ------------------------- | -------------------- |
+| **`protoc-gen-go-vtproto`**      | 3.8x faster serialization | `*_vtproto.pb.go`    |
+| **`protoc-gen-go-json`**         | JSON integration          | `*.pb.json.go`       |
+| **`protoc-gen-openapiv2`**       | OpenAPI v2 docs           | `*.swagger.json`     |
+| **`protoc-gen-grpc-federation`** | BFF generation            | `*_federation.pb.go` |
+
+## Configuration
+
+### Basic Configuration
+
+```nix
+languages.go = {
+  enable = true;
+  outputPath = "gen/go";
+  packagePrefix = "github.com/myorg/myproject";
+  options = [
+    "paths=source_relative"
+    "require_unimplemented_servers=false"
+  ];
+};
+```
+
+### Full Configuration Example
+
+```nix
+languages.go = {
+  enable = true;
+  outputPath = "gen/go";
+  packagePrefix = "github.com/myorg/myproject";
+  options = ["paths=source_relative"];
+
+  # gRPC service generation
+  grpc = {
+    enable = true;
+    options = [
+      "paths=source_relative"
+      "require_unimplemented_servers=false"
+    ];
+  };
+
+  # HTTP/JSON gateway for REST APIs
+  gateway = {
+    enable = true;
+    options = [
+      "paths=source_relative"
+      "generate_unbound_methods=true"
+      "allow_delete_body=true"
+    ];
+  };
+
+  # Modern validation (recommended)
+  protovalidate = {
+    enable = true;
+  };
+
+  # Legacy validation
+  validate = {
+    enable = true;
+    options = ["lang=go"];
+  };
+
+  # Modern Connect protocol
+  connect = {
+    enable = true;
+    options = ["paths=source_relative"];
+  };
+
+  # High-performance serialization
+  vtprotobuf = {
+    enable = true;
+    options = [
+      "paths=source_relative"
+      "features=marshal+unmarshal+size+pool"
+    ];
+  };
+
+  # JSON integration
+  json = {
+    enable = true;
+    options = ["paths=source_relative" "orig_name=true"];
+  };
+
+  # OpenAPI documentation
+  openapiv2 = {
+    enable = true;
+    options = ["logtostderr=true"];
+  };
+
+  # gRPC Federation (experimental)
+  federation = {
+    enable = true;
+    options = ["paths=source_relative"];
+  };
+};
+```
+
+## Buf Registry Plugin Support
+
+Use Buf registry plugins directly:
+
+```nix
+languages.go = {
+  enable = true;
+  plugins = [
+    "buf.build/protocolbuffers/go"
+    "buf.build/grpc/go"
+    {
+      plugin = "buf.build/community/planetscale-vtprotobuf";
+      opt = ["features=marshal+unmarshal+size+pool"];
+    }
+    "buf.build/community/mfridman-go-json"
+    "buf.build/bufbuild/validate-go"
+  ];
+};
+```
+
+## Proto Example
+
+```protobuf
+// proto/user/v1/user.proto
+syntax = "proto3";
+
+package user.v1;
+
+option go_package = "github.com/myorg/myproject/gen/go/user/v1;userv1";
+
+import "validate/validate.proto";
+import "google/api/annotations.proto";
+
+message User {
+  string id = 1;
+  string name = 2 [(validate.rules).string = {min_len: 1, max_len: 100}];
+  string email = 3 [(validate.rules).string.email = true];
+  int32 age = 4 [(validate.rules).int32 = {gte: 0, lte: 150}];
+  repeated string roles = 5;
+  UserStatus status = 6;
+  repeated Address addresses = 7;
+
+  message Address {
+    string street = 1;
+    string city = 2;
+    string state = 3;
+    string zip = 4;
+    string country = 5;
+  }
+}
+
+enum UserStatus {
+  USER_STATUS_UNSPECIFIED = 0;
+  USER_STATUS_ACTIVE = 1;
+  USER_STATUS_INACTIVE = 2;
+  USER_STATUS_SUSPENDED = 3;
+}
+
+service UserService {
+  rpc CreateUser(CreateUserRequest) returns (CreateUserResponse) {
+    option (google.api.http) = {
+      post: "/v1/users"
+      body: "user"
+    };
+  }
+
+  rpc GetUser(GetUserRequest) returns (GetUserResponse) {
+    option (google.api.http) = {
+      get: "/v1/users/{user_id}"
+    };
+  }
+}
+
+message CreateUserRequest {
+  User user = 1;
+}
+
+message CreateUserResponse {
+  User user = 1;
+}
+
+message GetUserRequest {
+  string user_id = 1;
+}
+
+message GetUserResponse {
+  User user = 1;
+}
+```
+
+## Generated Code Usage
+
+<Tabs>
+  <TabItem label="gRPC Server">
+    ```go
+    package main
+
+    import (
+        "context"
+        "log"
+        "net"
+
+        "google.golang.org/grpc"
+        pb "github.com/myorg/myproject/gen/go/user/v1"
+    )
+
+    type server struct {
+        pb.UnimplementedUserServiceServer
+        users map[string]*pb.User
+    }
+
+    func (s *server) CreateUser(ctx context.Context, req *pb.CreateUserRequest) (*pb.CreateUserResponse, error) {
+        user := req.GetUser()
+
+        // Validation happens automatically if validate plugin is enabled
+        if err := user.Validate(); err != nil {
+            return nil, err
+        }
+
+        s.users[user.GetId()] = user
+        return &pb.CreateUserResponse{User: user}, nil
+    }
+
+    func (s *server) GetUser(ctx context.Context, req *pb.GetUserRequest) (*pb.GetUserResponse, error) {
+        user, exists := s.users[req.GetUserId()]
+        if !exists {
+            return nil, status.Error(codes.NotFound, "user not found")
+        }
+        return &pb.GetUserResponse{User: user}, nil
+    }
+
+    func main() {
+        lis, err := net.Listen("tcp", ":50051")
+        if err != nil {
+            log.Fatalf("failed to listen: %v", err)
+        }
+
+        s := grpc.NewServer()
+        pb.RegisterUserServiceServer(s, &server{
+            users: make(map[string]*pb.User),
+        })
+
+        log.Println("Server listening on :50051")
+        if err := s.Serve(lis); err != nil {
+            log.Fatalf("failed to serve: %v", err)
+        }
+    }
+    ```
+
+  </TabItem>
+
+  <TabItem label="Connect Server">
+    ```go
+    package main
+
+    import (
+        "context"
+        "log"
+        "net/http"
+
+        "connectrpc.com/connect"
+        pb "github.com/myorg/myproject/gen/go/user/v1"
+        "github.com/myorg/myproject/gen/go/user/v1/userv1connect"
+    )
+
+    type server struct {
+        users map[string]*pb.User
+    }
+
+    func (s *server) CreateUser(
+        ctx context.Context,
+        req *connect.Request[pb.CreateUserRequest],
+    ) (*connect.Response[pb.CreateUserResponse], error) {
+        user := req.Msg.GetUser()
+        s.users[user.GetId()] = user
+
+        return connect.NewResponse(&pb.CreateUserResponse{
+            User: user,
+        }), nil
+    }
+
+    func (s *server) GetUser(
+        ctx context.Context,
+        req *connect.Request[pb.GetUserRequest],
+    ) (*connect.Response[pb.GetUserResponse], error) {
+        user, exists := s.users[req.Msg.GetUserId()]
+        if !exists {
+            return nil, connect.NewError(connect.CodeNotFound, errors.New("user not found"))
+        }
+
+        return connect.NewResponse(&pb.GetUserResponse{
+            User: user,
+        }), nil
+    }
+
+    func main() {
+        srv := &server{users: make(map[string]*pb.User)}
+
+        mux := http.NewServeMux()
+        path, handler := userv1connect.NewUserServiceHandler(srv)
+        mux.Handle(path, handler)
+
+        log.Println("Connect server listening on :8080")
+        http.ListenAndServe(":8080", mux)
+    }
+    ```
+
+  </TabItem>
+
+  <TabItem label="gRPC-Gateway">
+    ```go
+    package main
+
+    import (
+        "context"
+        "log"
+        "net"
+        "net/http"
+
+        "github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
+        "google.golang.org/grpc"
+        pb "github.com/myorg/myproject/gen/go/user/v1"
+    )
+
+    func main() {
+        // Start gRPC server
+        go func() {
+            lis, _ := net.Listen("tcp", ":50051")
+            s := grpc.NewServer()
+            pb.RegisterUserServiceServer(s, &server{
+                users: make(map[string]*pb.User),
+            })
+            s.Serve(lis)
+        }()
+
+        // Start HTTP gateway
+        ctx := context.Background()
+        mux := runtime.NewServeMux()
+        opts := []grpc.DialOption{grpc.WithInsecure()}
+
+        err := pb.RegisterUserServiceHandlerFromEndpoint(ctx, mux, "localhost:50051", opts)
+        if err != nil {
+            log.Fatal(err)
+        }
+
+        log.Println("HTTP gateway listening on :8080")
+        http.ListenAndServe(":8080", mux)
+    }
+    ```
+
+  </TabItem>
+
+  <TabItem label="Client">
+    ```go
+    package main
+
+    import (
+        "context"
+        "log"
+        "time"
+
+        "google.golang.org/grpc"
+        "google.golang.org/grpc/credentials/insecure"
+        pb "github.com/myorg/myproject/gen/go/user/v1"
+    )
+
+    func main() {
+        conn, err := grpc.NewClient("localhost:50051",
+            grpc.WithTransportCredentials(insecure.NewCredentials()))
+        if err != nil {
+            log.Fatal(err)
+        }
+        defer conn.Close()
+
+        client := pb.NewUserServiceClient(conn)
+        ctx, cancel := context.WithTimeout(context.Background(), time.Second)
+        defer cancel()
+
+        // Create user
+        createResp, err := client.CreateUser(ctx, &pb.CreateUserRequest{
+            User: &pb.User{
+                Id:    "123",
+                Name:  "John Doe",
+                Email: "john@example.com",
+                Age:   30,
+                Roles: []string{"user", "admin"},
+                Status: pb.UserStatus_USER_STATUS_ACTIVE,
+            },
+        })
+        if err != nil {
+            log.Fatal(err)
+        }
+        log.Printf("Created user: %v", createResp.GetUser())
+
+        // Get user
+        getResp, err := client.GetUser(ctx, &pb.GetUserRequest{
+            UserId: "123",
+        })
+        if err != nil {
+            log.Fatal(err)
+        }
+        log.Printf("Retrieved user: %v", getResp.GetUser())
+    }
+    ```
+
+  </TabItem>
+</Tabs>
+
+## Performance Optimization
+
+### VTProtobuf
+
+Enable vtprotobuf for 3.8x faster serialization:
+
+```nix
+languages.go = {
+  enable = true;
+  vtprotobuf = {
+    enable = true;
+    options = [
+      "paths=source_relative"
+      "features=marshal+unmarshal+size+pool"
+    ];
+  };
+};
+```
+
+Usage:
+
+```go
+// Fast marshaling
+data, err := user.MarshalVT()
+
+// Fast unmarshaling
+var user pb.User
+err := user.UnmarshalVT(data)
+
+// Object pooling
+user := pb.UserFromVTPool()
+defer user.ReturnToVTPool()
+```
+
+## Best Practices
+
+1. **Use Source-Relative Paths**: Always include `paths=source_relative` for cleaner imports
+2. **Enable Validation**: Use protovalidate for modern CEL-based validation
+3. **Consider Performance**: Enable vtprotobuf for high-throughput services
+4. **HTTP APIs**: Use gRPC-Gateway or Connect for HTTP/JSON APIs
+5. **Documentation**: Enable OpenAPI generation for REST API documentation
+
+## Try the Example
+
+```bash
+cd examples/simple-flake
+nix develop
+go run main.go
+```
+
+## Troubleshooting
+
+### Import Path Issues
+
+If you see import errors, ensure your `packagePrefix` matches your Go module path:
+
+```nix
+languages.go = {
+  packagePrefix = "github.com/yourusername/yourproject";
+};
+```
+
+### Missing Plugins
+
+Some plugins aren't yet in nixpkgs. Provide custom packages:
+
+```nix
+languages.go = {
+  vtprotobuf.package = pkgs.buildGoModule { ... };
+};
+```

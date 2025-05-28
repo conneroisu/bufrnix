@@ -36,6 +36,11 @@ with lib; let
         gateway.package = pkgs.grpc-gateway;
         validate.package = pkgs.protoc-gen-validate;
         connect.package = pkgs.protoc-gen-connect-go;
+        protovalidate.package = pkgs.protovalidate-go or null; # Not yet in nixpkgs
+        openapiv2.package = pkgs.protoc-gen-openapiv2 or null; # Not yet in nixpkgs
+        vtprotobuf.package = pkgs.protoc-gen-go-vtproto or null; # Not yet in nixpkgs
+        json.package = pkgs.protoc-gen-go-json or null; # Not yet in nixpkgs
+        federation.package = pkgs.protoc-gen-grpc-federation or null; # Not yet in nixpkgs
       };
       php = {
         package = pkgs.protobuf;
@@ -45,7 +50,7 @@ with lib; let
         package = jsPackage;
         es.package = pkgs.protoc-gen-es;
         connect.package = pkgs.protoc-gen-connect-es;
-        grpcWeb.package = pkgs.grpc-web;
+        grpcWeb.package = pkgs.protoc-gen-grpc-web;
         twirp.package = pkgs.protoc-gen-twirp_js;
       };
       dart = {
@@ -66,8 +71,17 @@ with lib; let
         package = pkgs.protoc-gen-swift;
       };
       c = {
-        protobuf-c.package = pkgs.protobuf-c;
+        protobuf-c.package = pkgs.protobufc;
         nanopb.package = pkgs.nanopb;
+      };
+      cpp = {
+        package = pkgs.protobuf;
+        grpc.package = pkgs.grpc;
+        nanopb.package = pkgs.nanopb;
+        protobuf-c.package = pkgs.protobufc;
+      };
+      svg = {
+        package = pkgs.protoc-gen-d2 or null; # Will need to be provided by user until in nixpkgs
       };
     };
   };
@@ -230,6 +244,9 @@ in
       ++ languageRuntimeInputs;
 
     text = ''
+      # Language-specific initialization
+      ${languageInitHooks}
+
       # Language-specific directory creation
       ${languageGenerateHooks}
 

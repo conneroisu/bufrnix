@@ -530,179 +530,142 @@ pytest -v
 ## JavaScript/TypeScript
 
 **Status**: ✅ Full Support  
-**Example**: [`examples/js-example/`](https://github.com/conneroisu/bufr.nix/tree/main/examples/js-example)
+**Examples**:
 
-JavaScript/TypeScript support provides multiple output formats and RPC options for modern web development.
+- [`examples/js-es-modules/`](https://github.com/conneroisu/bufr.nix/tree/main/examples/js-es-modules) - Modern TypeScript with Protobuf-ES and Connect-ES
+- [`examples/js-grpc-web/`](https://github.com/conneroisu/bufr.nix/tree/main/examples/js-grpc-web) - Browser gRPC with gRPC-Web
+- [`examples/js-protovalidate/`](https://github.com/conneroisu/bufr.nix/tree/main/examples/js-protovalidate) - Runtime validation example
+
+JavaScript and TypeScript support in bufrnix provides a modern, TypeScript-first development experience with multiple code generation options.
 
 ### Available Plugins
 
-| Plugin                      | Description       | Generated Files        |
-| --------------------------- | ----------------- | ---------------------- |
-| **`protoc-gen-js`**         | CommonJS messages | `*_pb.js`, `*_pb.d.ts` |
-| **`protoc-gen-es`**         | ES modules        | `*.js`, `*.d.ts`       |
-| **`protoc-gen-connect-es`** | Connect-ES RPC    | `*_connect.js`         |
-| **`protoc-gen-grpc-web`**   | gRPC-Web client   | `*_grpc_web_pb.js`     |
-| **`protoc-gen-twirp_js`**   | Twirp RPC         | `*_twirp.js`           |
+| Plugin                    | Description                        | Generated Files          |
+| ------------------------- | ---------------------------------- | ------------------------ |
+| **`protoc-gen-es`**       | Modern TypeScript/JS (recommended) | `*.ts`, `*.js`, `*.d.ts` |
+| **`protoc-gen-js`**       | Legacy CommonJS (deprecated)       | `*_pb.js`                |
+| **`protoc-gen-grpc-web`** | gRPC-Web for browsers              | `*_grpc_web_pb.js`       |
+| **`ts-proto`**            | Alternative TypeScript generator   | `*.ts` (interfaces)      |
+
+Note: Connect-ES functionality is now integrated into protoc-gen-es v2.
 
 ### Configuration
 
 ```nix
-languages.js = {
-  enable = true;
-  outputPath = "src/proto";
-  packageName = "@myorg/proto";
-  options = [
-    "import_style=commonjs"
-    "binary"
-  ];
-
-  # Modern ECMAScript modules
-  es = {
+languages = {
+  js = {
     enable = true;
-    options = [
-      "target=ts"              # Generate TypeScript
-      "import_extension=.js"   # ES module extensions
-      "json_types=true"        # JSON type definitions
-    ];
-  };
+    outputPath = "gen/js";
 
-  # Connect-ES for type-safe RPC
-  connect = {
-    enable = true;
-    options = [
-      "target=ts"
-      "import_extension=.js"
-    ];
-  };
+    # Protobuf-ES - The default TypeScript generator (recommended)
+    es = {
+      enable = true;  # Enabled by default
+      target = "ts";  # Options: "js", "ts", "dts"
+      generatePackageJson = true;
+      packageName = "@myproject/proto";
+      importExtension = ".js";  # For Node.js ES modules
+    };
 
-  # gRPC-Web for browser compatibility
-  grpcWeb = {
-    enable = true;
-    options = [
-      "import_style=typescript"
-      "mode=grpcwebtext"
-    ];
-  };
+    # Connect-ES - Modern RPC framework
+    connect = {
+      enable = true;  # Integrated with protoc-gen-es v2
+      generatePackageJson = true;
+      packageName = "@myproject/connect";
+    };
 
-  # Twirp RPC framework
-  twirp = {
-    enable = true;
-    options = ["lang=typescript"];
+    # Runtime validation support
+    protovalidate = {
+      enable = true;
+      generateValidationHelpers = true;
+    };
+
+    # Alternative: ts-proto for different style
+    tsProto = {
+      enable = false;  # Set to true for interface-style TypeScript
+      generatePackageJson = true;
+      generateTsConfig = true;
+      options = [
+        "esModuleInterop=true"
+        "outputServices=nice-grpc"
+        "useOptionals=messages"
+      ];
+    };
+
+    # Legacy options
+    grpcWeb = {
+      enable = false;  # For browser gRPC support
+    };
   };
 };
 ```
 
-### Proto Example
+### Generated Code Features
 
-```protobuf
-// proto/example/v1/example.proto
-syntax = "proto3";
+#### Protobuf-ES (Default)
 
-package example.v1;
+- **Full TypeScript Support**: Type-safe message creation and serialization
+- **ES Modules**: Modern JavaScript with optimal tree-shaking
+- **Conformant Implementation**: Only fully conformant JavaScript protobuf library
+- **Schema-based API**: Clean `create()`, `toBinary()`, `toJson()` functions
+- **Connect Integration**: Services generated alongside messages with v2
 
-message User {
-  string id = 1;
-  string name = 2;
-  string email = 3;
-  int32 age = 4;
-}
+#### Connect-ES
 
-service UserService {
-  rpc GetUser(GetUserRequest) returns (GetUserResponse);
-  rpc ListUsers(ListUsersRequest) returns (ListUsersResponse);
-  rpc CreateUser(CreateUserRequest) returns (CreateUserResponse);
-}
+- **Modern RPC**: Supports Connect, gRPC, and gRPC-Web protocols
+- **Type-safe Clients**: Full TypeScript support for service methods
+- **Streaming Support**: Server and client streaming capabilities
+- **Browser Compatible**: Works in Node.js and browsers
 
-message GetUserRequest {
-  string id = 1;
-}
+#### Protovalidate
 
-message GetUserResponse {
-  User user = 1;
-}
+- **Runtime Validation**: Enforce protobuf constraints at runtime
+- **buf.validate Support**: Compatible with buf.build validation rules
+- **TypeScript Integration**: Type-safe validation errors
 
-message ListUsersRequest {
-  int32 page_size = 1;
-  string page_token = 2;
-}
+#### ts-proto (Alternative)
 
-message ListUsersResponse {
-  repeated User users = 1;
-  string next_page_token = 2;
-}
+- **Interface Style**: Generates TypeScript interfaces instead of classes
+- **Customizable**: Extensive options for code generation
+- **Popular Choice**: Widely used in the TypeScript community
 
-message CreateUserRequest {
-  User user = 1;
-}
-
-message CreateUserResponse {
-  User user = 1;
-}
-```
-
-### Generated Code Usage
-
-**ES Modules with Connect-ES (Recommended):**
+### Example Usage
 
 ```typescript
-import { UserService } from "./proto/example/v1/example_connect.js";
+// Using Protobuf-ES (default)
+import { User, Role } from "./gen/js/user_pb.js";
+import { UserService } from "./gen/js/user_connect.js";
 import { createPromiseClient } from "@connectrpc/connect";
-import { createConnectTransport } from "@connectrpc/connect-web";
 
-// Create transport
-const transport = createConnectTransport({
-  baseUrl: "https://api.example.com",
-  credentials: "include",
+// Create a message
+const user = new User({
+  id: "123",
+  email: "user@example.com",
+  name: "John Doe",
+  role: Role.USER,
 });
 
-// Create client
+// Serialize
+const bytes = user.toBinary();
+const json = user.toJson();
+
+// Create a client
 const client = createPromiseClient(UserService, transport);
+const response = await client.createUser({ user });
 
-async function main() {
-  try {
-    // Create a new user
-    const createResponse = await client.createUser({
-      user: {
-        id: "1",
-        name: "John Doe",
-        email: "john@example.com",
-        age: 30,
-      },
-    });
-
-    console.log("Created user:", createResponse.user);
-
-    // Get the user
-    const getResponse = await client.getUser({
-      id: "1",
-    });
-
-    console.log("Retrieved user:", getResponse.user);
-
-    // List users with pagination
-    const listResponse = await client.listUsers({
-      pageSize: 10,
-      pageToken: "",
-    });
-
-    console.log(`Found ${listResponse.users.length} users`);
-    console.log("Next page token:", listResponse.nextPageToken);
-  } catch (error) {
-    console.error("RPC failed:", error);
-  }
-}
-
-main();
+// Validate
+import { createValidator } from "@bufbuild/protovalidate";
+const validator = await createValidator();
+const violations = await validator.validate(user);
 ```
 
 ### Try the Example
 
 ```bash
-cd examples/js-example
-nix develop
+cd examples/js-es-modules
+nix build
 npm install
-npm run build
-npm start
+npm run server  # In one terminal
+npm run client  # In another terminal
 ```
 
 ## PHP
@@ -1383,26 +1346,26 @@ swift run
 
 ## Language Comparison
 
-| Feature               | Go  | Dart | JavaScript/TypeScript | PHP | Python | Swift | C (protobuf-c) | C (nanopb) |
-| --------------------- | --- | ---- | --------------------- | --- | ------ | ----- | -------------- | ---------- |
-| **Base Messages**     | ✅  | ✅   | ✅                    | ✅  | ✅     | ✅    | ✅             | ✅         |
-| **gRPC Services**     | ✅  | ✅   | ✅ (Web)              | ✅  | ✅     | ❌    | ⚠️ (Basic)     | ❌         |
-| **Streaming RPC**     | ✅  | ✅   | ✅ (Web)              | ✅  | ✅     | ❌    | ❌             | ❌         |
-| **HTTP Gateway**      | ✅  | ❌   | ❌                    | ❌  | ❌     | ❌    | ❌             | ❌         |
-| **Validation**        | ✅  | ❌   | ❌                    | ❌  | ❌     | ❌    | ❌             | ❌         |
-| **Connect Protocol**  | ✅  | ❌   | ✅                    | ❌  | ❌     | ❌    | ❌             | ❌         |
-| **Twirp RPC**         | ❌  | ❌   | ✅                    | ✅  | ❌     | ❌    | ❌             | ❌         |
-| **JSON Mapping**      | ✅  | ✅   | ✅                    | ✅  | ✅     | ✅    | ❌             | ❌         |
-| **Type Safety**       | ✅  | ✅   | ✅                    | ⚠️  | ✅     | ✅    | ⚠️             | ⚠️         |
-| **Server Support**    | ✅  | ✅   | ❌                    | ✅  | ✅     | ✅    | ✅             | ✅         |
-| **Browser Support**   | ❌  | ❌   | ✅                    | ❌  | ❌     | ❌    | ❌             | ❌         |
-| **High-Perf Server**  | ✅  | ❌   | ❌                    | ✅  | ❌     | ❌    | ❌             | ❌         |
-| **Framework Support** | ⚠️  | ❌   | ⚠️                    | ✅  | ⚠️     | ❌    | ❌             | ❌         |
-| **Dynamic Memory**    | ✅  | ✅   | ✅                    | ✅  | ✅     | ✅    | ✅             | ❌         |
-| **Embedded Systems**  | ❌  | ❌   | ❌                    | ❌  | ❌     | ❌    | ⚠️             | ✅         |
-| **Zero Allocation**   | ❌  | ❌   | ❌                    | ❌  | ❌     | ❌    | ❌             | ✅         |
-| **Type Stubs**        | ❌  | ❌   | ✅                    | ❌  | ✅     | ❌    | ❌             | ❌         |
-| **Async Support**     | ✅  | ✅   | ✅                    | ✅  | ✅     | ✅    | ❌             | ❌         |
+| Feature              | Go  | Dart | JavaScript/TypeScript | PHP | Python | Swift | C (protobuf-c) | C (nanopb) |
+| -------------------- | --- | ---- | --------------------- | --- | ------ | ----- | -------------- | ---------- |
+| **Base Messages**    | ✅  | ✅   | ✅                    | ✅  | ✅     | ✅    | ✅             | ✅         |
+| **gRPC Services**    | ✅  | ✅   | ✅ (Web)              | ❌  | ✅     | ❌    | ⚠️ (Basic)     | ❌         |
+| **Streaming RPC**    | ✅  | ✅   | ✅ (Web)              | ❌  | ✅     | ❌    | ❌             | ❌         |
+| **HTTP Gateway**     | ✅  | ❌   | ❌                    | ❌  | ❌     | ❌    | ❌             | ❌         |
+| **Validation**       | ✅  | ❌   | ✅                    | ❌  | ❌     | ❌    | ❌             | ❌         |
+| **Connect Protocol** | ✅  | ❌   | ✅                    | ❌  | ❌     | ❌    | ❌             | ❌         |
+| **Twirp RPC**        | ❌  | ❌   | ✅                    | ✅  | ❌     | ❌    | ❌             | ❌         |
+| **JSON Mapping**     | ✅  | ✅   | ✅                    | ✅  | ✅     | ✅    | ❌             | ❌         |
+| **Type Safety**      | ✅  | ✅   | ✅                    | ⚠️  | ✅     | ✅    | ⚠️             | ⚠️         |
+| **Server Support**   | ✅  | ✅   | ✅                    | ✅  | ✅     | ✅    | ✅             | ✅         |
+| **Browser Support**  | ❌  | ❌   | ✅                    | ❌  | ❌     | ❌    | ❌             | ❌         |
+| **Codable Support**  | ❌  | ❌   | ❌                    | ❌  | ❌     | ✅    | ❌             | ❌         |
+| **Dynamic Memory**   | ✅  | ✅   | ✅                    | ✅  | ✅     | ✅    | ✅             | ❌         |
+| **Embedded Systems** | ❌  | ❌   | ❌                    | ❌  | ❌     | ❌    | ⚠️             | ✅         |
+| **Zero Allocation**  | ❌  | ❌   | ❌                    | ❌  | ❌     | ❌    | ❌             | ✅         |
+| **Type Stubs**       | ❌  | ❌   | ✅                    | ❌  | ✅     | ❌    | ❌             | ❌         |
+| **Async Support**    | ✅  | ✅   | ✅                    | ❌  | ✅     | ✅    | ❌             | ❌         |
+
 
 ## Multi-Language Projects
 
@@ -1495,7 +1458,9 @@ All examples are available in the [`examples/`](https://github.com/conneroisu/bu
 
 - **`simple-flake/`** - Go gRPC server/client with complex message types
 - **`dart-example/`** - Comprehensive Dart protobuf usage with testing
-- **`js-example/`** - Multiple JavaScript output formats and RPC options
+- **`js-es-modules/`** - Modern TypeScript with Protobuf-ES and Connect-ES
+- **`js-grpc-web/`** - Browser gRPC communication
+- **`js-protovalidate/`** - JavaScript/TypeScript with protovalidate-es runtime validation
 - **`php-twirp/`** - PHP Twirp RPC server and client implementation
 - **`python-example/`** - Python protobuf with gRPC, type stubs, and mypy integration
 - **`swift-example/`** - Swift Protocol Buffers with SwiftProtobuf integration

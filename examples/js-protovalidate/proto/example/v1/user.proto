@@ -1,0 +1,82 @@
+syntax = "proto3";
+
+package example.v1;
+
+import "buf/validate/validate.proto";
+
+// User represents a user in the system with validation rules
+message User {
+  // ID must be a valid UUID
+  string id = 1 [(buf.validate.field).string.uuid = true];
+
+  // Email must be a valid email address
+  string email = 2 [(buf.validate.field).string.email = true];
+
+  // Username must be between 3 and 20 characters
+  string username = 3 [(buf.validate.field).string = {
+    min_len: 3
+    max_len: 20
+    pattern: "^[a-zA-Z0-9_]+$"
+  }];
+
+  // Age must be between 18 and 120
+  int32 age = 4 [(buf.validate.field).int32 = {
+    gte: 18
+    lte: 120
+  }];
+
+  // Status must be one of the allowed values
+  UserStatus status = 5 [(buf.validate.field).enum.defined_only = true];
+
+  // Tags is optional but if provided, must have between 1 and 10 items
+  repeated string tags = 6 [(buf.validate.field).repeated = {
+    min_items: 0
+    max_items: 10
+    items: {
+      string: {
+        min_len: 1
+        max_len: 50
+      }
+    }
+  }];
+
+  // Profile is optional but if provided, must be valid
+  Profile profile = 7;
+}
+
+enum UserStatus {
+  USER_STATUS_UNSPECIFIED = 0;
+  USER_STATUS_ACTIVE = 1;
+  USER_STATUS_INACTIVE = 2;
+  USER_STATUS_BANNED = 3;
+}
+
+message Profile {
+  // Bio is optional but if provided, must be <= 500 characters
+  string bio = 1 [(buf.validate.field).string.max_len = 500];
+
+  // Website must be a valid URL if provided
+  string website = 2 [(buf.validate.field).string = {
+    uri: true
+    ignore_empty: true
+  }];
+
+  // Phone number must match a simple pattern if provided
+  string phone = 3 [(buf.validate.field).string = {
+    pattern: "^\\+?[1-9]\\d{1,14}$"
+    ignore_empty: true
+  }];
+}
+
+// CreateUserRequest validates the user creation request
+message CreateUserRequest {
+  // User must be provided and valid
+  User user = 1 [(buf.validate.field).required = true];
+
+  // Password must be strong (min 8 chars, must contain uppercase, lowercase, and digit)
+  string password = 2 [(buf.validate.field).string = {
+    min_len: 8
+    max_len: 100
+    pattern: "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d).+$"
+  }];
+}
