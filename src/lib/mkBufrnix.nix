@@ -74,6 +74,12 @@ with lib; let
         protobuf-c.package = pkgs.protobufc;
         nanopb.package = pkgs.nanopb;
       };
+      csharp = {
+        sdk = pkgs.dotnetCorePackages.sdk_8_0;
+      };
+      kotlin = {
+        jdk = pkgs.jdk17;
+      };
       cpp = {
         package = pkgs.protobuf;
         grpc.package = pkgs.grpc;

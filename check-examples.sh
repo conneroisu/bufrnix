@@ -178,6 +178,29 @@ test_example "doc-example" \
 test_example "swift-example" \
     "proto/gen/swift/example/v1/example.pb.swift"
 
+# Test C# basic example
+test_example "csharp-basic" \
+    "proto/gen/csharp/Person.cs" \
+    "proto/gen/csharp/GeneratedProtos.csproj"
+
+# Test C# gRPC example
+test_example "csharp-grpc" \
+    "proto/gen/csharp/Greeter.cs" \
+    "proto/gen/csharp/GreeterGrpc.cs" \
+    "proto/gen/csharp/GeneratedProtos.csproj"
+
+# Test Kotlin basic example
+test_example "kotlin-basic" \
+    "proto/gen/kotlin/java/com/example/protos/v1/UserProto.java" \
+    "proto/gen/kotlin/kotlin/com/example/protos/v1/UserKt.kt" \
+    "proto/gen/kotlin/build.gradle.kts"
+
+# Test Kotlin gRPC example
+test_example "kotlin-grpc" \
+    "proto/gen/kotlin/java/com/example/grpc/v1/GreeterGrpc.java" \
+    "proto/gen/kotlin/kotlin/com/example/grpc/v1/GreeterGrpcKt.kt" \
+    "proto/gen/kotlin/build.gradle.kts"
+
 # Test C protobuf-c example
 test_example "c-protobuf-c" \
     "proto/gen/c/protobuf-c/example/v1/example.pb-c.h" \

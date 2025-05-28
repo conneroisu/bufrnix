@@ -1,0 +1,221 @@
+---
+title: C#
+description: C# language support in Bufrnix
+---
+
+Bufrnix provides comprehensive C# code generation support for Protocol Buffers, including gRPC services, with full .NET integration.
+
+## Basic Configuration
+
+```nix
+{
+  languages.csharp = {
+    enable = true;
+    namespace = "MyApp.Protos";
+    targetFramework = "net8.0";
+  };
+}
+```
+
+## Features
+
+- ✅ Protocol Buffers 3 support
+- ✅ gRPC service generation
+- ✅ .NET 8.0+ support
+- ✅ NuGet package generation
+- ✅ Project file generation
+- ✅ Nullable reference types
+- ✅ JSON serialization support
+
+## Configuration Options
+
+| Option | Type | Default | Description |
+|--------|------|---------|-------------|
+| `enable` | bool | `false` | Enable C# code generation |
+| `sdk` | package | `pkgs.dotnetCorePackages.sdk_8_0` | .NET SDK to use |
+| `outputPath` | string | `"gen/csharp"` | Output directory for generated code |
+| `namespace` | string | `""` | Base namespace for generated code |
+| `targetFramework` | string | `"net8.0"` | .NET target framework |
+| `langVersion` | string | `"latest"` | C# language version |
+| `nullable` | bool | `true` | Enable nullable reference types |
+| `generateProjectFile` | bool | `true` | Generate .csproj file |
+| `projectName` | string | `"GeneratedProtos"` | Name for generated project |
+
+## gRPC Support
+
+Enable gRPC code generation:
+
+```nix
+{
+  languages.csharp = {
+    enable = true;
+    namespace = "MyApp.Services";
+    grpc.enable = true;
+  };
+}
+```
+
+### gRPC Options
+
+| Option | Type | Default | Description |
+|--------|------|---------|-------------|
+| `grpc.enable` | bool | `false` | Enable gRPC code generation |
+| `grpc.grpcVersion` | string | `"2.72.0"` | Grpc.Net.Client version |
+| `grpc.grpcCoreVersion` | string | `"2.72.0"` | Grpc.Core.Api version |
+| `grpc.generateClientFactory` | bool | `false` | Generate client factory classes |
+| `grpc.generateServerBase` | bool | `false` | Generate server base implementations |
+
+## Examples
+
+### Basic Message Generation
+
+```nix
+# flake.nix
+{
+  inputs.bufrnix.url = "github:bufrnix/bufrnix";
+  
+  outputs = { self, nixpkgs, bufrnix }: {
+    packages.x86_64-linux.default = bufrnix.lib.x86_64-linux.mkBufrnix {
+      root = ./proto;
+      languages.csharp = {
+        enable = true;
+        namespace = "MyApp.Models";
+        generatePackageOnBuild = true;
+        packageId = "MyApp.Protos";
+        packageVersion = "1.0.0";
+      };
+    };
+  };
+}
+```
+
+### gRPC Service
+
+```nix
+{
+  languages.csharp = {
+    enable = true;
+    namespace = "MyApp.Services";
+    grpc = {
+      enable = true;
+      generateClientFactory = true;
+    };
+  };
+}
+```
+
+### Advanced Configuration
+
+```nix
+{
+  languages.csharp = {
+    enable = true;
+    namespace = "Enterprise.Protos";
+    targetFramework = "net8.0";
+    langVersion = "12.0";
+    nullable = true;
+    
+    # Custom file extension
+    fileExtension = ".g.cs";
+    
+    # Assembly info generation
+    generateAssemblyInfo = true;
+    assemblyVersion = "1.0.0.0";
+    
+    # NuGet package settings
+    generatePackageOnBuild = true;
+    packageId = "Enterprise.Protos";
+    packageVersion = "2.1.0";
+    
+    # Custom protobuf version
+    protobufVersion = "3.31.0";
+    
+    # gRPC with custom options
+    grpc = {
+      enable = true;
+      options = ["internal_access"];
+      generateServerBase = true;
+    };
+  };
+}
+```
+
+## Generated Output
+
+The C# module generates:
+
+```
+gen/csharp/
+├── MyMessage.cs          # Message classes
+├── MyService.cs          # Service base classes (if gRPC enabled)
+├── MyServiceGrpc.cs      # gRPC client/server stubs
+└── GeneratedProtos.csproj # Project file (if enabled)
+```
+
+## Integration with .NET Projects
+
+### Using Generated Code
+
+```csharp
+using Google.Protobuf;
+using MyApp.Protos;
+
+var message = new MyMessage
+{
+    Id = 123,
+    Name = "Example"
+};
+
+// Serialize to bytes
+byte[] bytes = message.ToByteArray();
+
+// Serialize to JSON
+string json = JsonFormatter.Default.Format(message);
+```
+
+### gRPC Server
+
+```csharp
+using Grpc.Core;
+using MyApp.Services;
+
+public class GreeterService : Greeter.GreeterBase
+{
+    public override Task<HelloReply> SayHello(
+        HelloRequest request, 
+        ServerCallContext context)
+    {
+        return Task.FromResult(new HelloReply
+        {
+            Message = $"Hello {request.Name}"
+        });
+    }
+}
+```
+
+### gRPC Client
+
+```csharp
+using Grpc.Net.Client;
+using MyApp.Services;
+
+using var channel = GrpcChannel.ForAddress("http://localhost:5000");
+var client = new Greeter.GreeterClient(channel);
+
+var reply = await client.SayHelloAsync(
+    new HelloRequest { Name = "World" });
+```
+
+## Tips
+
+1. **Project Structure**: The generated .csproj file includes all necessary NuGet references
+2. **Namespace Convention**: Use dot-separated namespaces matching your project structure
+3. **Performance**: Enable `generatePackageOnBuild` for faster builds in CI/CD
+4. **Compatibility**: Target framework should match your application's framework
+
+## See Also
+
+- [C# Basic Example](/guides/examples#c-basic)
+- [C# gRPC Example](/guides/examples#c-grpc)
+- [Google.Protobuf Documentation](https://protobuf.dev/reference/csharp/api-docs/)
+- [gRPC for .NET Documentation](https://docs.microsoft.com/aspnet/core/grpc/)

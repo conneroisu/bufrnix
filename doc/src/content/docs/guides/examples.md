@@ -138,6 +138,125 @@ To create your own example:
 
 You can use any of the existing examples as a starting point for your own project.
 
+## C# Basic Example
+
+Demonstrates basic Protocol Buffers usage with C# and .NET.
+
+### Features
+
+- C# class generation for Protocol Buffers
+- Binary and JSON serialization
+- Nested messages and enums
+- Generated .csproj file for easy integration
+
+### Source Code
+
+Check out the [csharp-basic](https://github.com/conneroisu/bufrnix/tree/main/examples/csharp-basic) on GitHub.
+
+### Running the Example
+
+```bash
+# Navigate to the example directory
+cd examples/csharp-basic
+
+# Generate the proto code
+nix build .#proto
+
+# Run the example
+nix develop -c dotnet run
+```
+
+## C# gRPC Example
+
+Shows how to build gRPC services with C# and ASP.NET Core.
+
+### Features
+
+- gRPC service implementation with ASP.NET Core
+- Client console application
+- Unary and streaming RPC examples
+- Modern .NET 8.0 integration
+
+### Source Code
+
+Check out the [csharp-grpc](https://github.com/conneroisu/bufrnix/tree/main/examples/csharp-grpc) on GitHub.
+
+### Running the Example
+
+```bash
+# Navigate to the example directory
+cd examples/csharp-grpc
+
+# Generate the proto code
+nix build .#proto
+
+# Run the server (in one terminal)
+nix develop -c sh -c "cd Server && dotnet run"
+
+# Run the client (in another terminal)
+nix develop -c sh -c "cd Client && dotnet run"
+```
+
+## Kotlin Basic Example
+
+Demonstrates basic Protocol Buffers usage with Kotlin.
+
+### Features
+
+- Kotlin DSL builders for message creation
+- Immutable message updates with `copy`
+- Type-safe builders and null safety
+- Generated Gradle build file
+
+### Source Code
+
+Check out the [kotlin-basic](https://github.com/conneroisu/bufrnix/tree/main/examples/kotlin-basic) on GitHub.
+
+### Running the Example
+
+```bash
+# Navigate to the example directory
+cd examples/kotlin-basic
+
+# Generate the proto code
+nix build .#proto
+
+# Build and run with Gradle
+cd gen/kotlin
+gradle run
+```
+
+## Kotlin gRPC Example
+
+Shows how to build gRPC services with Kotlin coroutines.
+
+### Features
+
+- Coroutine-based gRPC services
+- Flow-based streaming APIs
+- Unary and streaming RPC examples
+- Modern Kotlin idioms
+
+### Source Code
+
+Check out the [kotlin-grpc](https://github.com/conneroisu/bufrnix/tree/main/examples/kotlin-grpc) on GitHub.
+
+### Running the Example
+
+```bash
+# Navigate to the example directory
+cd examples/kotlin-grpc
+
+# Generate the proto code
+nix build .#proto
+
+# Run the server (in one terminal)
+cd gen/kotlin && gradle runServer
+
+# Run the client (in another terminal)
+cd gen/kotlin && gradle runClient
+```
+
 ## Swift Example
 
 Demonstrates using Protocol Buffers with Swift for iOS, macOS, and server applications.
@@ -173,4 +292,8 @@ swift run
 - [JS Example README](https://github.com/conneroisu/bufrnix/blob/main/examples/js-example/README.md) - JavaScript integration details
 - [Dart Example README](https://github.com/conneroisu/bufrnix/blob/main/examples/dart-example/README.md) - Dart and Flutter integration
 - [PHP Twirp README](https://github.com/conneroisu/bufrnix/blob/main/examples/php-twirp/README.md) - PHP and Twirp integration
+- [C# Basic README](https://github.com/conneroisu/bufrnix/blob/main/examples/csharp-basic/README.md) - C# and .NET integration
+- [C# gRPC README](https://github.com/conneroisu/bufrnix/blob/main/examples/csharp-grpc/README.md) - C# gRPC with ASP.NET Core
+- [Kotlin Basic README](https://github.com/conneroisu/bufrnix/blob/main/examples/kotlin-basic/README.md) - Kotlin with DSL builders
+- [Kotlin gRPC README](https://github.com/conneroisu/bufrnix/blob/main/examples/kotlin-grpc/README.md) - Kotlin gRPC with coroutines
 - [Swift Example README](https://github.com/conneroisu/bufrnix/blob/main/examples/swift-example/README.md) - Swift and SwiftProtobuf integration
