@@ -41,6 +41,7 @@ with lib; let
         vtprotobuf.package = pkgs.protoc-gen-go-vtproto or null; # Not yet in nixpkgs
         json.package = pkgs.protoc-gen-go-json or null; # Not yet in nixpkgs
         federation.package = pkgs.protoc-gen-grpc-federation or null; # Not yet in nixpkgs
+        structTransformer.package = pkgs.protoc-gen-struct-transformer or (pkgs.callPackage ../languages/go/protoc-gen-struct-transformer.nix {});
       };
       php = {
         package = pkgs.protobuf;
