@@ -14,29 +14,29 @@ SVG support in bufrnix enables generation of visual diagrams from Protocol Buffe
 
 <Tabs>
   <TabItem label="Basic">
-```nix
-{
-  languages = {
-    svg = {
-      enable = true;
-    };
-  };
-}
-```
+	```nix
+	{
+	  languages = {
+	    svg = {
+	      enable = true;
+	    };
+	  };
+	}
+	```
   </TabItem>
   <TabItem label="Advanced">
-```nix
-{
-  languages = {
-    svg = {
-      enable = true;
-      outputPath = "proto/gen/svg";
-      package = pkgs.protoc-gen-d2;
-      options = [];
-    };
-  };
-}
-```
+	```nix
+	{
+	  languages = {
+	    svg = {
+	      enable = true;
+	      outputPath = "proto/gen/svg";
+	      package = pkgs.protoc-gen-d2;
+	      options = [];
+	    };
+	  };
+	}
+	```
   </TabItem>
 </Tabs>
 
@@ -90,7 +90,7 @@ enum UserRole {
 
 The generated SVG diagram would look like:
 
-```svg
+```xml
 <svg width="400" height="300" xmlns="http://www.w3.org/2000/svg">
   <!-- User Message Box -->
   <rect x="50" y="50" width="300" height="120" rx="5" fill="#f0f4f8" stroke="#2d3748" stroke-width="2"/>
@@ -127,7 +127,7 @@ The generated SVG diagram would look like:
 
 For a service with multiple RPC methods:
 
-```svg
+```xml
 <svg width="600" height="400" xmlns="http://www.w3.org/2000/svg">
   <!-- UserService Box -->
   <rect x="50" y="50" width="500" height="150" rx="5" fill="#fef3c7" stroke="#2d3748" stroke-width="2"/>
@@ -298,7 +298,7 @@ service UserService {
 
   </TabItem>
   <TabItem label="Generated Diagram">
-```d2
+```txt
 # Generated D2 diagram (example output)
 user.v1.User: {
   shape: class

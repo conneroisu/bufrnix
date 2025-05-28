@@ -1130,7 +1130,7 @@ message DeviceConfig {
 
 ### Nanopb Options File
 
-```options
+```txt
 # sensor.options - Constraints for embedded systems
 sensor.v1.DeviceConfig.device_id max_size:32
 sensor.v1.SensorReading.values max_count:10 fixed_count:true
