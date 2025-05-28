@@ -9,7 +9,7 @@ with lib; let
   connectOptions = cfg.options or [];
   javaOutputPath = cfg.javaOutputPath;
   kotlinOutputPath = cfg.kotlinOutputPath;
-  
+
   # Create wrapper script for Connect Kotlin plugin
   connectKotlinPlugin = pkgs.writeShellScriptBin "protoc-gen-connect-kotlin" ''
     #!/usr/bin/env sh
@@ -24,18 +24,19 @@ in {
 
   # Protoc plugin configuration for Connect Kotlin
   protocPlugins = optionals cfg.enable ([
-    # Generate Connect Kotlin code
-    "--connect-kotlin_out=${kotlinOutputPath}"
-    "--plugin=protoc-gen-connect-kotlin=${connectKotlinPlugin}/bin/protoc-gen-connect-kotlin"
-  ] ++ (optionals (connectOptions != []) [
-    "--connect-kotlin_opt=${concatStringsSep "," connectOptions}"
-  ]));
+      # Generate Connect Kotlin code
+      "--connect-kotlin_out=${kotlinOutputPath}"
+      "--plugin=protoc-gen-connect-kotlin=${connectKotlinPlugin}/bin/protoc-gen-connect-kotlin"
+    ]
+    ++ (optionals (connectOptions != []) [
+      "--connect-kotlin_opt=${concatStringsSep "," connectOptions}"
+    ]));
 
   # Initialization hook for Connect Kotlin
   initHooks = optionalString cfg.enable ''
     # Connect Kotlin specific initialization
     echo "Initializing Connect RPC Kotlin code generation..."
-    
+
     # Download Connect Kotlin plugin JAR if not provided
     ${optionalString (cfg.connectKotlinJar == null) ''
       echo "Downloading Connect Kotlin plugin JAR..."
@@ -50,20 +51,20 @@ in {
   generateHooks = optionalString cfg.enable ''
     # Connect Kotlin specific code generation
     echo "Generated Connect RPC Kotlin code"
-    
+
     # Generate client configuration if enabled
     ${optionalString cfg.generateClientConfig ''
       echo "Generating Connect client configuration..."
       cat > "${kotlinOutputPath}/ConnectConfig.kt" <<EOF
       package ${cfg.packageName}
-      
+
       import com.connectrpc.ConnectInterceptor
       import com.connectrpc.ProtocolClientConfig
       import com.connectrpc.extensions.GoogleJavaProtobufStrategy
       import com.connectrpc.impl.ProtocolClient
       import com.connectrpc.okhttp.ConnectOkHttpClient
       import okhttp3.OkHttpClient
-      
+
       object ConnectConfig {
           fun createClient(
               host: String,

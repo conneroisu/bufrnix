@@ -47,6 +47,7 @@ gradle runClient
 ## Generated Code
 
 The Kotlin gRPC plugin generates:
+
 - Coroutine-based service base classes
 - Flow-based streaming APIs
 - Suspend functions for unary calls
@@ -60,11 +61,11 @@ class GreeterService : GreeterGrpcKt.GreeterCoroutineImplBase() {
     override suspend fun sayHello(request: HelloRequest): HelloReply {
         // Suspend function for async handling
         delay(100)
-        return helloReply { 
+        return helloReply {
             message = "Hello ${request.name}!"
         }
     }
-    
+
     override fun sayHelloStream(request: HelloRequest): Flow<HelloReply> = flow {
         // Flow-based streaming
         repeat(5) {

@@ -35,6 +35,7 @@ dotnet run
 ## Generated Code
 
 The generated code includes:
+
 - C# classes for all messages
 - Serialization/deserialization methods
 - JSON support via Google.Protobuf

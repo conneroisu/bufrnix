@@ -49,7 +49,7 @@ in {
     ''
       # Create C#-specific directories
       mkdir -p "${outputPath}"
-      
+
       # Create .csproj file for generated code if enabled
       ${optionalString cfg.generateProjectFile ''
         echo "Creating C# project file..."
@@ -58,8 +58,16 @@ in {
           <PropertyGroup>
             <TargetFramework>${cfg.targetFramework}</TargetFramework>
             <LangVersion>${cfg.langVersion}</LangVersion>
-            <Nullable>${if cfg.nullable then "enable" else "disable"}</Nullable>
-            <GeneratePackageOnBuild>${if cfg.generatePackageOnBuild then "true" else "false"}</GeneratePackageOnBuild>
+            <Nullable>${
+          if cfg.nullable
+          then "enable"
+          else "disable"
+        }</Nullable>
+            <GeneratePackageOnBuild>${
+          if cfg.generatePackageOnBuild
+          then "true"
+          else "false"
+        }</GeneratePackageOnBuild>
             ${optionalString (cfg.packageId != "") "<PackageId>${cfg.packageId}</PackageId>"}
             ${optionalString (cfg.packageVersion != "") "<Version>${cfg.packageVersion}</Version>"}
             ${optionalString (cfg.namespace != "") "<RootNamespace>${cfg.namespace}</RootNamespace>"}
@@ -67,9 +75,9 @@ in {
           <ItemGroup>
             <PackageReference Include="Google.Protobuf" Version="${cfg.protobufVersion}" />
             ${optionalString cfg.grpc.enable ''
-              <PackageReference Include="Grpc.Net.Client" Version="${cfg.grpc.grpcVersion}" />
-              <PackageReference Include="Grpc.Core.Api" Version="${cfg.grpc.grpcCoreVersion}" />
-            ''}
+          <PackageReference Include="Grpc.Net.Client" Version="${cfg.grpc.grpcVersion}" />
+          <PackageReference Include="Grpc.Core.Api" Version="${cfg.grpc.grpcCoreVersion}" />
+        ''}
           </ItemGroup>
         </Project>
         EOF
@@ -85,20 +93,20 @@ in {
       # C#-specific code generation steps
       echo "Generating C# code..."
       mkdir -p ${outputPath}
-      
+
       # Post-process generated files if needed
       ${optionalString (cfg.fileExtension != ".cs") ''
         echo "Renaming generated files to use ${cfg.fileExtension} extension..."
         find ${outputPath} -name "*.cs" -exec bash -c 'mv "$0" "''${0%.cs}${cfg.fileExtension}"' {} \;
       ''}
-      
+
       # Generate AssemblyInfo.cs if enabled
       ${optionalString cfg.generateAssemblyInfo ''
         echo "Generating AssemblyInfo.cs..."
         cat > "${outputPath}/AssemblyInfo.cs" <<EOF
         using System.Reflection;
         using System.Runtime.CompilerServices;
-        
+
         [assembly: AssemblyTitle("${cfg.projectName}")]
         [assembly: AssemblyDescription("Generated Protocol Buffer code")]
         [assembly: AssemblyConfiguration("")]

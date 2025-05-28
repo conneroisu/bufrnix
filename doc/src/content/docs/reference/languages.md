@@ -1366,7 +1366,6 @@ swift run
 | **Type Stubs**       | ❌  | ❌   | ✅                    | ❌  | ✅     | ❌    | ❌             | ❌         |
 | **Async Support**    | ✅  | ✅   | ✅                    | ❌  | ✅     | ✅    | ❌             | ❌         |
 
-
 ## Multi-Language Projects
 
 Generate code for multiple languages simultaneously:

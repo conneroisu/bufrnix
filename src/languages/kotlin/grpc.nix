@@ -9,7 +9,7 @@ with lib; let
   grpcOptions = cfg.options or [];
   javaOutputPath = cfg.javaOutputPath;
   kotlinOutputPath = cfg.kotlinOutputPath;
-  
+
   # Create wrapper script for grpc-kotlin plugin
   grpcKotlinPlugin = pkgs.writeShellScriptBin "protoc-gen-grpckt" ''
     #!/usr/bin/env sh
@@ -19,28 +19,29 @@ with lib; let
 in {
   # Runtime dependencies for gRPC Kotlin code generation
   runtimeInputs = [
-    pkgs.grpc  # For grpc_java_plugin
+    pkgs.grpc # For grpc_java_plugin
     grpcKotlinPlugin
   ];
 
   # Protoc plugin configuration for gRPC Kotlin
   protocPlugins = optionals cfg.enable ([
-    # Generate Java gRPC stubs (required for Kotlin)
-    "--grpc_out=${javaOutputPath}"
-    "--plugin=protoc-gen-grpc=${pkgs.grpc}/bin/grpc_java_plugin"
-    
-    # Generate Kotlin gRPC stubs
-    "--grpckt_out=${kotlinOutputPath}"
-    "--plugin=protoc-gen-grpckt=${grpcKotlinPlugin}/bin/protoc-gen-grpckt"
-  ] ++ (optionals (grpcOptions != []) [
-    "--grpckt_opt=${concatStringsSep "," grpcOptions}"
-  ]));
+      # Generate Java gRPC stubs (required for Kotlin)
+      "--grpc_out=${javaOutputPath}"
+      "--plugin=protoc-gen-grpc=${pkgs.grpc}/bin/grpc_java_plugin"
+
+      # Generate Kotlin gRPC stubs
+      "--grpckt_out=${kotlinOutputPath}"
+      "--plugin=protoc-gen-grpckt=${grpcKotlinPlugin}/bin/protoc-gen-grpckt"
+    ]
+    ++ (optionals (grpcOptions != []) [
+      "--grpckt_opt=${concatStringsSep "," grpcOptions}"
+    ]));
 
   # Initialization hook for gRPC Kotlin
   initHooks = optionalString cfg.enable ''
     # gRPC Kotlin specific initialization
     echo "Initializing gRPC Kotlin code generation..."
-    
+
     # Download gRPC Kotlin plugin JAR if not provided
     ${optionalString (cfg.grpcKotlinJar == null) ''
       echo "Downloading gRPC Kotlin plugin JAR..."
@@ -55,7 +56,7 @@ in {
   generateHooks = optionalString cfg.enable ''
     # gRPC Kotlin specific code generation
     echo "Generated gRPC Kotlin service code"
-    
+
     # Create service implementations if enabled
     ${optionalString cfg.generateServiceImpl ''
       echo "Generating gRPC service implementations..."

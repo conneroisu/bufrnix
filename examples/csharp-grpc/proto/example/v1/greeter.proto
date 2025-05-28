@@ -7,13 +7,13 @@ option csharp_namespace = "GreeterProtos.Example.V1";
 // The greeting service definition
 service Greeter {
   // Sends a greeting
-  rpc SayHello (HelloRequest) returns (HelloReply);
-  
+  rpc SayHello(HelloRequest) returns (HelloReply);
+
   // Sends multiple greetings
-  rpc SayHelloStream (HelloRequest) returns (stream HelloReply);
-  
+  rpc SayHelloStream(HelloRequest) returns (stream HelloReply);
+
   // Receives multiple names and sends back greetings
-  rpc SayHelloToMany (stream HelloRequest) returns (stream HelloReply);
+  rpc SayHelloToMany(stream HelloRequest) returns (stream HelloReply);
 }
 
 // The request message containing the user's name

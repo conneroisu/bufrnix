@@ -17,7 +17,7 @@
     flake-utils.lib.eachDefaultSystem (
       system: let
         pkgs = nixpkgs.legacyPackages.${system};
-        
+
         # Generate protobuf code
         protoGen = bufrnix.lib.${system}.mkBufrnix {
           root = ./proto;
@@ -42,7 +42,7 @@
             gradle
             protobuf
           ];
-          
+
           shellHook = ''
             echo "Kotlin Proto Example Development Shell"
             echo "Run 'nix build .#proto' to generate proto code"

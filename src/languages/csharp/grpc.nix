@@ -16,11 +16,12 @@ in {
 
   # Protoc plugin configuration for gRPC C#
   protocPlugins = optionals cfg.enable ([
-    "--grpc_out=${outputPath}"
-    "--plugin=protoc-gen-grpc=${pkgs.grpc}/bin/grpc_csharp_plugin"
-  ] ++ (optionals (grpcOptions != []) [
-    "--grpc_opt=${concatStringsSep "," grpcOptions}"
-  ]));
+      "--grpc_out=${outputPath}"
+      "--plugin=protoc-gen-grpc=${pkgs.grpc}/bin/grpc_csharp_plugin"
+    ]
+    ++ (optionals (grpcOptions != []) [
+      "--grpc_opt=${concatStringsSep "," grpcOptions}"
+    ]));
 
   # Initialization hook for gRPC C#
   initHooks = optionalString cfg.enable ''
@@ -32,14 +33,14 @@ in {
   generateHooks = optionalString cfg.enable ''
     # gRPC C# specific code generation
     echo "Generated gRPC C# service code"
-    
+
     # Generate client factory if enabled
     ${optionalString cfg.generateClientFactory ''
       echo "Generating gRPC client factory..."
       # This would generate a factory class for creating gRPC clients
       # Implementation depends on specific requirements
     ''}
-    
+
     # Generate server base implementations if enabled
     ${optionalString cfg.generateServerBase ''
       echo "Generating gRPC server base implementations..."

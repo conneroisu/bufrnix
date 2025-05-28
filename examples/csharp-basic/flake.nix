@@ -17,7 +17,7 @@
     flake-utils.lib.eachDefaultSystem (
       system: let
         pkgs = nixpkgs.legacyPackages.${system};
-        
+
         # Generate protobuf code
         protoGen = bufrnix.lib.${system}.mkBufrnix {
           root = ./proto;
@@ -35,15 +35,15 @@
         app = pkgs.buildDotnetModule {
           pname = "csharp-proto-example";
           version = "1.0.0";
-          
+
           src = ./.;
-          
+
           projectFile = "CSharpExample.csproj";
           nugetDeps = ./deps.nix;
-          
+
           dotnet-sdk = pkgs.dotnetCorePackages.sdk_8_0;
           dotnet-runtime = pkgs.dotnetCorePackages.runtime_8_0;
-          
+
           preBuild = ''
             # Copy generated proto code
             cp -r ${protoGen}/gen/csharp/* ./Generated/
@@ -61,7 +61,7 @@
             protobuf
             grpc
           ];
-          
+
           shellHook = ''
             echo "C# Proto Example Development Shell"
             echo "Run 'nix build .#proto' to generate proto code"

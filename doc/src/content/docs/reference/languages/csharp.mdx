@@ -29,17 +29,17 @@ Bufrnix provides comprehensive C# code generation support for Protocol Buffers, 
 
 ## Configuration Options
 
-| Option | Type | Default | Description |
-|--------|------|---------|-------------|
-| `enable` | bool | `false` | Enable C# code generation |
-| `sdk` | package | `pkgs.dotnetCorePackages.sdk_8_0` | .NET SDK to use |
-| `outputPath` | string | `"gen/csharp"` | Output directory for generated code |
-| `namespace` | string | `""` | Base namespace for generated code |
-| `targetFramework` | string | `"net8.0"` | .NET target framework |
-| `langVersion` | string | `"latest"` | C# language version |
-| `nullable` | bool | `true` | Enable nullable reference types |
-| `generateProjectFile` | bool | `true` | Generate .csproj file |
-| `projectName` | string | `"GeneratedProtos"` | Name for generated project |
+| Option                | Type    | Default                           | Description                         |
+| --------------------- | ------- | --------------------------------- | ----------------------------------- |
+| `enable`              | bool    | `false`                           | Enable C# code generation           |
+| `sdk`                 | package | `pkgs.dotnetCorePackages.sdk_8_0` | .NET SDK to use                     |
+| `outputPath`          | string  | `"gen/csharp"`                    | Output directory for generated code |
+| `namespace`           | string  | `""`                              | Base namespace for generated code   |
+| `targetFramework`     | string  | `"net8.0"`                        | .NET target framework               |
+| `langVersion`         | string  | `"latest"`                        | C# language version                 |
+| `nullable`            | bool    | `true`                            | Enable nullable reference types     |
+| `generateProjectFile` | bool    | `true`                            | Generate .csproj file               |
+| `projectName`         | string  | `"GeneratedProtos"`               | Name for generated project          |
 
 ## gRPC Support
 
@@ -57,13 +57,13 @@ Enable gRPC code generation:
 
 ### gRPC Options
 
-| Option | Type | Default | Description |
-|--------|------|---------|-------------|
-| `grpc.enable` | bool | `false` | Enable gRPC code generation |
-| `grpc.grpcVersion` | string | `"2.72.0"` | Grpc.Net.Client version |
-| `grpc.grpcCoreVersion` | string | `"2.72.0"` | Grpc.Core.Api version |
-| `grpc.generateClientFactory` | bool | `false` | Generate client factory classes |
-| `grpc.generateServerBase` | bool | `false` | Generate server base implementations |
+| Option                       | Type   | Default    | Description                          |
+| ---------------------------- | ------ | ---------- | ------------------------------------ |
+| `grpc.enable`                | bool   | `false`    | Enable gRPC code generation          |
+| `grpc.grpcVersion`           | string | `"2.72.0"` | Grpc.Net.Client version              |
+| `grpc.grpcCoreVersion`       | string | `"2.72.0"` | Grpc.Core.Api version                |
+| `grpc.generateClientFactory` | bool   | `false`    | Generate client factory classes      |
+| `grpc.generateServerBase`    | bool   | `false`    | Generate server base implementations |
 
 ## Examples
 
@@ -73,7 +73,7 @@ Enable gRPC code generation:
 # flake.nix
 {
   inputs.bufrnix.url = "github:bufrnix/bufrnix";
-  
+
   outputs = { self, nixpkgs, bufrnix }: {
     packages.x86_64-linux.default = bufrnix.lib.x86_64-linux.mkBufrnix {
       root = ./proto;
@@ -114,22 +114,22 @@ Enable gRPC code generation:
     targetFramework = "net8.0";
     langVersion = "12.0";
     nullable = true;
-    
+
     # Custom file extension
     fileExtension = ".g.cs";
-    
+
     # Assembly info generation
     generateAssemblyInfo = true;
     assemblyVersion = "1.0.0.0";
-    
+
     # NuGet package settings
     generatePackageOnBuild = true;
     packageId = "Enterprise.Protos";
     packageVersion = "2.1.0";
-    
+
     # Custom protobuf version
     protobufVersion = "3.31.0";
-    
+
     # gRPC with custom options
     grpc = {
       enable = true;
@@ -182,7 +182,7 @@ using MyApp.Services;
 public class GreeterService : Greeter.GreeterBase
 {
     public override Task<HelloReply> SayHello(
-        HelloRequest request, 
+        HelloRequest request,
         ServerCallContext context)
     {
         return Task.FromResult(new HelloReply

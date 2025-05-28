@@ -17,7 +17,7 @@
     flake-utils.lib.eachDefaultSystem (
       system: let
         pkgs = nixpkgs.legacyPackages.${system};
-        
+
         # Generate protobuf code with gRPC
         protoGen = bufrnix.lib.${system}.mkBufrnix {
           root = ./proto;
@@ -38,15 +38,15 @@
         server = pkgs.buildDotnetModule {
           pname = "csharp-grpc-server";
           version = "1.0.0";
-          
+
           src = ./.;
-          
+
           projectFile = "Server/Server.csproj";
           nugetDeps = ./deps.nix;
-          
+
           dotnet-sdk = pkgs.dotnetCorePackages.sdk_8_0;
           dotnet-runtime = pkgs.dotnetCorePackages.aspnetcore_8_0;
-          
+
           preBuild = ''
             # Copy generated proto code
             mkdir -p Generated
@@ -58,15 +58,15 @@
         client = pkgs.buildDotnetModule {
           pname = "csharp-grpc-client";
           version = "1.0.0";
-          
+
           src = ./.;
-          
+
           projectFile = "Client/Client.csproj";
           nugetDeps = ./deps.nix;
-          
+
           dotnet-sdk = pkgs.dotnetCorePackages.sdk_8_0;
           dotnet-runtime = pkgs.dotnetCorePackages.runtime_8_0;
-          
+
           preBuild = ''
             # Copy generated proto code
             mkdir -p Generated
@@ -86,7 +86,7 @@
             protobuf
             grpc
           ];
-          
+
           shellHook = ''
             echo "C# gRPC Example Development Shell"
             echo "Run 'nix build .#proto' to generate proto code"

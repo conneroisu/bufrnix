@@ -42,6 +42,7 @@ gradle run
 ## Generated Code Features
 
 The Kotlin protobuf plugin generates:
+
 - Kotlin DSL builders for all messages
 - Immutable `copy` functions
 - Type-safe builders with scope functions

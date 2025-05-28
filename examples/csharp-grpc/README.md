@@ -41,6 +41,7 @@ cd Client && dotnet run
 ## Generated Code
 
 The generated code includes:
+
 - C# message classes
 - gRPC service base classes
 - Client and server stubs

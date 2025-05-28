@@ -17,13 +17,13 @@
     flake-utils.lib.eachDefaultSystem (
       system: let
         pkgs = nixpkgs.legacyPackages.${system};
-        
+
         # Download gRPC Kotlin plugin JAR
         grpcKotlinJar = pkgs.fetchurl {
           url = "https://repo1.maven.org/maven2/io/grpc/protoc-gen-grpc-kotlin/1.4.2/protoc-gen-grpc-kotlin-1.4.2-jdk8.jar";
           sha256 = "sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA="; # Replace with actual hash
         };
-        
+
         # Generate protobuf code with gRPC
         protoGen = bufrnix.lib.${system}.mkBufrnix {
           root = ./proto;
@@ -53,7 +53,7 @@
             protobuf
             grpc
           ];
-          
+
           shellHook = ''
             echo "Kotlin gRPC Example Development Shell"
             echo "Run 'nix build .#proto' to generate proto code"
