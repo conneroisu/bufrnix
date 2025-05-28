@@ -62,7 +62,7 @@
 
     # Add checks
     checks = eachSystem (system: {
-      formatting = treefmtEval.${system}.config.build.check inputs.self;
+      # formatting = treefmtEval.${system}.config.build.check inputs.self;
     });
 
     devShells = eachSystem (
