@@ -19,16 +19,20 @@
         pkgs = nixpkgs.legacyPackages.${system};
 
         # Generate protobuf code with gRPC
-        protoGen = bufrnix.lib.${system}.mkBufrnix {
-          root = ./proto;
-          languages = {
-            csharp = {
-              enable = true;
-              namespace = "GreeterProtos";
-              generateProjectFile = true;
-              projectName = "GreeterProtos";
-              grpc = {
+        protoGen = bufrnix.lib.mkBufrnixPackage {
+          inherit (pkgs) lib;
+          inherit pkgs;
+          config = {
+            root = ./proto;
+            languages = {
+              csharp = {
                 enable = true;
+                namespace = "GreeterProtos";
+                generateProjectFile = true;
+                projectName = "GreeterProtos";
+                grpc = {
+                  enable = true;
+                };
               };
             };
           };
@@ -48,9 +52,11 @@
           dotnet-runtime = pkgs.dotnetCorePackages.aspnetcore_8_0;
 
           preBuild = ''
+            # Generate proto code by running the bufrnix script
+            ${protoGen}/bin/bufrnix
             # Copy generated proto code
             mkdir -p Generated
-            cp -r ${protoGen}/gen/csharp/* ./Generated/
+            cp -r proto/gen/csharp/* ./Generated/
           '';
         };
 
@@ -68,9 +74,11 @@
           dotnet-runtime = pkgs.dotnetCorePackages.runtime_8_0;
 
           preBuild = ''
+            # Generate proto code by running the bufrnix script
+            ${protoGen}/bin/bufrnix
             # Copy generated proto code
             mkdir -p Generated
-            cp -r ${protoGen}/gen/csharp/* ./Generated/
+            cp -r proto/gen/csharp/* ./Generated/
           '';
         };
       in {

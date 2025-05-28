@@ -19,14 +19,18 @@
         pkgs = nixpkgs.legacyPackages.${system};
 
         # Generate protobuf code
-        protoGen = bufrnix.lib.${system}.mkBufrnix {
-          root = ./proto;
-          languages = {
-            csharp = {
-              enable = true;
-              namespace = "ExampleProtos";
-              generateProjectFile = true;
-              projectName = "ExampleProtos";
+        protoGen = bufrnix.lib.mkBufrnixPackage {
+          inherit (pkgs) lib;
+          inherit pkgs;
+          config = {
+            root = ./proto;
+            languages = {
+              csharp = {
+                enable = true;
+                namespace = "ExampleProtos";
+                generateProjectFile = true;
+                projectName = "ExampleProtos";
+              };
             };
           };
         };
@@ -45,8 +49,11 @@
           dotnet-runtime = pkgs.dotnetCorePackages.runtime_8_0;
 
           preBuild = ''
+            # Generate proto code by running the bufrnix script
+            ${protoGen}/bin/bufrnix
             # Copy generated proto code
-            cp -r ${protoGen}/gen/csharp/* ./Generated/
+            mkdir -p Generated
+            cp -r proto/gen/csharp/* ./Generated/
           '';
         };
       in {

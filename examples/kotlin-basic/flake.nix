@@ -19,13 +19,17 @@
         pkgs = nixpkgs.legacyPackages.${system};
 
         # Generate protobuf code
-        protoGen = bufrnix.lib.${system}.mkBufrnix {
-          root = ./proto;
-          languages = {
-            kotlin = {
-              enable = true;
-              generateBuildFile = true;
-              projectName = "KotlinProtoExample";
+        protoGen = bufrnix.lib.mkBufrnixPackage {
+          inherit (pkgs) lib;
+          inherit pkgs;
+          config = {
+            root = ./proto;
+            languages = {
+              kotlin = {
+                enable = true;
+                generateBuildFile = true;
+                projectName = "KotlinProtoExample";
+              };
             };
           };
         };
