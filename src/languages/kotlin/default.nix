@@ -19,6 +19,9 @@ with lib; let
       // {
         javaOutputPath = javaOutputPath;
         kotlinOutputPath = kotlinOutputPath;
+        jdk = cfg.jdk;
+        grpcKotlinJar = cfg.grpc.grpcKotlinJar or null;
+        grpcKotlinVersion = cfg.grpc.grpcKotlinVersion or "1.4.2";
       };
   };
 
@@ -29,6 +32,7 @@ with lib; let
       // {
         javaOutputPath = javaOutputPath;
         kotlinOutputPath = kotlinOutputPath;
+        jdk = cfg.jdk;
       };
   };
 
