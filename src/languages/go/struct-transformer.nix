@@ -61,5 +61,6 @@ in {
 
     echo "Note: struct-transformer requires business logic source files to be available during generation"
     echo "Ensure ${goModelsFilePath} contains the target struct definitions"
+    echo "See https://github.com/conneroisu/bufr.nix/examples/go-struct-transformer for an example"
   '';
 }
