@@ -21,9 +21,10 @@ in {
 
   # Protoc plugin configuration for gRPC C++
   protocPlugins = optionals enabled ([
-    "--grpc_out=${outputPath}"
-    "--plugin=protoc-gen-grpc=${grpcPkg}/bin/grpc_cpp_plugin"
-  ] ++ optional (length options > 0) "--grpc_opt=${concatStringsSep "," options}");
+      "--grpc_out=${outputPath}"
+      "--plugin=protoc-gen-grpc=${grpcPkg}/bin/grpc_cpp_plugin"
+    ]
+    ++ optional (length options > 0) "--grpc_opt=${concatStringsSep "," options}");
 
   # Initialization hooks for gRPC C++
   initHooks = optionalString enabled ''
@@ -38,4 +39,3 @@ in {
     echo "Generated gRPC services will include client and server stubs"
   '';
 }
-

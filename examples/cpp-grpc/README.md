@@ -141,4 +141,3 @@ The example includes:
 - Try `cpp-cmake-integration` for advanced CMake usage
 - Explore `cpp-embedded` for resource-constrained environments
 - Check out authentication and TLS examples
-

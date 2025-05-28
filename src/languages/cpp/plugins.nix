@@ -106,4 +106,3 @@ with lib; {
   performancePlugins = ["flatbuffers"];
   testingPlugins = ["grpc-mock"];
 }
-

@@ -39,18 +39,20 @@
         };
       in {
         devShells.default = pkgs.mkShell {
-          packages = with pkgs; [
-            cmake
-            ninja
-            gcc
-            protobuf
-            abseil-cpp
-            pkg-config
-            generated
-          ] ++ lib.optionals pkgs.stdenv.isLinux [
-            gdb
-            valgrind
-          ];
+          packages = with pkgs;
+            [
+              cmake
+              ninja
+              gcc
+              protobuf
+              abseil-cpp
+              pkg-config
+              generated
+            ]
+            ++ lib.optionals pkgs.stdenv.isLinux [
+              gdb
+              valgrind
+            ];
 
           shellHook = ''
             echo "C++ Protobuf Development Shell"
@@ -72,4 +74,3 @@
       }
     );
 }
-

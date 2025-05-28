@@ -1,0 +1,134 @@
+syntax = "proto3";
+
+package example.product.v1;
+
+import "google/protobuf/timestamp.proto";
+
+// Product represents an item in the catalog
+message Product {
+  // Unique identifier
+  string id = 1;
+
+  // Product name
+  string name = 2;
+
+  // Product description
+  string description = 3;
+
+  // Price in cents
+  int64 price_cents = 4;
+
+  // Currency code (e.g., "USD")
+  string currency = 5;
+
+  // Stock quantity
+  int32 stock_quantity = 6;
+
+  // Product category
+  Category category = 7;
+
+  // Product tags for search
+  repeated string tags = 8;
+
+  // Product images
+  repeated ProductImage images = 9;
+
+  // When the product was created
+  google.protobuf.Timestamp created_at = 10;
+
+  // When the product was last updated
+  google.protobuf.Timestamp updated_at = 11;
+}
+
+// ProductImage represents a product image
+message ProductImage {
+  // Image URL
+  string url = 1;
+
+  // Alt text for accessibility
+  string alt_text = 2;
+
+  // Whether this is the primary image
+  bool is_primary = 3;
+}
+
+// Category for product classification
+enum Category {
+  CATEGORY_UNSPECIFIED = 0;
+  CATEGORY_ELECTRONICS = 1;
+  CATEGORY_CLOTHING = 2;
+  CATEGORY_FOOD = 3;
+  CATEGORY_BOOKS = 4;
+  CATEGORY_HOME = 5;
+  CATEGORY_TOYS = 6;
+}
+
+// Request to search products
+message SearchProductsRequest {
+  // Search query
+  string query = 1;
+
+  // Filter by category
+  optional Category category = 2;
+
+  // Minimum price in cents
+  optional int64 min_price_cents = 3;
+
+  // Maximum price in cents
+  optional int64 max_price_cents = 4;
+
+  // Page size
+  int32 page_size = 5;
+
+  // Page token for pagination
+  string page_token = 6;
+}
+
+// Response containing search results
+message SearchProductsResponse {
+  // Found products
+  repeated Product products = 1;
+
+  // Total number of results
+  int32 total_results = 2;
+
+  // Next page token
+  string next_page_token = 3;
+}
+
+// ProductService provides product catalog operations
+service ProductService {
+  // Search for products
+  rpc SearchProducts(SearchProductsRequest) returns (SearchProductsResponse);
+
+  // Get a single product by ID
+  rpc GetProduct(GetProductRequest) returns (Product);
+
+  // Create a new product
+  rpc CreateProduct(CreateProductRequest) returns (Product);
+
+  // Update product inventory
+  rpc UpdateInventory(UpdateInventoryRequest) returns (UpdateInventoryResponse);
+}
+
+// Request to get a product
+message GetProductRequest {
+  string id = 1;
+}
+
+// Request to create a product
+message CreateProductRequest {
+  Product product = 1;
+}
+
+// Request to update inventory
+message UpdateInventoryRequest {
+  string product_id = 1;
+  int32 quantity_change = 2;
+}
+
+// Response after updating inventory
+message UpdateInventoryResponse {
+  string product_id = 1;
+  int32 new_quantity = 2;
+}

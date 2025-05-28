@@ -3,7 +3,7 @@ title: C Language Support
 description: Multiple Protocol Buffer implementations for C, from standard systems to embedded microcontrollers.
 ---
 
-import { Tabs, TabItem } from '@astrojs/starlight/components';
+import { Tabs, TabItem } from "@astrojs/starlight/components";
 
 # C Language Support
 
@@ -14,11 +14,11 @@ C support provides multiple Protocol Buffer implementations optimized for differ
 
 ## Available Implementations
 
-| Implementation | Description | Target Use Case | Generated Files |
-|----------------|-------------|-----------------|-----------------|
-| **protobuf-c** | Standard C implementation | General purpose C applications | `*.pb-c.h`, `*.pb-c.c` |
-| **nanopb** | Lightweight implementation | Embedded systems, microcontrollers | `*.pb.h`, `*.pb.c` |
-| **upb** | Google's C implementation | High-performance parsing (future) | `*.upb.h`, `*.upb.c` |
+| Implementation | Description                | Target Use Case                    | Generated Files        |
+| -------------- | -------------------------- | ---------------------------------- | ---------------------- |
+| **protobuf-c** | Standard C implementation  | General purpose C applications     | `*.pb-c.h`, `*.pb-c.c` |
+| **nanopb**     | Lightweight implementation | Embedded systems, microcontrollers | `*.pb.h`, `*.pb.c`     |
+| **upb**        | Google's C implementation  | High-performance parsing (future)  | `*.upb.h`, `*.upb.c`   |
 
 ## Configuration
 
@@ -28,7 +28,7 @@ C support provides multiple Protocol Buffer implementations optimized for differ
 languages.c = {
   enable = true;
   outputPath = "gen/c";
-  
+
   # Choose your implementation
   protobuf-c.enable = true;  # For general C applications
   # OR
@@ -196,7 +196,7 @@ sensor.v1.DeviceConfig.calibration max_count:8 fixed_count:true
             printf("  Value: %d\n", unpacked->value);
             printf("  Type: %d\n", unpacked->type);
             printf("  Tags (%zu):\n", unpacked->n_tags);
-            
+
             for (size_t i = 0; i < unpacked->n_tags; i++) {
                 printf("    - %s\n", unpacked->tags[i]);
             }
@@ -211,10 +211,11 @@ sensor.v1.DeviceConfig.calibration max_count:8 fixed_count:true
         }
         free(example.tags);
         free(buffer);
-        
+
         return 0;
     }
     ```
+
   </TabItem>
 
   <TabItem label="nanopb">
@@ -263,7 +264,7 @@ sensor.v1.DeviceConfig.calibration max_count:8 fixed_count:true
             printf("  Pressure: %u hPa\n", reading.pressure);
             printf("  Status: %d\n", reading.status);
             printf("  Values (%d):\n", reading.values_count);
-            
+
             for (int i = 0; i < reading.values_count; i++) {
                 printf("    [%d]: %.3f\n", i, reading.values[i]);
             }
@@ -281,7 +282,7 @@ sensor.v1.DeviceConfig.calibration max_count:8 fixed_count:true
         // Encode message
         if (encode_sensor_reading(buffer, sizeof(buffer), &message_length)) {
             printf("Encoded %zu bytes\n", message_length);
-            
+
             // Decode message
             decode_sensor_reading(buffer, message_length);
         } else {
@@ -292,6 +293,7 @@ sensor.v1.DeviceConfig.calibration max_count:8 fixed_count:true
         return 0;
     }
     ```
+
   </TabItem>
 
   <TabItem label="Device Config">
@@ -312,46 +314,46 @@ sensor.v1.DeviceConfig.calibration max_count:8 fixed_count:true
 
     bool save_device_config(const device_config_t *config, uint8_t *buffer, size_t buffer_size, size_t *length) {
         sensor_v1_DeviceConfig pb_config = sensor_v1_DeviceConfig_init_zero;
-        
+
         // Copy device ID (nanopb handles the size constraint)
         strncpy(pb_config.device_id, config->device_id, sizeof(pb_config.device_id) - 1);
         pb_config.device_id[sizeof(pb_config.device_id) - 1] = '\0';
-        
+
         pb_config.sample_rate = config->sample_rate;
         pb_config.enable_logging = config->enable_logging;
-        
+
         // Copy calibration data (fixed array)
         pb_config.calibration_count = config->calibration_count;
         for (size_t i = 0; i < config->calibration_count && i < 8; i++) {
             pb_config.calibration[i] = config->calibration[i];
         }
-        
+
         pb_ostream_t stream = pb_ostream_from_buffer(buffer, buffer_size);
         bool status = pb_encode(&stream, sensor_v1_DeviceConfig_fields, &pb_config);
         *length = stream.bytes_written;
-        
+
         return status;
     }
 
     bool load_device_config(device_config_t *config, const uint8_t *buffer, size_t length) {
         sensor_v1_DeviceConfig pb_config = sensor_v1_DeviceConfig_init_zero;
-        
+
         pb_istream_t stream = pb_istream_from_buffer(buffer, length);
         bool status = pb_decode(&stream, sensor_v1_DeviceConfig_fields, &pb_config);
-        
+
         if (status) {
             strncpy(config->device_id, pb_config.device_id, sizeof(config->device_id) - 1);
             config->device_id[sizeof(config->device_id) - 1] = '\0';
-            
+
             config->sample_rate = pb_config.sample_rate;
             config->enable_logging = pb_config.enable_logging;
             config->calibration_count = pb_config.calibration_count;
-            
+
             for (size_t i = 0; i < pb_config.calibration_count; i++) {
                 config->calibration[i] = pb_config.calibration[i];
             }
         }
-        
+
         return status;
     }
 
@@ -363,14 +365,14 @@ sensor.v1.DeviceConfig.calibration max_count:8 fixed_count:true
             .calibration = {100, 200, 300, 400},
             .calibration_count = 4
         };
-        
+
         uint8_t buffer[128];
         size_t length;
-        
+
         // Save configuration
         if (save_device_config(&config, buffer, sizeof(buffer), &length)) {
             printf("Saved config (%zu bytes)\n", length);
-            
+
             // Load configuration
             device_config_t loaded_config = {0};
             if (load_device_config(&loaded_config, buffer, length)) {
@@ -379,16 +381,17 @@ sensor.v1.DeviceConfig.calibration max_count:8 fixed_count:true
                 printf("  Sample Rate: %u Hz\n", loaded_config.sample_rate);
                 printf("  Logging: %s\n", loaded_config.enable_logging ? "enabled" : "disabled");
                 printf("  Calibration (%zu values):\n", loaded_config.calibration_count);
-                
+
                 for (size_t i = 0; i < loaded_config.calibration_count; i++) {
                     printf("    [%zu]: %u\n", i, loaded_config.calibration[i]);
                 }
             }
         }
-        
+
         return 0;
     }
     ```
+
   </TabItem>
 
   <TabItem label="Build Integration">
@@ -403,8 +406,8 @@ sensor.v1.DeviceConfig.calibration max_count:8 fixed_count:true
     # protobuf-c example
     PROTOBUF_C_LIBS = -lprotobuf-c
     PROTOBUF_C_SOURCES = main.c proto/gen/c/protobuf-c/example/v1/example.pb-c.c
-    
-    # nanopb example  
+
+    # nanopb example
     NANOPB_INCLUDES = -I$(NANOPB_DIR)
     NANOPB_SOURCES = main.c proto/gen/c/nanopb/sensor/v1/sensor.pb.c $(NANOPB_DIR)/pb_encode.c $(NANOPB_DIR)/pb_decode.c $(NANOPB_DIR)/pb_common.c
 
@@ -432,24 +435,25 @@ sensor.v1.DeviceConfig.calibration max_count:8 fixed_count:true
     	./example_protobuf_c
     	./sensor_nanopb
     ```
+
   </TabItem>
 </Tabs>
 
 ## Implementation Comparison
 
-| Feature | protobuf-c | nanopb | upb (future) |
-|---------|------------|--------|--------------|
-| **Dynamic Allocation** | ✅ | ❌ | ✅ |
-| **Fixed Arrays** | ❌ | ✅ | ❌ |
-| **Code Size** | Medium | Small | Small |
-| **Memory Usage** | Dynamic | Static | Arena |
-| **Embedded Systems** | ⚠️ Limited | ✅ Excellent | ⚠️ Limited |
-| **Full Proto3** | ✅ | ⚠️ Subset | ✅ |
-| **Services/RPC** | Basic | ❌ | ✅ |
-| **Extensions** | ✅ | ❌ | ✅ |
-| **Options Files** | ❌ | ✅ | ❌ |
-| **Zero-Copy** | ❌ | ✅ | ✅ |
-| **JSON Support** | ❌ | ❌ | ✅ |
+| Feature                | protobuf-c | nanopb       | upb (future) |
+| ---------------------- | ---------- | ------------ | ------------ |
+| **Dynamic Allocation** | ✅         | ❌           | ✅           |
+| **Fixed Arrays**       | ❌         | ✅           | ❌           |
+| **Code Size**          | Medium     | Small        | Small        |
+| **Memory Usage**       | Dynamic    | Static       | Arena        |
+| **Embedded Systems**   | ⚠️ Limited | ✅ Excellent | ⚠️ Limited   |
+| **Full Proto3**        | ✅         | ⚠️ Subset    | ✅           |
+| **Services/RPC**       | Basic      | ❌           | ✅           |
+| **Extensions**         | ✅         | ❌           | ✅           |
+| **Options Files**      | ❌         | ✅           | ❌           |
+| **Zero-Copy**          | ❌         | ✅           | ✅           |
+| **JSON Support**       | ❌         | ❌           | ✅           |
 
 ## Use Case Guidelines
 

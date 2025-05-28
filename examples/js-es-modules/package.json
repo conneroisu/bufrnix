@@ -1,0 +1,31 @@
+{
+  "name": "@bufrnix-example/js-es-modules",
+  "version": "1.0.0",
+  "description": "JavaScript ES Modules example with Protobuf-ES and Connect-ES",
+  "type": "module",
+  "scripts": {
+    "build": "nix build && tsc",
+    "server": "tsx src/server-example.ts",
+    "client": "tsx src/client-example.ts",
+    "dev": "npm run server",
+    "clean": "rm -rf proto/gen dist",
+    "typecheck": "tsc --noEmit",
+    "test": "npm run build && npm run typecheck"
+  },
+  "dependencies": {
+    "@bufbuild/protobuf": "^1.10.0",
+    "@bufbuild/protovalidate": "^0.2.0",
+    "@connectrpc/connect": "^1.4.0",
+    "@connectrpc/connect-node": "^1.4.0",
+    "@connectrpc/connect-fastify": "^1.4.0",
+    "fastify": "^4.26.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.0",
+    "tsx": "^4.7.0",
+    "typescript": "^5.3.3"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}

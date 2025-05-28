@@ -1,0 +1,73 @@
+syntax = "proto3";
+
+package example.chat.v1;
+
+import "google/protobuf/timestamp.proto";
+
+option go_package = "example/chat/v1;chatv1";
+
+// Message represents a chat message
+message Message {
+  string id = 1;
+  string user_id = 2;
+  string room_id = 3;
+  string content = 4;
+  google.protobuf.Timestamp sent_at = 5;
+}
+
+// Room represents a chat room
+message Room {
+  string id = 1;
+  string name = 2;
+  repeated string participants = 3;
+  google.protobuf.Timestamp created_at = 4;
+}
+
+// SendMessageRequest is the request for sending a message
+message SendMessageRequest {
+  string room_id = 1;
+  string user_id = 2;
+  string content = 3;
+}
+
+// SendMessageResponse is the response for sending a message
+message SendMessageResponse {
+  Message message = 1;
+}
+
+// JoinRoomRequest is the request for joining a room
+message JoinRoomRequest {
+  string room_id = 1;
+  string user_id = 2;
+}
+
+// JoinRoomResponse is the response for joining a room
+message JoinRoomResponse {
+  Room room = 1;
+}
+
+// StreamMessagesRequest is the request for streaming messages
+message StreamMessagesRequest {
+  string room_id = 1;
+  string user_id = 2;
+}
+
+// StreamMessagesResponse is the response for streaming messages
+message StreamMessagesResponse {
+  Message message = 1;
+}
+
+// ChatService provides real-time chat functionality
+service ChatService {
+  // SendMessage sends a message to a room
+  rpc SendMessage(SendMessageRequest) returns (SendMessageResponse) {}
+
+  // JoinRoom joins a user to a chat room
+  rpc JoinRoom(JoinRoomRequest) returns (JoinRoomResponse) {}
+
+  // StreamMessages streams messages from a room
+  rpc StreamMessages(StreamMessagesRequest) returns (stream StreamMessagesResponse) {}
+
+  // StreamChat provides bidirectional streaming for real-time chat
+  rpc StreamChat(stream SendMessageRequest) returns (stream StreamMessagesResponse) {}
+}

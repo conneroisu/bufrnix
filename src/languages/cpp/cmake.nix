@@ -20,7 +20,7 @@ with lib; let
 
       # Set include directory to generated proto path
       set(BUFRNIX_PROTO_INCLUDE_DIR "''${BUFRNIX_PROTO_ROOT}/${outputPath}")
-      
+
       # Check if directory exists
       if(EXISTS "''${BUFRNIX_PROTO_INCLUDE_DIR}")
         set(BUFRNIX_PROTO_FOUND TRUE)
@@ -30,7 +30,7 @@ with lib; let
           add_library(Bufrnix::Protobuf INTERFACE IMPORTED)
           set_target_properties(Bufrnix::Protobuf PROPERTIES
             INTERFACE_INCLUDE_DIRECTORIES "''${BUFRNIX_PROTO_INCLUDE_DIR}"
-            INTERFACE_LINK_LIBRARIES 
+            INTERFACE_LINK_LIBRARIES
               "${protobufPkg}/lib/libprotobuf${pkgs.stdenv.hostPlatform.extensions.sharedLibrary}"
               "${pkgs.abseil-cpp}/lib/libabsl_log_internal_check_op${pkgs.stdenv.hostPlatform.extensions.sharedLibrary}"
               "${pkgs.abseil-cpp}/lib/libabsl_log_internal_message${pkgs.stdenv.hostPlatform.extensions.sharedLibrary}"
@@ -150,4 +150,3 @@ in {
         echo "CMake modules created in ${outputPath}/"
   '';
 }
-

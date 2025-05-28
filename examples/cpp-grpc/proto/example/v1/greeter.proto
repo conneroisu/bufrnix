@@ -33,4 +33,3 @@ message HelloResponse {
   google.protobuf.Timestamp server_timestamp = 3;
   int32 response_count = 4; // For streaming responses
 }
-

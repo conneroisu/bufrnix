@@ -508,12 +508,12 @@ with lib; {
           description = "JavaScript package name for generated code";
         };
 
-        # ECMAScript modules support
+        # ECMAScript modules support with Protobuf-ES (default TypeScript generator)
         es = {
           enable = mkOption {
             type = types.bool;
-            default = false;
-            description = "Enable ECMAScript modules generation (modern JavaScript)";
+            default = true; # Enable by default for TypeScript-first development
+            description = "Enable ECMAScript modules generation with Protobuf-ES (modern JavaScript/TypeScript)";
           };
 
           package = mkOption {
@@ -524,8 +524,32 @@ with lib; {
 
           options = mkOption {
             type = types.listOf types.str;
-            default = [];
-            description = "Options to pass to protoc-gen-es";
+            default = ["target=ts"]; # Default to TypeScript output
+            description = "Options to pass to protoc-gen-es (e.g., target=ts, import_extension=.js)";
+          };
+
+          target = mkOption {
+            type = types.enum ["js" "ts" "dts"];
+            default = "ts";
+            description = "Target output format (js, ts, or dts for TypeScript declarations)";
+          };
+
+          importExtension = mkOption {
+            type = types.str;
+            default = ""; # Let protoc-gen-es handle defaults
+            description = "Import extension to use (e.g., '.js' for Node.js ES modules)";
+          };
+
+          generatePackageJson = mkOption {
+            type = types.bool;
+            default = false;
+            description = "Generate package.json for the generated code";
+          };
+
+          packageName = mkOption {
+            type = types.str;
+            default = "";
+            description = "Package name for generated package.json";
           };
         };
 
@@ -538,15 +562,28 @@ with lib; {
           };
 
           package = mkOption {
-            type = types.package;
-            defaultText = literalExpression "pkgs.protoc-gen-connect-es";
-            description = "The protoc-gen-connect-es package to use";
+            type = types.nullOr types.package;
+            default = null;
+            defaultText = literalExpression "null";
+            description = "The protoc-gen-connect-es package to use (deprecated - functionality integrated into protoc-gen-es v2)";
           };
 
           options = mkOption {
             type = types.listOf types.str;
             default = [];
             description = "Options to pass to protoc-gen-connect-es";
+          };
+
+          generatePackageJson = mkOption {
+            type = types.bool;
+            default = false;
+            description = "Generate package.json for the generated code";
+          };
+
+          packageName = mkOption {
+            type = types.str;
+            default = "";
+            description = "Package name for generated package.json";
           };
         };
 
@@ -589,6 +626,78 @@ with lib; {
             type = types.listOf types.str;
             default = [];
             description = "Options to pass to protoc-gen-twirp_js";
+          };
+        };
+
+        # Protovalidate support
+        protovalidate = {
+          enable = mkOption {
+            type = types.bool;
+            default = false;
+            description = "Enable protovalidate-es validation code generation for JavaScript/TypeScript";
+          };
+
+          package = mkOption {
+            type = types.package;
+            defaultText = literalExpression "pkgs.protoc-gen-es";
+            description = "The protoc-gen-es package to use (protovalidate-es uses the same generator)";
+          };
+
+          options = mkOption {
+            type = types.listOf types.str;
+            default = [];
+            description = "Options to pass to protoc-gen-es for protovalidate";
+          };
+
+          generateValidationHelpers = mkOption {
+            type = types.bool;
+            default = true;
+            description = "Generate validation helper functions";
+          };
+
+          target = mkOption {
+            type = types.enum ["js" "ts" "dts"];
+            default = "ts";
+            description = "Target output format (js, ts, or dts for TypeScript declarations)";
+          };
+        };
+
+        # ts-proto for TypeScript-first development
+        tsProto = {
+          enable = mkOption {
+            type = types.bool;
+            default = false;
+            description = "Enable ts-proto TypeScript code generation (idiomatic TypeScript interfaces)";
+          };
+
+          package = mkOption {
+            type = types.package;
+            defaultText = literalExpression "pkgs.protoc-gen-ts_proto";
+            description = "The ts-proto package to use";
+          };
+
+          options = mkOption {
+            type = types.listOf types.str;
+            default = [];
+            description = "Options to pass to ts-proto (e.g., esModuleInterop=true, useOptionals=messages)";
+          };
+
+          generatePackageJson = mkOption {
+            type = types.bool;
+            default = false;
+            description = "Generate package.json for the generated code";
+          };
+
+          generateTsConfig = mkOption {
+            type = types.bool;
+            default = false;
+            description = "Generate tsconfig.json for the generated code";
+          };
+
+          packageName = mkOption {
+            type = types.str;
+            default = "";
+            description = "Package name for generated package.json";
           };
         };
       };

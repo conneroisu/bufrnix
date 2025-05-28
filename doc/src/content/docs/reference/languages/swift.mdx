@@ -5,8 +5,8 @@ sidebar:
   order: 6
 ---
 
-import { Tabs, TabItem } from '@astrojs/starlight/components';
-import { Code } from '@astrojs/starlight/components';
+import { Tabs, TabItem } from "@astrojs/starlight/components";
+import { Code } from "@astrojs/starlight/components";
 
 Swift support in bufrnix enables generation of Swift Protocol Buffer code for iOS, macOS, and server-side Swift applications using SwiftProtobuf.
 
@@ -46,21 +46,25 @@ Swift support in bufrnix enables generation of Swift Protocol Buffer code for iO
 ## Options
 
 ### `swift.enable`
+
 - **Type**: `bool`
 - **Default**: `false`
 - **Description**: Enable Swift code generation
 
 ### `swift.outputPath`
+
 - **Type**: `string`
 - **Default**: `"proto/gen/swift"`
 - **Description**: Output directory for generated Swift files
 
 ### `swift.packageName`
+
 - **Type**: `string`
 - **Default**: `""`
 - **Description**: Name of the Swift package to create
 
 ### `swift.options`
+
 - **Type**: `list of strings`
 - **Default**: `[]`
 - **Description**: Additional options to pass to protoc-gen-swift
@@ -75,16 +79,16 @@ Swift support in bufrnix enables generation of Swift Protocol Buffer code for iO
 {
   description = "iOS app with protobuf support";
 
-  inputs = {
-    nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
-    bufrnix.url = "github:your-org/bufrnix";
-  };
+inputs = {
+nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
+bufrnix.url = "github:your-org/bufrnix";
+};
 
-  outputs = { self, nixpkgs, bufrnix }:
-    let
-      system = "aarch64-darwin";
-      pkgs = import nixpkgs { inherit system; };
-      
+outputs = { self, nixpkgs, bufrnix }:
+let
+system = "aarch64-darwin";
+pkgs = import nixpkgs { inherit system; };
+
       protoGen = bufrnix.lib.mkBufrnixPackage {
         inherit pkgs;
         inherit (pkgs) lib;
@@ -115,8 +119,10 @@ Swift support in bufrnix enables generation of Swift Protocol Buffer code for iO
         ];
       };
     };
+
 }
-```
+
+````
   </TabItem>
   <TabItem label="Package.swift">
 ```swift
@@ -153,7 +159,8 @@ let package = Package(
             dependencies: ["MyApp"]),
     ]
 )
-```
+````
+
   </TabItem>
   <TabItem label="Usage">
 ```swift
@@ -162,35 +169,36 @@ import SwiftProtobuf
 
 // Using generated protobuf messages
 struct UserService {
-    func createUser(name: String, email: String) -> User_V1_User {
-        var user = User_V1_User()
-        user.id = UUID().uuidString
-        user.name = name
-        user.email = email
-        user.createdAt = Google_Protobuf_Timestamp(date: Date())
-        return user
-    }
-    
+func createUser(name: String, email: String) -> User_V1_User {
+var user = User_V1_User()
+user.id = UUID().uuidString
+user.name = name
+user.email = email
+user.createdAt = Google_Protobuf_Timestamp(date: Date())
+return user
+}
+
     func serializeUser(_ user: User_V1_User) throws -> Data {
         return try user.serializedData()
     }
-    
+
     func deserializeUser(from data: Data) throws -> User_V1_User {
         return try User_V1_User(serializedData: data)
     }
-    
+
     func toJSON(_ user: User_V1_User) throws -> String {
         let jsonData = try user.jsonUTF8Data()
         return String(data: jsonData, encoding: .utf8) ?? ""
     }
+
 }
 
 // iOS SwiftUI integration
 import SwiftUI
 
 struct UserDetailView: View {
-    let user: User_V1_User
-    
+let user: User_V1_User
+
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
             Text(user.name)
@@ -203,8 +211,10 @@ struct UserDetailView: View {
         }
         .padding()
     }
+
 }
-```
+
+````
   </TabItem>
 </Tabs>
 
@@ -226,7 +236,8 @@ struct UserDetailView: View {
     };
   };
 }
-```
+````
+
   </TabItem>
   <TabItem label="Vapor Integration">
 ```swift
@@ -234,19 +245,19 @@ import Vapor
 import SwiftProtobuf
 
 // Vapor route handlers using protobuf
-func routes(_ app: Application) throws {
-    app.post("users") { req -> EventLoopFuture<Response> in
-        return req.body.collect(max: 1024 * 1024).flatMapThrowing { buffer in
-            let data = Data(buffer: buffer)
-            let createRequest = try User_V1_CreateUserRequest(serializedData: data)
-            
+func routes(\_ app: Application) throws {
+app.post("users") { req -> EventLoopFuture<Response> in
+return req.body.collect(max: 1024 \* 1024).flatMapThrowing { buffer in
+let data = Data(buffer: buffer)
+let createRequest = try User_V1_CreateUserRequest(serializedData: data)
+
             // Process the request
             var user = User_V1_User()
             user.id = UUID().uuidString
             user.name = createRequest.name
             user.email = createRequest.email
             user.createdAt = Google_Protobuf_Timestamp(date: Date())
-            
+
             // Return protobuf response
             let responseData = try user.serializedData()
             return Response(
@@ -256,40 +267,42 @@ func routes(_ app: Application) throws {
             )
         }
     }
-    
+
     app.get("users", ":id") { req -> EventLoopFuture<User_V1_User> in
         guard let userID = req.parameters.get("id") else {
             throw Abort(.badRequest)
         }
-        
+
         // Fetch user and return as protobuf
         var user = User_V1_User()
         user.id = userID
         user.name = "John Doe"
         user.email = "john@example.com"
-        
+
         return req.eventLoop.makeSucceededFuture(user)
     }
+
 }
 
 // Custom content configuration for protobuf
 extension Application.ContentConfiguration {
-    func configureProtobuf() {
-        // Add protobuf content type support
-        self.use(encoder: ProtobufEncoder(), for: .init(type: "application", subType: "x-protobuf"))
-        self.use(decoder: ProtobufDecoder(), for: .init(type: "application", subType: "x-protobuf"))
-    }
+func configureProtobuf() {
+// Add protobuf content type support
+self.use(encoder: ProtobufEncoder(), for: .init(type: "application", subType: "x-protobuf"))
+self.use(decoder: ProtobufDecoder(), for: .init(type: "application", subType: "x-protobuf"))
+}
 }
 
 struct ProtobufEncoder: ContentEncoder {
-    func encode<E: Encodable>(_ encodable: E, to body: inout ByteBuffer, headers: inout HTTPHeaders) throws {
-        if let message = encodable as? SwiftProtobuf.Message {
-            let data = try message.serializedData()
-            body.writeBytes(data)
-        }
-    }
+func encode<E: Encodable>(\_ encodable: E, to body: inout ByteBuffer, headers: inout HTTPHeaders) throws {
+if let message = encodable as? SwiftProtobuf.Message {
+let data = try message.serializedData()
+body.writeBytes(data)
 }
-```
+}
+}
+
+````
   </TabItem>
 </Tabs>
 
@@ -306,11 +319,11 @@ extension User_V1_User {
     var displayName: String {
         return name.isEmpty ? "Unknown User" : name
     }
-    
+
     var isValidEmail: Bool {
         return email.contains("@") && email.contains(".")
     }
-    
+
     static func create(name: String, email: String) -> User_V1_User {
         var user = User_V1_User()
         user.id = UUID().uuidString
@@ -324,34 +337,35 @@ extension User_V1_User {
 // API client using protobuf
 class APIClient {
     private let baseURL: URL
-    
+
     init(baseURL: URL) {
         self.baseURL = baseURL
     }
-    
+
     func createUser(name: String, email: String) async throws -> User_V1_User {
         var request = User_V1_CreateUserRequest()
         request.name = name
         request.email = email
-        
+
         let data = try request.serializedData()
-        
+
         var urlRequest = URLRequest(url: baseURL.appendingPathComponent("users"))
         urlRequest.httpMethod = "POST"
         urlRequest.setValue("application/x-protobuf", forHTTPHeaderField: "Content-Type")
         urlRequest.httpBody = data
-        
+
         let (responseData, _) = try await URLSession.shared.data(for: urlRequest)
         return try User_V1_User(serializedData: responseData)
     }
-    
+
     func getUser(id: String) async throws -> User_V1_User {
         let url = baseURL.appendingPathComponent("users/\(id)")
         let (data, _) = try await URLSession.shared.data(from: url)
         return try User_V1_User(serializedData: data)
     }
 }
-```
+````
+
   </TabItem>
   <TabItem label="Testing">
 ```swift
@@ -360,40 +374,42 @@ import SwiftProtobuf
 @testable import MyApp
 
 class ProtobufTests: XCTestCase {
-    
+
     func testUserSerialization() throws {
         // Create a user
         let user = User_V1_User.create(name: "Alice", email: "alice@example.com")
-        
+
         // Test binary serialization
         let binaryData = try user.serializedData()
         let deserializedUser = try User_V1_User(serializedData: binaryData)
-        
+
         XCTAssertEqual(user.name, deserializedUser.name)
         XCTAssertEqual(user.email, deserializedUser.email)
         XCTAssertEqual(user.id, deserializedUser.id)
     }
-    
+
     func testJSONSerialization() throws {
         let user = User_V1_User.create(name: "Bob", email: "bob@example.com")
-        
+
         // Test JSON serialization
         let jsonData = try user.jsonUTF8Data()
         let jsonUser = try User_V1_User(jsonUTF8Data: jsonData)
-        
+
         XCTAssertEqual(user.name, jsonUser.name)
         XCTAssertEqual(user.email, jsonUser.email)
     }
-    
+
     func testValidation() {
         let validUser = User_V1_User.create(name: "Charlie", email: "charlie@example.com")
         XCTAssertTrue(validUser.isValidEmail)
-        
+
         var invalidUser = User_V1_User()
         invalidUser.email = "invalid-email"
         XCTAssertFalse(invalidUser.isValidEmail)
     }
+
 }
+
 ```
   </TabItem>
 </Tabs>
@@ -419,25 +435,27 @@ The Swift plugin supports several options that can be passed via the `options` c
 
 ### Project Structure
 ```
+
 MySwiftProject/
 ├── Package.swift
 ├── Sources/
-│   ├── MyApp/
-│   │   ├── main.swift
-│   │   └── Services/
-│   └── ProtoModels/          # Generated protobuf code
-│       ├── user/
-│       │   └── v1/
-│       │       └── user.pb.swift
-│       └── common/
+│ ├── MyApp/
+│ │ ├── main.swift
+│ │ └── Services/
+│ └── ProtoModels/ # Generated protobuf code
+│ ├── user/
+│ │ └── v1/
+│ │ └── user.pb.swift
+│ └── common/
 ├── Tests/
-├── proto/                    # Source proto files
-│   ├── user/
-│   │   └── v1/
-│   │       └── user.proto
-│   └── buf.yaml
+├── proto/ # Source proto files
+│ ├── user/
+│ │ └── v1/
+│ │ └── user.proto
+│ └── buf.yaml
 └── flake.nix
-```
+
+````
 
 ### Performance Considerations
 - Use `Any` types sparingly for better performance
@@ -476,7 +494,7 @@ extension User_V1_User {
         user.createdAt = self.createdAt.date
         return user
     }
-    
+
     static func fromCoreDataUser(_ user: CoreDataUser) -> User_V1_User {
         var protoUser = User_V1_User()
         protoUser.id = user.id ?? ""
@@ -488,20 +506,21 @@ extension User_V1_User {
         return protoUser
     }
 }
-```
+````
 
 ### Combine Integration
+
 ```swift
 import Combine
 
 class UserRepository: ObservableObject {
     @Published var users: [User_V1_User] = []
     private let apiClient: APIClient
-    
+
     init(apiClient: APIClient) {
         self.apiClient = apiClient
     }
-    
+
     func fetchUsers() -> AnyPublisher<[User_V1_User], Error> {
         return apiClient.getUsers()
             .receive(on: DispatchQueue.main)

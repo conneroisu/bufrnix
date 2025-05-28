@@ -1,0 +1,9 @@
+node_modules/
+dist/
+proto/gen/
+result
+result-*
+.DS_Store
+*.log
+.envrc
+.direnv/

@@ -1,9 +1,7 @@
 # Simple test for C++ language module
-{ pkgs ? import <nixpkgs> {} }:
-
-let
+{pkgs ? import <nixpkgs> {}}: let
   lib = pkgs.lib;
-  
+
   # Test configuration
   testConfig = {
     languages = {
@@ -25,18 +23,17 @@ let
       };
     };
   };
-  
+
   # Load the C++ module directly
   cppModule = import ./src/languages/cpp {
     inherit pkgs lib;
     config = testConfig;
     cfg = testConfig.languages.cpp;
   };
-  
 in {
   # Output module attributes for inspection
   inherit cppModule;
-  
+
   # Test results
   hasRuntimeInputs = builtins.length (cppModule.runtimeInputs or []) > 0;
   hasProtocPlugins = builtins.length (cppModule.protocPlugins or []) > 0;

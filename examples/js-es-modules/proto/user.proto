@@ -1,0 +1,118 @@
+syntax = "proto3";
+
+package example.user.v1;
+
+import "buf/validate/validate.proto";
+
+// User represents a system user
+message User {
+  // Unique identifier for the user
+  string id = 1 [(buf.validate.field).string = {
+    min_len: 1
+    max_len: 36
+    pattern: "^[a-zA-Z0-9-_]+$"
+  }];
+
+  // User's email address
+  string email = 2 [(buf.validate.field).string.email = true];
+
+  // User's display name
+  string name = 3 [(buf.validate.field).string = {
+    min_len: 1
+    max_len: 100
+  }];
+
+  // User's role in the system
+  Role role = 4 [(buf.validate.field).enum = {
+    not_in: [0] /* Must not be UNSPECIFIED */
+  }];
+
+  // Account creation timestamp
+  int64 created_at = 5 [(buf.validate.field).int64.gte = 0];
+
+  // Optional user profile
+  optional UserProfile profile = 6;
+}
+
+// UserProfile contains additional user information
+message UserProfile {
+  // User's bio
+  string bio = 1;
+
+  // Profile picture URL
+  string avatar_url = 2;
+
+  // User's location
+  string location = 3;
+
+  // User's preferences
+  map<string, string> preferences = 4;
+}
+
+// Role defines user permissions
+enum Role {
+  ROLE_UNSPECIFIED = 0;
+  ROLE_USER = 1;
+  ROLE_ADMIN = 2;
+  ROLE_MODERATOR = 3;
+}
+
+// Request to create a new user
+message CreateUserRequest {
+  // User data to create
+  User user = 1;
+}
+
+// Response after creating a user
+message CreateUserResponse {
+  // The created user
+  User user = 1;
+}
+
+// Request to get a user by ID
+message GetUserRequest {
+  // ID of the user to retrieve
+  string id = 1;
+}
+
+// Request to update a user
+message UpdateUserRequest {
+  // User data to update
+  User user = 1;
+}
+
+// Request to list users
+message ListUsersRequest {
+  // Maximum number of users to return
+  int32 page_size = 1;
+
+  // Token for pagination
+  string page_token = 2;
+
+  // Optional role filter
+  optional Role role_filter = 3;
+}
+
+// Response containing a list of users
+message ListUsersResponse {
+  // List of users
+  repeated User users = 1;
+
+  // Token for next page
+  string next_page_token = 2;
+}
+
+// UserService provides user management operations
+service UserService {
+  // Create a new user
+  rpc CreateUser(CreateUserRequest) returns (CreateUserResponse);
+
+  // Get a user by ID
+  rpc GetUser(GetUserRequest) returns (User);
+
+  // Update an existing user
+  rpc UpdateUser(UpdateUserRequest) returns (User);
+
+  // List all users with pagination
+  rpc ListUsers(ListUsersRequest) returns (ListUsersResponse);
+}

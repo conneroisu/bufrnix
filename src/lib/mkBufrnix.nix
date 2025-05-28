@@ -50,7 +50,7 @@ with lib; let
         package = jsPackage;
         es.package = pkgs.protoc-gen-es;
         connect.package = pkgs.protoc-gen-connect-es;
-        grpcWeb.package = pkgs.grpc-web;
+        grpcWeb.package = pkgs.protoc-gen-grpc-web;
         twirp.package = pkgs.protoc-gen-twirp_js;
       };
       dart = {
@@ -71,14 +71,14 @@ with lib; let
         package = pkgs.protoc-gen-swift;
       };
       c = {
-        protobuf-c.package = pkgs.protobuf-c;
+        protobuf-c.package = pkgs.protobufc;
         nanopb.package = pkgs.nanopb;
       };
       cpp = {
         package = pkgs.protobuf;
         grpc.package = pkgs.grpc;
         nanopb.package = pkgs.nanopb;
-        protobuf-c.package = pkgs.protobuf-c;
+        protobuf-c.package = pkgs.protobufc;
       };
       svg = {
         package = pkgs.protoc-gen-d2 or null; # Will need to be provided by user until in nixpkgs
@@ -244,6 +244,9 @@ in
       ++ languageRuntimeInputs;
 
     text = ''
+      # Language-specific initialization
+      ${languageInitHooks}
+
       # Language-specific directory creation
       ${languageGenerateHooks}
 

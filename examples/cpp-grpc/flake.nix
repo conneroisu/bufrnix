@@ -116,21 +116,23 @@
         };
       in {
         devShells.default = pkgs.mkShell {
-          packages = with pkgs; [
-            cmake
-            ninja
-            gcc
-            protobuf
-            grpc
-            abseil-cpp
-            openssl
-            pkg-config
-            grpcurl
-            generated
-          ] ++ lib.optionals pkgs.stdenv.isLinux [
-            gdb
-            valgrind
-          ];
+          packages = with pkgs;
+            [
+              cmake
+              ninja
+              gcc
+              protobuf
+              grpc
+              abseil-cpp
+              openssl
+              pkg-config
+              grpcurl
+              generated
+            ]
+            ++ lib.optionals pkgs.stdenv.isLinux [
+              gdb
+              valgrind
+            ];
 
           shellHook = ''
             echo "C++ gRPC Development Shell"
@@ -169,4 +171,3 @@
       }
     );
 }
-

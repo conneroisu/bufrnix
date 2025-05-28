@@ -1,12 +1,11 @@
-{ pkgs ? import <nixpkgs> {} }:
-
+{pkgs ? import <nixpkgs> {}}:
 pkgs.stdenv.mkDerivation {
   name = "test-cpp-gen";
-  
-  buildInputs = [ pkgs.protobuf ];
-  
+
+  buildInputs = [pkgs.protobuf];
+
   src = ./examples/cpp-basic/proto;
-  
+
   buildPhase = ''
     mkdir -p $out/gen/cpp
     ${pkgs.protobuf}/bin/protoc \
@@ -15,7 +14,7 @@ pkgs.stdenv.mkDerivation {
       -I. \
       example/v1/person.proto
   '';
-  
+
   installPhase = ''
     echo "Generated files:"
     find $out -name "*.pb.*" -type f

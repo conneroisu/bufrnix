@@ -110,4 +110,3 @@ Try the more advanced examples:
 - `cpp-grpc` - gRPC services with client/server
 - `cpp-cmake-integration` - Advanced CMake usage
 - `cpp-embedded` - Embedded C++ with nanopb
-
