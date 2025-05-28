@@ -1,6 +1,13 @@
+# ====================
+# PYTHON BUILD & DISTRIBUTION ARTIFACTS
+# ====================
+# Compiled shared object files
 *.so
-.direnv/
+
+# Python binary/symlink
 .Python
+
+# Build output directories
 build/
 develop-eggs/
 dist/
@@ -12,49 +19,49 @@ sdist/
 var/
 wheels/
 share/python-wheels/
+
+# Package metadata and eggs
 *.egg-info/
 .installed.cfg
 *.egg
 MANIFEST
 *.manifest
 *.spec
+
+# Build target directory (Java/Maven style)
+target/
+
+# PDM build artifacts
+.pdm-build/
+
+# Python packages directory
+**pypackages**/
+
+# ====================
+# PACKAGE MANAGEMENT
+# ====================
+# Pip logs and temporary files
 pip-log.txt
 pip-delete-this-directory.txt
-htmlcov/
-.tox/
-.nox/
-.coverage
-.coverage.*
-.cache
-nosetests.xml
-coverage.xml
-*.cover
-*.py,cover
-.hypothesis/
-.pytest_cache/
-cover/
-*.mo
-*.pot
-*.log
-local_settings.py
-db.sqlite3
-db.sqlite3-journal
-instance/
-.webassets-cache
-.scrapy
-docs/_build/
-.pybuilder/
-target/
-.ipynb_checkpoints
-profile_default/
-ipython_config.py
+
+# Node.js dependencies and lock files
+node_modules/
+yarn.lock
+
+# Nix result symlink
+result
+
+# PyPI configuration file
+.pypirc
+
+# PDM configuration
 .pdm.toml
 .pdm-python
-.pdm-build/
-__pypackages__/
-celerybeat-schedule
-celerybeat.pid
-*.sage.py
+
+# ====================
+# VIRTUAL ENVIRONMENTS
+# ====================
+# Standard virtual environment directories
 .env
 .venv
 env/
@@ -62,22 +69,137 @@ venv/
 ENV/
 env.bak/
 venv.bak/
-.spyderproject
-.spyproject
-.ropeproject
+
+# Development environment (direnv/devenv)
+.direnv/
+.devenv
+
+# ====================
+# TESTING & COVERAGE
+# ====================
+# Testing framework outputs
+htmlcov/
+.tox/
+.nox/
+.hypothesis/
+.pytest_cache/
+cover/
+
+# Coverage data files
+.coverage
+.coverage.*
+nosetests.xml
+coverage.xml
+*.cover
+*.py,cover
+
+# ====================
+# CACHING
+# ====================
+# General cache directories
+.cache
+
+# Jupyter notebook checkpoints
+.ipynb_checkpoints
+
+# Web assets cache
+.webassets-cache
+
+# ====================
+# TYPE CHECKING
+# ====================
+# MyPy cache and configuration
 .mypy_cache/
 .dmypy.json
 dmypy.json
+
+# Pyre type checker
 .pyre/
+
+# Pytype cache
 .pytype/
+
+# ====================
+# IDE & EDITOR FILES
+# ====================
+# Visual Studio Code
+.vscode
+
+# IntelliJ IDEA
+.idea
+
+# Cursor editor
+.cursor
+
+# Spyder IDE
+.spyderproject
+.spyproject
+
+# Rope refactoring tool
+.ropeproject
+
+# ====================
+# FRAMEWORK-SPECIFIC FILES
+# ====================
+# Django
+local_settings.py
+db.sqlite3
+db.sqlite3-journal
+
+# Flask instance folder
+instance/
+
+# Scrapy framework
+.scrapy
+
+# SageMath
+*.sage.py
+
+# Celery
+celerybeat-schedule
+celerybeat.pid
+
+# ====================
+# DOCUMENTATION BUILD
+# ====================
+# Sphinx documentation
+docs/_build/
+
+# PyBuilder
+.pybuilder/
+
+# ====================
+# JUPYTER & IPYTHON
+# ====================
+# IPython profile and configuration
+profile_default/
+ipython_config.py
+
+# ====================
+# INTERNATIONALIZATION
+# ====================
+# Compiled message files
+*.mo
+
+# Message template files
+*.pot
+
+# ====================
+# LOGS & TEMPORARY FILES
+# ====================
+# Log files
+*.log
+
+# ====================
+# DEBUGGING
+# ====================
+# Cython debugging information
 cython_debug/
-.pypirc
-.devenv
-node_modules/
-yarn.lock
-result
+
+# ====================
+# AI ASSISTANT FILES
+# ====================
+# Claude AI assistant files
 CLAUDE.md
 .claude
 .cursor
-.vscode
-.idea
