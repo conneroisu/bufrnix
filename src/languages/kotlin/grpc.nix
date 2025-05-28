@@ -11,14 +11,20 @@ with lib; let
   kotlinOutputPath = cfg.kotlinOutputPath;
 
   # Create wrapper script for grpc-kotlin plugin
-  grpcKotlinPlugin = pkgs.writeShellScriptBin "protoc-gen-grpckt" ''
-    #!/usr/bin/env sh
-    # Wrapper script for gRPC Kotlin plugin JAR
-    ${cfg.jdk}/bin/java -jar ${cfg.grpcKotlinJar} "$@"
-  '';
+  grpcKotlinPlugin = if cfg.enable then
+    pkgs.writeShellScriptBin "protoc-gen-grpckt" ''
+      #!/usr/bin/env sh
+      # Wrapper script for gRPC Kotlin plugin JAR
+      if [ -n "$GRPC_KOTLIN_JAR" ]; then
+        ${cfg.jdk}/bin/java -jar "$GRPC_KOTLIN_JAR" "$@"
+      else
+        ${cfg.jdk}/bin/java -jar ${if cfg.grpcKotlinJar != null then cfg.grpcKotlinJar else ".bufrnix-cache/protoc-gen-grpc-kotlin.jar"} "$@"
+      fi
+    ''
+  else null;
 in {
   # Runtime dependencies for gRPC Kotlin code generation
-  runtimeInputs = [
+  runtimeInputs = optionals cfg.enable [
     pkgs.grpc # For grpc_java_plugin
     grpcKotlinPlugin
   ];

@@ -33,6 +33,8 @@ with lib; let
         javaOutputPath = javaOutputPath;
         kotlinOutputPath = kotlinOutputPath;
         jdk = cfg.jdk;
+        connectKotlinJar = cfg.connect.connectKotlinJar or null;
+        connectVersion = cfg.connect.connectVersion or "0.7.3";
       };
   };
 

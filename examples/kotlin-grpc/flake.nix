@@ -20,21 +20,25 @@
 
         # Download gRPC Kotlin plugin JAR
         grpcKotlinJar = pkgs.fetchurl {
-          url = "https://repo1.maven.org/maven2/io/grpc/protoc-gen-grpc-kotlin/1.4.2/protoc-gen-grpc-kotlin-1.4.2-jdk8.jar";
-          sha256 = "sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA="; # Replace with actual hash
+          url = "https://repo1.maven.org/maven2/io/grpc/protoc-gen-grpc-kotlin/1.4.1/protoc-gen-grpc-kotlin-1.4.1-jdk8.jar";
+          sha256 = "sha256-YqmVa0yarUoG7Lu11CXgeKA5HsV8Wia7+7sZ9nF7zWk=";
         };
 
         # Generate protobuf code with gRPC
-        protoGen = bufrnix.lib.${system}.mkBufrnix {
-          root = ./proto;
-          languages = {
-            kotlin = {
-              enable = true;
-              generateBuildFile = true;
-              projectName = "KotlinGrpcExample";
-              grpc = {
+        protoGen = bufrnix.lib.mkBufrnixPackage {
+          inherit (pkgs) lib;
+          inherit pkgs;
+          config = {
+            root = ./proto;
+            languages = {
+              kotlin = {
                 enable = true;
-                grpcKotlinJar = grpcKotlinJar;
+                generateBuildFile = true;
+                projectName = "KotlinGrpcExample";
+                grpc = {
+                  enable = true;
+                  grpcKotlinJar = grpcKotlinJar;
+                };
               };
             };
           };

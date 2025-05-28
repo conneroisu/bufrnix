@@ -11,11 +11,17 @@ with lib; let
   kotlinOutputPath = cfg.kotlinOutputPath;
 
   # Create wrapper script for Connect Kotlin plugin
-  connectKotlinPlugin = pkgs.writeShellScriptBin "protoc-gen-connect-kotlin" ''
-    #!/usr/bin/env sh
-    # Wrapper script for Connect Kotlin plugin
-    ${cfg.jdk}/bin/java -jar ${cfg.connectKotlinJar} "$@"
-  '';
+  connectKotlinPlugin = if cfg.enable then
+    pkgs.writeShellScriptBin "protoc-gen-connect-kotlin" ''
+      #!/usr/bin/env sh
+      # Wrapper script for Connect Kotlin plugin
+      if [ -n "$CONNECT_KOTLIN_JAR" ]; then
+        ${cfg.jdk}/bin/java -jar "$CONNECT_KOTLIN_JAR" "$@"
+      else
+        ${cfg.jdk}/bin/java -jar ${if cfg.connectKotlinJar != null then cfg.connectKotlinJar else ".bufrnix-cache/protoc-gen-connect-kotlin.jar"} "$@"
+      fi
+    ''
+  else null;
 in {
   # Runtime dependencies for Connect Kotlin code generation
   runtimeInputs = optionals cfg.enable [
