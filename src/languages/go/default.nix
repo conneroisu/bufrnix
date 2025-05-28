@@ -92,6 +92,15 @@ with lib; let
       };
   };
 
+  structTransformerModule = import ./struct-transformer.nix {
+    inherit pkgs lib;
+    cfg =
+      (cfg.structTransformer or {enable = false;})
+      // {
+        outputPath = outputPath;
+      };
+  };
+
   # Combine all sub-modules
   combineModuleAttrs = attr:
     concatLists (catAttrs attr [
@@ -104,6 +113,7 @@ with lib; let
       vtprotobufModule
       jsonModule
       federationModule
+      structTransformerModule
     ]);
 in {
   # Runtime dependencies for Go code generation
@@ -140,6 +150,7 @@ in {
       vtprotobufModule
       jsonModule
       federationModule
+      structTransformerModule
     ]);
 
   # Code generation hook for Go
@@ -159,5 +170,6 @@ in {
       vtprotobufModule
       jsonModule
       federationModule
+      structTransformerModule
     ]);
 }

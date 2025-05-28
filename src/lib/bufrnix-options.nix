@@ -277,6 +277,44 @@ with lib; {
             description = "Options to pass to protoc-gen-grpc-federation";
           };
         };
+
+        structTransformer = {
+          enable = mkOption {
+            type = types.bool;
+            default = false;
+            description = "Enable struct-transformer for generating transformation functions between protobuf and business logic structs";
+          };
+
+          package = mkOption {
+            type = types.package;
+            defaultText = literalExpression "pkgs.protoc-gen-struct-transformer";
+            description = "The protoc-gen-struct-transformer package to use";
+          };
+
+          goRepoPackage = mkOption {
+            type = types.str;
+            default = "models";
+            description = "Go package name for business logic models";
+          };
+
+          goProtobufPackage = mkOption {
+            type = types.str;
+            default = "proto";
+            description = "Go package name for protobuf generated code";
+          };
+
+          goModelsFilePath = mkOption {
+            type = types.str;
+            default = "models/models.go";
+            description = "Path to the Go file containing business logic struct definitions";
+          };
+
+          outputPackage = mkOption {
+            type = types.str;
+            default = "transform";
+            description = "Package name for generated transformation functions";
+          };
+        };
       };
 
       # Additional language options will be defined here

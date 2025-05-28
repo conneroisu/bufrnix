@@ -1,0 +1,34 @@
+syntax = "proto3";
+
+package example.v1;
+
+import "options/annotations.proto";
+
+option go_package = "github.com/example/proto/example/v1;examplev1";
+option (transformer.go_models_file_path) = "models/models.go";
+option (transformer.go_protobuf_package) = "examplev1";
+// File-level options for struct-transformer
+option (transformer.go_repo_package) = "models";
+
+message Product {
+  option (transformer.go_struct) = "ProductModel";
+
+  int32 id = 1;
+  string name = 2;
+  string description = 3;
+  double price = 4;
+  int32 stock_quantity = 5 [(transformer.map_to) = "Stock"];
+  repeated string tags = 6;
+
+  // Example of fields that would be skipped in transformation:
+  string internal_field = 7 [(transformer.skip) = true];
+}
+
+message ProductList {
+  option (transformer.go_struct) = "ProductListModel";
+
+  repeated Product products = 1;
+  int32 total_count = 2;
+  string next_page_token = 3;
+  // PageSize exists in the model but not in proto, so no mapping needed
+}
