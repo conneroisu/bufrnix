@@ -969,7 +969,7 @@ with lib; {
         };
 
         format = mkOption {
-          type = types.enum ["html" "markdown" "json" "docbook"];
+          type = types.enum ["html" "markdown" "json" "docbook" "mdx"];
           default = "html";
           description = "Documentation output format";
         };
@@ -978,6 +978,57 @@ with lib; {
           type = types.str;
           default = "index.html";
           description = "Output filename for the documentation";
+        };
+
+        customTemplate = mkOption {
+          type = types.nullOr types.str;
+          default = null;
+          description = "Path to custom template file for documentation generation";
+        };
+
+        mdx = {
+          enable = mkOption {
+            type = types.bool;
+            default = false;
+            description = "Enable MDX format generation for Astro documentation site";
+          };
+
+          outputFile = mkOption {
+            type = types.str;
+            default = "api-reference.mdx";
+            description = "Output filename for MDX documentation";
+          };
+
+          title = mkOption {
+            type = types.str;
+            default = "API Reference";
+            description = "Title for the MDX documentation";
+          };
+
+          description = mkOption {
+            type = types.str;
+            default = "Generated API documentation from Protocol Buffers";
+            description = "Description for the MDX documentation";
+          };
+
+          frontmatter = mkOption {
+            type = types.attrs;
+            default = {};
+            example = literalExpression ''
+              {
+                title = "API Reference";
+                description = "Protocol Buffer API documentation";
+                sidebar.order = 3;
+              }
+            '';
+            description = "Additional frontmatter attributes for MDX files";
+          };
+
+          outputPath = mkOption {
+            type = types.str;
+            default = "./doc/src/content/docs/reference";
+            description = "Output directory for MDX documentation (relative to project root)";
+          };
         };
       };
 
@@ -1145,6 +1196,309 @@ with lib; {
           type = types.str;
           default = "";
           description = "Swift package name for generated code";
+        };
+      };
+
+      # C# language options
+      csharp = {
+        enable = mkOption {
+          type = types.bool;
+          default = false;
+          description = "Enable C# code generation";
+        };
+
+        sdk = mkOption {
+          type = types.package;
+          defaultText = literalExpression "pkgs.dotnetCorePackages.sdk_8_0";
+          description = "The .NET SDK package to use";
+        };
+
+        outputPath = mkOption {
+          type = types.str;
+          default = "gen/csharp";
+          description = "Output directory for generated C# code";
+        };
+
+        options = mkOption {
+          type = types.listOf types.str;
+          default = [];
+          description = "Options to pass to protoc C# plugin";
+        };
+
+        namespace = mkOption {
+          type = types.str;
+          default = "";
+          description = "Base namespace for generated C# code";
+        };
+
+        targetFramework = mkOption {
+          type = types.str;
+          default = "net8.0";
+          description = ".NET target framework";
+        };
+
+        langVersion = mkOption {
+          type = types.str;
+          default = "latest";
+          description = "C# language version";
+        };
+
+        nullable = mkOption {
+          type = types.bool;
+          default = true;
+          description = "Enable nullable reference types";
+        };
+
+        fileExtension = mkOption {
+          type = types.str;
+          default = ".cs";
+          description = "File extension for generated files";
+        };
+
+        generateProjectFile = mkOption {
+          type = types.bool;
+          default = true;
+          description = "Generate .csproj file for the generated code";
+        };
+
+        projectName = mkOption {
+          type = types.str;
+          default = "GeneratedProtos";
+          description = "Name for the generated .csproj file";
+        };
+
+        packageId = mkOption {
+          type = types.str;
+          default = "";
+          description = "NuGet package ID if generating a package";
+        };
+
+        packageVersion = mkOption {
+          type = types.str;
+          default = "1.0.0";
+          description = "Version for the generated package";
+        };
+
+        generatePackageOnBuild = mkOption {
+          type = types.bool;
+          default = false;
+          description = "Generate NuGet package on build";
+        };
+
+        generateAssemblyInfo = mkOption {
+          type = types.bool;
+          default = false;
+          description = "Generate AssemblyInfo.cs file";
+        };
+
+        assemblyVersion = mkOption {
+          type = types.str;
+          default = "1.0.0.0";
+          description = "Assembly version for generated code";
+        };
+
+        protobufVersion = mkOption {
+          type = types.str;
+          default = "3.31.0";
+          description = "Google.Protobuf NuGet package version";
+        };
+
+        # gRPC support
+        grpc = {
+          enable = mkOption {
+            type = types.bool;
+            default = false;
+            description = "Enable gRPC code generation for C#";
+          };
+
+          options = mkOption {
+            type = types.listOf types.str;
+            default = [];
+            description = "Options to pass to grpc C# plugin";
+          };
+
+          grpcVersion = mkOption {
+            type = types.str;
+            default = "2.72.0";
+            description = "Grpc.Net.Client NuGet package version";
+          };
+
+          grpcCoreVersion = mkOption {
+            type = types.str;
+            default = "2.72.0";
+            description = "Grpc.Core.Api NuGet package version";
+          };
+
+          generateClientFactory = mkOption {
+            type = types.bool;
+            default = false;
+            description = "Generate gRPC client factory classes";
+          };
+
+          generateServerBase = mkOption {
+            type = types.bool;
+            default = false;
+            description = "Generate base server implementations";
+          };
+        };
+      };
+
+      # Kotlin language options
+      kotlin = {
+        enable = mkOption {
+          type = types.bool;
+          default = false;
+          description = "Enable Kotlin code generation (requires Java output as well)";
+        };
+
+        jdk = mkOption {
+          type = types.package;
+          defaultText = literalExpression "pkgs.jdk17";
+          description = "JDK package to use for running Java-based plugins";
+        };
+
+        outputPath = mkOption {
+          type = types.str;
+          default = "gen/kotlin";
+          description = "Base output directory for generated code";
+        };
+
+        javaOutputPath = mkOption {
+          type = types.str;
+          default = "gen/kotlin/java";
+          description = "Output directory for generated Java code (required for Kotlin)";
+        };
+
+        kotlinOutputPath = mkOption {
+          type = types.str;
+          default = "gen/kotlin/kotlin";
+          description = "Output directory for generated Kotlin code";
+        };
+
+        options = mkOption {
+          type = types.listOf types.str;
+          default = [];
+          description = "Options to pass to Kotlin code generation";
+        };
+
+        projectName = mkOption {
+          type = types.str;
+          default = "GeneratedProtos";
+          description = "Name for the Kotlin project";
+        };
+
+        kotlinVersion = mkOption {
+          type = types.str;
+          default = "2.1.20";
+          description = "Kotlin version to use";
+        };
+
+        protobufVersion = mkOption {
+          type = types.str;
+          default = "4.28.2";
+          description = "Google Protobuf version";
+        };
+
+        jvmTarget = mkOption {
+          type = types.int;
+          default = 17;
+          description = "JVM target version";
+        };
+
+        coroutinesVersion = mkOption {
+          type = types.str;
+          default = "1.8.0";
+          description = "Kotlin coroutines version";
+        };
+
+        generateBuildFile = mkOption {
+          type = types.bool;
+          default = true;
+          description = "Generate build.gradle.kts file";
+        };
+
+        generatePackageInfo = mkOption {
+          type = types.bool;
+          default = false;
+          description = "Generate package-info.java files";
+        };
+
+        # gRPC support
+        grpc = {
+          enable = mkOption {
+            type = types.bool;
+            default = false;
+            description = "Enable gRPC code generation for Kotlin";
+          };
+
+          grpcVersion = mkOption {
+            type = types.str;
+            default = "1.62.2";
+            description = "gRPC Java version";
+          };
+
+          grpcKotlinVersion = mkOption {
+            type = types.str;
+            default = "1.4.2";
+            description = "gRPC Kotlin version";
+          };
+
+          grpcKotlinJar = mkOption {
+            type = types.nullOr types.path;
+            default = null;
+            description = "Path to gRPC Kotlin plugin JAR (will download if not provided)";
+          };
+
+          options = mkOption {
+            type = types.listOf types.str;
+            default = [];
+            description = "Options to pass to gRPC Kotlin plugin";
+          };
+
+          generateServiceImpl = mkOption {
+            type = types.bool;
+            default = false;
+            description = "Generate service implementation stubs";
+          };
+        };
+
+        # Connect RPC support
+        connect = {
+          enable = mkOption {
+            type = types.bool;
+            default = false;
+            description = "Enable Connect RPC code generation for Kotlin";
+          };
+
+          connectVersion = mkOption {
+            type = types.str;
+            default = "0.7.3";
+            description = "Connect Kotlin version";
+          };
+
+          connectKotlinJar = mkOption {
+            type = types.nullOr types.path;
+            default = null;
+            description = "Path to Connect Kotlin plugin JAR (will download if not provided)";
+          };
+
+          options = mkOption {
+            type = types.listOf types.str;
+            default = [];
+            description = "Options to pass to Connect Kotlin plugin";
+          };
+
+          packageName = mkOption {
+            type = types.str;
+            default = "com.example.connect";
+            description = "Package name for generated Connect configuration";
+          };
+
+          generateClientConfig = mkOption {
+            type = types.bool;
+            default = false;
+            description = "Generate Connect client configuration helper";
+          };
         };
       };
 

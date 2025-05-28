@@ -1,0 +1,93 @@
+---
+title: "{{title}}"
+description: "{{description}}"
+{{#frontmatter}}
+{{#-foreach}}
+{{key}}: {{value}}
+{{/-foreach}}
+{{/frontmatter}}
+---
+
+import { Tabs, TabItem } from '@astrojs/starlight/components';
+
+# {{title}}
+
+{{{description}}}
+
+{{#files}}
+## {{name}}
+
+{{#file_description}}
+{{{.}}}
+{{/file_description}}
+
+{{#messages}}
+### {{long_name}}
+
+{{#description}}
+{{{.}}}
+{{/description}}
+
+{{#hasFields}}
+| Field | Type | Label | Description |
+|-------|------|-------|-------------|
+{{#fields}}
+| {{name}} | {{#type_link}}[{{label}}]({{url}}){{/type_link}}{{^type_link}}{{label}}{{/type_link}} | {{#is_repeated}}repeated{{/is_repeated}}{{^is_repeated}}{{#is_optional}}optional{{/is_optional}}{{/is_repeated}} | {{{description}}} |
+{{/fields}}
+{{/hasFields}}
+
+{{/messages}}
+
+{{#enums}}
+### {{long_name}}
+
+{{#description}}
+{{{.}}}
+{{/description}}
+
+| Name | Number | Description |
+|------|--------|-------------|
+{{#values}}
+| {{name}} | {{number}} | {{{description}}} |
+{{/values}}
+
+{{/enums}}
+
+{{#services}}
+### {{long_name}}
+
+{{#description}}
+{{{.}}}
+{{/description}}
+
+{{#methods}}
+#### {{name}}
+
+{{#description}}
+{{{.}}}
+{{/description}}
+
+**Request Type:** {{#input_type_link}}[{{input_type}}]({{url}}){{/input_type_link}}{{^input_type_link}}{{input_type}}{{/input_type_link}}
+
+**Response Type:** {{#output_type_link}}[{{output_type}}]({{url}}){{/output_type_link}}{{^output_type_link}}{{output_type}}{{/output_type_link}}
+
+{{#client_streaming}}
+*Client streaming*
+{{/client_streaming}}
+{{#server_streaming}}
+*Server streaming*
+{{/server_streaming}}
+
+{{/methods}}
+
+{{/services}}
+
+{{/files}}
+
+## Scalar Value Types
+
+| .proto Type | Notes | C++ | Java | Python | Go | C# | PHP | Ruby |
+|-------------|-------|-----|------|--------|----|----|-----|------|
+{{#scalar_value_types}}
+| {{proto_type}} | {{{notes}}} | {{cpp_type}} | {{java_type}} | {{python_type}} | {{go_type}} | {{cs_type}} | {{php_type}} | {{ruby_type}} |
+{{/scalar_value_types}}

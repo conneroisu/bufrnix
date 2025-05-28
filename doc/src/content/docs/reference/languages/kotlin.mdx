@@ -1,0 +1,331 @@
+---
+title: Kotlin
+description: Kotlin language support in Bufrnix
+---
+
+Bufrnix provides comprehensive Kotlin code generation support for Protocol Buffers, including gRPC services with coroutines and Connect RPC, leveraging Kotlin's modern language features.
+
+## Basic Configuration
+
+```nix
+{
+  languages.kotlin = {
+    enable = true;
+    jvmTarget = 17;
+    kotlinVersion = "2.1.20";
+  };
+}
+```
+
+## Features
+
+- ✅ Protocol Buffers 3 support (built into protoc)
+- ✅ Kotlin DSL builders for messages
+- ✅ Immutable message updates with `copy`
+- ✅ gRPC with coroutines support
+- ✅ Connect RPC support
+- ✅ Flow-based streaming APIs
+- ✅ Gradle build file generation
+- ✅ Null safety and type safety
+
+## Important Notes
+
+**Kotlin support requires both Java and Kotlin outputs** to be generated, as Kotlin protobuf support extends Java classes. This is handled automatically by Bufrnix.
+
+## Configuration Options
+
+| Option              | Type    | Default               | Description                   |
+| ------------------- | ------- | --------------------- | ----------------------------- |
+| `enable`            | bool    | `false`               | Enable Kotlin code generation |
+| `jdk`               | package | `pkgs.jdk17`          | JDK to use for plugins        |
+| `outputPath`        | string  | `"gen/kotlin"`        | Base output directory         |
+| `javaOutputPath`    | string  | `"gen/kotlin/java"`   | Java output directory         |
+| `kotlinOutputPath`  | string  | `"gen/kotlin/kotlin"` | Kotlin output directory       |
+| `kotlinVersion`     | string  | `"2.1.20"`            | Kotlin version                |
+| `protobufVersion`   | string  | `"4.28.2"`            | Protobuf version              |
+| `jvmTarget`         | int     | `17`                  | JVM target version            |
+| `coroutinesVersion` | string  | `"1.8.0"`             | Kotlinx coroutines version    |
+| `generateBuildFile` | bool    | `true`                | Generate build.gradle.kts     |
+| `projectName`       | string  | `"GeneratedProtos"`   | Gradle project name           |
+
+## gRPC Support
+
+Enable coroutine-based gRPC code generation:
+
+```nix
+{
+  languages.kotlin = {
+    enable = true;
+    grpc = {
+      enable = true;
+      grpcKotlinVersion = "1.4.2";
+    };
+  };
+}
+```
+
+### gRPC Options
+
+| Option                     | Type   | Default    | Description            |
+| -------------------------- | ------ | ---------- | ---------------------- |
+| `grpc.enable`              | bool   | `false`    | Enable gRPC generation |
+| `grpc.grpcVersion`         | string | `"1.62.2"` | gRPC Java version      |
+| `grpc.grpcKotlinVersion`   | string | `"1.4.2"`  | gRPC Kotlin version    |
+| `grpc.grpcKotlinJar`       | path   | `null`     | Path to plugin JAR     |
+| `grpc.generateServiceImpl` | bool   | `false`    | Generate service stubs |
+
+## Connect RPC Support
+
+Enable modern HTTP-based RPC with Connect:
+
+```nix
+{
+  languages.kotlin = {
+    enable = true;
+    connect = {
+      enable = true;
+      connectVersion = "0.7.3";
+      generateClientConfig = true;
+    };
+  };
+}
+```
+
+### Connect Options
+
+| Option                         | Type   | Default                 | Description            |
+| ------------------------------ | ------ | ----------------------- | ---------------------- |
+| `connect.enable`               | bool   | `false`                 | Enable Connect RPC     |
+| `connect.connectVersion`       | string | `"0.7.3"`               | Connect version        |
+| `connect.connectKotlinJar`     | path   | `null`                  | Path to plugin JAR     |
+| `connect.packageName`          | string | `"com.example.connect"` | Package for config     |
+| `connect.generateClientConfig` | bool   | `false`                 | Generate client helper |
+
+## Examples
+
+### Basic Message Generation
+
+```nix
+# flake.nix
+{
+  inputs = {
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
+    bufrnix.url = "github:bufrnix/bufrnix";
+  };
+
+  outputs = { self, nixpkgs, bufrnix }:
+    let
+      system = "x86_64-linux";
+      pkgs = nixpkgs.legacyPackages.${system};
+    in {
+      packages.${system}.default = bufrnix.lib.mkBufrnixPackage {
+        inherit (pkgs) lib;
+        inherit pkgs;
+        config = {
+          root = ./proto;
+          languages.kotlin = {
+            enable = true;
+            generateBuildFile = true;
+            projectName = "MyKotlinProtos";
+          };
+        };
+      };
+    };
+}
+```
+
+### gRPC Service with Coroutines
+
+```nix
+{
+  languages.kotlin = {
+    enable = true;
+    grpc = {
+      enable = true;
+      # JAR will be downloaded automatically
+      # grpcKotlinJar = ./path/to/protoc-gen-grpc-kotlin.jar; # Optional manual path
+    };
+  };
+}
+```
+
+### Complete Configuration
+
+```nix
+{
+  languages.kotlin = {
+    enable = true;
+    jvmTarget = 21;
+    kotlinVersion = "2.1.20";
+    protobufVersion = "4.28.2";
+    coroutinesVersion = "1.8.0";
+
+    # Custom output paths
+    javaOutputPath = "gen/java";
+    kotlinOutputPath = "gen/kotlin";
+
+    # Build configuration
+    generateBuildFile = true;
+    projectName = "MyProtos";
+    generatePackageInfo = true;
+
+    # gRPC with coroutines
+    grpc = {
+      enable = true;
+      grpcVersion = "1.62.2";
+      grpcKotlinVersion = "1.4.2";
+      generateServiceImpl = true;
+    };
+
+    # Connect RPC
+    connect = {
+      enable = true;
+      connectVersion = "0.7.3";
+      packageName = "com.mycompany.connect";
+      generateClientConfig = true;
+    };
+  };
+}
+```
+
+## Generated Output
+
+The Kotlin module generates:
+
+```
+gen/kotlin/
+├── java/                    # Java protobuf classes
+│   └── com/example/
+│       └── MyMessage.java
+├── kotlin/                  # Kotlin extensions
+│   └── com/example/
+│       ├── MyMessageKt.kt  # DSL builders
+│       └── MyServiceGrpcKt.kt # Coroutine stubs
+├── build.gradle.kts         # Gradle build file
+└── settings.gradle.kts      # Gradle settings
+```
+
+## Usage
+
+After building the package, run the generated script to create the protobuf files:
+
+```bash
+# Build the package
+nix build
+
+# Generate the protobuf code
+./result/bin/bufrnix
+```
+
+This will create the generated Kotlin files in the `gen/kotlin/` directory according to your configuration.
+
+## Platform Support
+
+### macOS ARM64 (Apple Silicon)
+
+On macOS ARM64 systems, Bufrnix automatically handles the gRPC Java plugin compatibility by using Rosetta 2 for x86_64 binaries. This ensures compatibility across all Apple Silicon machines.
+
+## Using Generated Code
+
+### Kotlin DSL Builder
+
+```kotlin
+import com.example.protos.*
+
+// Create messages with DSL
+val user = user {
+    id = "123"
+    name = "John Doe"
+    emails += "john@example.com"
+
+    profile = userProfile {
+        bio = "Kotlin developer"
+    }
+}
+
+// Immutable updates
+val updated = user.copy {
+    name = "Jane Doe"
+}
+```
+
+### gRPC with Coroutines
+
+```kotlin
+// Server implementation
+class MyService : MyServiceGrpcKt.MyServiceCoroutineImplBase() {
+    override suspend fun getUser(request: GetUserRequest): User {
+        // Suspend function for async operations
+        val user = userRepository.findById(request.id)
+        return user {
+            id = user.id
+            name = user.name
+        }
+    }
+
+    override fun listUsers(request: ListRequest): Flow<User> = flow {
+        // Flow-based streaming
+        userRepository.findAll().forEach { user ->
+            emit(user)
+            delay(100)
+        }
+    }
+}
+
+// Client usage
+val stub = MyServiceGrpcKt.MyServiceCoroutineStub(channel)
+val user = stub.getUser(getUserRequest { id = "123" })
+```
+
+### Connect RPC
+
+```kotlin
+import com.connectrpc.ConnectInterceptor
+import com.connectrpc.ProtocolClientConfig
+import com.connectrpc.okhttp.ConnectOkHttpClient
+
+// Using generated client config
+val client = ConnectConfig.createClient(
+    host = "https://api.example.com",
+    interceptors = listOf(authInterceptor)
+)
+
+// Make RPC calls
+val response = client.unary(
+    path = "/example.v1.MyService/GetUser",
+    request = getUserRequest { id = "123" }
+)
+```
+
+## Plugin JAR Management
+
+The gRPC and Connect Kotlin plugins are distributed as JAR files. Bufrnix can either:
+
+1. **Use provided JARs**: Set `grpcKotlinJar` or `connectKotlinJar` paths
+2. **Download automatically**: Leave paths null (downloads to `.bufrnix-cache/`)
+
+Example with manual JAR:
+
+```nix
+{
+  grpc.grpcKotlinJar = pkgs.fetchurl {
+    url = "https://repo1.maven.org/maven2/io/grpc/protoc-gen-grpc-kotlin/1.4.2/protoc-gen-grpc-kotlin-1.4.2-jdk8.jar";
+    sha256 = "...";
+  };
+}
+```
+
+## Tips
+
+1. **Java compatibility**: Always ensure Java and Kotlin outputs use compatible package names
+2. **Coroutines**: Use `kotlinx-coroutines-core` for async operations
+3. **Build tools**: Generated Gradle files work with Gradle 8.10.2+
+4. **Version alignment**: Keep protobuf, gRPC, and Kotlin versions aligned
+
+## See Also
+
+- [Kotlin Basic Example](/guides/examples#kotlin-basic)
+- [Kotlin gRPC Example](/guides/examples#kotlin-grpc)
+- [Kotlin Protobuf Documentation](https://developers.google.com/protocol-buffers/docs/kotlintutorial)
+- [gRPC Kotlin Documentation](https://github.com/grpc/grpc-kotlin)
+- [Connect RPC Kotlin](https://connectrpc.com/docs/kotlin/getting-started)

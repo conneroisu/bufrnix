@@ -108,6 +108,7 @@
               alejandra
               nixd
               statix
+              nixdoc
               # Add the formatter to the devShell
               treefmtEval.${system}.config.build.wrapper
               git-bug
