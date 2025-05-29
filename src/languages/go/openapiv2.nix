@@ -11,7 +11,7 @@ with lib; let
 in {
   # Runtime dependencies for OpenAPI v2
   runtimeInputs = optionals enabled [
-    cfg.package or pkgs.protoc-gen-openapiv2
+    cfg.package or (pkgs.callPackage ../../packages/protoc-gen-openapiv2.nix {})
   ];
 
   # Protoc plugin configuration for OpenAPI v2

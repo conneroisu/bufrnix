@@ -191,6 +191,15 @@ ipython_config.py
 *.log
 
 # ====================
+# DEVELOPMENT FILES
+# ====================
+# direnv configuration
+.envrc
+
+# Test scripts (temporary)
+test.sh
+
+# ====================
 # DEBUGGING
 # ====================
 # Cython debugging information
