@@ -1,10 +1,10 @@
 CC = gcc
-CFLAGS = -Wall -Wextra -I. -I$(shell pkg-config --variable=includedir nanopb 2>/dev/null || echo /usr/local/include)
-LDFLAGS = -L$(shell pkg-config --variable=libdir nanopb 2>/dev/null || echo /usr/local/lib)
+CFLAGS = -Wall -Wextra -I. -I/nix/store/mvgyx36jmxwplhl6ab2kfrw7hdv25iw6-nanopb-0.4.9.1/include/nanopb
+LDFLAGS = -L/nix/store/mvgyx36jmxwplhl6ab2kfrw7hdv25iw6-nanopb-0.4.9.1/lib -lprotobuf-nanopb
 
 TARGET = sensor_example
-TEST_TARGET = test
-PROTO_DIR = proto/gen/c/nanopb/sensor/v1
+TEST_TARGET = test_example
+PROTO_DIR = proto/gen/c/nanopb/example/v1
 PROTO_SRC = $(PROTO_DIR)/sensor.pb.c
 
 EXAMPLE_SOURCES = main.c $(PROTO_SRC)

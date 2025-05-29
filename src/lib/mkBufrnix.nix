@@ -302,6 +302,16 @@ in
         )
         loadedLanguageModules}
 
+      # Handle nanopb options files if nanopb is enabled
+      ${optionalString (cfg.languages.c.enable && cfg.languages.c.nanopb.enable) ''
+        # Find nanopb options files and add them to protoc_args
+        options_file=$(find . -name "*.options" -type f 2>/dev/null | head -1)
+        if [ -n "$options_file" ]; then
+          echo "Found nanopb options file: $options_file"
+          protoc_args="$protoc_args --nanopb_opt=-f$options_file"
+        fi
+      ''}
+
       # Execute protoc with expanded file list
       eval "$protoc_cmd $protoc_args $proto_files"
       ${debug.log 1 "Code generation completed successfully" cfg}

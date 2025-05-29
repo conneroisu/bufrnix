@@ -1,4 +1,4 @@
-#include "proto/gen/c/nanopb/sensor/v1/sensor.pb.h"
+#include "proto/gen/c/nanopb/example/v1/sensor.pb.h"
 #include <pb_encode.h>
 #include <pb_decode.h>
 #include <stdio.h>
@@ -26,9 +26,8 @@ int main() {
         reading.pressure = 101325;
         reading.status = sensor_v1_SensorStatus_SENSOR_STATUS_OK;
         
-        // Add sensor values
-        reading.values_count = 5;
-        for (size_t i = 0; i < reading.values_count; i++) {
+        // Add sensor values (fixed array of 10)
+        for (size_t i = 0; i < 5; i++) {
             reading.values[i] = i * 1.5f;
         }
         
@@ -51,10 +50,13 @@ int main() {
         assert(decoded.humidity == 65.2f);
         assert(decoded.pressure == 101325);
         assert(decoded.status == sensor_v1_SensorStatus_SENSOR_STATUS_OK);
-        assert(decoded.values_count == 5);
+        // Verify first 5 values are correct, rest should be 0.0f
+        for (size_t i = 0; i < 5; i++) {
+            assert(decoded.values[i] == i * 1.5f);
+        }
         printf("  ✓ Decoded successfully\n");
         printf("  ✓ Temperature: %.2f°C\n", decoded.temperature);
-        printf("  ✓ Values count: %zu\n", decoded.values_count);
+        printf("  ✓ Values array verified\n");
     }
     
     // Test 2: Device configuration with strings
@@ -120,7 +122,7 @@ int main() {
             batch.readings[i].humidity = 60.0f + i * 1.0f;
             batch.readings[i].pressure = 101300 + i * 10;
             batch.readings[i].status = sensor_v1_SensorStatus_SENSOR_STATUS_OK;
-            batch.readings[i].values_count = 2;
+            // Fill first 2 values in the fixed array
             batch.readings[i].values[0] = i * 1.0f;
             batch.readings[i].values[1] = i * 2.0f;
         }
@@ -142,7 +144,7 @@ int main() {
         assert(strcmp(decoded.device_id, "BATCH-TEST") == 0);
         assert(decoded.batch_number == 42);
         assert(decoded.readings_count == 3);
-        printf("  ✓ Batch contains %zu readings\n", decoded.readings_count);
+        printf("  ✓ Batch contains %u readings\n", decoded.readings_count);
         
         for (size_t i = 0; i < decoded.readings_count; i++) {
             printf("  ✓ Reading[%zu]: temp=%.1f°C, humidity=%.1f%%\n",

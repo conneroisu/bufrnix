@@ -120,13 +120,13 @@
 
     lib = {
       mkBufrnixPackage = {
-        lib,
         pkgs,
         self ? null,
         config ? {},
+        ...
       }:
         import "${inputs.self}/src/lib/mkBufrnix.nix" {
-          inherit lib pkgs self config;
+          inherit pkgs self config;
         };
     };
   };

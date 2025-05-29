@@ -56,7 +56,11 @@ with lib; let
               then "sha256-HVRJbxa4aJy/WMTTnP4ne1Mi2gpy9YZlzWDhHX3kfis=" # macOS ARM64
               else if pkgs.stdenv.isDarwin
               then "sha256-HVRJbxa4aJy/WMTTnP4ne1Mi2gpy9YZlzWDhHX3kfis=" # macOS x86_64
-              else "sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA="; # Linux - needs actual hash
+              else if pkgs.stdenv.isLinux && pkgs.stdenv.hostPlatform.isAarch64
+              then "" # Linux AArch - needs actual hashk
+              else if pkgs.stdenv.isLinux
+              then "sha256-NIskxLJM2MVRdCFzCfJrb29tNohJL+dj1IoVV7UV6Lw="
+              else builtins.trace "Unknown platform" null;
           };
 
         dontUnpack = true;

@@ -3,7 +3,7 @@ CFLAGS = -Wall -Wextra -I.
 LDFLAGS = -lprotobuf-c
 
 TARGET = example
-TEST_TARGET = test
+TEST_TARGET = test_example
 PROTO_DIR = proto/gen/c/protobuf-c/example/v1
 PROTO_SRC = $(PROTO_DIR)/example.pb-c.c
 

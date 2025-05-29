@@ -16,7 +16,7 @@ int main() {
         example.id = "test-001";
         example.name = "Test Example";
         example.value = 42;
-        example.type = EXAMPLE__V1__EXAMPLE_TYPE__BASIC;
+        example.type = EXAMPLE__V1__EXAMPLE_TYPE__EXAMPLE_TYPE_BASIC;
         
         // Serialize
         size_t size = example__v1__example__get_packed_size(&example);
@@ -34,7 +34,7 @@ int main() {
         assert(strcmp(unpacked->id, "test-001") == 0);
         assert(strcmp(unpacked->name, "Test Example") == 0);
         assert(unpacked->value == 42);
-        assert(unpacked->type == EXAMPLE__V1__EXAMPLE_TYPE__BASIC);
+        assert(unpacked->type == EXAMPLE__V1__EXAMPLE_TYPE__EXAMPLE_TYPE_BASIC);
         printf("  ✓ Deserialized successfully\n");
         
         example__v1__example__free_unpacked(unpacked, NULL);
@@ -140,9 +140,9 @@ int main() {
         
         Example__V1__Example examples[3];
         Example__V1__ExampleType types[] = {
-            EXAMPLE__V1__EXAMPLE_TYPE__UNSPECIFIED,
-            EXAMPLE__V1__EXAMPLE_TYPE__BASIC,
-            EXAMPLE__V1__EXAMPLE_TYPE__ADVANCED
+            EXAMPLE__V1__EXAMPLE_TYPE__EXAMPLE_TYPE_UNSPECIFIED,
+            EXAMPLE__V1__EXAMPLE_TYPE__EXAMPLE_TYPE_BASIC,
+            EXAMPLE__V1__EXAMPLE_TYPE__EXAMPLE_TYPE_ADVANCED
         };
         const char *type_names[] = {"UNSPECIFIED", "BASIC", "ADVANCED"};
         

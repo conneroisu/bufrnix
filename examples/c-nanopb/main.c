@@ -1,4 +1,4 @@
-#include "proto/gen/c/nanopb/sensor/v1/sensor.pb.h"
+#include "proto/gen/c/nanopb/example/v1/sensor.pb.h"
 #include <pb_encode.h>
 #include <pb_decode.h>
 #include <stdio.h>
@@ -29,8 +29,8 @@ void print_sensor_reading(const sensor_v1_SensorReading *reading) {
         default:
             printf("UNKNOWN\n");
     }
-    printf("  values[%zu]: ", reading->values_count);
-    for (size_t i = 0; i < reading->values_count; i++) {
+    printf("  values[10]: ");
+    for (size_t i = 0; i < 10; i++) {
         printf("%.2f ", reading->values[i]);
     }
     printf("\n}\n");
@@ -48,8 +48,7 @@ bool encode_sensor_reading(uint8_t *buffer, size_t buffer_size, size_t *message_
     reading.status = sensor_v1_SensorStatus_SENSOR_STATUS_OK;
     
     // Add sensor values (demonstrating fixed array usage)
-    reading.values_count = 5;
-    for (size_t i = 0; i < reading.values_count; i++) {
+    for (size_t i = 0; i < 5; i++) {
         reading.values[i] = 10.0f + i * 2.5f;
     }
     
@@ -155,16 +154,17 @@ void demonstrate_telemetry_batch() {
         batch.readings[i].humidity = 60.0f + i * 2.0f;
         batch.readings[i].pressure = 101300 + i * 10;
         batch.readings[i].status = sensor_v1_SensorStatus_SENSOR_STATUS_OK;
-        batch.readings[i].values_count = 2;
-        batch.readings[i].values[0] = i * 1.1f;
-        batch.readings[i].values[1] = i * 2.2f;
+        // Initialize some values in the fixed array  
+        for (size_t j = 0; j < 2; j++) {
+            batch.readings[i].values[j] = i * 1.1f + j * 0.5f;
+        }
     }
     
     // Calculate message size
     size_t size = 0;
     if (pb_get_encoded_size(&size, sensor_v1_TelemetryBatch_fields, &batch)) {
         printf("Telemetry batch will require %zu bytes\n", size);
-        printf("Batch contains %zu readings\n", batch.readings_count);
+        printf("Batch contains %u readings\n", batch.readings_count);
     }
 }
 
