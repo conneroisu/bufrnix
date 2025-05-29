@@ -26,14 +26,16 @@ Before diving into setup, it's worth understanding why Bufrnix exists and when i
 ### Real-World Scenarios
 
 **Choose Bufrnix when you need:**
+
 - Offline development in corporate or air-gapped environments
-- Processing sensitive schemas that can't leave your infrastructure  
+- Processing sensitive schemas that can't leave your infrastructure
 - High-performance builds with complex multi-language generation
 - Custom plugins or community plugins not in Buf's approved registry
 - Compliance with regulations requiring local data processing
 - Supply chain security with cryptographic dependency verification
 
 **Buf's remote plugins work well for:**
+
 - Quick experimentation and getting started
 - Simple, single-language projects with standard plugins
 - Teams comfortable with external schema processing

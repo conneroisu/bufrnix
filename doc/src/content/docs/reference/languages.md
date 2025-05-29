@@ -12,21 +12,28 @@ Bufrnix supports code generation for multiple programming languages through a mo
 Traditional Protocol Buffer tooling forces difficult tradeoffs between convenience and control. Bufrnix's language module system solves this by prioritizing **local execution**, **version control**, and **ecosystem completeness**:
 
 ### Local Plugin Execution
+
 Unlike remote plugin systems, all Bufrnix plugins execute locally with dependencies managed through Nix. This means:
+
 - **Zero network dependency** - work offline, behind firewalls, or in air-gapped environments
 - **Instant execution** - no network latency or rate limiting delays
 - **Privacy guaranteed** - your schemas never leave your local environment
 - **Custom plugins welcome** - no approval process or subscription required
 
 ### Precise Version Control
+
 Every plugin version is cryptographically pinned:
+
 ```nix
 languages.go.grpc.package = pkgs.protoc-gen-go-grpc; # Exact SHA-256 hash verified
 ```
+
 This eliminates "works on my machine" problems and ensures identical outputs across all environments.
 
 ### Complete Ecosystem Support
+
 Rather than limiting you to centrally-approved plugins, Bufrnix provides access to the entire protoc plugin ecosystem:
+
 - **8+ languages** with full feature support
 - **50+ plugins** including gRPC, validation, documentation, and custom frameworks
 - **Community innovations** available immediately without gatekeeping
