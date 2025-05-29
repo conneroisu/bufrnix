@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "/Users/connerohnesorge/Documents/001Repos/bufrnix/examples/csharp-basic/gen/csharp/ExampleProtos.csproj": {}
+    "/Users/connerohnesorge/Documents/001Repos/bufrnix/examples/csharp-grpc/gen/csharp/GreeterProtos.csproj": {}
   },
   "projects": {
-    "/Users/connerohnesorge/Documents/001Repos/bufrnix/examples/csharp-basic/gen/csharp/ExampleProtos.csproj": {
+    "/Users/connerohnesorge/Documents/001Repos/bufrnix/examples/csharp-grpc/gen/csharp/GreeterProtos.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "/Users/connerohnesorge/Documents/001Repos/bufrnix/examples/csharp-basic/gen/csharp/ExampleProtos.csproj",
-        "projectName": "ExampleProtos",
-        "projectPath": "/Users/connerohnesorge/Documents/001Repos/bufrnix/examples/csharp-basic/gen/csharp/ExampleProtos.csproj",
+        "projectUniqueName": "/Users/connerohnesorge/Documents/001Repos/bufrnix/examples/csharp-grpc/gen/csharp/GreeterProtos.csproj",
+        "projectName": "GreeterProtos",
+        "projectPath": "/Users/connerohnesorge/Documents/001Repos/bufrnix/examples/csharp-grpc/gen/csharp/GreeterProtos.csproj",
         "packagesPath": "/Users/connerohnesorge/.nuget/packages/",
-        "outputPath": "/Users/connerohnesorge/Documents/001Repos/bufrnix/examples/csharp-basic/gen/csharp/obj/",
+        "outputPath": "/Users/connerohnesorge/Documents/001Repos/bufrnix/examples/csharp-grpc/gen/csharp/obj/",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "/Users/connerohnesorge/.nuget/NuGet/NuGet.Config"
@@ -45,7 +45,15 @@
           "dependencies": {
             "Google.Protobuf": {
               "target": "Package",
-              "version": "[3.31.0, )"
+              "version": "[3.28.2, )"
+            },
+            "Grpc.Core.Api": {
+              "target": "Package",
+              "version": "[2.66.0, )"
+            },
+            "Grpc.Net.Client": {
+              "target": "Package",
+              "version": "[2.66.0, )"
             }
           },
           "imports": [

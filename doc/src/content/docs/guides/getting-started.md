@@ -7,6 +7,42 @@ description: Learn how to set up Bufrnix and generate your first Protocol Buffer
 
 Bufrnix makes it easy to integrate Protocol Buffers into your Nix-based projects with declarative configuration and reproducible builds. This comprehensive guide will walk you through setting up Bufrnix, generating code for your first Protocol Buffer definitions, and avoiding common pitfalls.
 
+## Why Choose Bufrnix?
+
+Before diving into setup, it's worth understanding why Bufrnix exists and when it's the right choice for your project:
+
+**🌐 Works Anywhere**: Unlike remote plugin systems, Bufrnix runs completely offline. Perfect for corporate firewalls, air-gapped environments, or unreliable internet connections. No more `context deadline exceeded` errors or geographic latency.
+
+**🔒 Keeps Schemas Private**: All processing happens locally - your proprietary API definitions never leave your environment. Essential for regulated industries (SOX, HIPAA, FedRAMP) and protecting competitive advantages.
+
+**⚡ Blazing Fast**: Up to 60x faster than remote alternatives. No network latency, no rate limiting, no timeouts. Parallel execution across multiple languages and plugins.
+
+**🎯 Truly Reproducible**: Same inputs = identical outputs, always. Cryptographic hashes ensure supply chain integrity across all environments. Content-addressed storage prevents version drift.
+
+**🔧 No Technical Limits**: Break free from 64KB response size constraints, enable plugin chaining, file system access, and custom multi-stage workflows that remote systems can't support.
+
+**💰 Cost Effective**: Access the full community plugin ecosystem without Pro/Enterprise subscriptions. Develop custom plugins without approval bottlenecks.
+
+### Real-World Scenarios
+
+**Choose Bufrnix when you need:**
+- Offline development in corporate or air-gapped environments
+- Processing sensitive schemas that can't leave your infrastructure  
+- High-performance builds with complex multi-language generation
+- Custom plugins or community plugins not in Buf's approved registry
+- Compliance with regulations requiring local data processing
+- Supply chain security with cryptographic dependency verification
+
+**Buf's remote plugins work well for:**
+- Quick experimentation and getting started
+- Simple, single-language projects with standard plugins
+- Teams comfortable with external schema processing
+- Workflows that fit within remote plugin technical limitations
+
+Many teams use **both tools together**: Buf for schema management and validation, Bufrnix for production code generation.
+
+**Ready to get started?** Let's build your first Bufrnix project.
+
 ## Prerequisites
 
 - [Nix](https://nixos.org/download.html) with [flakes enabled](https://nixos.wiki/wiki/Flakes)
