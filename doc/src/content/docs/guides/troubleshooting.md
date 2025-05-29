@@ -3,8 +3,6 @@ title: Troubleshooting Guide
 description: Common issues and solutions when using Bufrnix for Protocol Buffer code generation.
 ---
 
-# Troubleshooting Guide
-
 This guide covers common issues you might encounter when using Bufrnix and provides practical solutions to resolve them.
 
 ## Getting Help

@@ -3,8 +3,6 @@ title: Contributing to Bufrnix
 description: Guidelines for contributing to the Bufrnix project, including adding new language support.
 ---
 
-# Contributing to Bufrnix
-
 Bufrnix is an open-source project, and contributions are welcome! This guide explains how to contribute to Bufrnix, whether you're adding new features, fixing bugs, or improving documentation.
 
 ## Getting Started
@@ -38,7 +36,8 @@ bufrnix/
 │   │   ├── dart/
 │   │   ├── go/
 │   │   ├── js/
-│   │   └── php/
+│   │   ├── php/
+│   │   └── ...
 │   └── lib/                # Core library code
 │       ├── bufrnix-options.nix  # Configuration schema
 │       ├── mkBufrnix.nix        # Main implementation

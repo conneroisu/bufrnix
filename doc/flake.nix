@@ -52,6 +52,7 @@
         bunNix = ./bun.nix;
 
         buildPhase = ''
+          cp -r ${./../examples} ./.
           # Build the Astro site
           bun run build
         '';

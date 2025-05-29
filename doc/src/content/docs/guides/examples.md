@@ -3,8 +3,6 @@ title: Example Projects
 description: Learn from pre-built examples that demonstrate how to use Bufrnix in real projects.
 ---
 
-# Example Projects
-
 Bufrnix includes several example projects that demonstrate how to use Protocol Buffers with different languages and frameworks. These examples are complete, working projects that you can use as starting points for your own applications.
 
 ## Simple Go gRPC Example
