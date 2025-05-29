@@ -8,6 +8,145 @@ Bufrnix provides a **declarative, reproducible way** to generate Protocol Buffer
 
 See the [quick start guide](https://conneroisu.github.io/bufrnix/guides/getting-started/) for a quick introduction to Bufrnix.
 
+## Why Bufrnix?
+
+Protocol Buffer tooling has traditionally suffered from **dependency hell**, **network dependencies**, and **non-reproducible builds**. While Buf's remote plugin system simplifies initial setup, it introduces critical limitations that become deal-breakers for production teams:
+
+### The Problems with Remote Plugin Systems
+
+**🌐 Network Dependency Friction**
+- Remote plugins require constant internet connectivity, breaking offline development
+- Corporate firewalls and air-gapped environments can't access remote plugin execution  
+- Network latency and rate limiting slow down development workflows
+- Timeout errors (`context deadline exceeded`) and service interruptions disrupt CI/CD pipelines
+- Geographic latency affects teams in regions distant from Buf's servers
+
+**🔒 Security and Compliance Concerns**
+- Proprietary Protocol Buffer schemas must be sent to external servers for processing
+- Financial services, healthcare, and government contractors can't share sensitive API definitions
+- Intellectual property concerns prevent many organizations from using remote execution
+- Compliance requirements (SOX, HIPAA, FedRAMP) demand local processing of technical specifications
+- Supply chain security policies prohibit external dependency on third-party infrastructure
+
+**⚡ Technical Limitations**
+- **64KB response size limits** cause silent failures with large generated outputs (affects protoc-gen-grpc-swift and other plugins)
+- Plugins requiring file system access or multi-stage generation cannot function remotely
+- **"All" strategy requirement** prevents efficient directory-based generation optimizations
+- Custom plugins require expensive Pro/Enterprise subscriptions
+- Plugin ecosystem growth is bottlenecked by centralized approval processes
+- Cross-plugin dependencies (like protoc-gen-gotag modifying generated Go code) are impossible
+
+**🔄 Reproducibility Challenges**
+- Network variability introduces non-determinism in generated code
+- Plugin version updates can break existing workflows without warning
+- Cache invalidation and remote infrastructure changes affect build consistency
+- Migration between plugin versions often requires extensive code modifications
+- Alpha-to-stable transitions have caused breaking changes requiring full codebase updates
+- Remote caching can mask non-deterministic plugin behavior until production
+
+### How Bufrnix Solves These Problems
+
+**🏠 Local, Deterministic Execution**
+```nix
+# All plugins execute locally with dependencies managed by Nix
+languages.go = {
+  enable = true;
+  grpc.enable = true;     # No network calls, no timeouts
+  validate.enable = true; # Full plugin ecosystem available
+  # Exact plugin versions cryptographically pinned
+  grpc.package = pkgs.protoc-gen-go-grpc; # v1.3.0 always
+};
+```
+
+**🔐 Complete Privacy and Control**
+- All processing happens on your machines - schemas never leave your environment
+- No external dependencies for code generation workflows
+- Full control over plugin versions, updates, and security patches
+- Compliance-friendly for regulated industries (SOX, HIPAA, FedRAMP)
+- Supply chain integrity through cryptographic verification
+
+**⚡ Performance and Flexibility**
+- **60x faster builds** in some cases (20 minutes → 20 seconds in CI)
+- No artificial size limits (64KB) or plugin capability restrictions
+- Support for custom plugins, multi-stage generation, and complex workflows
+- Plugin chaining and file system access work seamlessly
+- Directory-based generation strategies for optimal performance
+- Parallel execution across multiple languages and plugins
+
+**🎯 True Reproducibility**
+```nix
+# Same inputs = identical outputs, always
+config = {
+  languages.go.grpc.package = pkgs.protoc-gen-go-grpc; # Exact version pinned
+  # Cryptographic hashes ensure supply chain integrity
+  # Content-addressed storage prevents version drift
+  # Hermetic builds with no external state
+};
+```
+
+**🛠 Developer Experience**
+- **Offline-first**: Development continues without internet connectivity
+- **Zero setup**: `nix develop` provides complete toolchain in seconds
+- **Type-safe configuration**: Catch errors before generation runs
+- **Multi-language**: Generate for 8+ languages simultaneously from one config
+- **Plugin ecosystem**: Access to all community plugins, not just Buf-approved ones
+
+### Real-World Impact
+
+Teams using Bufrnix report:
+- **Eliminated "works on my machine" problems** with reproducible Nix environments
+- **Simplified CI/CD pipelines** with deterministic, cacheable builds
+- **Improved security posture** by keeping sensitive schemas internal
+- **Faster iteration** without network latency and rate limiting
+- **Better compliance** with local processing requirements
+- **Cost savings** by eliminating Pro/Enterprise subscriptions for custom plugins
+- **Increased developer productivity** with offline-capable workflows
+
+### The Broader Ecosystem: Buf vs. Bufrnix
+
+Bufrnix doesn't compete with Buf - it **complements** the Protocol Buffer ecosystem by addressing different use cases:
+
+**Buf excels at:**
+- Schema management and breaking change detection
+- Collaborative protobuf development with buf.build registry
+- Getting started quickly with zero local setup
+- Managed plugin ecosystem with security guarantees
+- Remote code generation for simple workflows
+
+**Bufrnix excels at:**
+- Local, offline-first development workflows
+- Complex multi-language, multi-plugin scenarios
+- Regulated environments with compliance requirements
+- High-performance build pipelines at scale
+- Custom plugin development and integration
+- Supply chain security with cryptographic verification
+
+**The hybrid approach** many teams adopt:
+1. **Use Buf for** schema validation, breaking change detection, and collaboration
+2. **Use Bufrnix for** actual code generation in production environments
+3. **Combine both** for comprehensive Protocol Buffer development workflows
+
+This pattern maximizes the benefits of both tools while avoiding their respective limitations.
+
+### When to Choose Bufrnix
+
+**Choose Bufrnix if you need:**
+- Offline development capabilities
+- Corporate firewall/air-gapped environment support
+- Sensitive schema privacy and compliance
+- Custom or community plugins not in Buf's registry
+- Reproducible builds with version pinning
+- High-performance local execution
+- Multi-language code generation workflows
+
+**Buf's remote plugins work well for:**
+- Quick experimentation and getting started
+- Simple, single-language projects
+- Teams comfortable with external processing
+- Workflows fitting within remote plugin limitations
+
+Bufrnix doesn't replace Buf - it **extends** the Protocol Buffer ecosystem with local, reproducible alternatives for teams that need them.
+
 ### Key Features
 
 - 🚀 **Multi-language Support**: Go, Dart, JavaScript/TypeScript, PHP, Swift with more coming

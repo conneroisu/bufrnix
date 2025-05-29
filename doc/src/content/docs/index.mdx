@@ -20,24 +20,95 @@ import { Card, CardGrid } from "@astrojs/starlight/components";
 
 ## Why Bufrnix?
 
+Protocol Buffer tooling has traditionally suffered from **dependency hell**, **network dependencies**, and **non-reproducible builds**. While Buf's remote plugin system simplifies initial setup, it introduces critical limitations that become deal-breakers for production teams:
+
+**Remote Plugin Limitations:**
+- **Network dependency** breaks offline development and corporate environments
+- **64KB response limits** cause silent failures with large generated outputs
+- **Security concerns** from sending proprietary schemas to external servers
+- **Technical constraints** prevent file system access and cross-plugin dependencies
+- **Ecosystem bottlenecks** limit available plugins to centrally-approved options
+
+**Bufrnix solves these challenges** with local, deterministic execution powered by Nix.
+
 <CardGrid stagger>
-  <Card title="Simple Configuration" icon="setting">
-    Define your Protocol Buffer generation pipeline with a clean Nix
-    configuration interface.
+  <Card title="Offline-First Development" icon="laptop">
+    Never worry about network connectivity again. All plugins execute locally with 
+    dependencies managed by Nix. Work anywhere - corporate firewalls, air-gapped 
+    environments, or your favorite coffee shop.
+  </Card>
+  <Card title="True Reproducibility" icon="rocket">
+    Same inputs = identical outputs, always. Cryptographic hashes ensure supply 
+    chain integrity. No more "works on my machine" problems or surprise build 
+    breakages from remote infrastructure changes.
+  </Card>
+  <Card title="Security & Compliance" icon="shield">
+    Keep proprietary schemas internal. All processing happens on your machines - 
+    sensitive API definitions never leave your environment. Perfect for financial 
+    services, healthcare, and government contractors.
+  </Card>
+  <Card title="Performance Excellence" icon="lightning">
+    Up to 60x faster builds compared to remote plugins. No artificial size limits, 
+    network latency, or rate limiting. Support for custom plugins, multi-stage 
+    generation, and complex workflows.
   </Card>
   <Card title="Multi-language Support" icon="puzzle">
-    Generate code for Go, Dart, JavaScript/TypeScript, PHP and more from a
-    single source.
+    Generate code for 8+ languages simultaneously: Go, Dart, JavaScript/TypeScript, 
+    PHP, Python, Swift, C/C++, and more. Full plugin ecosystem with gRPC, Connect, 
+    validation, and custom protocols.
   </Card>
-  <Card title="Developer Friendly" icon="open-book">
-    Complete tooling including CLI, linter, formatter, and language server
-    protocol (LSP) support.
-  </Card>
-  <Card title="Reproducible Builds" icon="rocket">
-    Leverage Nix to ensure consistent builds across all environments and team
-    members.
+  <Card title="Zero Setup DevEx" icon="open-book">
+    `nix develop` provides complete toolchain in seconds. Type-safe configuration 
+    catches errors before generation runs. Complete tooling including CLI, linter, 
+    formatter, and LSP support.
   </Card>
 </CardGrid>
+
+### When to Choose Bufrnix
+
+**Choose Bufrnix if you need:**
+- Offline development capabilities  
+- Corporate firewall/air-gapped environment support
+- Sensitive schema privacy and compliance
+- Custom or community plugins not in Buf's registry
+- Reproducible builds with version pinning
+- High-performance local execution
+- Multi-language code generation workflows
+
+**Buf's remote plugins work well for:**
+- Quick experimentation and getting started
+- Simple, single-language projects  
+- Teams comfortable with external processing
+- Workflows fitting within remote plugin limitations
+
+Bufrnix doesn't replace Buf - it **extends** the Protocol Buffer ecosystem with local, reproducible alternatives for teams that need them.
+
+## The Hybrid Approach
+
+Many teams adopt a **complementary strategy** that maximizes the benefits of both tools:
+
+1. **Use Buf for** schema management, breaking change detection, and collaborative development with the buf.build registry
+2. **Use Bufrnix for** actual code generation in production environments where control, performance, and compliance matter
+3. **Combine both** for comprehensive Protocol Buffer development workflows
+
+This pattern addresses the full spectrum of protobuf development needs - from experimentation to production deployment.
+
+## Technical Advantages
+
+**🔧 No Artificial Limits**
+- Remove the 64KB response size constraint that breaks large outputs
+- Support plugins requiring file system access and cross-plugin dependencies
+- Enable directory-based generation strategies for optimal performance
+
+**🏗️ Supply Chain Security**
+- Cryptographic verification of all dependencies through Nix's content-addressed storage
+- Local execution eliminates external attack vectors
+- Full audit trail of plugin versions and their provenance
+
+**⚡ Advanced Workflows**
+- Multi-stage generation where plugins build on previous outputs
+- Parallel execution across multiple languages and plugin chains
+- Custom plugin development without subscription requirements
 
 ## Get Started
 

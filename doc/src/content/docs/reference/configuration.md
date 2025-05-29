@@ -7,6 +7,17 @@ description: Complete reference for all Bufrnix configuration options and settin
 
 This page documents all available configuration options for Bufrnix. These options should be set in your project's `flake.nix` file within the `config` attribute of `bufrnix.lib.mkBufrnixPackage`.
 
+## Design Philosophy
+
+Bufrnix configuration prioritizes **explicitness over magic** and **reproducibility over convenience**. Every option is designed to give you complete control while maintaining declarative simplicity:
+
+- **Type-safe**: All options are validated at evaluation time, catching errors before generation runs
+- **Reproducible**: Same configuration = identical outputs across all environments and team members  
+- **Explicit dependencies**: No hidden network calls or surprise downloads - everything declared upfront
+- **Modular**: Enable only what you need, compose complex workflows from simple parts
+
+This approach trades some initial setup time for long-term reliability, making Bufrnix ideal for production systems where consistency matters more than convenience.
+
 ## Basic Configuration Structure
 
 ```nix

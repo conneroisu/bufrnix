@@ -47,19 +47,17 @@
 
           dotnet-sdk = pkgs.dotnetCorePackages.sdk_8_0;
           dotnet-runtime = pkgs.dotnetCorePackages.runtime_8_0;
-
-          preBuild = ''
-            # Generate proto code by running the bufrnix script
-            ${protoGen}/bin/bufrnix
-            # Copy generated proto code
-            mkdir -p Generated
-            cp -r proto/gen/csharp/* ./Generated/
-          '';
         };
       in {
         packages = {
-          default = app;
+          default = protoGen;
           proto = protoGen;
+          inherit app;
+        };
+
+        apps.app = {
+          type = "app";
+          program = "${app}/bin/CSharpExample";
         };
 
         devShells.default = pkgs.mkShell {

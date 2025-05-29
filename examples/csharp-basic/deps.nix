@@ -4,6 +4,6 @@
   (fetchNuGet {
     pname = "Google.Protobuf";
     version = "3.31.0";
-    hash = "sha256-1RJaYpv7+4wREj3ixYg5BEcj1476CpnKb6Dh8xDDvqo=";
+    hash = "sha256-ed3FVERXwVHAXdy+iDEppbpuDUbVqErGczNVw1BEWzE=";
   })
 ]

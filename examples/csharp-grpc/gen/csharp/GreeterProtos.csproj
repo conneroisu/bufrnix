@@ -1,17 +1,16 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <OutputType>Exe</OutputType>
     <TargetFramework>net8.0</TargetFramework>
     <LangVersion>latest</LangVersion>
     <Nullable>enable</Nullable>
+    <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
+    
+    <Version>1.0.0</Version>
+    <RootNamespace>GreeterProtos</RootNamespace>
   </PropertyGroup>
-  
   <ItemGroup>
     <PackageReference Include="Google.Protobuf" Version="3.28.2" />
     <PackageReference Include="Grpc.Net.Client" Version="2.66.0" />
-  </ItemGroup>
-  
-  <ItemGroup>
-    <Compile Include="../gen/csharp/*.cs" />
+    <PackageReference Include="Grpc.Core.Api" Version="2.66.0" />
   </ItemGroup>
 </Project>
