@@ -32,6 +32,7 @@
       packages = {
         default = bufrnix.lib.mkBufrnixPackage {
           inherit pkgs;
+
           config = {
             root = ./.;
             protoc = {
