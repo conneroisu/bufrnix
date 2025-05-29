@@ -51,12 +51,23 @@
           dotnet-sdk = pkgs.dotnetCorePackages.sdk_8_0;
           dotnet-runtime = pkgs.dotnetCorePackages.aspnetcore_8_0;
 
-          preBuild = ''
-            # Generate proto code by running the bufrnix script
+          configurePhase = ''
+            runHook preConfigure
+
+            # Generate proto code before dotnet restore tries to find the project references
+            echo "Generating protobuf code with bufrnix..."
             ${protoGen}/bin/bufrnix
-            # Copy generated proto code
-            mkdir -p Generated
-            cp -r proto/gen/csharp/* ./Generated/
+
+            # List all generated files to see where they actually are
+            echo "Searching for generated .cs files:"
+            find . -name "*.cs" -type f | grep -v Program.cs
+            echo "Directory structure:"
+            find . -type d | head -20
+
+            # Now run the normal dotnet configure
+            dotnetConfigureHook
+
+            runHook postConfigure
           '';
         };
 
@@ -73,19 +84,30 @@
           dotnet-sdk = pkgs.dotnetCorePackages.sdk_8_0;
           dotnet-runtime = pkgs.dotnetCorePackages.runtime_8_0;
 
-          preBuild = ''
-            # Generate proto code by running the bufrnix script
+          configurePhase = ''
+            runHook preConfigure
+
+            # Generate proto code before dotnet restore tries to find the project references
+            echo "Generating protobuf code with bufrnix..."
             ${protoGen}/bin/bufrnix
-            # Copy generated proto code
-            mkdir -p Generated
-            cp -r proto/gen/csharp/* ./Generated/
+
+            # List all generated files to see where they actually are
+            echo "Searching for generated .cs files:"
+            find . -name "*.cs" -type f | grep -v Program.cs
+            echo "Directory structure:"
+            find . -type d | head -20
+
+            # Now run the normal dotnet configure
+            dotnetConfigureHook
+
+            runHook postConfigure
           '';
         };
       in {
         packages = {
-          default = server;
           inherit server client;
           proto = protoGen;
+          default = protoGen;
         };
 
         devShells.default = pkgs.mkShell {

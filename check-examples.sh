@@ -181,13 +181,13 @@ test_example "swift-example" \
 # Test C# basic example
 test_example "csharp-basic" \
     "gen/csharp/Person.cs" \
-    "gen/csharp/GeneratedProtos.csproj"
+    "gen/csharp/ExampleProtos.csproj"
 
 # Test C# gRPC example
 test_example "csharp-grpc" \
     "gen/csharp/Greeter.cs" \
     "gen/csharp/GreeterGrpc.cs" \
-    "gen/csharp/GeneratedProtos.csproj"
+    "gen/csharp/GreeterProtos.csproj"
 
 # Test Kotlin basic example
 test_example "kotlin-basic" \
@@ -198,7 +198,7 @@ test_example "kotlin-basic" \
 # Test Kotlin gRPC example
 test_example "kotlin-grpc" \
     "gen/kotlin/java/com/example/grpc/v1/GreeterGrpc.java" \
-    "gen/kotlin/kotlin/com/example/grpc/v1/GreeterGrpcKt.kt" \
+    "gen/kotlin/kotlin/com/example/grpc/v1/GreeterOuterClassGrpcKt.kt" \
     "gen/kotlin/build.gradle.kts"
 
 # Test C protobuf-c example
@@ -207,11 +207,9 @@ test_example "c-protobuf-c" \
     "proto/gen/c/protobuf-c/example/v1/example.pb-c.c"
 
 # Test C nanopb example
-# NOTE: Commented out due to known issue with nanopb package in nixpkgs
-# The protoc-gen-nanopb plugin has Python module import issues
-# test_example "c-nanopb" \
-#     "proto/gen/c/nanopb/sensor/v1/sensor.pb.h" \
-#     "proto/gen/c/nanopb/sensor/v1/sensor.pb.c"
+test_example "c-nanopb" \
+    "proto/gen/c/nanopb/example/v1/sensor.pb.h" \
+    "proto/gen/c/nanopb/example/v1/sensor.pb.c"
 
 # Summary
 echo -e "\n${YELLOW}Test Summary:${NC}"

@@ -1,6 +1,8 @@
 using Grpc.Core;
 using Grpc.Net.Client;
 using GreeterProtos.Example.V1;
+using System;
+using System.Threading.Tasks;
 
 // Create a channel to the server
 using var channel = GrpcChannel.ForAddress("http://localhost:5000");

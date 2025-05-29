@@ -1,0 +1,4 @@
+bin/
+obj/
+gen/**/bin/
+gen/**/obj/
