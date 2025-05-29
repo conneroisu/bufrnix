@@ -1,0 +1,10 @@
+{
+  "version": 2,
+  "dgSpecHash": "m/fBNV1Ewzw=",
+  "success": true,
+  "projectFilePath": "/Users/connerohnesorge/Documents/001Repos/bufrnix/examples/csharp-basic/gen/csharp/ExampleProtos.csproj",
+  "expectedPackageFiles": [
+    "/Users/connerohnesorge/.nuget/packages/google.protobuf/3.31.0/google.protobuf.3.31.0.nupkg.sha512"
+  ],
+  "logs": []
+}
