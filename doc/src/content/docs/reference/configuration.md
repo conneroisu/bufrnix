@@ -12,7 +12,7 @@ This page documents all available configuration options for Bufrnix. These optio
 Bufrnix configuration prioritizes **explicitness over magic** and **reproducibility over convenience**. Every option is designed to give you complete control while maintaining declarative simplicity:
 
 - **Type-safe**: All options are validated at evaluation time, catching errors before generation runs
-- **Reproducible**: Same configuration = identical outputs across all environments and team members  
+- **Reproducible**: Same configuration = identical outputs across all environments and team members
 - **Explicit dependencies**: No hidden network calls or surprise downloads - everything declared upfront
 - **Modular**: Enable only what you need, compose complex workflows from simple parts
 

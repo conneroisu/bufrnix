@@ -181,13 +181,13 @@ test_example "swift-example" \
 # Test C# basic example
 test_example "csharp-basic" \
     "gen/csharp/Person.cs" \
-    "gen/csharp/GeneratedProtos.csproj"
+    "gen/csharp/ExampleProtos.csproj"
 
 # Test C# gRPC example
 test_example "csharp-grpc" \
     "gen/csharp/Greeter.cs" \
     "gen/csharp/GreeterGrpc.cs" \
-    "gen/csharp/GeneratedProtos.csproj"
+    "gen/csharp/GreeterProtos.csproj"
 
 # Test Kotlin basic example
 test_example "kotlin-basic" \
@@ -198,7 +198,7 @@ test_example "kotlin-basic" \
 # Test Kotlin gRPC example
 test_example "kotlin-grpc" \
     "gen/kotlin/java/com/example/grpc/v1/GreeterGrpc.java" \
-    "gen/kotlin/kotlin/com/example/grpc/v1/GreeterGrpcKt.kt" \
+    "gen/kotlin/kotlin/com/example/grpc/v1/GreeterOuterClassGrpcKt.kt" \
     "gen/kotlin/build.gradle.kts"
 
 # Test C protobuf-c example

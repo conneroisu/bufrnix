@@ -53,20 +53,20 @@
 
           configurePhase = ''
             runHook preConfigure
-            
+
             # Generate proto code before dotnet restore tries to find the project references
             echo "Generating protobuf code with bufrnix..."
             ${protoGen}/bin/bufrnix
-            
+
             # List all generated files to see where they actually are
             echo "Searching for generated .cs files:"
             find . -name "*.cs" -type f | grep -v Program.cs
             echo "Directory structure:"
             find . -type d | head -20
-            
+
             # Now run the normal dotnet configure
             dotnetConfigureHook
-            
+
             runHook postConfigure
           '';
         };
@@ -86,28 +86,28 @@
 
           configurePhase = ''
             runHook preConfigure
-            
+
             # Generate proto code before dotnet restore tries to find the project references
             echo "Generating protobuf code with bufrnix..."
             ${protoGen}/bin/bufrnix
-            
+
             # List all generated files to see where they actually are
             echo "Searching for generated .cs files:"
             find . -name "*.cs" -type f | grep -v Program.cs
             echo "Directory structure:"
             find . -type d | head -20
-            
+
             # Now run the normal dotnet configure
             dotnetConfigureHook
-            
+
             runHook postConfigure
           '';
         };
       in {
         packages = {
-          default = server;
           inherit server client;
           proto = protoGen;
+          default = protoGen;
         };
 
         devShells.default = pkgs.mkShell {
