@@ -6,6 +6,8 @@ sensor_example
 *.o
 *.a
 *.so
+main
+test_example
 
 # Build artifacts
 build/

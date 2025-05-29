@@ -54,6 +54,9 @@ with lib; let
       "-Dnanopb_BUILD_RUNTIME=ON"
       "-Dnanopb_BUILD_GENERATOR=ON"
       "-DPYTHON_EXECUTABLE=${pkgs.python312}/bin/python3"
+      "-DPROTOC_EXE=${pkgs.protobuf}/bin/protoc"
+      "-DProtobuf_PROTOC_EXE=${pkgs.protobuf}/bin/protoc"
+      "-DProtobuf_PROTOC_EXECUTABLE=${pkgs.protobuf}/bin/protoc"
     ];
     
     # We need to set the Python install directory at configure time
@@ -64,6 +67,10 @@ with lib; let
       
       # Override the Python install directory
       cmakeFlagsArray+=("-Dnanopb_PYTHON_INSTDIR_OVERRIDE=$out/lib/python3.12/site-packages")
+      
+      # Create a symlink to protoc in the generator directory to fix nanopb build
+      mkdir -p generator
+      ln -sf ${pkgs.protobuf}/bin/protoc generator/protoc
     '';
     
     postInstall = ''
@@ -105,9 +112,6 @@ in {
     optionals enabled [
       "--plugin=protoc-gen-nanopb=${nanopbPackage}/bin/protoc-gen-nanopb"
       "--nanopb_out=${outputPath}"
-    ]
-    ++ optionals (length nanopbOptions > 0) [
-      "--nanopb_opt=${concatStringsSep "," nanopbOptions}"
     ];
 
   initHooks = optionalString enabled ''

@@ -9,8 +9,8 @@ void print_example(const Example__V1__Example *example) {
     printf("  name: %s\n", example->name);
     printf("  value: %d\n", example->value);
     printf("  type: %s\n", 
-           example->type == EXAMPLE__V1__EXAMPLE_TYPE__BASIC ? "BASIC" :
-           example->type == EXAMPLE__V1__EXAMPLE_TYPE__ADVANCED ? "ADVANCED" : "UNSPECIFIED");
+           example->type == EXAMPLE__V1__EXAMPLE_TYPE__EXAMPLE_TYPE_BASIC ? "BASIC" :
+           example->type == EXAMPLE__V1__EXAMPLE_TYPE__EXAMPLE_TYPE_ADVANCED ? "ADVANCED" : "UNSPECIFIED");
     printf("  tags: [");
     for (size_t i = 0; i < example->n_tags; i++) {
         printf("%s%s", example->tags[i], i < example->n_tags - 1 ? ", " : "");
@@ -28,7 +28,7 @@ int main() {
     example.id = "test-123";
     example.name = "Test Example";
     example.value = 42;
-    example.type = EXAMPLE__V1__EXAMPLE_TYPE__BASIC;
+    example.type = EXAMPLE__V1__EXAMPLE_TYPE__EXAMPLE_TYPE_BASIC;
     
     // Add some tags
     char *tags[] = {"important", "test", "demo"};

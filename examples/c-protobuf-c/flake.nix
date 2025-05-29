@@ -9,7 +9,6 @@
   };
 
   outputs = {
-    self,
     nixpkgs,
     flake-utils,
     bufrnix,
@@ -20,16 +19,18 @@
     in {
       devShells.default = pkgs.mkShell {
         packages = [
+          pkgs.nixd
+          pkgs.alejandra
           pkgs.gcc
           pkgs.cmake
           pkgs.pkg-config
-          pkgs.protobuf-c
+          pkgs.protobuf
+          pkgs.protobufc
         ];
       };
 
       packages = {
         default = bufrnix.lib.mkBufrnixPackage {
-          inherit (pkgs) lib;
           inherit pkgs;
           config = {
             root = ./.;

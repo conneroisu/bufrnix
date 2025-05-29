@@ -19,7 +19,6 @@
 
         # Generate C++ protobuf files
         generated = bufrnix.lib.mkBufrnixPackage {
-          inherit (pkgs) lib;
           inherit pkgs;
           config = {
             root = ".";
