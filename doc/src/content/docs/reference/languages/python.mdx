@@ -4,6 +4,8 @@ description: Comprehensive Protocol Buffer support for Python with gRPC, type st
 ---
 
 import { Tabs, TabItem } from "@astrojs/starlight/components";
+import { Code } from 'astro:components';
+import betterprotoConfig from './python-betterproto-configuration.nix?raw';
 
 **Status**: ✅ Full Support  
 **Example**: [`examples/python-example/`](https://github.com/conneroisu/bufr.nix/tree/main/examples/python-example)
@@ -469,3 +471,7 @@ mypy --follow-imports=skip proto/gen/python/
 ### Betterproto Compatibility
 
 Betterproto generates different code than standard protobuf. Don't mix them in the same project.
+
+## Try the Example
+
+<Code code={betterprotoConfig} lang="nix" />

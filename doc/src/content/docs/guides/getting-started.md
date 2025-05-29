@@ -3,7 +3,7 @@ title: Getting Started with Bufrnix
 description: Learn how to set up Bufrnix and generate your first Protocol Buffer code with comprehensive examples and troubleshooting.
 ---
 
-# Getting Started with Bufrnix
+# Introduction
 
 Bufrnix makes it easy to integrate Protocol Buffers into your Nix-based projects with declarative configuration and reproducible builds. This comprehensive guide will walk you through setting up Bufrnix, generating code for your first Protocol Buffer definitions, and avoiding common pitfalls.
 

@@ -4,22 +4,23 @@
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
     flake-utils.url = "github:numtide/flake-utils";
-    bufrnix.url = "path:../..";
-    bufrnix.inputs.nixpkgs.follows = "nixpkgs";
+    bufrnix = {
+      url = "github:conneroisu/bufrnix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs = {
+    self,
     nixpkgs,
     flake-utils,
     bufrnix,
-    ...
   }:
     flake-utils.lib.eachDefaultSystem (system: let
       pkgs = nixpkgs.legacyPackages.${system};
 
-      bufrnixConfig = bufrnix.lib.mkBufrnixPackage {
+      bufrnixConfig = bufrnix.lib.mkBufrnix {
         inherit pkgs;
-        inherit (pkgs) lib;
         config = {
           root = "./proto";
 
@@ -36,7 +37,6 @@
         };
       };
     in {
-      packages.default = bufrnixConfig;
       devShells.default = pkgs.mkShell {
         buildInputs = with pkgs; [
           python3

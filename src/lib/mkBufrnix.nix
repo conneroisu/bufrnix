@@ -1,14 +1,14 @@
 {
-  lib,
   pkgs,
   self ? null,
   config ? {},
+  ...
 }:
-with lib; let
+with pkgs.lib; let
   # Import our modules
-  optionsDef = import ./bufrnix-options.nix {inherit lib;};
-  debug = import ./utils/debug.nix {inherit lib;};
-  moduleSystem = import ./module-system.nix {inherit lib;};
+  optionsDef = import ./bufrnix-options.nix {inherit (pkgs) lib;};
+  debug = import ./utils/debug.nix {inherit (pkgs) lib;};
+  moduleSystem = import ./module-system.nix {inherit (pkgs) lib;};
 
   # Extract default values from options
   extractDefaults = options:
@@ -65,7 +65,7 @@ with lib; let
         package = pkgs.protobuf;
         grpc.package = pkgs.python3Packages.grpcio-tools;
         pyi.package = pkgs.protobuf;
-        betterproto.package = pkgs.python3Packages.betterproto;
+        betterproto.package = pkgs.callPackage ../languages/python/betterproto-package.nix {};
         mypy.package = pkgs.python3Packages.mypy-protobuf;
       };
       swift = {
@@ -110,7 +110,8 @@ with lib; let
     then
       import ../languages/${language}
       {
-        inherit pkgs lib;
+        inherit pkgs;
+        inherit (pkgs) lib;
         config = cfg;
         cfg = cfg.languages.${language};
       }
