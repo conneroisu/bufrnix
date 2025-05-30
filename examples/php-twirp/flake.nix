@@ -3,7 +3,7 @@
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
     flake-utils.url = "github:numtide/flake-utils";
-    bufrnix.url = "github:conneroisu/bufrnix/php";
+    bufrnix.url = "path:../..";
   };
 
   outputs = {
@@ -33,7 +33,7 @@
             languages.php = {
               enable = true;
               outputPath = "proto/gen/php";
-              namespace = "Example\\Twirp";
+              namespace = "";
               twirp = {
                 enable = true;
               };

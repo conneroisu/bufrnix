@@ -153,8 +153,8 @@ with lib; let
 
   # Build PHP namespace options
   namespaceOptions = concatStringsSep "," (filter (s: s != "") [
-    (optionalString (cfg.namespace != "") "php_namespace=${cfg.namespace}")
-    (optionalString (cfg.metadataNamespace != "") "php_metadata_namespace=${cfg.metadataNamespace}")
+    # (optionalString (cfg.namespace != "") "php_namespace=${cfg.namespace}")
+    # (optionalString (cfg.metadataNamespace != "") "php_metadata_namespace=${cfg.metadataNamespace}")
     (optionalString (cfg.classPrefix != "") "php_class_prefix=${cfg.classPrefix}")
   ]);
 in {
