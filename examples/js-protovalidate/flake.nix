@@ -5,7 +5,6 @@
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
     flake-utils.url = "github:numtide/flake-utils";
     bufrnix.url = "path:../..";
-    bufrnix.inputs.nixpkgs.follows = "nixpkgs";
   };
 
   outputs = {
@@ -17,24 +16,26 @@
     flake-utils.lib.eachDefaultSystem (system: let
       pkgs = nixpkgs.legacyPackages.${system};
     in {
-      packages.default = bufrnix.lib.mkBufrnixPackage {
-        inherit pkgs;
+      packages = {
+        default = bufrnix.lib.mkBufrnixPackage {
+          inherit pkgs;
 
-        config = {
-          root = ./.;
-          protoc = {
-            sourceDirectories = ["./proto"];
-            includeDirectories = ["./proto"];
-            files = ["./proto/example/v1/user.proto"];
-          };
-          languages.js = {
-            enable = true;
-            outputPath = "proto/gen/js";
-            es.enable = true;
-            protovalidate = {
+          config = {
+            root = ./.;
+            protoc = {
+              sourceDirectories = ["./proto"];
+              includeDirectories = ["./proto"];
+              files = ["./proto/example/v1/user.proto"];
+            };
+            languages.js = {
               enable = true;
-              target = "ts";
-              generateValidationHelpers = true;
+              outputPath = "./proto/gen/js";
+              es.enable = true;
+              protovalidate = {
+                enable = true;
+                target = "ts";
+                generateValidationHelpers = true;
+              };
             };
           };
         };
