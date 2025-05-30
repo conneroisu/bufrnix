@@ -33,7 +33,6 @@
             languages.php = {
               enable = true;
               outputPath = "proto/gen/php";
-              namespace = "Example\\Twirp";
               twirp = {
                 enable = true;
               };
