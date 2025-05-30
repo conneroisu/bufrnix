@@ -252,9 +252,11 @@ test_example "go-struct-transformer" \
 # test_example "php-features-test" \
 #     "gen/php/basic/Test/V1/TestMessage.php"
 
-# TODO: Fix PHP gRPC RoadRunner example
-# test_example "php-grpc-roadrunner" \
-#     "gen/php/Example/V1/GreeterServiceInterface.php"
+# Test PHP gRPC RoadRunner example
+test_example "php-grpc-roadrunner" \
+    "gen/php/Example/V1/GreeterServiceClient.php" \
+    "gen/php/Example/V1/HelloRequest.php" \
+    "gen/php/Example/V1/HelloResponse.php"
 
 # Test Python basic example
 test_example "python-basic" \

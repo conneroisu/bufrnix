@@ -18,69 +18,59 @@
   }:
     flake-utils.lib.eachDefaultSystem (system: let
       pkgs = nixpkgs.legacyPackages.${system};
-      bufrnixLib = bufrnix.lib.${system};
+      
+      # Create a bufrnix package for this project
+      bufrnixPackage = bufrnix.lib.mkBufrnixPackage {
+        inherit pkgs;
+        
+        config = {
+          root = ./.;
+          debug.enable = true;
+          protoc = {
+            sourceDirectories = ["./proto"];
+            includeDirectories = ["./proto"];
+          };
+          languages.php = {
+            enable = true;
+            outputPath = "gen/php";
+            namespace = "";
+            metadataNamespace = "";
+            
+            # Enable gRPC support
+            grpc = {
+              enable = true;
+              serviceNamespace = "Services";
+              clientOnly = false;  # Generate both client and server code
+            };
+            
+            # Enable RoadRunner for server interfaces
+            roadrunner = {
+              enable = true;
+              workers = 4;
+              maxJobs = 100;
+              maxMemory = 128;
+            };
+          };
+        };
+      };
     in {
-      devShells.default = bufrnixLib.mkShell {
-        name = "php-grpc-roadrunner-example";
+      packages = {
+        default = bufrnixPackage;
+      };
 
-        # Configure PHP with all new features
-        languages.php = {
-          enable = true;
-          outputPath = "gen/php";
-
-          namespace = "App\\Proto";
-          metadataNamespace = "Metadata";
-
-          composer = {
-            enable = true;
-            autoInstall = true;
-          };
-
-          # Enable gRPC support
-          grpc = {
-            enable = true;
-            serviceNamespace = "Services";
-          };
-
-          # Enable RoadRunner for high-performance server
-          roadrunner = {
-            enable = true;
-            workers = 4;
-            maxJobs = 100;
-            maxMemory = 128;
-          };
-
-          # Enable Laravel framework integration
-          frameworks.laravel.enable = false; # Set to true if using Laravel
-
-          # Enable async PHP features
-          async = {
-            reactphp = {
-              enable = true;
-              version = "^1.0";
-            };
-            swoole = {
-              enable = true;
-              coroutines = true;
-            };
-            fibers.enable = true;
-          };
-        };
-
-        # Proto configuration
-        proto = {
-          directories = ["./proto"];
-        };
-
-        # Additional development tools
-        packages = with pkgs; [
+      devShells.default = pkgs.mkShell {
+        buildInputs = with pkgs; [
+          # Core tools
+          bufrnixPackage
+          php82
+          php82Packages.composer
+          
           # Development tools
           git
           curl
           jq
-
+          
           # PHP development
-          php82Packages.composer
           php82Packages.psalm
           php82Packages.php-cs-fixer
         ];

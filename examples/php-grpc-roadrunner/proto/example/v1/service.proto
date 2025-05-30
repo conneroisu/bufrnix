@@ -2,8 +2,7 @@ syntax = "proto3";
 
 package example.v1;
 
-option php_metadata_namespace = "App\\Proto\\Metadata\\Example\\V1";
-option php_namespace = "App\\Proto\\Example\\V1";
+option php_namespace = "Example\\V1";
 
 // The greeting service definition
 service GreeterService {
