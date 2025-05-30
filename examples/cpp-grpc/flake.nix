@@ -8,10 +8,10 @@
   };
 
   outputs = {
-    self,
     nixpkgs,
     flake-utils,
     bufrnix,
+    ...
   }:
     flake-utils.lib.eachDefaultSystem (
       system: let
@@ -20,6 +20,7 @@
         # Generate C++ protobuf and gRPC files
         generated = bufrnix.lib.mkBufrnixPackage {
           inherit pkgs;
+
           config = {
             root = ".";
             protoc = {

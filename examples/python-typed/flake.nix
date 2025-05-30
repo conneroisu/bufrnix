@@ -5,38 +5,41 @@
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
     flake-utils.url = "github:numtide/flake-utils";
     bufrnix = {
-      url = "github:conneroisu/bufrnix";
+      url = "path:../..";
       inputs.nixpkgs.follows = "nixpkgs";
     };
   };
 
   outputs = {
-    self,
     nixpkgs,
     flake-utils,
     bufrnix,
+    ...
   }:
     flake-utils.lib.eachDefaultSystem (system: let
       pkgs = nixpkgs.legacyPackages.${system};
 
-      bufrnixConfig = bufrnix.lib.mkBufrnix {
+      bufrnixPackage = bufrnix.lib.mkBufrnixPackage {
         inherit pkgs;
+
         config = {
-          root = "./proto";
+          root = ./.;
+
+          protoc = {
+            sourceDirectories = ["./proto"];
+            includeDirectories = ["./proto"];
+          };
 
           # Python with type stubs for IDE and mypy
           languages.python = {
             enable = true;
-            outputPath = "proto/gen/python";
+            outputPath = "./proto/gen/python";
 
             grpc = {
               enable = true;
             };
 
-            pyi = {
-              enable = true;
-            };
-
+            # Use mypy for type stubs (not pyi)
             mypy = {
               enable = true;
             };
@@ -44,6 +47,7 @@
         };
       };
     in {
+      packages.default = bufrnixPackage;
       devShells.default = pkgs.mkShell {
         buildInputs = with pkgs; [
           python3
@@ -53,18 +57,18 @@
           python3Packages.mypy
           python3Packages.mypy-protobuf
           protobuf
+          bufrnixPackage
         ];
 
         shellHook = ''
           echo "Python Type Stubs Example"
           echo "========================"
           echo "Commands:"
-          echo "  bufrnix_init - Initialize project"
           echo "  bufrnix - Generate Python + type stubs"
           echo "  python test_types.py - Run type test"
           echo "  mypy test_types.py - Type check the code"
           echo ""
-          ${bufrnixConfig.shellHook}
+          echo "Run 'bufrnix' to generate code from proto files."
         '';
       };
     });

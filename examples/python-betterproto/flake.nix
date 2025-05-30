@@ -19,6 +19,7 @@
 
       bufrnixConfig = bufrnix.lib.mkBufrnixPackage {
         inherit pkgs;
+
         config = {
           root = "./proto";
 

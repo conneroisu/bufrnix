@@ -2,15 +2,26 @@
 // @generated from file example/v1/example.proto (package example.v1, syntax proto3)
 /* eslint-disable */
 
-import type { GenFile, GenMessage, GenService } from "@bufbuild/protobuf/codegenv1";
-import { fileDesc, messageDesc, serviceDesc } from "@bufbuild/protobuf/codegenv1";
+import type {
+  GenFile,
+  GenMessage,
+  GenService,
+} from "@bufbuild/protobuf/codegenv1";
+import {
+  fileDesc,
+  messageDesc,
+  serviceDesc,
+} from "@bufbuild/protobuf/codegenv1";
 import type { Message } from "@bufbuild/protobuf";
 
 /**
  * Describes the file example/v1/example.proto.
  */
-export const file_example_v1_example: GenFile = /*@__PURE__*/
-  fileDesc("ChhleGFtcGxlL3YxL2V4YW1wbGUucHJvdG8SCmV4YW1wbGUudjEiPAoEVXNlchIKCgJpZBgBIAEoCRIMCgRuYW1lGAIgASgJEg0KBWVtYWlsGAMgASgJEgsKA2FnZRgEIAEoBSIcCg5HZXRVc2VyUmVxdWVzdBIKCgJpZBgBIAEoCSIxCg9HZXRVc2VyUmVzcG9uc2USHgoEdXNlchgBIAEoCzIQLmV4YW1wbGUudjEuVXNlciI5ChBMaXN0VXNlcnNSZXF1ZXN0EhEKCXBhZ2Vfc2l6ZRgBIAEoBRISCgpwYWdlX3Rva2VuGAIgASgJIk0KEUxpc3RVc2Vyc1Jlc3BvbnNlEh8KBXVzZXJzGAEgAygLMhAuZXhhbXBsZS52MS5Vc2VyEhcKD25leHRfcGFnZV90b2tlbhgCIAEoCSIzChFDcmVhdGVVc2VyUmVxdWVzdBIeCgR1c2VyGAEgASgLMhAuZXhhbXBsZS52MS5Vc2VyIjQKEkNyZWF0ZVVzZXJSZXNwb25zZRIeCgR1c2VyGAEgASgLMhAuZXhhbXBsZS52MS5Vc2VyMugBCgtVc2VyU2VydmljZRJCCgdHZXRVc2VyEhouZXhhbXBsZS52MS5HZXRVc2VyUmVxdWVzdBobLmV4YW1wbGUudjEuR2V0VXNlclJlc3BvbnNlEkgKCUxpc3RVc2VycxIcLmV4YW1wbGUudjEuTGlzdFVzZXJzUmVxdWVzdBodLmV4YW1wbGUudjEuTGlzdFVzZXJzUmVzcG9uc2USSwoKQ3JlYXRlVXNlchIdLmV4YW1wbGUudjEuQ3JlYXRlVXNlclJlcXVlc3QaHi5leGFtcGxlLnYxLkNyZWF0ZVVzZXJSZXNwb25zZWIGcHJvdG8z");
+export const file_example_v1_example: GenFile =
+  /*@__PURE__*/
+  fileDesc(
+    "ChhleGFtcGxlL3YxL2V4YW1wbGUucHJvdG8SCmV4YW1wbGUudjEiPAoEVXNlchIKCgJpZBgBIAEoCRIMCgRuYW1lGAIgASgJEg0KBWVtYWlsGAMgASgJEgsKA2FnZRgEIAEoBSIcCg5HZXRVc2VyUmVxdWVzdBIKCgJpZBgBIAEoCSIxCg9HZXRVc2VyUmVzcG9uc2USHgoEdXNlchgBIAEoCzIQLmV4YW1wbGUudjEuVXNlciI5ChBMaXN0VXNlcnNSZXF1ZXN0EhEKCXBhZ2Vfc2l6ZRgBIAEoBRISCgpwYWdlX3Rva2VuGAIgASgJIk0KEUxpc3RVc2Vyc1Jlc3BvbnNlEh8KBXVzZXJzGAEgAygLMhAuZXhhbXBsZS52MS5Vc2VyEhcKD25leHRfcGFnZV90b2tlbhgCIAEoCSIzChFDcmVhdGVVc2VyUmVxdWVzdBIeCgR1c2VyGAEgASgLMhAuZXhhbXBsZS52MS5Vc2VyIjQKEkNyZWF0ZVVzZXJSZXNwb25zZRIeCgR1c2VyGAEgASgLMhAuZXhhbXBsZS52MS5Vc2VyMugBCgtVc2VyU2VydmljZRJCCgdHZXRVc2VyEhouZXhhbXBsZS52MS5HZXRVc2VyUmVxdWVzdBobLmV4YW1wbGUudjEuR2V0VXNlclJlc3BvbnNlEkgKCUxpc3RVc2VycxIcLmV4YW1wbGUudjEuTGlzdFVzZXJzUmVxdWVzdBodLmV4YW1wbGUudjEuTGlzdFVzZXJzUmVzcG9uc2USSwoKQ3JlYXRlVXNlchIdLmV4YW1wbGUudjEuQ3JlYXRlVXNlclJlcXVlc3QaHi5leGFtcGxlLnYxLkNyZWF0ZVVzZXJSZXNwb25zZWIGcHJvdG8z",
+  );
 
 /**
  * Example message
@@ -43,7 +54,8 @@ export type User = Message<"example.v1.User"> & {
  * Describes the message example.v1.User.
  * Use `create(UserSchema)` to create a new message.
  */
-export const UserSchema: GenMessage<User> = /*@__PURE__*/
+export const UserSchema: GenMessage<User> =
+  /*@__PURE__*/
   messageDesc(file_example_v1_example, 0);
 
 /**
@@ -60,7 +72,8 @@ export type GetUserRequest = Message<"example.v1.GetUserRequest"> & {
  * Describes the message example.v1.GetUserRequest.
  * Use `create(GetUserRequestSchema)` to create a new message.
  */
-export const GetUserRequestSchema: GenMessage<GetUserRequest> = /*@__PURE__*/
+export const GetUserRequestSchema: GenMessage<GetUserRequest> =
+  /*@__PURE__*/
   messageDesc(file_example_v1_example, 1);
 
 /**
@@ -77,7 +90,8 @@ export type GetUserResponse = Message<"example.v1.GetUserResponse"> & {
  * Describes the message example.v1.GetUserResponse.
  * Use `create(GetUserResponseSchema)` to create a new message.
  */
-export const GetUserResponseSchema: GenMessage<GetUserResponse> = /*@__PURE__*/
+export const GetUserResponseSchema: GenMessage<GetUserResponse> =
+  /*@__PURE__*/
   messageDesc(file_example_v1_example, 2);
 
 /**
@@ -99,7 +113,8 @@ export type ListUsersRequest = Message<"example.v1.ListUsersRequest"> & {
  * Describes the message example.v1.ListUsersRequest.
  * Use `create(ListUsersRequestSchema)` to create a new message.
  */
-export const ListUsersRequestSchema: GenMessage<ListUsersRequest> = /*@__PURE__*/
+export const ListUsersRequestSchema: GenMessage<ListUsersRequest> =
+  /*@__PURE__*/
   messageDesc(file_example_v1_example, 3);
 
 /**
@@ -121,7 +136,8 @@ export type ListUsersResponse = Message<"example.v1.ListUsersResponse"> & {
  * Describes the message example.v1.ListUsersResponse.
  * Use `create(ListUsersResponseSchema)` to create a new message.
  */
-export const ListUsersResponseSchema: GenMessage<ListUsersResponse> = /*@__PURE__*/
+export const ListUsersResponseSchema: GenMessage<ListUsersResponse> =
+  /*@__PURE__*/
   messageDesc(file_example_v1_example, 4);
 
 /**
@@ -138,7 +154,8 @@ export type CreateUserRequest = Message<"example.v1.CreateUserRequest"> & {
  * Describes the message example.v1.CreateUserRequest.
  * Use `create(CreateUserRequestSchema)` to create a new message.
  */
-export const CreateUserRequestSchema: GenMessage<CreateUserRequest> = /*@__PURE__*/
+export const CreateUserRequestSchema: GenMessage<CreateUserRequest> =
+  /*@__PURE__*/
   messageDesc(file_example_v1_example, 5);
 
 /**
@@ -155,7 +172,8 @@ export type CreateUserResponse = Message<"example.v1.CreateUserResponse"> & {
  * Describes the message example.v1.CreateUserResponse.
  * Use `create(CreateUserResponseSchema)` to create a new message.
  */
-export const CreateUserResponseSchema: GenMessage<CreateUserResponse> = /*@__PURE__*/
+export const CreateUserResponseSchema: GenMessage<CreateUserResponse> =
+  /*@__PURE__*/
   messageDesc(file_example_v1_example, 6);
 
 /**
@@ -171,7 +189,7 @@ export const UserService: GenService<{
     methodKind: "unary";
     input: typeof GetUserRequestSchema;
     output: typeof GetUserResponseSchema;
-  },
+  };
   /**
    * @generated from rpc example.v1.UserService.ListUsers
    */
@@ -179,7 +197,7 @@ export const UserService: GenService<{
     methodKind: "unary";
     input: typeof ListUsersRequestSchema;
     output: typeof ListUsersResponseSchema;
-  },
+  };
   /**
    * @generated from rpc example.v1.UserService.CreateUser
    */
@@ -187,7 +205,5 @@ export const UserService: GenService<{
     methodKind: "unary";
     input: typeof CreateUserRequestSchema;
     output: typeof CreateUserResponseSchema;
-  },
-}> = /*@__PURE__*/
-  serviceDesc(file_example_v1_example, 0);
-
+  };
+}> = /*@__PURE__*/ serviceDesc(file_example_v1_example, 0);

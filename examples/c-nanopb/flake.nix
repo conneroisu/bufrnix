@@ -30,7 +30,6 @@
 
       packages = {
         default = bufrnix.lib.mkBufrnixPackage {
-          inherit (pkgs) lib;
           inherit pkgs;
           config = {
             root = ./.;
