@@ -4,7 +4,7 @@
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
     flake-utils.url = "github:numtide/flake-utils";
-    bufrnix.url = "../..";
+    bufrnix.url = "path:../..";
     bufrnix.inputs.nixpkgs.follows = "nixpkgs";
   };
 
@@ -20,7 +20,6 @@
       # Create our bufrnix package with Swift language support
       bufrnixPkg = bufrnix.lib.mkBufrnixPackage {
         inherit pkgs;
-        inherit (pkgs) lib;
         config = {
           languages = {
             swift = {

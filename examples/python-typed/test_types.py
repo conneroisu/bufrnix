@@ -2,11 +2,11 @@
 """Test Python type stubs and mypy integration."""
 
 import sys
-sys.path.insert(0, '.')
+sys.path.insert(0, './proto/gen/python')
 
 from typing import List, Optional
-from proto.gen.python import typed_pb2
-from proto.gen.python import typed_pb2_grpc
+from typed.v1 import typed_pb2
+from typed.v1 import typed_pb2_grpc
 
 
 def create_user(name: str, email: Optional[str] = None) -> typed_pb2.User:

@@ -9,12 +9,14 @@ with lib; {
   runtimeInputs = optionals cfg.enable [
     cfg.package
     pkgs.python3
+    pkgs.grpc
   ];
 
   # Protoc plugins for Python gRPC
   protocPlugins =
     optionals cfg.enable [
       "--grpc_python_out=${cfg.outputPath}"
+      "--plugin=protoc-gen-grpc_python=${pkgs.grpc}/bin/grpc_python_plugin"
     ]
     ++ (optionals (cfg.enable && cfg.options != []) [
       "--grpc_python_opt=${concatStringsSep " --grpc_python_opt=" cfg.options}"
