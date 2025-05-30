@@ -16,7 +16,6 @@
   }:
     flake-utils.lib.eachDefaultSystem (system: let
       pkgs = nixpkgs.legacyPackages.${system};
-
     in {
       # Development shell with Python and generated code
       devShells.default = pkgs.mkShell {

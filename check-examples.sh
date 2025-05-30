@@ -211,6 +211,80 @@ test_example "c-nanopb" \
     "proto/gen/c/nanopb/example/v1/sensor.pb.h" \
     "proto/gen/c/nanopb/example/v1/sensor.pb.c"
 
+# Test C++ basic example
+test_example "cpp-basic" \
+    "proto/gen/cpp/example/v1/person.pb.cc" \
+    "proto/gen/cpp/example/v1/person.pb.h"
+
+# Test C++ gRPC example
+test_example "cpp-grpc" \
+    "proto/gen/cpp/example/v1/greeter.pb.cc" \
+    "proto/gen/cpp/example/v1/greeter.pb.h" \
+    "proto/gen/cpp/example/v1/greeter.grpc.pb.cc" \
+    "proto/gen/cpp/example/v1/greeter.grpc.pb.h"
+
+# Test Go advanced example
+test_example "go-advanced" \
+    "proto/gen/go/example/v1/user.pb.go" \
+    "proto/gen/go/example/v1/user_grpc.pb.go" \
+    "proto/gen/openapi/user.swagger.json"
+
+# Test Go struct transformer example
+test_example "go-struct-transformer" \
+    "gen/go/example/v1/product.pb.go" \
+    "gen/go/example/v1/transform/product_transformer.go"
+
+# TODO: Fix JavaScript ES modules example (has Connect-ES plugin issues)
+# test_example "js-es-modules" \
+#     "src/generated/product_pb.ts" \
+#     "src/generated/user_pb.ts"
+
+# TODO: Fix JavaScript gRPC-Web example
+# test_example "js-grpc-web" \
+#     "src/generated/chat_pb.ts" \
+#     "src/generated/user_pb.ts"
+
+# TODO: Fix JavaScript protovalidate example
+# test_example "js-protovalidate" \
+#     "src/generated/example/v1/user_pb.ts"
+
+# TODO: Fix PHP features test (complex multi-config setup)
+# test_example "php-features-test" \
+#     "gen/php/basic/Test/V1/TestMessage.php"
+
+# TODO: Fix PHP gRPC RoadRunner example
+# test_example "php-grpc-roadrunner" \
+#     "gen/php/Example/V1/GreeterServiceInterface.php"
+
+# Test Python basic example
+test_example "python-basic" \
+    "proto/gen/python/basic_pb2.py"
+
+# Test Python betterproto example
+test_example "python-betterproto" \
+    "proto/gen/python/modern/__init__.py"
+
+# Test Python example
+test_example "python-example" \
+    "proto/gen/python/example/v1/example_pb2.py" \
+    "proto/gen/python/example/v1/example_pb2_grpc.py"
+
+# Test Python gRPC example
+test_example "python-grpc" \
+    "proto/gen/python/greeter_pb2.py" \
+    "proto/gen/python/greeter_pb2_grpc.py"
+
+# Test Python typed example
+test_example "python-typed" \
+    "proto/gen/python/typed/v1/typed_pb2.py" \
+    "proto/gen/python/typed/v1/typed_pb2.pyi" \
+    "proto/gen/python/typed/v1/typed_pb2_grpc.py"
+
+# Test SVG example
+test_example "svg-example" \
+    "proto/gen/svg/example/v1/example.svg" \
+    "proto/gen/doc/index.html"
+
 # Summary
 echo -e "\n${YELLOW}Test Summary:${NC}"
 echo -e "${GREEN}Passed: ${#PASSED_TESTS[@]}${NC}"

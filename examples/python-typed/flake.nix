@@ -24,7 +24,7 @@
 
         config = {
           root = ./.;
-          
+
           protoc = {
             sourceDirectories = ["./proto"];
             includeDirectories = ["./proto"];

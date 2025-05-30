@@ -8,10 +8,10 @@
   };
 
   outputs = {
-    self,
     nixpkgs,
     flake-utils,
     bufrnix,
+    ...
   }:
     flake-utils.lib.eachDefaultSystem (system: let
       pkgs = nixpkgs.legacyPackages.${system};
@@ -19,7 +19,7 @@
       # Configure bufrnix for JavaScript ES modules with all modern features
       protoGenerated = bufrnix.lib.mkBufrnixPackage {
         inherit pkgs;
-        lib = pkgs.lib;
+
         config = {
           src = ./.;
           protoSourcePaths = ["proto"];

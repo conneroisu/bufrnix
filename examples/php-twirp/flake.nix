@@ -3,7 +3,7 @@
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
     flake-utils.url = "github:numtide/flake-utils";
-    bufrnix.url = "github:conneroisu/bufrnix/php";
+    bufrnix.url = "path:../..";
   };
 
   outputs = {
@@ -21,8 +21,8 @@
         };
         # Create a bufrnix package for this project
         bufrnixPackage = bufrnix.lib.mkBufrnixPackage {
-          inherit (nixpkgs.legacyPackages.${system}) lib;
           inherit pkgs;
+
           config = {
             root = ./.;
             debug.enable = true;

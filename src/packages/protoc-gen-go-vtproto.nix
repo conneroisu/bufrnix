@@ -24,4 +24,3 @@ pkgs.buildGoModule rec {
     maintainers = with maintainers; [];
   };
 }
-

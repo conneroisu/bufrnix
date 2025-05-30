@@ -4,7 +4,7 @@
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-24.05";
     flake-utils.url = "github:numtide/flake-utils";
-    bufrnix.url = "github:conneroisu/bufrnix";
+    bufrnix.url = "path:../..";
   };
 
   outputs = {
@@ -30,7 +30,6 @@
 
         packages = {
           default = bufrnix.lib.mkBufrnixPackage {
-            inherit (pkgs) lib;
             inherit pkgs;
             config = {
               root = ".";

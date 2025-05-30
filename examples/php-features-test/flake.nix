@@ -1,5 +1,5 @@
 {
-  description = "Comprehensive PHP features test for Bufrnix";
+  description = "Comprehensive PHP features test/example for Bufrnix";
 
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
@@ -22,7 +22,6 @@
       # Helper to create a bufrnix package with given config
       mkBufrnixPkg = config:
         bufrnix.lib.mkBufrnixPackage {
-          inherit (pkgs) lib;
           inherit pkgs;
           inherit config;
         };

@@ -29,6 +29,7 @@ mypy test_types.py
 ## Configuration
 
 The example uses mypy to generate type stubs, providing:
+
 - Full type hints for all generated classes
 - IDE autocomplete support
 - Static type checking with mypy

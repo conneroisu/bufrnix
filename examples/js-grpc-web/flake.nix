@@ -8,10 +8,10 @@
   };
 
   outputs = {
-    self,
     nixpkgs,
     flake-utils,
     bufrnix,
+    ...
   }:
     flake-utils.lib.eachDefaultSystem (system: let
       pkgs = nixpkgs.legacyPackages.${system};
@@ -19,7 +19,7 @@
       # Configure bufrnix for JavaScript with gRPC-Web
       protobufGenerated = bufrnix.lib.mkBufrnixPackage {
         inherit pkgs;
-        lib = pkgs.lib;
+
         config = {
           name = "js-grpc-web-example";
           src = ./.;
