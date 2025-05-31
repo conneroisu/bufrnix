@@ -237,7 +237,7 @@ message User {
 ### 3. Generate Code
 
 ```bash
-nix build
+nix run
 ```
 
 Generated code will appear in `gen/go/user/v1/`:
