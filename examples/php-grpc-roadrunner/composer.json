@@ -1,0 +1,20 @@
+{
+  "name": "generated/protobuf",
+  "description": "Generated Protocol Buffer code",
+  "type": "library",
+  "require": {
+    "php": ">=7.4",
+    "google/protobuf": "^3.21"
+    ,"grpc/grpc": "^1.50"
+    
+    
+    
+    
+    
+  },
+  "autoload": {
+    "psr-4": {
+      "App\Proto\\": "gen/php/"
+    }
+  }
+}

@@ -11,8 +11,8 @@
 
 require __DIR__ . '/vendor/autoload.php';
 
-use App\Proto\Example\V1\HelloRequest;
-use App\Proto\Example\V1\Services\GreeterServiceClient;
+use Example\V1\HelloRequest;
+use Example\V1\GreeterServiceClient;
 use Grpc\ChannelCredentials;
 
 // ANSI color codes for pretty output

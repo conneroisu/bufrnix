@@ -1,0 +1,76 @@
+version: "3"
+
+# RPC server configuration (for management)
+rpc:
+  listen: tcp://127.0.0.1:6001
+
+# Server configuration
+server:
+  command: "php worker.php"
+  relay: pipes
+  user: ""
+  group: ""
+  env:
+    - GRPC_PHP_LOG_VERBOSITY: error
+
+# gRPC plugin configuration
+grpc:
+  listen: "tcp://0.0.0.0:9001"
+  proto:
+    - "*.proto"
+    - "proto/*.proto"
+
+  pool:
+    num_workers: 4
+    max_jobs: 100
+    allocate_timeout: 60s
+    destroy_timeout: 60s
+
+    supervisor:
+      watch_tick: 1s
+      ttl: 0
+      idle_ttl: 10s
+      max_worker_memory: 128
+      exec_ttl: 60s
+
+  
+
+# Logging configuration
+logs:
+  mode: production
+  level: info
+  encoding: json
+  output: stdout
+  err_output: stderr
+
+  channels:
+    http:
+      level: debug
+      output: stdout
+    server:
+      level: info
+      output: stdout
+    grpc:
+      level: debug
+      output: stdout
+
+# Metrics configuration (optional)
+metrics:
+  address: "127.0.0.1:2112"
+
+# Health check endpoint
+status:
+  address: "127.0.0.1:2114"
+
+# Reload plugin
+reload:
+  enabled: true
+  interval: 1s
+  patterns:
+    - ".php"
+  services:
+    grpc:
+      enabled: true
+      recursive: true
+      dirs:
+        - "."

@@ -4,7 +4,7 @@ import {
   CreateUserRequest,
   UserStatus,
   Profile,
-} from "../proto/gen/js/example/v1/user_pb";
+} from "../proto/gen/js/example/v1/user_pb.js";
 
 async function main() {
   // Create a validator
@@ -20,7 +20,7 @@ async function main() {
     email: "john.doe@example.com",
     username: "john_doe",
     age: 25,
-    status: UserStatus.ACTIVE,
+    status: UserStatus.USER_STATUS_ACTIVE,
     tags: ["developer", "typescript"],
     profile: new Profile({
       bio: "Full-stack developer",
@@ -47,7 +47,7 @@ async function main() {
     email: "not-an-email",
     username: "john_doe",
     age: 25,
-    status: UserStatus.ACTIVE,
+    status: UserStatus.USER_STATUS_ACTIVE,
   });
 
   try {
@@ -70,7 +70,7 @@ async function main() {
     email: "john@example.com",
     username: "jd", // Too short
     age: 25,
-    status: UserStatus.ACTIVE,
+    status: UserStatus.USER_STATUS_ACTIVE,
   });
 
   try {
@@ -93,7 +93,7 @@ async function main() {
     email: "john@example.com",
     username: "john_doe",
     age: 15, // Too young
-    status: UserStatus.ACTIVE,
+    status: UserStatus.USER_STATUS_ACTIVE,
   });
 
   try {

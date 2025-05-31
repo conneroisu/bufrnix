@@ -244,17 +244,19 @@ test_example "go-struct-transformer" \
 #     "src/generated/chat_pb.ts" \
 #     "src/generated/user_pb.ts"
 
-# TODO: Fix JavaScript protovalidate example
-# test_example "js-protovalidate" \
-#     "src/generated/example/v1/user_pb.ts"
+# Test JavaScript protovalidate example
+test_example "js-protovalidate" \
+    "proto/gen/js/example/v1/user_pb.ts"
 
 # TODO: Fix PHP features test (complex multi-config setup)
 # test_example "php-features-test" \
 #     "gen/php/basic/Test/V1/TestMessage.php"
 
-# TODO: Fix PHP gRPC RoadRunner example
-# test_example "php-grpc-roadrunner" \
-#     "gen/php/Example/V1/GreeterServiceInterface.php"
+# Test PHP gRPC RoadRunner example
+test_example "php-grpc-roadrunner" \
+    "gen/php/Example/V1/GreeterServiceClient.php" \
+    "gen/php/Example/V1/HelloRequest.php" \
+    "gen/php/Example/V1/HelloResponse.php"
 
 # Test Python basic example
 test_example "python-basic" \

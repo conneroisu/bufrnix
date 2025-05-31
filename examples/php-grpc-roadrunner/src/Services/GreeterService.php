@@ -2,9 +2,9 @@
 
 namespace App\Services;
 
-use App\Proto\Example\V1\HelloRequest;
-use App\Proto\Example\V1\HelloResponse;
-use App\Proto\Example\V1\Services\GreeterServiceInterface;
+use Example\V1\HelloRequest;
+use Example\V1\HelloResponse;
+use Example\V1\GreeterServiceInterface;
 use Spiral\RoadRunner\GRPC\ContextInterface;
 
 class GreeterService implements GreeterServiceInterface
