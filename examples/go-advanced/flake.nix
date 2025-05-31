@@ -8,10 +8,10 @@
   };
 
   outputs = {
-    self,
     nixpkgs,
     flake-utils,
     bufrnix,
+    ...
   }:
     flake-utils.lib.eachDefaultSystem (
       system: let

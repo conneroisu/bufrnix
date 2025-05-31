@@ -227,7 +227,7 @@ test_example "cpp-grpc" \
 test_example "go-advanced" \
     "proto/gen/go/example/v1/user.pb.go" \
     "proto/gen/go/example/v1/user_grpc.pb.go" \
-    "proto/gen/openapi/user.swagger.json"
+    "proto/gen/go/example/v1/user.swagger.json"
 
 # Test Go struct transformer example
 test_example "go-struct-transformer" \

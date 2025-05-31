@@ -11,10 +11,10 @@ pkgs.buildGoModule rec {
     owner = "mfridman";
     repo = "protoc-gen-go-json";
     rev = "v${version}";
-    sha256 = "sha256-g3Rc9cpONI6+FiXcMG9H8go6J7i+hsvcQG8OREMqaKU=";
+    sha256 = "sha256-qgYW12nsDPpaDnhkMS+4yaAeV2pHOdYg97SbA6emnkQ=";
   };
 
-  vendorHash = "sha256-8G8u5gXOcFiqOKwdrj8RKNp8l8X/lLIDkudginm7JPw=";
+  vendorHash = "sha256-80HXbpa4ZZDPyMHPHUYzGqZ8eYE9oJC8uvpg5I9TxKw=";
 
   meta = with lib; {
     description = "A protoc plugin that generates Go code with JSON marshaling/unmarshaling methods";

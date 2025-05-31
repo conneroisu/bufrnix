@@ -58,13 +58,11 @@ message Profile {
   // Website must be a valid URL if provided
   string website = 2 [(buf.validate.field).string = {
     uri: true
-    ignore_empty: true
   }];
 
   // Phone number must match a simple pattern if provided
   string phone = 3 [(buf.validate.field).string = {
     pattern: "^\\+?[1-9]\\d{1,14}$"
-    ignore_empty: true
   }];
 }
 
