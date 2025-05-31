@@ -6,18 +6,14 @@
         "treefmt-nix": "treefmt-nix"
       },
       "locked": {
-        "lastModified": 1748551694,
-        "narHash": "sha256-S/gI34E2dD/qP7DjKvO6s0ujNm0s8/CIpGx2ugV9tJ8=",
-        "owner": "conneroisu",
-        "repo": "bufrnix",
-        "rev": "067f29c4146a7ab5d8498bfd239f4e8bfe689cff",
-        "type": "github"
+        "path": "../..",
+        "type": "path"
       },
       "original": {
-        "owner": "conneroisu",
-        "repo": "bufrnix",
-        "type": "github"
-      }
+        "path": "../..",
+        "type": "path"
+      },
+      "parent": []
     },
     "flake-utils": {
       "inputs": {
