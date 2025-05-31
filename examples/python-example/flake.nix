@@ -70,11 +70,6 @@
                 enable = true;
               };
 
-              # Enable type stubs for better IDE support
-              pyi = {
-                enable = true;
-              };
-
               # Enable mypy stubs for type checking
               mypy = {
                 enable = true;

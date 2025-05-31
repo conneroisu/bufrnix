@@ -8,10 +8,10 @@
   };
 
   outputs = {
-    self,
     nixpkgs,
     flake-utils,
     bufrnix,
+    ...
   }:
     flake-utils.lib.eachDefaultSystem (
       system: let
@@ -35,6 +35,7 @@
               root = ".";
               protoc = {
                 includeDirectories = ["proto"];
+                files = ["proto/example/v1/user.proto"];
               };
 
               languages = {

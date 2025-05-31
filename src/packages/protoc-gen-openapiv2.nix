@@ -11,10 +11,10 @@ pkgs.buildGoModule rec {
     owner = "grpc-ecosystem";
     repo = "grpc-gateway";
     rev = "v${version}";
-    sha256 = "sha256-zLAIZce0A2G5q6orevUGkgKEQhgXutpyJJaWLqVaOqA=";
+    sha256 = "sha256-mppN8twrOTIVK3TDQcv5fYZtXKPA34EWGPo31JxME1g=";
   };
 
-  vendorHash = "sha256-S4hcD5/BSGxM2qdJHMxOkxsJ5+Ks6m4lKHSS9+yZ17c=";
+  vendorHash = "sha256-R/V3J9vCSQppm59RCaJrDIS0Juff5htPl/GjTwhHEfQ=";
   subPackages = ["protoc-gen-openapiv2"];
 
   meta = with lib; {

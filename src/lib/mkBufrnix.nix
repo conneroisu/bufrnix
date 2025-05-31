@@ -37,9 +37,9 @@ with pkgs.lib; let
         validate.package = pkgs.protoc-gen-validate;
         connect.package = pkgs.protoc-gen-connect-go;
         protovalidate.package = pkgs.protovalidate-go or null; # Not yet in nixpkgs
-        openapiv2.package = pkgs.protoc-gen-openapiv2 or null; # Not yet in nixpkgs
-        vtprotobuf.package = pkgs.protoc-gen-go-vtproto or null; # Not yet in nixpkgs
-        json.package = pkgs.protoc-gen-go-json or null; # Not yet in nixpkgs
+        openapiv2.package = pkgs.protoc-gen-openapiv2 or (pkgs.callPackage ../packages/protoc-gen-openapiv2.nix {});
+        vtprotobuf.package = pkgs.protoc-gen-go-vtproto or (pkgs.callPackage ../packages/protoc-gen-go-vtproto.nix {});
+        json.package = pkgs.protoc-gen-go-json or (pkgs.callPackage ../packages/protoc-gen-go-json.nix {});
         federation.package = pkgs.protoc-gen-grpc-federation or null; # Not yet in nixpkgs
         structTransformer.package = pkgs.protoc-gen-struct-transformer or (pkgs.callPackage ../languages/go/protoc-gen-struct-transformer.nix {});
       };
