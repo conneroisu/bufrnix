@@ -11,12 +11,12 @@ with lib;
     then {
       # Runtime dependencies for gRPC-Web
       runtimeInputs = [
-        cfg.package or pkgs.grpc-web
+        cfg.package or pkgs.protoc-gen-grpc-web
       ];
 
       # Protoc plugin configuration
       protocPlugins = [
-        "--grpc-web_out=import_style=typescript,mode=grpcwebtext:${cfg.outputPath}"
+        "--grpc-web_out=import_style=${cfg.importStyle or "commonjs"},mode=${cfg.mode or "grpcweb"}:${cfg.outputPath}"
       ];
 
       # Initialize hook

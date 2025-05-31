@@ -11,12 +11,11 @@
     "forceConsistentCasingInFileNames": true,
     "resolveJsonModule": true,
     "outDir": "./dist",
-    "rootDir": "./src",
     "baseUrl": ".",
     "paths": {
       "@proto/*": ["./proto/gen/js/*"]
     }
   },
-  "include": ["src/**/*"],
+  "include": ["src/**/*", "proto/**/*"],
   "exclude": ["node_modules", "dist"]
 }

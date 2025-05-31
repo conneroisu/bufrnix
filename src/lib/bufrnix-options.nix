@@ -822,7 +822,7 @@ with lib; {
 
           package = mkOption {
             type = types.package;
-            defaultText = literalExpression "pkgs.grpc-web";
+            defaultText = literalExpression "pkgs.protoc-gen-grpc-web";
             description = "The protoc-gen-grpc-web package to use";
           };
 
@@ -830,6 +830,18 @@ with lib; {
             type = types.listOf types.str;
             default = [];
             description = "Options to pass to protoc-gen-grpc-web";
+          };
+
+          importStyle = mkOption {
+            type = types.enum ["typescript" "commonjs" "closure"];
+            default = "commonjs";
+            description = "Import style for generated gRPC-Web code";
+          };
+
+          mode = mkOption {
+            type = types.enum ["grpcweb" "grpcwebtext"];
+            default = "grpcweb";
+            description = "gRPC-Web mode (grpcweb or grpcwebtext)";
           };
         };
 

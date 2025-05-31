@@ -1,18 +1,28 @@
+import { create } from "@bufbuild/protobuf";
 import { UserServiceClient } from "../proto/gen/js/user_grpc_web_pb.js";
 import { ChatServiceClient } from "../proto/gen/js/chat_grpc_web_pb.js";
 import {
   CreateUserRequest,
+  CreateUserRequestSchema,
   GetUserRequest,
+  GetUserRequestSchema,
   ListUsersRequest,
+  ListUsersRequestSchema,
   UpdateUserRequest,
+  UpdateUserRequestSchema,
   DeleteUserRequest,
+  DeleteUserRequestSchema,
   StreamUsersRequest,
+  StreamUsersRequestSchema,
   UserStatus,
 } from "../proto/gen/js/user_pb.js";
 import {
   SendMessageRequest,
+  SendMessageRequestSchema,
   JoinRoomRequest,
+  JoinRoomRequestSchema,
   StreamMessagesRequest,
+  StreamMessagesRequestSchema,
 } from "../proto/gen/js/chat_pb.js";
 
 // Configure the gRPC-Web client to connect through Envoy proxy
@@ -32,11 +42,12 @@ async function userServiceExamples() {
 
   // 1. Create a user
   console.log("1. Creating a user...");
-  const createUserRequest = new CreateUserRequest();
-  createUserRequest.setName("Alice Smith");
-  createUserRequest.setEmail("alice@example.com");
-  createUserRequest.setAge(28);
-  createUserRequest.setInterestsList(["coding", "reading", "hiking"]);
+  const createUserRequest = create(CreateUserRequestSchema, {
+    name: "Alice Smith",
+    email: "alice@example.com",
+    age: 28,
+    interests: ["coding", "reading", "hiking"],
+  });
 
   try {
     const createResponse = await new Promise((resolve, reject) => {
@@ -55,8 +66,9 @@ async function userServiceExamples() {
 
     // 2. Get the user
     console.log("\n2. Getting user by ID...");
-    const getUserRequest = new GetUserRequest();
-    getUserRequest.setId(userId);
+    const getUserRequest = create(GetUserRequestSchema, {
+      id: userId,
+    });
 
     const getResponse = await new Promise((resolve, reject) => {
       userClient.getUser(getUserRequest, {}, (err, response) => {
@@ -72,11 +84,12 @@ async function userServiceExamples() {
 
     // 3. Update the user
     console.log("\n3. Updating user...");
-    const updateUserRequest = new UpdateUserRequest();
-    updateUserRequest.setId(userId);
-    updateUserRequest.setName("Alice Johnson");
-    updateUserRequest.setAge(29);
-    updateUserRequest.setStatus(UserStatus.USER_STATUS_ACTIVE);
+    const updateUserRequest = create(UpdateUserRequestSchema, {
+      id: userId,
+      name: "Alice Johnson",
+      age: 29,
+      status: UserStatus.ACTIVE,
+    });
 
     const updateResponse = await new Promise((resolve, reject) => {
       userClient.updateUser(updateUserRequest, {}, (err, response) => {
@@ -92,8 +105,9 @@ async function userServiceExamples() {
 
     // 4. List users
     console.log("\n4. Listing users...");
-    const listUsersRequest = new ListUsersRequest();
-    listUsersRequest.setPageSize(10);
+    const listUsersRequest = create(ListUsersRequestSchema, {
+      pageSize: 10,
+    });
 
     const listResponse = await new Promise((resolve, reject) => {
       userClient.listUsers(listUsersRequest, {}, (err, response) => {
@@ -110,8 +124,9 @@ async function userServiceExamples() {
 
     // 5. Stream users (server streaming)
     console.log("\n5. Streaming users...");
-    const streamUsersRequest = new StreamUsersRequest();
-    streamUsersRequest.setStatusFilter(UserStatus.USER_STATUS_ACTIVE);
+    const streamUsersRequest = create(StreamUsersRequestSchema, {
+      statusFilter: UserStatus.ACTIVE,
+    });
 
     const stream = userClient.streamUsers(streamUsersRequest, {});
     let streamCount = 0;
@@ -140,8 +155,9 @@ async function userServiceExamples() {
 
     // 6. Delete the user
     console.log("\n6. Deleting user...");
-    const deleteUserRequest = new DeleteUserRequest();
-    deleteUserRequest.setId(userId);
+    const deleteUserRequest = create(DeleteUserRequestSchema, {
+      id: userId,
+    });
 
     const deleteResponse = await new Promise((resolve, reject) => {
       userClient.deleteUser(deleteUserRequest, {}, (err, response) => {
@@ -167,9 +183,10 @@ async function chatServiceExamples() {
   try {
     // 1. Join a room
     console.log("1. Joining chat room...");
-    const joinRoomRequest = new JoinRoomRequest();
-    joinRoomRequest.setRoomId(roomId);
-    joinRoomRequest.setUserId(userId1);
+    const joinRoomRequest = create(JoinRoomRequestSchema, {
+      roomId: roomId,
+      userId: userId1,
+    });
 
     const joinResponse = await new Promise((resolve, reject) => {
       chatClient.joinRoom(joinRoomRequest, {}, (err, response) => {
@@ -191,10 +208,11 @@ async function chatServiceExamples() {
     ];
 
     for (const content of messages) {
-      const sendMessageRequest = new SendMessageRequest();
-      sendMessageRequest.setRoomId(roomId);
-      sendMessageRequest.setUserId(userId1);
-      sendMessageRequest.setContent(content);
+      const sendMessageRequest = create(SendMessageRequestSchema, {
+        roomId: roomId,
+        userId: userId1,
+        content: content,
+      });
 
       const messageResponse = await new Promise((resolve, reject) => {
         chatClient.sendMessage(sendMessageRequest, {}, (err, response) => {
@@ -212,9 +230,10 @@ async function chatServiceExamples() {
 
     // 3. Stream messages
     console.log("\n3. Streaming messages from room...");
-    const streamMessagesRequest = new StreamMessagesRequest();
-    streamMessagesRequest.setRoomId(roomId);
-    streamMessagesRequest.setUserId(userId2);
+    const streamMessagesRequest = create(StreamMessagesRequestSchema, {
+      roomId: roomId,
+      userId: userId2,
+    });
 
     const messageStream = chatClient.streamMessages(streamMessagesRequest, {});
     let messageCount = 0;
@@ -241,10 +260,11 @@ async function chatServiceExamples() {
     // Send another message to see it in the stream
     await new Promise((resolve) => setTimeout(resolve, 1000));
 
-    const liveMessageRequest = new SendMessageRequest();
-    liveMessageRequest.setRoomId(roomId);
-    liveMessageRequest.setUserId(userId2);
-    liveMessageRequest.setContent("This message should appear in the stream!");
+    const liveMessageRequest = create(SendMessageRequestSchema, {
+      roomId: roomId,
+      userId: userId2,
+      content: "This message should appear in the stream!",
+    });
 
     await new Promise((resolve, reject) => {
       chatClient.sendMessage(liveMessageRequest, {}, (err, response) => {

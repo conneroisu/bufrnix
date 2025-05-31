@@ -239,10 +239,12 @@ test_example "go-struct-transformer" \
 #     "src/generated/product_pb.ts" \
 #     "src/generated/user_pb.ts"
 
-# TODO: Fix JavaScript gRPC-Web example
-# test_example "js-grpc-web" \
-#     "src/generated/chat_pb.ts" \
-#     "src/generated/user_pb.ts"
+# Test JavaScript gRPC-Web example
+test_example "js-grpc-web" \
+    "proto/gen/js/user_grpc_web_pb.js" \
+    "proto/gen/js/chat_grpc_web_pb.js" \
+    "proto/gen/js/user_pb.ts" \
+    "proto/gen/js/chat_pb.ts"
 
 # Test JavaScript protovalidate example
 test_example "js-protovalidate" \

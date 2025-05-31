@@ -11,6 +11,7 @@
     "dev": "concurrently \"npm run server\" \"npm run proxy\""
   },
   "dependencies": {
+    "@bufbuild/protobuf": "^2.5.1",
     "@grpc/grpc-js": "^1.9.13",
     "@grpc/proto-loader": "^0.7.10",
     "google-protobuf": "^3.21.2",

@@ -4,7 +4,8 @@
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
     flake-utils.url = "github:numtide/flake-utils";
-    bufrnix.url = "path:../../..";
+    bufrnix.url = "path:../..";
+    bufrnix.inputs.nixpkgs.follows = "nixpkgs";
   };
 
   outputs = {
@@ -15,29 +16,7 @@
   }:
     flake-utils.lib.eachDefaultSystem (system: let
       pkgs = nixpkgs.legacyPackages.${system};
-
-      # Configure bufrnix for JavaScript with gRPC-Web
-      protobufGenerated = bufrnix.lib.mkBufrnixPackage {
-        inherit pkgs;
-
-        config = {
-          name = "js-grpc-web-example";
-          src = ./.;
-
-          # Enable JavaScript with gRPC-Web support
-          languages.js = {
-            enable = true;
-            grpcWeb = {
-              enable = true;
-              importStyle = "typescript";
-              mode = "grpcweb";
-            };
-          };
-        };
-      };
     in {
-      packages.default = protobufGenerated;
-
       devShells.default = pkgs.mkShell {
         buildInputs = with pkgs; [
           nodejs_20
@@ -57,6 +36,37 @@
           echo "Run 'npm run proxy' to start the Envoy proxy"
           echo "Run 'npm run client' to run the client example"
         '';
+      };
+
+      packages = {
+        default = bufrnix.lib.mkBufrnixPackage {
+          inherit pkgs;
+
+          config = {
+            root = ./.;
+            protoc = {
+              sourceDirectories = ["./proto"];
+              includeDirectories = ["./proto"];
+              files = ["./proto/user.proto" "./proto/chat.proto"];
+            };
+            languages.js = {
+              enable = true;
+              outputPath = "proto/gen/js";
+              packageName = "grpc-web-example";
+              # Enable gRPC-Web support
+              grpcWeb = {
+                enable = true;
+                importStyle = "commonjs";
+                mode = "grpcweb";
+              };
+              # Disable ES modules to use traditional protoc-gen-js style
+              # es = {
+              #   enable = true;
+              #   target = "js";
+              # };
+            };
+          };
+        };
       };
     });
 }

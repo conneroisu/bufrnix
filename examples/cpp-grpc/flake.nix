@@ -61,6 +61,7 @@
             protobuf
             grpc
             abseil-cpp
+            openssl
           ];
 
           cmakeFlags = [
@@ -96,6 +97,7 @@
             protobuf
             grpc
             abseil-cpp
+            openssl
           ];
 
           cmakeFlags = [
@@ -155,7 +157,7 @@
 
         packages = {
           inherit server client generated;
-          default = server;
+          default = generated;
         };
 
         apps = {
