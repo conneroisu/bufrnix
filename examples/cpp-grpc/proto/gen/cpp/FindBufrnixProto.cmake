@@ -17,10 +17,10 @@ if(NOT BUFRNIX_PROTO_FOUND)
       set_target_properties(Bufrnix::Protobuf PROPERTIES
         INTERFACE_INCLUDE_DIRECTORIES "${BUFRNIX_PROTO_INCLUDE_DIR}"
         INTERFACE_LINK_LIBRARIES
-          "/nix/store/a682j6yvlpn0ibq99m6b26rvzwzw5da2-protobuf-24.4/lib/libprotobuf.dylib"
-          "/nix/store/s5m41i42ay0liyax3zwn6jn5ygszzq1d-abseil-cpp-20240116.2/lib/libabsl_log_internal_check_op.dylib"
-          "/nix/store/s5m41i42ay0liyax3zwn6jn5ygszzq1d-abseil-cpp-20240116.2/lib/libabsl_log_internal_message.dylib"
-          "/nix/store/s5m41i42ay0liyax3zwn6jn5ygszzq1d-abseil-cpp-20240116.2/lib/libabsl_status.dylib"
+          "/nix/store/2abn91wajq4jxl37dymvsh8hg6xg9kw0-protobuf-24.4/lib/libprotobuf.so"
+          "/nix/store/3j9kmkqjzmv8nzwal713z20qm8pg0ylp-abseil-cpp-20240116.2/lib/libabsl_log_internal_check_op.so"
+          "/nix/store/3j9kmkqjzmv8nzwal713z20qm8pg0ylp-abseil-cpp-20240116.2/lib/libabsl_log_internal_message.so"
+          "/nix/store/3j9kmkqjzmv8nzwal713z20qm8pg0ylp-abseil-cpp-20240116.2/lib/libabsl_status.so"
       )
     endif()
 
@@ -29,7 +29,7 @@ if(EXISTS "${BUFRNIX_PROTO_INCLUDE_DIR}/grpc" AND NOT TARGET Bufrnix::GRPC)
   add_library(Bufrnix::GRPC INTERFACE IMPORTED)
   set_target_properties(Bufrnix::GRPC PROPERTIES
     INTERFACE_INCLUDE_DIRECTORIES "${BUFRNIX_PROTO_INCLUDE_DIR}/grpc"
-    INTERFACE_LINK_LIBRARIES "/nix/store/shnfmjkhfy5n0k7nc7kln7dvi2hi8iw5-grpc-1.62.3/lib/libgrpc++.dylib"
+    INTERFACE_LINK_LIBRARIES "/nix/store/z6b1yvld4q2my3rd07d9awv1cnbc2zhb-grpc-1.62.3/lib/libgrpc++.so"
   )
 endif()
 
