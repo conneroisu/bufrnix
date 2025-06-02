@@ -54,17 +54,21 @@ check_example() {
     fi
     
     if [ "$all_found" = true ]; then
-        echo -e "${GREEN}✓ $example_name structure valid${NC}\n"
-        PASSED_TESTS+=("$example_name")
-        return 0
+        echo -e "  ${YELLOW}Running nix flake check...${NC}"
+        if nix flake check "$example_dir"; then
+            echo -e "${GREEN}✓ $example_name structure valid and flake check passed${NC}\n"
+            PASSED_TESTS+=("$example_name")
+            return 0
+        else
+            echo -e "${RED}✗ $example_name flake check failed${NC}\n"
+            FAILED_TESTS+=("$example_name: flake check failed")
+            return 1
+        fi
     else
         echo -e "${RED}✗ $example_name structure invalid${NC}\n"
         FAILED_TESTS+=("$example_name: invalid structure")
         return 1
     fi
-
-    # Call nix flake check on example
-    nix flake check "$example_dir"
 }
 
 # Check all examples
