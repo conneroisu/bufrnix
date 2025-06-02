@@ -21,8 +21,6 @@
           "aarch64-darwin"
         ]
       );
-
-    # Evaluate the treefmt modules with an inline treefmt config
     treefmtEval = eachSystem (
       system: let
         pkgs = import inputs.nixpkgs {
@@ -32,12 +30,8 @@
       in
         inputs.treefmt-nix.lib.evalModule pkgs {
           projectRootFile = "flake.nix";
-
-          # Format Nix files with alejandra
           programs = {
             alejandra.enable = true;
-
-            # Format Markdown, TypeScript, and JSON files with prettier
             buf.enable = true;
             prettier.enable = true;
             prettier.includes = [
@@ -47,8 +41,6 @@
               "**/*.tsx"
               "**/*.json"
             ];
-
-            # Format YAML files
             yamlfmt.enable = true;
           };
         }
