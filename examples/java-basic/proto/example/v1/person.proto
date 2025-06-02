@@ -1,0 +1,29 @@
+syntax = "proto3";
+
+package example.v1;
+
+option java_package = "com.example.protos.v1";
+option java_outer_classname = "PersonProto";
+option java_multiple_files = true;
+
+message Person {
+  int32 id = 1;
+  string name = 2;
+  string email = 3;
+  repeated PhoneNumber phones = 4;
+  
+  message PhoneNumber {
+    string number = 1;
+    PhoneType type = 2;
+  }
+  
+  enum PhoneType {
+    MOBILE = 0;
+    HOME = 1;
+    WORK = 2;
+  }
+}
+
+message AddressBook {
+  repeated Person people = 1;
+}

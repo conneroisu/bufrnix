@@ -1,0 +1,258 @@
+---
+title: Scala
+description: Generate Scala code from Protocol Buffers using ScalaPB
+sidebar:
+  order: 11
+---
+
+Bufrnix supports generating Scala code from Protocol Buffer definitions using [ScalaPB](https://scalapb.github.io/), a protocol buffer compiler plugin for Scala.
+
+## Basic Configuration
+
+To enable Scala code generation, add the following to your `flake.nix`:
+
+```nix
+protoGen = bufrnix.lib.mkBufrnixPackage {
+  inherit pkgs;
+  
+  config = {
+    root = ./proto;
+    languages = {
+      scala = {
+        enable = true;
+      };
+    };
+  };
+};
+```
+
+## Configuration Options
+
+### Basic Options
+
+| Option | Type | Default | Description |
+|--------|------|---------|-------------|
+| `enable` | boolean | `false` | Enable Scala code generation |
+| `package` | package | `pkgs.scalapb` | The ScalaPB package to use |
+| `outputPath` | string | `"gen/scala"` | Output directory for generated Scala code |
+| `options` | list of strings | `[]` | Options to pass to ScalaPB |
+| `scalaVersion` | string | `"3.3.3"` | Scala version for generated build file |
+| `scalapbVersion` | string | `"1.0.0-alpha.1"` | ScalaPB version |
+| `sbtVersion` | string | `"1.10.5"` | SBT version for generated build file |
+| `sbtProtocVersion` | string | `"1.0.7"` | sbt-protoc plugin version |
+| `projectName` | string | `"generated-protos"` | Project name for generated build file |
+| `projectVersion` | string | `"0.1.0"` | Project version for generated build file |
+| `organization` | string | `"com.example"` | Organization for generated build file |
+| `generateBuildFile` | boolean | `false` | Generate build.sbt file |
+| `generatePackageObject` | boolean | `false` | Generate package objects for proto packages |
+
+### gRPC Support
+
+To enable gRPC code generation:
+
+```nix
+scala = {
+  enable = true;
+  grpc = {
+    enable = true;
+    options = []; # Additional options for gRPC generation
+  };
+};
+```
+
+### JSON Support
+
+To enable JSON serialization support:
+
+```nix
+scala = {
+  enable = true;
+  json = {
+    enable = true;
+    json4sVersion = "0.7.0"; # scalapb-json4s version
+  };
+};
+```
+
+### Validation Support
+
+To enable validation support:
+
+```nix
+scala = {
+  enable = true;
+  validate = {
+    enable = true;
+  };
+};
+```
+
+## ScalaPB Options
+
+You can pass options to ScalaPB using the `options` field:
+
+```nix
+scala = {
+  enable = true;
+  options = [
+    "flat_package"     # Don't append file name to package
+    "java_conversions" # Generate Java conversions
+    "single_line_to_proto_string" # Single line toString
+  ];
+};
+```
+
+Common ScalaPB options:
+- `flat_package` - Don't append file name to package
+- `java_conversions` - Generate converters to/from Java protos
+- `grpc` - Generate gRPC service stubs (also available via `grpc.enable`)
+- `single_line_to_proto_string` - Generate single line toString methods
+- `no_lenses` - Don't generate lenses
+- `retain_source_code_info` - Retain source code info in descriptors
+
+## Generated Build File
+
+When `generateBuildFile` is enabled, bufrnix generates a complete SBT project structure:
+
+```nix
+scala = {
+  enable = true;
+  generateBuildFile = true;
+  projectName = "MyProtoProject";
+  organization = "com.mycompany";
+  scalaVersion = "3.3.3";
+};
+```
+
+This generates:
+- `build.sbt` - Main build file with ScalaPB dependencies
+- `project/plugins.sbt` - SBT plugins including sbt-protoc
+- `project/build.properties` - SBT version configuration
+
+## Example Usage
+
+### Basic Example
+
+```protobuf
+// proto/person.proto
+syntax = "proto3";
+
+package example.v1;
+
+option java_package = "com.example.v1";
+
+message Person {
+  int32 id = 1;
+  string name = 2;
+  string email = 3;
+}
+```
+
+### Scala Code
+
+```scala
+import com.example.v1.person._
+
+// Create a person
+val person = Person(
+  id = 1,
+  name = "John Doe",
+  email = "john@example.com"
+)
+
+// Serialize to bytes
+val bytes = person.toByteArray
+
+// Parse from bytes
+val parsed = Person.parseFrom(bytes)
+
+// Convert to JSON (if json support is enabled)
+import scalapb.json4s.JsonFormat
+val json = JsonFormat.toJsonString(person)
+```
+
+### With gRPC
+
+```protobuf
+// proto/greeter.proto
+syntax = "proto3";
+
+package example.v1;
+
+service Greeter {
+  rpc SayHello (HelloRequest) returns (HelloReply);
+}
+
+message HelloRequest {
+  string name = 1;
+}
+
+message HelloReply {
+  string message = 1;
+}
+```
+
+```scala
+import example.v1.greeter._
+import io.grpc.stub.StreamObserver
+
+// Implement the service
+class GreeterImpl extends GreeterGrpc.Greeter {
+  override def sayHello(
+    request: HelloRequest,
+    responseObserver: StreamObserver[HelloReply]
+  ): Unit = {
+    val reply = HelloReply(
+      message = s"Hello ${request.name}!"
+    )
+    responseObserver.onNext(reply)
+    responseObserver.onCompleted()
+  }
+}
+```
+
+## Development Shell
+
+Include necessary tools in your development shell:
+
+```nix
+devShells.default = pkgs.mkShell {
+  buildInputs = with pkgs; [
+    jdk17        # or jdk21
+    sbt          # Scala build tool
+    scala_3      # or scala_2_13
+    protobuf     # protoc compiler
+  ];
+};
+```
+
+## Tips and Best Practices
+
+1. **Package Names**: Use `option java_package` in your proto files to control the generated package structure
+2. **Case Classes**: ScalaPB generates immutable case classes by default
+3. **Collections**: Repeated fields become `Seq[T]` in Scala
+4. **Optionals**: Proto3 optional fields become `Option[T]` in Scala
+5. **Enums**: Proto enums become sealed traits with companion objects
+6. **Unknown Fields**: ScalaPB preserves unknown fields by default for forward compatibility
+
+## Troubleshooting
+
+### Common Issues
+
+1. **Missing Dependencies**: Ensure your build.sbt includes the ScalaPB runtime:
+   ```scala
+   libraryDependencies += "com.thesamet.scalapb" %% "scalapb-runtime" % scalapb.compiler.Version.scalapbVersion % "protobuf"
+   ```
+
+2. **Import Errors**: Make sure the generated code directory is added to your source paths:
+   ```scala
+   Compile / sourceDirectories += file("gen/scala")
+   ```
+
+3. **Version Conflicts**: Ensure your Scala version matches between ScalaPB and your project
+
+## See Also
+
+- [ScalaPB Documentation](https://scalapb.github.io/)
+- [ScalaPB GitHub](https://github.com/scalapb/ScalaPB)
+- [Protocol Buffers Documentation](https://developers.google.com/protocol-buffers)

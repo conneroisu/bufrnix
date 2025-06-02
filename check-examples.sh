@@ -289,6 +289,10 @@ test_example "svg-example" \
     "proto/gen/svg/example/v1/example.svg" \
     "proto/gen/doc/index.html"
 
+# Test Scala basic example
+test_example "scala-basic" \
+    "gen/scala/com/example/protobuf/v1/person/Person.scala"
+
 # Summary
 echo -e "\n${YELLOW}Test Summary:${NC}"
 echo -e "${GREEN}Passed: ${#PASSED_TESTS[@]}${NC}"
