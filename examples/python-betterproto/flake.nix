@@ -2,7 +2,7 @@
   description = "Python with betterproto example";
 
   inputs = {
-    nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
+    nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
     flake-utils.url = "github:numtide/flake-utils";
     bufrnix.url = "path:../..";
     bufrnix.inputs.nixpkgs.follows = "nixpkgs";

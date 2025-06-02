@@ -62,6 +62,9 @@ check_example() {
         FAILED_TESTS+=("$example_name: invalid structure")
         return 1
     fi
+
+    # Call nix flake check on example
+    nix flake check "$example_dir"
 }
 
 # Check all examples
