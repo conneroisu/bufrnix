@@ -212,3 +212,10 @@ cython_debug/
 CLAUDE.md
 .claude
 .cursor
+
+# ====================
+# GENERATED PROTOCOL BUFFER FILES
+# ====================
+# Generated protobuf output directories
+gen/
+proto/gen/
