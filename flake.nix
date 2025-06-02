@@ -61,8 +61,40 @@
     );
 
     # Add checks
-    checks = eachSystem (system: {
+    checks = eachSystem (system: let
+      pkgs = import inputs.nixpkgs {
+        inherit system;
+        overlays = [];
+      };
+    in {
       # formatting = treefmtEval.${system}.config.build.check inputs.self;
+      
+      check-examples = pkgs.runCommand "check-examples" {
+        src = inputs.self;
+        nativeBuildInputs = with pkgs; [
+          bash
+          coreutils
+          findutils
+          gnugrep
+          gnused
+        ];
+      } ''
+        # Copy source to build directory
+        cp -r $src/* .
+        chmod -R u+w .
+        
+        # The check script expects to be run from repo root
+        export HOME=$TMPDIR
+        
+        # Run the structure check script
+        chmod +x check-examples-nix.sh
+        patchShebangs check-examples-nix.sh
+        ./check-examples-nix.sh
+        
+        # Create output
+        mkdir -p $out
+        echo "Example structure checks passed!" > $out/result.txt
+      '';
     });
 
     devShells = eachSystem (
@@ -112,6 +144,8 @@
               # Add the formatter to the devShell
               treefmtEval.${system}.config.build.wrapper
               git-bug
+              # Python for package update scripts
+              python3
             ]
             ++ builtins.attrValues scriptPackages;
         };

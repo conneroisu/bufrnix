@@ -1,0 +1,26 @@
+syntax = "proto3";
+
+package example.v1;
+
+// Example enum type
+enum ExampleType {
+  EXAMPLE_TYPE_UNSPECIFIED = 0;
+  EXAMPLE_TYPE_BASIC = 1;
+  EXAMPLE_TYPE_ADVANCED = 2;
+}
+
+// Example message
+message Example {
+  string id = 1;
+  string name = 2;
+  int32 value = 3;
+  ExampleType type = 4;
+  repeated string tags = 5;
+}
+
+// Nested example message with map
+message NestedExample {
+  Example example = 1;
+  map<string, string> metadata = 2;
+  bytes data = 3;
+}

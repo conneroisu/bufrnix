@@ -24,6 +24,7 @@
 #include <grpcpp/support/status.h>
 #include <grpcpp/support/stub_options.h>
 #include <grpcpp/support/sync_stream.h>
+#include <grpcpp/ports_def.inc>
 
 namespace example {
 namespace v1 {
@@ -668,4 +669,5 @@ class GreeterService final {
 }  // namespace example
 
 
+#include <grpcpp/ports_undef.inc>
 #endif  // GRPC_example_2fv1_2fgreeter_2eproto__INCLUDED

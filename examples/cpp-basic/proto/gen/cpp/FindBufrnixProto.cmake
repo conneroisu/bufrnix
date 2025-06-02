@@ -17,10 +17,10 @@ if(NOT BUFRNIX_PROTO_FOUND)
       set_target_properties(Bufrnix::Protobuf PROPERTIES
         INTERFACE_INCLUDE_DIRECTORIES "${BUFRNIX_PROTO_INCLUDE_DIR}"
         INTERFACE_LINK_LIBRARIES
-          "/nix/store/2abn91wajq4jxl37dymvsh8hg6xg9kw0-protobuf-24.4/lib/libprotobuf.so"
-          "/nix/store/3j9kmkqjzmv8nzwal713z20qm8pg0ylp-abseil-cpp-20240116.2/lib/libabsl_log_internal_check_op.so"
-          "/nix/store/3j9kmkqjzmv8nzwal713z20qm8pg0ylp-abseil-cpp-20240116.2/lib/libabsl_log_internal_message.so"
-          "/nix/store/3j9kmkqjzmv8nzwal713z20qm8pg0ylp-abseil-cpp-20240116.2/lib/libabsl_status.so"
+          "/nix/store/88ma4lbybcpdg0z8745nw9mvj5anb7mq-protobuf-30.2/lib/libprotobuf.so"
+          "/nix/store/afacgi173j35xdc3rih1i2iadx8k68vr-abseil-cpp-20250127.1/lib/libabsl_log_internal_check_op.so"
+          "/nix/store/afacgi173j35xdc3rih1i2iadx8k68vr-abseil-cpp-20250127.1/lib/libabsl_log_internal_message.so"
+          "/nix/store/afacgi173j35xdc3rih1i2iadx8k68vr-abseil-cpp-20250127.1/lib/libabsl_status.so"
       )
     endif()
 

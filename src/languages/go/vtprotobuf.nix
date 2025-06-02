@@ -15,7 +15,7 @@ with lib; let
 in {
   # Runtime dependencies for vtprotobuf
   runtimeInputs = optionals enabled [
-    cfg.package or (pkgs.callPackage ../../packages/protoc-gen-go-vtproto.nix {})
+    cfg.package or (pkgs.callPackage ../../packages/protoc-gen-go-vtproto {})
   ];
 
   # Protoc plugin configuration for vtprotobuf
