@@ -2,7 +2,7 @@
   description = "Basic C++ Protobuf example using Bufrnix";
 
   inputs = {
-    nixpkgs.url = "github:NixOS/nixpkgs/nixos-24.05";
+    nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
     flake-utils.url = "github:numtide/flake-utils";
     bufrnix.url = "path:../..";
   };

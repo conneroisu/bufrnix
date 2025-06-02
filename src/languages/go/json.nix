@@ -15,7 +15,7 @@ with lib; let
 in {
   # Runtime dependencies for go-json
   runtimeInputs = optionals enabled [
-    cfg.package or (pkgs.callPackage ../../packages/protoc-gen-go-json.nix {})
+    cfg.package or (pkgs.callPackage ../../packages/protoc-gen-go-json {})
   ];
 
   # Protoc plugin configuration for go-json

@@ -21,6 +21,5 @@ pkgs.buildGoModule rec {
     description = "A protocol buffer compiler plugin that generates Go code with vtprotobuf optimizations";
     homepage = "https://github.com/planetscale/vtprotobuf";
     license = licenses.bsd3;
-    maintainers = with maintainers; [];
   };
 }

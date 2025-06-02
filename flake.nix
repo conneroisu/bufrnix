@@ -21,8 +21,6 @@
           "aarch64-darwin"
         ]
       );
-
-    # Evaluate the treefmt modules with an inline treefmt config
     treefmtEval = eachSystem (
       system: let
         pkgs = import inputs.nixpkgs {
@@ -32,12 +30,8 @@
       in
         inputs.treefmt-nix.lib.evalModule pkgs {
           projectRootFile = "flake.nix";
-
-          # Format Nix files with alejandra
           programs = {
             alejandra.enable = true;
-
-            # Format Markdown, TypeScript, and JSON files with prettier
             buf.enable = true;
             prettier.enable = true;
             prettier.includes = [
@@ -47,8 +41,6 @@
               "**/*.tsx"
               "**/*.json"
             ];
-
-            # Format YAML files
             yamlfmt.enable = true;
           };
         }
@@ -61,9 +53,16 @@
     );
 
     # Add checks
-    checks = eachSystem (system: {
-      # formatting = treefmtEval.${system}.config.build.check inputs.self;
-    });
+    checks = eachSystem (system:
+      # let
+      # pkgs = import inputs.nixpkgs {
+      #   inherit system;
+      #   overlays = [];
+      # };
+      # in
+      {
+        # formatting = treefmtEval.${system}.config.build.check inputs.self;
+      });
 
     devShells = eachSystem (
       system: let
@@ -112,6 +111,8 @@
               # Add the formatter to the devShell
               treefmtEval.${system}.config.build.wrapper
               git-bug
+              # Python for package update scripts
+              python3
             ]
             ++ builtins.attrValues scriptPackages;
         };
