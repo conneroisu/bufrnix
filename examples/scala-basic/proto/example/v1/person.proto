@@ -1,0 +1,55 @@
+syntax = "proto3";
+
+package example.v1;
+
+option java_package = "com.example.protobuf.v1";
+option java_outer_classname = "PersonProto";
+
+// Person represents an individual with contact information
+message Person {
+  // Unique identifier for the person
+  int32 id = 1;
+  
+  // Person's full name
+  string name = 2;
+  
+  // Email address (optional)
+  string email = 3;
+  
+  // Phone numbers associated with the person
+  repeated PhoneNumber phones = 4;
+  
+  // Person's address (optional)
+  Address address = 5;
+}
+
+// PhoneNumber represents a phone number with its type
+message PhoneNumber {
+  // The phone number
+  string number = 1;
+  
+  // Type of phone number
+  PhoneType type = 2;
+}
+
+// PhoneType represents the type of a phone number
+enum PhoneType {
+  PHONE_TYPE_UNSPECIFIED = 0;
+  PHONE_TYPE_MOBILE = 1;
+  PHONE_TYPE_HOME = 2;
+  PHONE_TYPE_WORK = 3;
+}
+
+// Address represents a physical address
+message Address {
+  string street = 1;
+  string city = 2;
+  string state = 3;
+  string zip = 4;
+  string country = 5;
+}
+
+// AddressBook is a collection of people
+message AddressBook {
+  repeated Person people = 1;
+}

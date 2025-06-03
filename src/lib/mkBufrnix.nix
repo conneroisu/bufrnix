@@ -78,6 +78,12 @@ with pkgs.lib; let
       csharp = {
         sdk = pkgs.dotnetCorePackages.sdk_8_0;
       };
+      java = {
+        package = pkgs.protobuf;
+        jdk = pkgs.jdk17;
+        grpc.package = pkgs.callPackage ../packages/grpc-java {};
+        protovalidate.package = pkgs.callPackage ../packages/protoc-gen-validate-java {};
+      };
       kotlin = {
         jdk = pkgs.jdk17;
       };
@@ -89,6 +95,9 @@ with pkgs.lib; let
       };
       svg = {
         package = pkgs.protoc-gen-d2 or null; # Will need to be provided by user until in nixpkgs
+      };
+      scala = {
+        package = pkgs.callPackage ../packages/scalapb {};
       };
     };
   };

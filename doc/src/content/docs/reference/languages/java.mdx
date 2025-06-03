@@ -1,0 +1,259 @@
+---
+title: Java
+description: Java code generation with Protocol Buffers and gRPC
+---
+
+import { Tabs, TabItem } from '@astrojs/starlight/components';
+
+Java is a popular enterprise programming language with excellent Protocol Buffers and gRPC support. Bufrnix provides comprehensive Java code generation using Google's official generators and runtime libraries.
+
+## Quick Start
+
+<Tabs>
+<TabItem label="Basic Protobuf">
+
+```nix
+{
+  languages.java = {
+    enable = true;
+    outputPath = "gen/java";
+  };
+}
+```
+
+</TabItem>
+<TabItem label="With gRPC">
+
+```nix
+{
+  languages.java = {
+    enable = true;
+    outputPath = "gen/java";
+    grpc.enable = true;
+  };
+}
+```
+
+</TabItem>
+<TabItem label="With Validation">
+
+```nix
+{
+  languages.java = {
+    enable = true;
+    outputPath = "gen/java";
+    protovalidate.enable = true;
+  };
+}
+```
+
+</TabItem>
+</Tabs>
+
+## Generators
+
+Bufrnix supports all three major Java protobuf generators:
+
+| Generator | Purpose | Plugin |
+|-----------|---------|---------|
+| **protocolbuffers/java** | Base types for Java messages and enums | Built-in to protoc |
+| **grpc/java** | Java client and server stubs for gRPC | `protoc-gen-grpc-java` |
+| **bufbuild/validate-java** | Runtime validation using CEL expressions | protovalidate-java library |
+
+## Configuration
+
+### Basic Options
+
+```nix
+{
+  languages.java = {
+    enable = true;
+    
+    # Output directory for generated Java files
+    outputPath = "gen/java";
+    
+    # Java package to use (defaults to proto package)
+    packageName = "com.example.protos";
+    
+    # JDK version to use
+    jdk = pkgs.jdk17;
+    
+    # Additional options for protoc
+    options = [];
+  };
+}
+```
+
+### gRPC Support
+
+```nix
+{
+  languages.java.grpc = {
+    enable = true;
+    
+    # gRPC Java package
+    package = pkgs.grpc-java;
+    
+    # Additional gRPC generation options
+    options = [];
+  };
+}
+```
+
+### Validation Support
+
+```nix
+{
+  languages.java.protovalidate = {
+    enable = true;
+    
+    # Protovalidate package (runtime validation)
+    package = pkgs.protoc-gen-validate-java;
+    
+    # Additional validation options
+    options = [];
+  };
+}
+```
+
+## Generated Code Structure
+
+When you run `nix run .#generate`, bufrnix creates:
+
+```
+gen/java/
+├── com/example/protos/v1/          # Generated Java classes
+│   ├── Person.java                 # Message class
+│   ├── PersonOrBuilder.java        # Interface
+│   └── PersonProto.java           # File-level class
+├── build.gradle                   # Gradle build file
+├── pom.xml                        # Maven build file
+└── PROTOVALIDATE_README.txt      # Validation setup (if enabled)
+```
+
+## Examples
+
+### Basic Message Usage
+
+```java
+// Create a person message
+Person person = Person.newBuilder()
+    .setId(1)
+    .setName("John Doe")
+    .setEmail("john.doe@example.com")
+    .build();
+
+// Serialize to bytes
+byte[] data = person.toByteArray();
+
+// Parse from bytes
+Person parsed = Person.parseFrom(data);
+```
+
+### gRPC Service Implementation
+
+```java
+public class GreeterImpl extends GreeterServiceGrpc.GreeterServiceImplBase {
+    @Override
+    public void sayHello(HelloRequest request, 
+                        StreamObserver<HelloResponse> responseObserver) {
+        HelloResponse response = HelloResponse.newBuilder()
+            .setMessage("Hello " + request.getName())
+            .build();
+        responseObserver.onNext(response);
+        responseObserver.onCompleted();
+    }
+}
+```
+
+### Validation with Protovalidate
+
+```java
+// Create validator
+Validator validator = new Validator();
+
+// Validate a message
+try {
+    validator.validate(user);
+    System.out.println("User is valid!");
+} catch (ValidationException e) {
+    System.out.println("Validation failed:");
+    e.getViolations().forEach(violation -> 
+        System.out.println("- " + violation.getFieldPath() + ": " + violation.getMessage())
+    );
+}
+```
+
+## Build Integration
+
+### Gradle
+
+The generated `build.gradle` includes all necessary dependencies:
+
+```gradle
+dependencies {
+    implementation 'com.google.protobuf:protobuf-java:3.25.1'
+    implementation 'io.grpc:grpc-stub:1.60.0'              // if gRPC enabled
+    implementation 'io.grpc:grpc-protobuf:1.60.0'          // if gRPC enabled
+    implementation 'io.grpc:grpc-netty-shaded:1.60.0'      // if gRPC enabled
+    implementation 'build.buf:protovalidate:0.1.8'         // if validation enabled
+}
+```
+
+### Maven
+
+The generated `pom.xml` provides equivalent Maven dependencies:
+
+```xml
+<dependency>
+    <groupId>com.google.protobuf</groupId>
+    <artifactId>protobuf-java</artifactId>
+    <version>3.25.1</version>
+</dependency>
+```
+
+## Features
+
+### Core Protobuf Features
+- **Type Safety**: Strongly typed message classes with builders
+- **Performance**: Efficient binary serialization
+- **Immutability**: Generated classes are immutable
+- **Reflection**: Full descriptor and reflection support
+- **JSON Support**: Optional JSON serialization (with additional dependencies)
+
+### gRPC Features
+- **Service Stubs**: Blocking, async, and future-based clients
+- **Server Implementation**: Base classes for service implementation
+- **Streaming**: Support for all four gRPC streaming patterns
+- **Error Handling**: Rich status and error handling
+- **Interceptors**: Client and server interceptor support
+
+### Validation Features
+- **Runtime Validation**: CEL-based validation expressions
+- **Field Constraints**: String length, numeric ranges, patterns
+- **Message Validation**: Cross-field validation logic
+- **Collection Rules**: Min/max items, uniqueness constraints
+- **Custom Rules**: Complex business logic with CEL
+
+## Best Practices
+
+1. **Use Java 17+**: Modern Java features improve code quality
+2. **Builder Pattern**: Always use builders for message construction
+3. **Null Safety**: Messages are never null, but optional fields may be unset
+4. **Performance**: Reuse builder instances when creating many messages
+5. **Error Handling**: Always handle parsing and validation exceptions
+6. **Thread Safety**: Generated classes are thread-safe (immutable)
+
+## Examples
+
+- [java-basic](https://github.com/conneroisu/bufrnix/tree/main/examples/java-basic) - Basic protobuf usage
+- [java-grpc](https://github.com/conneroisu/bufrnix/tree/main/examples/java-grpc) - gRPC client and server
+- [java-protovalidate](https://github.com/conneroisu/bufrnix/tree/main/examples/java-protovalidate) - Runtime validation
+
+## Dependencies
+
+Java code generation requires:
+- **JDK 17+**: For building and running Java code
+- **Protocol Buffers**: Core protobuf runtime
+- **gRPC Java** (optional): For gRPC functionality
+- **Protovalidate Java** (optional): For validation support
