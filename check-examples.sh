@@ -293,6 +293,38 @@ test_example "svg-example" \
 test_example "scala-basic" \
     "gen/scala/com/example/protobuf/v1/person/Person.scala"
 
+# Test Java basic example
+test_example "java-basic" \
+    "gen/java/com/example/protos/v1/Person.java" \
+    "gen/java/com/example/protos/v1/PersonOrBuilder.java" \
+    "gen/java/com/example/protos/v1/PersonProto.java" \
+    "gen/java/com/example/protos/v1/AddressBook.java" \
+    "gen/java/com/example/protos/v1/AddressBookOrBuilder.java" \
+    "gen/java/build.gradle" \
+    "gen/java/pom.xml"
+
+# Test Java gRPC example
+test_example "java-grpc" \
+    "gen/java/com/example/grpc/v1/HelloRequest.java" \
+    "gen/java/com/example/grpc/v1/HelloRequestOrBuilder.java" \
+    "gen/java/com/example/grpc/v1/HelloResponse.java" \
+    "gen/java/com/example/grpc/v1/HelloResponseOrBuilder.java" \
+    "gen/java/com/example/grpc/v1/GreeterProto.java" \
+    "gen/java/com/example/grpc/v1/GreeterServiceGrpc.java" \
+    "gen/java/build.gradle" \
+    "gen/java/pom.xml"
+
+# Test Java protovalidate example  
+test_example "java-protovalidate" \
+    "gen/java/com/example/protos/v1/User.java" \
+    "gen/java/com/example/protos/v1/UserProfile.java" \
+    "gen/java/com/example/protos/v1/CreateUserRequest.java" \
+    "gen/java/com/example/protos/v1/CreateUserResponse.java" \
+    "gen/java/com/example/protos/v1/ValidateUserRequest.java" \
+    "gen/java/com/example/protos/v1/ValidateUserResponse.java" \
+    "gen/java/build.gradle" \
+    "gen/java/pom.xml"
+
 # Summary
 echo -e "\n${YELLOW}Test Summary:${NC}"
 echo -e "${GREEN}Passed: ${#PASSED_TESTS[@]}${NC}"

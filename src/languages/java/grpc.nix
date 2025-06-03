@@ -1,33 +1,22 @@
-{ pkgs, lib, config, cfg, ... }:
-
+{pkgs, lib, cfg, ...}:
 with lib;
-
-let
-  grpcCfg = cfg.grpc;
-  javaOutputPath = cfg.outputPath or "gen/java";
-  
-  # Build the gRPC-specific protoc arguments
-  grpcArgs = concatStringsSep ":" grpcCfg.options;
-  
-  grpcPlugin = "--grpc-java_out=${javaOutputPath}";
-  fullGrpcPlugin = if grpcArgs != "" then "${grpcPlugin}:${grpcArgs}" else grpcPlugin;
-in
-if grpcCfg.enable then {
+if cfg.enable then {
   # Runtime dependencies
-  runtimeInputs = [ grpcCfg.package cfg.jdk ];
+  runtimeInputs = [ cfg.package ];
   
   # Protoc plugins configuration
   protocPlugins = [
-    {
-      name = "grpc-java";
-      plugin = "${grpcCfg.package}/bin/protoc-gen-grpc-java";
-      flags = [ "--plugin=protoc-gen-grpc-java=${grpcCfg.package}/bin/protoc-gen-grpc-java" fullGrpcPlugin ];
-    }
-  ];
+    "--grpc-java_out=${cfg.outputPath}"
+    "--plugin=protoc-gen-grpc-java=${cfg.package}/bin/protoc-gen-grpc-java"
+  ] ++ (optionals (cfg.options != []) ["--grpc-java_opt=${concatStringsSep " --grpc-java_opt=" cfg.options}"]);
   
-  # Additional build steps
-  postBuild = ''
-    # Ensure output directory exists
-    mkdir -p ${javaOutputPath}
+  # Additional initialization steps
+  initHooks = ''
+    # Ensure gRPC output directory exists
+    mkdir -p "${cfg.outputPath}"
   '';
-} else {}
+} else {
+  runtimeInputs = [];
+  protocPlugins = [];
+  initHooks = "";
+}
