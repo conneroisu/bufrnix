@@ -31,7 +31,7 @@ with lib; let
 
   # Build Gradle dependencies section
   gradleDependencies = ''
-    implementation 'com.google.protobuf:protobuf-java:3.25.1'
+    implementation 'com.google.protobuf:protobuf-java:3.21.12'
   '' + optionalString (cfg.grpc.enable or false) ''
     implementation 'io.grpc:grpc-stub:1.60.0'
     implementation 'io.grpc:grpc-protobuf:1.60.0'
@@ -81,7 +81,7 @@ with lib; let
   mavenProperties = ''
         <maven.compiler.source>17</maven.compiler.source>
         <maven.compiler.target>17</maven.compiler.target>
-        <protobuf.version>3.25.1</protobuf.version>
+        <protobuf.version>3.21.12</protobuf.version>
   '' + optionalString (cfg.grpc.enable or false) ''
         <grpc.version>1.60.0</grpc.version>
   '' + optionalString (cfg.protovalidate.enable or false) ''
