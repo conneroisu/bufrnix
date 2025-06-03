@@ -3,9 +3,9 @@ title: Python Language Support
 description: Comprehensive Protocol Buffer support for Python with gRPC, type stubs, and modern dataclass alternatives.
 ---
 
-import { Tabs, TabItem } from "@astrojs/starlight/components";
+import { Tabs, TabItem, FileTree } from "@astrojs/starlight/components";
 import { Code } from "astro:components";
-import betterprotoConfig from "./python-betterproto-configuration.nix?raw";
+import betterprotoConfig from "./python.x-betterproto-configuration.nix?raw";
 
 **Status**: ✅ Full Support  
 **Example**: [`examples/python-example/`](https://github.com/conneroisu/bufr.nix/tree/main/examples/python-example)
@@ -418,18 +418,18 @@ async def test_grpc_service():
 
 ## Package Structure
 
-```
-proto/
-└── gen/
-    └── python/
-        └── example/
-            └── v1/
-                ├── __init__.py
-                ├── example_pb2.py
-                ├── example_pb2.pyi      # If pyi enabled
-                ├── example_pb2_grpc.py
-                └── example_pb2_grpc.pyi # If mypy enabled
-```
+<FileTree>
+- proto/
+	- gen/
+		- python/
+			- example/
+				- v1/
+					- \_\_init\_\_.py
+					- example_pb2.py
+					- example_pb2.pyi If pyi/mypy enabled
+					- example_pb2_grpc.py
+					- example_pb2_grpc.pyi If pyi/mypy enabled
+</FileTree>
 
 ## Performance Considerations
 

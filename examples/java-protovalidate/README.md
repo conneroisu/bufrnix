@@ -1,84 +1,121 @@
 # Java Protovalidate Example
 
-This example demonstrates Java validation using bufrnix with the `bufbuild/validate-java` approach via the protovalidate-java runtime library.
+This example demonstrates Java validation using bufrnix with the `bufbuild/protovalidate-java` runtime library for protocol buffer validation.
 
 ## Features
 
-- Runtime validation using CEL (Common Expression Language) expressions
-- Comprehensive field validation rules (string length, patterns, numeric ranges, etc.)
-- Message-level validation with custom logic
-- Collection validation (min/max items, uniqueness)
-- Type-safe validation with detailed error reporting
+- **Declarative validation**: Validation rules defined directly in .proto files using buf.validate constraints
+- **Runtime validation**: CEL (Common Expression Language) expressions for complex validation logic
+- **Comprehensive field validation**: String length, patterns, numeric ranges, collection constraints
+- **Message-level validation**: Custom business logic validation with CEL expressions
+- **Type-safe validation**: Detailed error reporting with field paths and violation messages
 
 ## Validation Rules Demonstrated
 
-This example showcases various validation constraints:
+This example showcases various validation constraints defined in the proto file:
 
 ### Field-Level Validations
-- **Numeric ranges**: Age between 0-150, Score 0.0-100.0
-- **String constraints**: Name length 1-50 characters
-- **Pattern matching**: Email and phone number regex validation
-- **Collection rules**: Phone numbers 1-3 items, unique values
+- **ID validation**: Must be greater than 0
+- **String constraints**: Name length 1-50 characters, email pattern validation
+- **Numeric ranges**: Age between 0-150, Score 0.0-100.0  
+- **Collection rules**: Phone numbers 1-3 items with uniqueness constraint
+- **Optional field validation**: Website URL pattern validation
 
 ### Message-Level Validations
 - **Custom CEL expressions**: UserProfile requires either bio OR website
-- **Cross-field validation**: Complex business logic validation
+- **Cross-field validation**: Complex business logic validation using CEL
 
-## Generated Code
+## Architecture
 
-The `bufbuild/validate-java` approach uses:
-- Standard Java protobuf classes from `protocolbuffers/java`
-- Runtime validation with the `protovalidate-java` library
-- CEL expression evaluation for complex validations
-- Detailed violation reporting with field paths
+This example uses bufrnix to generate:
+- Standard Java protobuf classes with validation annotations
+- Gradle build configuration with protovalidate-java dependency
+- Maven POM.xml as an alternative build option
+
+The validation approach:
+- **Code generation**: bufrnix generates standard Java protobuf classes
+- **Runtime validation**: `protovalidate-java` library validates messages at runtime
+- **CEL expressions**: Complex validation logic using Common Expression Language
 
 ## Quick Start
 
-1. **Generate the protobuf code:**
+1. **Generate the protobuf code using bufrnix:**
    ```bash
-   nix run .#generate
+   nix build
+   ./result/bin/bufrnix
    ```
 
-2. **Build and run the validation example:**
+2. **Enter development environment and build:**
    ```bash
    nix develop
    cd gen/java
    gradle build
+   ```
+
+3. **Run the example:**
+   ```bash
    gradle run
    ```
+
+## Current Status
+
+✅ **Working**: Bufrnix successfully generates Java protobuf classes with validation constraints
+✅ **Working**: Generated Gradle and Maven build configurations with protovalidate dependencies  
+✅ **Working**: Basic protobuf message creation and usage
+
+⚠️ **Known Issue**: Runtime validation has compatibility issues between generated code and protovalidate-java library versions. The basic protobuf functionality works perfectly, but actual constraint validation encounters method signature mismatches.
+
+This example demonstrates that bufrnix properly:
+- Generates Java classes from .proto files with buf.validate constraints
+- Creates proper build configurations with the correct dependencies
+- Produces working protobuf message builders and accessors
 
 ## Validation Library
 
 This example uses the `protovalidate-java` runtime library which provides:
-- `Validator` class for validating protobuf messages
-- `ValidationException` with detailed violation information
-- Support for all standard constraint types
-- CEL expression evaluation for custom rules
+- `Validator` class for validating protobuf messages against buf.validate constraints
+- `ValidationException` with detailed violation information including field paths
+- Support for all standard constraint types (string, numeric, repeated, etc.)
+- CEL expression evaluation for complex custom validation rules
 
 ## Example Output
 
 The validation example tests various scenarios:
 - ✅ Valid user with all constraints satisfied
-- ❌ Invalid users with specific constraint violations
-- Detailed error messages showing which fields failed validation
+- ❌ Invalid users with specific constraint violations:
+  - Empty name (string.min_len violation)
+  - Invalid email format (string.pattern violation) 
+  - Age out of range (int32.lte violation)
+  - Too many phone numbers (repeated.max_items violation)
+  - Duplicate phone numbers (repeated.unique violation)
+  - Profile missing bio and website (message CEL violation)
+
+## Generated Files
+
+Bufrnix generates the following in `gen/java/`:
+- **Java protobuf classes**: Standard protobuf message classes
+- **build.gradle**: Gradle build configuration with protovalidate dependency
+- **pom.xml**: Maven alternative build configuration
+- **PROTOVALIDATE_README.txt**: Documentation about runtime dependencies
 
 ## Dependencies
 
-The generated build files include:
-- `com.google.protobuf:protobuf-java` - Protocol Buffers runtime
-- `build.buf:protovalidate` - Protovalidate Java runtime library
+The generated build files automatically include:
+- `com.google.protobuf:protobuf-java:4.30.2` - Protocol Buffers runtime
+- `build.buf:protovalidate:0.1.8` - Protovalidate Java runtime library
 
 ## Constraint Types
 
 The example demonstrates these validation constraint types:
-- **String**: `min_len`, `max_len`, `pattern`
-- **Numeric**: `gt`, `gte`, `lt`, `lte`, `const`, `in`, `not_in`
-- **Repeated**: `min_items`, `max_items`, `unique`
-- **Custom**: CEL expressions for complex business logic
+- **String**: `min_len`, `max_len`, `pattern` (regex validation)
+- **Numeric**: `gt`, `gte`, `lt`, `lte` for range validation
+- **Repeated**: `min_items`, `max_items`, `unique` for collection validation
+- **Message**: CEL expressions for complex cross-field business logic
 
 ## Best Practices
 
-1. **Fail fast**: Validate messages at service boundaries
-2. **Clear messages**: Use descriptive constraint violation messages
-3. **Performance**: Validator instances can be reused safely
-4. **Error handling**: Always catch and handle `ValidationException`
+1. **Validation at boundaries**: Validate messages when they enter your system
+2. **Clear constraint messages**: Use descriptive validation error messages
+3. **Performance**: Validator instances are thread-safe and can be reused
+4. **Error handling**: Always catch and handle `ValidationException` appropriately
+5. **Proto organization**: Keep validation constraints close to field definitions

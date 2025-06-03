@@ -4,6 +4,7 @@ import starlight from '@astrojs/starlight';
 
 // https://astro.build/config
 export default defineConfig({
+  prefetch: true,
   site: 'https://conneroisu.github.io',
   base: 'bufrnix',
   integrations: [
@@ -42,7 +43,9 @@ export default defineConfig({
             { label: 'C# Support', link: '/reference/languages/csharp/' },
             { label: 'Go Support', link: '/reference/languages/go/' },
             { label: 'JavaScript Support', link: '/reference/languages/javascript/' },
+            { label: 'Java Support', link: '/reference/languages/java/' },
             { label: 'Kotlin Support', link: '/reference/languages/kotlin/' },
+            { label: 'Scala Support', link: '/reference/languages/scala/' },
             { label: 'PHP Support', link: '/reference/languages/php/' },
             { label: 'Python Support', link: '/reference/languages/python/' },
             { label: 'Swift Support', link: '/reference/languages/swift/' },

@@ -31,14 +31,14 @@ with lib; let
 
   # Build Gradle dependencies section
   gradleDependencies = ''
-    implementation 'com.google.protobuf:protobuf-java:3.21.12'
+    implementation 'com.google.protobuf:protobuf-java:4.31.1'
   '' + optionalString (cfg.grpc.enable or false) ''
     implementation 'io.grpc:grpc-stub:1.60.0'
     implementation 'io.grpc:grpc-protobuf:1.60.0'
     implementation 'io.grpc:grpc-netty-shaded:1.60.0'
     implementation 'javax.annotation:javax.annotation-api:1.3.2'
   '' + optionalString (cfg.protovalidate.enable or false) ''
-    implementation 'build.buf:protovalidate:0.1.8'
+    implementation 'build.buf:protovalidate:0.9.0'
   '';
 
   # Build Maven dependencies section
@@ -81,11 +81,11 @@ with lib; let
   mavenProperties = ''
         <maven.compiler.source>17</maven.compiler.source>
         <maven.compiler.target>17</maven.compiler.target>
-        <protobuf.version>3.21.12</protobuf.version>
+        <protobuf.version>4.31.1</protobuf.version>
   '' + optionalString (cfg.grpc.enable or false) ''
         <grpc.version>1.60.0</grpc.version>
   '' + optionalString (cfg.protovalidate.enable or false) ''
-        <protovalidate.version>0.1.8</protovalidate.version>
+        <protovalidate.version>0.9.0</protovalidate.version>
   '';
 
   # Combine all sub-modules
@@ -132,9 +132,8 @@ dependencies {
 ${gradleDependencies}}
 
 java {
-    toolchain {
-        languageVersion = JavaLanguageVersion.of(17)
-    }
+    sourceCompatibility = JavaVersion.VERSION_17
+    targetCompatibility = JavaVersion.VERSION_17
 }
 GRADLE_EOF
       

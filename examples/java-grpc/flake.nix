@@ -22,7 +22,7 @@
           pkgs.gradle
           pkgs.maven
           pkgs.jdk17
-          pkgs.protobuf3_21
+          pkgs.protobuf_21
         ];
         shellHook = ''
           echo "Java gRPC Example"
@@ -45,7 +45,7 @@
             };
             languages.java = {
               enable = true;
-              package = pkgs.protobuf3_21;
+              package = pkgs.protobuf_21;
               jdk = pkgs.jdk17;
               outputPath = "gen/java";
               options = [];

@@ -1,10 +1,10 @@
 {
-  description = "PHP gRPC with RoadRunner example using Bufrnix";
+  description = "PHP gRPC with RoadRunner Generation using Bufrnix";
 
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
     flake-utils.url = "github:numtide/flake-utils";
-    bufrnix.url = "path:../..";
+    bufrnix.url = "github:conneroisu/bufrnix";
     bufrnix.inputs.nixpkgs.follows = "nixpkgs";
   };
 
@@ -72,35 +72,6 @@
           php82Packages.psalm
           php82Packages.php-cs-fixer
         ];
-
-        shellHook = ''
-          echo "🚀 PHP gRPC + RoadRunner Development Environment"
-          echo "================================================"
-          echo ""
-          echo "Available commands:"
-          echo "  buf generate    - Generate PHP code from proto files"
-          echo "  buf lint        - Lint proto files"
-          echo "  buf breaking    - Check for breaking changes"
-          echo ""
-          echo "PHP/Composer commands:"
-          echo "  composer install          - Install dependencies"
-          echo "  composer dump-autoload    - Regenerate autoloader"
-          echo ""
-          echo "RoadRunner commands:"
-          echo "  ./roadrunner-dev.sh start   - Start RoadRunner server"
-          echo "  ./roadrunner-dev.sh debug   - Start in debug mode"
-          echo "  ./roadrunner-dev.sh workers - Check worker status"
-          echo ""
-          echo "Testing:"
-          echo "  php test-client.php      - Run test client"
-          echo "  php test-async.php       - Run async examples"
-          echo ""
-
-          # Initialize project structure
-          mkdir -p proto/example/v1
-          mkdir -p src/Services
-          mkdir -p tests
-        '';
       };
     });
 }
