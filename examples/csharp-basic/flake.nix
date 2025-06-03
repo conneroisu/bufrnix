@@ -2,6 +2,7 @@
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
     flake-utils.url = "github:numtide/flake-utils";
+    # bufrnix.url = "github:conneroisu/bufrnix";
     bufrnix = {
       url = "path:../..";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -43,7 +44,7 @@
           src = ./.;
 
           projectFile = "CSharpExample.csproj";
-          nugetDeps = ./deps.nix;
+          nugetDeps = ./deps.json;
 
           dotnet-sdk = pkgs.dotnetCorePackages.sdk_8_0;
           dotnet-runtime = pkgs.dotnetCorePackages.runtime_8_0;
@@ -61,17 +62,17 @@
         };
 
         devShells.default = pkgs.mkShell {
-          buildInputs = with pkgs; [
+packages = with pkgs; [
             dotnetCorePackages.sdk_8_0
             protobuf
             grpc
+            nuget-to-json
           ];
 
           shellHook = ''
             echo "C# Proto Example Development Shell"
-            echo "Run 'nix build .#proto' to generate proto code"
-            echo "Run 'nix build' to build the application"
-            echo "Run 'dotnet run' to run the application"
+            echo "Run 'nix run' to generate proto code"
+            echo "Run 'nix run .#app' or 'dotnet run' to run the application"
           '';
         };
       }
