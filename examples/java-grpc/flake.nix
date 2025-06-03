@@ -2,261 +2,60 @@
   description = "Java gRPC example with bufrnix";
 
   inputs = {
-    nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
+    nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
+    flake-utils.url = "github:numtide/flake-utils";
     bufrnix.url = "path:../..";
+    bufrnix.inputs.nixpkgs.follows = "nixpkgs";
   };
 
-  outputs = { nixpkgs, bufrnix, ... }:
-    let
-      allSystems = [ "x86_64-linux" "aarch64-linux" "x86_64-darwin" "aarch64-darwin" ];
-      forAllSystems = f: nixpkgs.lib.genAttrs allSystems (system: f {
-        inherit system;
-        pkgs = nixpkgs.legacyPackages.${system};
-      });
-      
-    in 
-    {
-      devShells = forAllSystems ({ system, pkgs }: {
-        default = pkgs.mkShell {
-          buildInputs = [
-            pkgs.gradle
-            pkgs.maven
-            pkgs.jdk17
-            pkgs.protobuf
-          ];
-          
-          shellHook = ''
-            echo "Java gRPC Example"
-            echo "Available commands:"
-            echo "  nix run .#generate - Generate Java protobuf + gRPC code"
-            echo "  gradle build - Build with Gradle"
-            echo "  gradle runServer - Run the gRPC server"
-            echo "  gradle runClient - Run the gRPC client"
-          '';
+  outputs = {
+    nixpkgs,
+    flake-utils,
+    bufrnix,
+    ...
+  }:
+    flake-utils.lib.eachDefaultSystem (system: let
+      pkgs = nixpkgs.legacyPackages.${system};
+    in {
+      devShells.default = pkgs.mkShell {
+        packages = [
+          pkgs.gradle
+          pkgs.maven
+          pkgs.jdk17
+          pkgs.protobuf
+        ];
+        shellHook = ''
+          echo "Java gRPC Example"
+          echo "Available commands:"
+          echo "  nix build - Generate Java protobuf + gRPC code"
+          echo "  gradle build - Build with Gradle (in gen/java/)"
+          echo "  gradle runServer - Run the gRPC server"
+          echo "  gradle runClient - Run the gRPC client"
+        '';
+      };
+      packages = {
+        default = bufrnix.lib.mkBufrnixPackage {
+          inherit pkgs;
+          config = {
+            root = ./.;
+            protoc = {
+              sourceDirectories = ["./proto"];
+              includeDirectories = ["./proto"];
+              files = ["./proto/example/v1/greeter.proto"];
+            };
+            languages.java = {
+              enable = true;
+              package = pkgs.protobuf;
+              jdk = pkgs.jdk17;
+              outputPath = "gen/java";
+              options = [];
+              grpc = {
+                enable = true;
+                options = [];
+              };
+            };
+          };
         };
-      });
-      
-      apps = forAllSystems ({ system, pkgs }: {
-        default = {
-          type = "app";
-          program = "${pkgs.writeShellScript "generate-java-grpc" ''
-            mkdir -p gen/java/src/main/java
-            ${pkgs.protobuf}/bin/protoc \
-              --proto_path=proto \
-              --java_out=gen/java/src/main/java \
-              proto/example/v1/greeter.proto
-            
-            # Note: In a real implementation, we would also generate gRPC stubs here
-            # --grpc-java_out=gen/java/src/main/java would be added
-            
-            # Generate build files
-            cat > gen/java/build.gradle << 'EOF'
-plugins {
-    id 'java'
-    id 'application'
-}
-
-repositories {
-    mavenCentral()
-}
-
-dependencies {
-    implementation 'com.google.protobuf:protobuf-java:4.30.2'
-    implementation 'io.grpc:grpc-stub:1.60.0'
-    implementation 'io.grpc:grpc-protobuf:1.60.0'
-    implementation 'io.grpc:grpc-netty-shaded:1.60.0'
-    implementation 'javax.annotation:javax.annotation-api:1.3.2'
-}
-
-java {
-    sourceCompatibility = JavaVersion.VERSION_17
-    targetCompatibility = JavaVersion.VERSION_17
-}
-
-application {
-    mainClass = 'com.example.grpc.GreeterServer'
-}
-
-task runServer(type: JavaExec) {
-    mainClass = 'com.example.grpc.GreeterServer'
-    classpath = sourceSets.main.runtimeClasspath
-}
-
-task runClient(type: JavaExec) {
-    mainClass = 'com.example.grpc.GreeterClient'
-    classpath = sourceSets.main.runtimeClasspath
-}
-EOF
-
-            cat > gen/java/pom.xml << 'EOF'
-<?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 
-         http://maven.apache.org/xsd/maven-4.0.0.xsd">
-    <modelVersion>4.0.0</modelVersion>
-    
-    <groupId>com.example</groupId>
-    <artifactId>grpc-example</artifactId>
-    <version>1.0.0</version>
-    
-    <properties>
-        <maven.compiler.source>17</maven.compiler.source>
-        <maven.compiler.target>17</maven.compiler.target>
-        <protobuf.version>4.30.2</protobuf.version>
-        <grpc.version>1.60.0</grpc.version>
-    </properties>
-    
-    <dependencies>
-        <dependency>
-            <groupId>com.google.protobuf</groupId>
-            <artifactId>protobuf-java</artifactId>
-            <version>''${protobuf.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>io.grpc</groupId>
-            <artifactId>grpc-stub</artifactId>
-            <version>''${grpc.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>io.grpc</groupId>
-            <artifactId>grpc-protobuf</artifactId>
-            <version>''${grpc.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>io.grpc</groupId>
-            <artifactId>grpc-netty-shaded</artifactId>
-            <version>''${grpc.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>javax.annotation</groupId>
-            <artifactId>javax.annotation-api</artifactId>
-            <version>1.3.2</version>
-        </dependency>
-    </dependencies>
-</project>
-EOF
-            
-            # Copy the example source code
-            mkdir -p gen/java/src/main/java
-            cp -r src/main/java/* gen/java/src/main/java/ 2>/dev/null || true
-            
-            echo "Generated Java protobuf + gRPC code in gen/java/"
-            echo "Source files copied to gen/java/src/main/java/"
-            echo ""
-            echo "Note: gRPC stubs would be generated by protoc-gen-grpc-java in a full implementation"
-          ''}";
-        };
-        generate = {
-          type = "app";
-          program = "${pkgs.writeShellScript "generate-java-grpc" ''
-            mkdir -p gen/java/src/main/java
-            ${pkgs.protobuf}/bin/protoc \
-              --proto_path=proto \
-              --java_out=gen/java/src/main/java \
-              proto/example/v1/greeter.proto
-            
-            # Note: In a real implementation, we would also generate gRPC stubs here
-            # --grpc-java_out=gen/java/src/main/java would be added
-            
-            # Generate build files
-            cat > gen/java/build.gradle << 'EOF'
-plugins {
-    id 'java'
-    id 'application'
-}
-
-repositories {
-    mavenCentral()
-}
-
-dependencies {
-    implementation 'com.google.protobuf:protobuf-java:4.30.2'
-    implementation 'io.grpc:grpc-stub:1.60.0'
-    implementation 'io.grpc:grpc-protobuf:1.60.0'
-    implementation 'io.grpc:grpc-netty-shaded:1.60.0'
-    implementation 'javax.annotation:javax.annotation-api:1.3.2'
-}
-
-java {
-    sourceCompatibility = JavaVersion.VERSION_17
-    targetCompatibility = JavaVersion.VERSION_17
-}
-
-application {
-    mainClass = 'com.example.grpc.GreeterServer'
-}
-
-task runServer(type: JavaExec) {
-    mainClass = 'com.example.grpc.GreeterServer'
-    classpath = sourceSets.main.runtimeClasspath
-}
-
-task runClient(type: JavaExec) {
-    mainClass = 'com.example.grpc.GreeterClient'
-    classpath = sourceSets.main.runtimeClasspath
-}
-EOF
-
-            cat > gen/java/pom.xml << 'EOF'
-<?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 
-         http://maven.apache.org/xsd/maven-4.0.0.xsd">
-    <modelVersion>4.0.0</modelVersion>
-    
-    <groupId>com.example</groupId>
-    <artifactId>grpc-example</artifactId>
-    <version>1.0.0</version>
-    
-    <properties>
-        <maven.compiler.source>17</maven.compiler.source>
-        <maven.compiler.target>17</maven.compiler.target>
-        <protobuf.version>4.30.2</protobuf.version>
-        <grpc.version>1.60.0</grpc.version>
-    </properties>
-    
-    <dependencies>
-        <dependency>
-            <groupId>com.google.protobuf</groupId>
-            <artifactId>protobuf-java</artifactId>
-            <version>''${protobuf.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>io.grpc</groupId>
-            <artifactId>grpc-stub</artifactId>
-            <version>''${grpc.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>io.grpc</groupId>
-            <artifactId>grpc-protobuf</artifactId>
-            <version>''${grpc.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>io.grpc</groupId>
-            <artifactId>grpc-netty-shaded</artifactId>
-            <version>''${grpc.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>javax.annotation</groupId>
-            <artifactId>javax.annotation-api</artifactId>
-            <version>1.3.2</version>
-        </dependency>
-    </dependencies>
-</project>
-EOF
-            
-            # Copy the example source code
-            mkdir -p gen/java/src/main/java
-            cp -r src/main/java/* gen/java/src/main/java/ 2>/dev/null || true
-            
-            echo "Generated Java protobuf + gRPC code in gen/java/"
-            echo "Source files copied to gen/java/src/main/java/"
-            echo ""
-            echo "Note: gRPC stubs would be generated by protoc-gen-grpc-java in a full implementation"
-          ''}";
-        };
-      });
-    };
+      };
+    });
 }
