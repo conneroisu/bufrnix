@@ -4,8 +4,12 @@ using GreeterProtos.Example.V1;
 using System;
 using System.Threading.Tasks;
 
+// Enable HTTP/2 over plaintext (h2c) - must be done before creating channels
+AppContext.SetSwitch("System.Net.Http.SocketsHttpHandler.Http2UnencryptedSupport", true);
+
 // Create a channel to the server
 using var channel = GrpcChannel.ForAddress("http://localhost:5000");
+
 var client = new Greeter.GreeterClient(channel);
 
 Console.WriteLine("C# gRPC Client Example");
