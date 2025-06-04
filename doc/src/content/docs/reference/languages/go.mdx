@@ -4,6 +4,8 @@ description: Complete Protocol Buffer support for Go with gRPC, Connect, Gateway
 ---
 
 import { Tabs, TabItem } from "@astrojs/starlight/components";
+import { Code } from "astro:components";
+import basicConfig from "./go.x-basic-configuration.nix?raw";
 
 # Go Language Support
 
@@ -508,3 +510,7 @@ languages.go = {
   vtprotobuf.package = pkgs.buildGoModule { ... };
 };
 ```
+
+## Complete Flake Configuration Example
+
+<Code code={basicConfig} lang="nix" />

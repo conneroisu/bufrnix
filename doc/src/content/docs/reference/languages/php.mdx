@@ -3,7 +3,9 @@ title: PHP Language Support
 description: Protocol Buffer messages and Twirp RPC framework integration for PHP applications.
 ---
 
-import { Tabs, TabItem } from "@astrojs/starlight/components";
+import { Tabs, TabItem, FileTree } from "@astrojs/starlight/components";
+import { Code } from "astro:components";
+import roadrunnerConfig from "./php.x-roadrunner-configuration.nix?raw";
 
 # PHP Language Support
 
@@ -540,23 +542,19 @@ class ProtoTest extends TestCase
 
 ## Generated Files Structure
 
-```
-gen/php/
-└── MyApp/
-    └── Proto/
-        └── Example/
-            └── V1/
-                ├── User.php
-                ├── UserStatus.php
-                ├── HelloRequest.php
-                ├── HelloResponse.php
-                ├── HelloServiceClient.php
-                ├── HelloServiceServer.php
-                └── GPBMetadata/
-                    └── Example/
-                        └── V1/
-                            └── Service.php
-```
+<FileTree>
+- gen/php/
+  - MyApp/
+    - Proto/
+      - Example/
+        - V1/
+          - HelloServiceClient.php
+          - HelloServiceServer.php
+          - GPBMetadata/
+            - Example/
+              - V1/
+                - Service.php
+</FileTree>
 
 ## Try the Example
 
@@ -697,6 +695,10 @@ foreach ($call->responses() as $response) {
 ```
 
 ### RoadRunner Server
+
+#### Configuration
+
+<Code code={roadrunnerConfig} lang="nix" />
 
 ```php
 // worker.php
@@ -896,10 +898,3 @@ If you're migrating from the deprecated Twirp support:
 4. **Implement health checks** for monitoring
 5. **Use streaming** for large data transfers
 6. **Add metrics** for observability
-
-## Related Documentation
-
-- [Getting Started Guide](/guides/getting-started)
-- [Example: PHP gRPC with RoadRunner](/guides/examples#php-grpc-roadrunner)
-- [Go Language Support](/reference/languages/go)
-- [Python Language Support](/reference/languages/python)

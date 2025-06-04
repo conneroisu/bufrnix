@@ -4,6 +4,8 @@ description: Java code generation with Protocol Buffers and gRPC
 ---
 
 import { Tabs, TabItem } from '@astrojs/starlight/components';
+import { Code } from "astro:components";
+import basicConfig from "./java.x-basic-configuration.nix?raw";
 
 Java is a popular enterprise programming language with excellent Protocol Buffers and gRPC support. Bufrnix provides comprehensive Java code generation using Google's official generators and runtime libraries.
 
@@ -257,3 +259,7 @@ Java code generation requires:
 - **Protocol Buffers**: Core protobuf runtime
 - **gRPC Java** (optional): For gRPC functionality
 - **Protovalidate Java** (optional): For validation support
+
+## Complete Flake Configuration Example
+
+<Code code={basicConfig} lang="nix" />

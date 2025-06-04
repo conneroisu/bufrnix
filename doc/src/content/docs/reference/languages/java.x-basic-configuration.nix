@@ -1,11 +1,11 @@
 {
-  description = "Java basic protobuf example with bufrnix";
-
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
     flake-utils.url = "github:numtide/flake-utils";
-    bufrnix.url = "path:../..";
-    bufrnix.inputs.nixpkgs.follows = "nixpkgs";
+    bufrnix = {
+      url = "github:conneroisu/bufrnix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs = {

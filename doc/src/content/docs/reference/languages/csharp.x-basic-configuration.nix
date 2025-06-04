@@ -2,9 +2,8 @@
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
     flake-utils.url = "github:numtide/flake-utils";
-    # bufrnix.url = "github:conneroisu/bufrnix";
     bufrnix = {
-      url = "path:../..";
+      url = "github:conneroisu/bufrnix";
       inputs.nixpkgs.follows = "nixpkgs";
     };
   };
@@ -44,7 +43,7 @@
           src = ./.;
 
           projectFile = "CSharpExample.csproj";
-          nugetDeps = ./deps.json;
+          nugetDeps = ./deps.nix;
 
           dotnet-sdk = pkgs.dotnetCorePackages.sdk_8_0;
           dotnet-runtime = pkgs.dotnetCorePackages.runtime_8_0;
@@ -62,11 +61,10 @@
         };
 
         devShells.default = pkgs.mkShell {
-packages = with pkgs; [
+          buildInputs = with pkgs; [
             dotnetCorePackages.sdk_8_0
             protobuf
             grpc
-            nuget-to-json
           ];
 
           shellHook = ''

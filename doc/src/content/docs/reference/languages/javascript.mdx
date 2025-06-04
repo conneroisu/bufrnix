@@ -4,6 +4,8 @@ description: Modern Protocol Buffer support for JavaScript and TypeScript with E
 ---
 
 import { Tabs, TabItem } from "@astrojs/starlight/components";
+import { Code } from "astro:components";
+import basicConfig from "./javascript.x-basic-configuration.nix?raw";
 
 # JavaScript/TypeScript Language Support
 
@@ -679,3 +681,7 @@ Configure path mapping in tsconfig.json:
   }
 }
 ```
+
+## Complete Flake Configuration Example
+
+<Code code={basicConfig} lang="nix" />

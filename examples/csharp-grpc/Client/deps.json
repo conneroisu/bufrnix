@@ -1,0 +1,27 @@
+[
+  {
+    "pname": "Google.Protobuf",
+    "version": "3.31.0",
+    "hash": "sha256-ed3FVERXwVHAXdy+iDEppbpuDUbVqErGczNVw1BEWzE="
+  },
+  {
+    "pname": "Grpc.Core.Api",
+    "version": "2.66.0",
+    "hash": "sha256-XVZmvlUK0t4bWaIBUAoAm007VhUdUvSSlCDh6P4IV9c="
+  },
+  {
+    "pname": "Grpc.Net.Client",
+    "version": "2.66.0",
+    "hash": "sha256-bxK/5xFYWpqFmD8N79B79ymSt/u4aKRJkrO5I1ZxDgI="
+  },
+  {
+    "pname": "Grpc.Net.Common",
+    "version": "2.66.0",
+    "hash": "sha256-M/GsAvCs1vQ29xLYtK1tuxOhk5MPm5lmwn+DPhfcgkA="
+  },
+  {
+    "pname": "Microsoft.Extensions.Logging.Abstractions",
+    "version": "6.0.0",
+    "hash": "sha256-QNqcQ3x+MOK7lXbWkCzSOWa/2QyYNbdM/OEEbWN15Sw="
+  }
+]

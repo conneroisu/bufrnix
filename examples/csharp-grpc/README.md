@@ -18,6 +18,13 @@ This example demonstrates gRPC service implementation with C# and Bufrnix.
 - `Client/` - Console client application
 - `flake.nix` - Nix flake configuration with Bufrnix
 
+## Quick Start
+
+```bash
+# Run the complete demo (server + client automatically)
+nix run .#runDemo
+```
+
 ## Building
 
 ```bash
@@ -28,15 +35,23 @@ nix build .#proto
 nix build .#server
 nix build .#client
 
-# Or enter development shell
+# Or enter development shell for manual development
 nix develop
 
-# Run server (in one terminal)
+# Manual execution (run server in one terminal)
 cd Server && dotnet run
 
-# Run client (in another terminal)
+# Manual execution (run client in another terminal)
 cd Client && dotnet run
 ```
+
+## Commands
+
+- `nix run .#runDemo` - **Recommended**: Run complete demo with server and client
+- `nix build .#proto` - Generate protobuf/gRPC code
+- `nix build .#server` - Build the server application  
+- `nix build .#client` - Build the client application
+- `nix develop` - Enter development shell for manual work
 
 ## Generated Code
 

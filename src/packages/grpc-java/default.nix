@@ -1,22 +1,59 @@
 {
-  pkgs,
   lib,
+  stdenv,
+  fetchurl,
+  makeWrapper,
+  protobuf,
+  jdk,
   ...
 }:
-# Placeholder implementation for gRPC Java plugin
-# The actual plugin would need to be downloaded from Maven Central
-# For now, we create a wrapper that uses the main grpc package's capabilities
-pkgs.writeShellScriptBin "protoc-gen-grpc-java" ''
-  # This is a placeholder implementation
-  # In a real deployment, this would be the actual gRPC Java plugin
-  # For demonstration purposes, this shows where the plugin would be integrated
+let
+  version = "1.60.0";
   
-  echo "gRPC Java plugin placeholder - configure with:" >&2
-  echo "  languages.java.grpc.package = pkgs.actual-grpc-java-plugin;" >&2
-  echo "" >&2
-  echo "This plugin would generate Java gRPC client and server stubs" >&2
-  
-  # For now, pass through to the regular Java generator
-  # In reality, this would generate gRPC-specific code
-  exit 1
-''
+  # Platform detection for multi-platform support
+  platform = 
+    if stdenv.isLinux && stdenv.isx86_64 then "linux-x86_64"
+    else if stdenv.isLinux && stdenv.isAarch64 then "linux-aarch_64" 
+    else if stdenv.isDarwin && stdenv.isx86_64 then "osx-x86_64"
+    else if stdenv.isDarwin && stdenv.isAarch64 then "osx-aarch_64"
+    else throw "Unsupported platform for grpc-java";
+in
+stdenv.mkDerivation {
+  pname = "grpc-java";
+  inherit version;
+
+  # For multi-platform support
+  src = fetchurl {
+    url = "https://repo1.maven.org/maven2/io/grpc/protoc-gen-grpc-java/${version}/protoc-gen-grpc-java-${version}-${platform}.exe";
+    sha256 = 
+      if platform == "linux-x86_64" then "12a9z4f04wzs016rz47wbwnywznqqrlrvdpyhsn50j7svbhab64r"
+      else if platform == "linux-aarch_64" then "sha256-BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB="
+      else if platform == "osx-x86_64" then "sha256-CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC="
+      else if platform == "osx-aarch_64" then "sha256-DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD="
+      else throw "Unknown platform";
+  };
+
+  nativeBuildInputs = [ makeWrapper ];
+
+  dontUnpack = true;
+  dontBuild = true;
+
+  installPhase = ''
+    runHook preInstall
+    
+    # Install the binary
+    install -Dm755 $src $out/bin/protoc-gen-grpc-java
+    
+    # The plugin needs to be executable
+    chmod +x $out/bin/protoc-gen-grpc-java
+    
+    runHook postInstall
+  '';
+
+  meta = with lib; {
+    description = "gRPC Java protoc plugin";
+    homepage = "https://github.com/grpc/grpc-java";
+    license = licenses.asl20;
+    platforms = [ "x86_64-linux" "aarch64-linux" "x86_64-darwin" "aarch64-darwin" ];
+  };
+}

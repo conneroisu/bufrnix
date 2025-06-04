@@ -22,27 +22,22 @@ The `grpc/java` generator creates:
 
 ## Quick Start
 
-1. **Generate the protobuf and gRPC code:**
-   ```bash
-   nix run .#generate
-   ```
+1. Generate the code:
+```bash
+nix run 
+```
 
-2. **Build the project:**
-   ```bash
-   nix develop
-   cd gen/java
-   gradle build
-   ```
+2. Build and run server:
+```bash
+cd gen/java
+nix develop .. --command gradle runServer
+```
 
-3. **Run the server (in one terminal):**
-   ```bash
-   gradle runServer
-   ```
-
-4. **Run the client (in another terminal):**
-   ```bash
-   gradle runClient
-   ```
+3. Build and run client (in separate terminal):
+```bash
+cd gen/java
+nix develop .. --command gradle runClient
+```
 
 ## Service Definition
 

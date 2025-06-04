@@ -40,3 +40,16 @@ The generated code includes:
 - Serialization/deserialization methods
 - JSON support via Google.Protobuf
 - A complete .csproj file
+
+## Using Dependencies
+There is also a manual method: First, restore the packages to the out directory, ensure you have cloned the upstream repository and you are inside it.
+
+```bash
+dotnet restore --packages out
+```
+
+Next, use nuget-to-json tool provided in nixpkgs to generate a lockfile to deps.json from the packages inside the out directory.
+
+```bash
+nuget-to-json out > deps.json
+```
