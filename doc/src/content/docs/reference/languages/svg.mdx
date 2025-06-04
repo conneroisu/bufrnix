@@ -7,6 +7,7 @@ sidebar:
 
 import { Tabs, TabItem } from "@astrojs/starlight/components";
 import { Code } from "@astrojs/starlight/components";
+import basicConfig from "./svg.x-basic-configuration.nix?raw";
 
 SVG support in bufrnix enables generation of visual diagrams from Protocol Buffer definitions using protoc-gen-d2 and the D2 diagram language. This creates clear, visual documentation of your data structures and service relationships.
 
@@ -735,3 +736,7 @@ The SVG generation feature is continuously improving. Planned enhancements inclu
    - Ensure proto imports are correct
    - Check that message types are properly referenced
    - Verify protoc-gen-d2 version supports your proto features
+
+## Complete Flake Configuration Example
+
+<Code code={basicConfig} lang="nix" />

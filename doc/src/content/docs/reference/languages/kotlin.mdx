@@ -3,6 +3,9 @@ title: Kotlin
 description: Kotlin language support in Bufrnix
 ---
 
+import { Code } from "astro:components";
+import basicConfig from "./kotlin.x-basic-configuration.nix?raw";
+
 Bufrnix provides comprehensive Kotlin code generation support for Protocol Buffers, including gRPC services with coroutines and Connect RPC, leveraging Kotlin's modern language features.
 
 ## Basic Configuration
@@ -321,6 +324,10 @@ Example with manual JAR:
 2. **Coroutines**: Use `kotlinx-coroutines-core` for async operations
 3. **Build tools**: Generated Gradle files work with Gradle 8.10.2+
 4. **Version alignment**: Keep protobuf, gRPC, and Kotlin versions aligned
+
+## Complete Flake Configuration Example
+
+<Code code={basicConfig} lang="nix" />
 
 ## See Also
 

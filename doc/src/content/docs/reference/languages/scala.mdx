@@ -5,6 +5,9 @@ sidebar:
   order: 11
 ---
 
+import { Code } from "astro:components";
+import basicConfig from "./scala.x-basic-configuration.nix?raw";
+
 Bufrnix supports generating Scala code from Protocol Buffer definitions using [ScalaPB](https://scalapb.github.io/), a protocol buffer compiler plugin for Scala.
 
 ## Basic Configuration
@@ -250,6 +253,10 @@ devShells.default = pkgs.mkShell {
    ```
 
 3. **Version Conflicts**: Ensure your Scala version matches between ScalaPB and your project
+
+## Complete Flake Configuration Example
+
+<Code code={basicConfig} lang="nix" />
 
 ## See Also
 
