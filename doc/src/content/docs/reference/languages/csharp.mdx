@@ -3,6 +3,9 @@ title: C#
 description: C# language support in Bufrnix
 ---
 
+import { Code } from "astro:components";
+import basicConfig from "./csharp.x-basic-configuration.nix?raw";
+
 Bufrnix provides comprehensive C# code generation support for Protocol Buffers, including gRPC services, with full .NET integration.
 
 ## Basic Configuration
@@ -16,6 +19,7 @@ Bufrnix provides comprehensive C# code generation support for Protocol Buffers, 
   };
 }
 ```
+
 
 ## Features
 
@@ -237,6 +241,10 @@ var reply = await client.SayHelloAsync(
 2. **Namespace Convention**: Use dot-separated namespaces matching your project structure
 3. **Performance**: Enable `generatePackageOnBuild` for faster builds in CI/CD
 4. **Compatibility**: Target framework should match your application's framework
+
+## Complete Flake Configuration Example
+
+<Code code={basicConfig} lang="nix" />
 
 ## See Also
 
