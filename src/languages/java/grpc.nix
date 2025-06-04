@@ -8,7 +8,7 @@ if cfg.enable then {
   protocPlugins = [
     "--grpc-java_out=${cfg.outputPath}"
     "--plugin=protoc-gen-grpc-java=${cfg.package}/bin/protoc-gen-grpc-java"
-  ] ++ (optionals (cfg.options != []) ["--grpc-java_opt=${concatStringsSep " --grpc-java_opt=" cfg.options}"]);
+  ] ++ (optionals (cfg.options != []) (map (opt: "--grpc-java_opt=${opt}") cfg.options));
   
   # Additional initialization steps
   initHooks = ''

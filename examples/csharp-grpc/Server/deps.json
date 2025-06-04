@@ -1,8 +1,8 @@
 [
   {
     "pname": "Google.Protobuf",
-    "version": "3.28.2",
-    "hash": "sha256-GUaoreN2G4CSHnhaQJBS5jFfDKVmMyGE7b+9DV6lXPs="
+    "version": "3.31.0",
+    "hash": "sha256-ed3FVERXwVHAXdy+iDEppbpuDUbVqErGczNVw1BEWzE="
   },
   {
     "pname": "Grpc.AspNetCore",
