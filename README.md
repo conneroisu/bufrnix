@@ -1,14 +1,59 @@
 # Bufrnix
 
-Nix powered Protocol Buffers with declarative code generation and comprehensive developer tooling.
+<p align="center">
+  <img src="assets/bufrnix.png" alt="Bufrnix Logo" width="600">
+</p>
 
-## Overview
+<p align="center">
+  <strong>Nix-powered Protocol Buffers with declarative code generation and comprehensive developer tooling</strong>
+</p>
+
+<p align="center">
+  <a href="https://github.com/conneroisu/bufr.nix/blob/main/LICENSE">
+    <img src="https://img.shields.io/badge/license-MIT-blue.svg" alt="License">
+  </a>
+  <a href="https://nixos.org">
+    <img src="https://img.shields.io/badge/Built%20with-Nix-5277C3.svg?logo=nixos&logoColor=white" alt="Built with Nix">
+  </a>
+  <a href="https://protobuf.dev/">
+    <img src="https://img.shields.io/badge/Protocol-Buffers-00ADD8.svg?logo=google" alt="Protocol Buffers">
+  </a>
+  <a href="https://conneroisu.github.io/bufrnix/">
+    <img src="https://img.shields.io/badge/docs-available-brightgreen.svg" alt="Documentation">
+  </a>
+</p>
+
+<p align="center">
+  <a href="#-key-features">Features</a> •
+  <a href="#-quick-start">Quick Start</a> •
+  <a href="#-language-support">Languages</a> •
+  <a href="#-examples">Examples</a> •
+  <a href="https://conneroisu.github.io/bufrnix/">Documentation</a>
+</p>
+
+## 📋 Overview
 
 Bufrnix provides a **declarative, reproducible way** to generate Protocol Buffer code for multiple languages through Nix flakes. It eliminates the complexity of managing protoc plugins, dependencies, and build environments by leveraging Nix's deterministic package management.
 
-See the [quick start guide](https://conneroisu.github.io/bufrnix/guides/getting-started/) for a quick introduction to Bufrnix.
+> 📚 See the [quick start guide](https://conneroisu.github.io/bufrnix/guides/getting-started/) for a quick introduction to Bufrnix.
 
-## Why Bufrnix?
+### Table of Contents
+
+- [🎯 Why Bufrnix?](#-why-bufrnix)
+  - [The Problems with Remote Plugin Systems](#the-problems-with-remote-plugin-systems)
+  - [How Bufrnix Solves These Problems](#how-bufrnix-solves-these-problems)
+- [✨ Key Features](#-key-features)
+- [🚀 Quick Start](#-quick-start)
+- [📖 Comprehensive Examples](#-comprehensive-examples)
+- [🌍 Language Support](#-language-support)
+- [💡 Examples](#-examples)
+- [🛠️ Development Environment](#️-development-environment)
+- [⚙️ Configuration Reference](#️-configuration-reference)
+- [🔧 Advanced Usage](#-advanced-usage)
+- [🤝 Contributing](#-contributing)
+- [📄 License](#-license)
+
+## 🎯 Why Bufrnix?
 
 Protocol Buffer tooling has traditionally suffered from **dependency hell**, **network dependencies**, and **non-reproducible builds**. While Buf's remote plugin system simplifies initial setup, it introduces critical limitations that become deal-breakers for production teams:
 
@@ -147,16 +192,41 @@ This pattern maximizes the benefits of both tools while avoiding their respectiv
 
 Bufrnix doesn't replace Buf - it **extends** the Protocol Buffer ecosystem with local, reproducible alternatives for teams that need them.
 
-### Key Features
+### ✨ Key Features
 
-- 🚀 **Multi-language Support**: Go, Dart, JavaScript/TypeScript, PHP, Swift with more coming
-- 🔧 **Rich Plugin Ecosystem**: gRPC, Connect, gRPC-Web, gRPC-Gateway, Twirp, and validation
-- 📦 **Zero Setup**: All dependencies managed through Nix
-- 🎯 **Declarative Configuration**: Type-safe configuration with clear error messages  
-- 🔄 **Reproducible Builds**: Same output across all machines and CI/CD
-- ⚡ **Developer Experience**: Comprehensive tooling, formatting, linting, and language servers included
+<table>
+<tr>
+<td>🚀 <strong>Multi-language Support</strong></td>
+<td>Go, Dart, JavaScript/TypeScript, PHP, Swift with more coming</td>
+</tr>
+<tr>
+<td>🔧 <strong>Rich Plugin Ecosystem</strong></td>
+<td>gRPC, Connect, gRPC-Web, gRPC-Gateway, Twirp, and validation</td>
+</tr>
+<tr>
+<td>📦 <strong>Zero Setup</strong></td>
+<td>All dependencies managed through Nix</td>
+</tr>
+<tr>
+<td>🎯 <strong>Declarative Configuration</strong></td>
+<td>Type-safe configuration with clear error messages</td>
+</tr>
+<tr>
+<td>🔄 <strong>Reproducible Builds</strong></td>
+<td>Same output across all machines and CI/CD</td>
+</tr>
+<tr>
+<td>⚡ <strong>Developer Experience</strong></td>
+<td>Comprehensive tooling, formatting, linting, and language servers included</td>
+</tr>
+</table>
 
-## Quick Start
+## 🚀 Quick Start
+
+### Prerequisites
+
+- [Nix](https://nixos.org/download.html) with [flakes enabled](https://nixos.wiki/wiki/Flakes)
+- That's it! All other dependencies are managed by Nix
 
 ### 1. Basic Usage
 
@@ -244,7 +314,7 @@ Generated code will appear in `gen/go/user/v1/`:
 - `user.pb.go` - Protocol Buffer messages
 - `user_grpc.pb.go` - gRPC service definitions
 
-## Comprehensive Examples
+## 📖 Comprehensive Examples
 
 ### Multi-Language Project
 
@@ -407,38 +477,21 @@ languages.js = {
 };
 ```
 
-## Language Support
+## 🌍 Language Support
 
-### Go
-- **Plugins**: `protoc-gen-go`, `protoc-gen-go-grpc`, `protoc-gen-grpc-gateway`, `protoc-gen-validate`, `protoc-gen-connect-go`
-- **Features**: Full gRPC ecosystem, HTTP gateways, validation, modern Connect protocol
-- **Output**: Standard Go packages with proper module support
+| Language | Plugins | Features | Output |
+|----------|---------|----------|--------|
+| **Go** | `protoc-gen-go`<br>`protoc-gen-go-grpc`<br>`protoc-gen-grpc-gateway`<br>`protoc-gen-validate`<br>`protoc-gen-connect-go` | Full gRPC ecosystem<br>HTTP gateways<br>Validation<br>Modern Connect protocol | Standard Go packages with proper module support |
+| **Dart** | `protoc-gen-dart` | Complete protobuf and gRPC support<br>Flutter and server applications | Dart classes with full type safety and gRPC clients/servers |
+| **JavaScript/TypeScript** | `protoc-gen-js`<br>`protoc-gen-es`<br>`protoc-gen-connect-es`<br>`protoc-gen-grpc-web`<br>`protoc-gen-twirp_js` | CommonJS<br>ES modules<br>Connect-ES<br>gRPC-Web<br>Twirp support | Modern JavaScript with TypeScript definitions |
+| **PHP** | `protoc-gen-php`<br>`protoc-gen-twirp_php` | Standard protobuf messages<br>Twirp RPC framework | PSR-4 compatible PHP classes |
+| **Swift** | `protoc-gen-swift` | Complete protobuf support<br>iOS/macOS applications | Swift classes with full type safety and Codable support |
 
-### Dart  
-- **Plugins**: `protoc-gen-dart`
-- **Features**: Complete protobuf and gRPC support for Flutter and server applications
-- **Output**: Dart classes with full type safety and gRPC clients/servers
+## 💡 Examples
 
-### JavaScript/TypeScript
-- **Plugins**: `protoc-gen-js`, `protoc-gen-es`, `protoc-gen-connect-es`, `protoc-gen-grpc-web`, `protoc-gen-twirp_js`
-- **Features**: CommonJS, ES modules, Connect-ES, gRPC-Web, Twirp support
-- **Output**: Modern JavaScript with TypeScript definitions
+Explore complete working examples in the [`examples/`](examples/) directory:
 
-### PHP
-- **Plugins**: `protoc-gen-php`, `protoc-gen-twirp_php`  
-- **Features**: Standard protobuf messages and Twirp RPC framework
-- **Output**: PSR-4 compatible PHP classes
-
-### Swift
-- **Plugins**: `protoc-gen-swift`
-- **Features**: Complete protobuf support for iOS/macOS applications
-- **Output**: Swift classes with full type safety and Codable support
-
-## Working Examples
-
-Explore complete working examples in the `examples/` directory:
-
-### [Simple Go gRPC Example](examples/simple-flake/)
+### 🟦 [Simple Go gRPC Example](examples/simple-flake/)
 ```bash
 cd examples/simple-flake
 nix develop
@@ -448,7 +501,7 @@ go run main.go
 - User management service
 - Error handling and validation
 
-### [Comprehensive Dart Example](examples/dart-example/) 
+### 🎯 [Comprehensive Dart Example](examples/dart-example/) 
 ```bash
 cd examples/dart-example
 nix develop
@@ -460,7 +513,7 @@ dart test
 - Complete gRPC client implementation 
 - Comprehensive test suite
 
-### [Modern JavaScript Example](examples/js-example/)
+### 🟨 [Modern JavaScript Example](examples/js-example/)
 ```bash
 cd examples/js-example
 nix develop
@@ -470,7 +523,7 @@ npm install && npm run build && npm start
 - Connect-ES and gRPC-Web clients
 - TypeScript integration
 
-### [PHP Twirp Example](examples/php-twirp/)
+### 🐘 [PHP Twirp Example](examples/php-twirp/)
 ```bash
 cd examples/php-twirp
 nix develop
@@ -481,7 +534,7 @@ php -S localhost:8080 -t src/
 - PSR-4 autoloading
 - JSON-over-HTTP communication
 
-### [Swift Example](examples/swift-example/)
+### 🍎 [Swift Example](examples/swift-example/)
 ```bash
 cd examples/swift-example
 nix develop
@@ -493,7 +546,7 @@ swift build && swift run
 - Type-safe Swift code generation
 - SwiftProtobuf integration
 
-## Development Environment
+## 🛠️ Development Environment
 
 ### Prerequisites
 
@@ -526,7 +579,7 @@ bun run dev     # http://localhost:4321
 bun run build   # Build static site
 ```
 
-## Configuration Reference
+## ⚙️ Configuration Reference
 
 ### Root Configuration
 
@@ -567,7 +620,7 @@ Each language module supports:
 
 See the [Language Modules Documentation](src/languages/README.md) for complete details.
 
-## Advanced Usage
+## 🔧 Advanced Usage
 
 ### Custom Proto Dependencies
 
@@ -636,7 +689,9 @@ Generate different outputs for different environments:
 }
 ```
 
-## Contributing
+## 🤝 Contributing
+
+We welcome contributions! Here's how you can help:
 
 1. **Fork and clone** the repository
 2. **Make changes** to language modules or core functionality
@@ -653,11 +708,11 @@ Generate different outputs for different environments:
 
 See the [Language Modules README](src/languages/README.md) for details.
 
-## License
+## 📄 License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-## Related Projects
+## 🔗 Related Projects
 
 - [Protocol Buffers](https://developers.google.com/protocol-buffers) - Google's language-neutral data serialization
 - [Nix](https://nixos.org/) - Reproducible package management and builds
@@ -667,4 +722,10 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ---
 
-**Questions?** Check out the [documentation](doc/), browse the [examples](examples/), or open an issue!
+<p align="center">
+  <strong>Questions?</strong> Check out the <a href="https://conneroisu.github.io/bufrnix/">documentation</a>, browse the <a href="examples/">examples</a>, or <a href="https://github.com/conneroisu/bufr.nix/issues/new">open an issue</a>!
+</p>
+
+<p align="center">
+  Made with ❤️ by the Bufrnix community
+</p>
