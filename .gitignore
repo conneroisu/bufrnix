@@ -208,9 +208,6 @@ cython_debug/
 # ====================
 # AI ASSISTANT FILES
 # ====================
-# Claude AI assistant files
-CLAUDE.md
-.claude
 .cursor
 
 # ====================
