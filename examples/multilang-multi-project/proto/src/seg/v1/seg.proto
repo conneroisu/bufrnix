@@ -1,0 +1,102 @@
+
+// -----------------------------------------------------------------------------
+// Segment gRPC Service Definition (proto3)
+// -----------------------------------------------------------------------------
+//
+// This file defines a gRPC AI inference service for embedding data. The service
+// allows clients to send a request to embed data and receive the corresponding
+// embedding vectors.
+//
+// This service is part of the internal api of the pegwings platform.
+// -----------------------------------------------------------------------------
+//
+// Note: This example uses proto3 syntax and is designed to be used with gRPC.
+//       To compile this file, you would use the Protocol Buffers compiler
+//       (protoc) along with the gRPC plugin for your target language.
+//
+// Copyright 2025 Pegwings All rights reserved.
+// -----------------------------------------------------------------------------
+
+syntax = "proto3";
+
+package seg.v1;
+
+// External
+import "google/api/field_behavior.proto";
+import "google/api/annotations.proto";
+import "google/protobuf/empty.proto";
+import "gateway/protoc-gen-openapiv2/annotations.proto";
+
+option go_package = "github.com/pegwings/pegwings/proto/gen/go/seg/v1;seg";
+
+option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_swagger) = {
+  info : {
+    title : "Internal Semantic Segmentation API"
+    version : "1.0.0"
+    contact : {
+      name : "Conner Ohnsorge"
+      url : "https://github.com/pegwings"
+      email : "conneroisu@outlook.com"
+    }
+  }
+};
+
+// SEGService is the service for the SEG API.
+service SEGService {
+  // SEG generates semantically segmented images.
+  rpc SEG(SEGRequest) returns (SEGResponse) {
+    option (google.api.http) = {
+      post : "/v1/seg"
+      body : "*"
+    };
+    option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+      summary : "Generate speech from text"
+      description : "Generate speech from text"
+      tags : "SEG"
+    };
+  }
+  // HealthCheck returns the health of the service
+  rpc HealthCheck(google.protobuf.Empty) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      get : "/v1/health"
+    };
+    option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+      summary : "Health check"
+      description : "Health check"
+      tags : "Health,healthcheck"
+    };
+  }
+}
+
+// SEGResponse is the response message for the SEG method.
+message SEGResponse {
+  // file_path is the path to the ouput of the segmented file.
+  string file_path = 1 [
+    (google.api.field_behavior) = REQUIRED,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      description : "The path to the output of the segmented file."
+      example : "\"1234.png\""
+    }
+  ];
+}
+
+// SEGRequest is the request message for the SEG method.
+message SEGRequest {
+  // file_path is the path to the file to be segmented.
+  string file_path = 1 [
+    (google.api.field_behavior) = REQUIRED,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      description : "The path to the file to be segmented."
+      example : "\"input-1234.png\""
+    }
+  ];
+
+  // prompt is the prompt to be used for segmenting the file.
+  string prompt = 2 [
+    (google.api.field_behavior) = REQUIRED,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      description : "The prompt to be used for segmenting the file."
+      example : "\"dog, cat\""
+    }
+  ];
+}

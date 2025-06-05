@@ -1,0 +1,126 @@
+// ----------------------------------------------------------------------------
+// Image Editing API
+// ----------------------------------------------------------------------------
+// This service provides a gRPC API for generating images from prompts and
+// image edits/variations.
+// ----------------------------------------------------------------------------
+// Copyright 2025 Pegwings All rights reserved.
+// ----------------------------------------------------------------------------
+
+syntax = "proto3";
+
+package edi.v1;
+
+// External
+import "gateway/protoc-gen-openapiv2/annotations.proto";
+import "google/api/field_behavior.proto";
+import "google/api/annotations.proto";
+import "google/protobuf/empty.proto";
+
+// Internal
+import "lib/media.proto";
+
+option go_package = "github.com/pegwings/pegwings/proto/gen/go/edi/v1;edi";
+
+option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_swagger) = {
+  info : {
+    title : "Image Editing API"
+    version : "1.0.0"
+    description : "# Image Editing API\n\nThis service provides a gRPC API for "
+                  "generating images from prompts and variations.\n\n## _TOOLCH"
+                  "E\n\nYou can generate images using the following "
+                  "methods:\n\n"
+                  "- **Edit** - Generate an image edit from a prompt and "
+                  "image.\n\n"
+                  "\n\n"
+    contact : {
+      name : "Conner Ohnsorge"
+      url : "https://github.com/pegwings"
+      email : "conneroisu@outlook.com"
+    }
+  }
+};
+
+service EditImageService {
+  // EditImage edits an image from a prompt and image.
+  rpc Edit(EditRequest) returns (EditResponse) {
+    option (google.api.http) = {
+      post : "/v1/edit"
+      body : "*"
+    };
+    option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+      summary : "Generate an image edit from a prompt and image."
+      description : "Generate an image edit from a prompt and image."
+      tags : "Image"
+    };
+  }
+
+  // CheckHealthRequest represents a request for a health check.
+  rpc CheckHealth(google.protobuf.Empty) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      get : "/v1/health"
+    };
+    option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+      summary : "Check the health of the service."
+      description : "Check the health of the service."
+      tags : "checkhealth"
+    };
+  }
+}
+
+// EditRequest represents a request for an image edit.
+message EditRequest {
+  // prompt is the prompt to generate an image from.
+  string prompt = 1 [
+    (google.api.field_behavior) = REQUIRED,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      description : "The prompt to generate an image from."
+      // TODO: Add examples.
+    }
+  ];
+  // image is the path to the image to create the edit from.
+  string image = 2 [
+    (google.api.field_behavior) = REQUIRED,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      description : "The path to the image to create the edit from."
+      // TODO: Add examples.
+    }
+  ];
+  // num_images is the number of images to generate.
+  int32 num_images = 3 [
+    (google.api.field_behavior) = OPTIONAL,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      description : "The number of images to generate."
+      // TODO: Add examples.
+    }
+  ];
+  // format is the format of the generated image.
+  string format = 4 [
+    (google.api.field_behavior) = OPTIONAL,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      description : "The number of images to generate."
+      // TODO: Add examples.
+    }
+  ];
+
+  // size is the size of the generated image.
+  media.v1.ImageSize size = 5 [
+    (google.api.field_behavior) = REQUIRED,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      description : "The size of the generated image."
+      // TODO: Add examples.
+    }
+  ];
+}
+
+// EditResponse represents a response for an image edit.
+message EditResponse {
+  // image is the path to the generated image in the public bucket.
+  string image = 1 [
+    (google.api.field_behavior) = OUTPUT_ONLY,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      description : "The path to the generated image in the public bucket."
+      // TODO: Add examples.
+    }
+  ];
+}

@@ -1,0 +1,237 @@
+syntax = "proto3";
+
+package embeddings.v1;
+
+// External
+import "google/api/field_behavior.proto";
+import "gateway/protoc-gen-openapiv2/annotations.proto";
+
+option go_package = "github.com/pegwings/pegwings/proto/gen/go/api/v1;api";
+
+// EmbeddingRequest is the request message for the GenerateEmbedding method.
+//
+// It contains the input text and other parameters for the embedding generation.
+message EmbeddingsCreateRequest {
+
+  option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_schema) = {
+    json_schema : {
+      title : "Embedding Request"
+      description : "The request message for the GenerateEmbedding method."
+      required : [ "model", "input" ]
+    }
+    external_docs : {
+      url : "https://docs.pegwings.com/api/embeddings"
+      description : "Learn more about the Embeddings API"
+    }
+    example : "{"
+              "\n   \"model\": \"nester\","
+              "\n   \"input\": \"The food was delicious and the waiter...\""
+              "\n}"
+  };
+
+  // input is the input text to generate embeddings for.
+  string input = 1 [
+    (google.api.field_behavior) = REQUIRED,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      description : "The input text to generate embeddings for."
+    }
+  ];
+
+  // model is the model to use for generating embeddings.
+  string model = 2 [
+    (google.api.field_behavior) = REQUIRED,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      description : "The model to use for generating embeddings."
+    }
+  ];
+
+  // dimensions is the number of dimensions to return. Defaults to 128.
+  int64 dimensions = 4 [
+    (google.api.field_behavior) = OPTIONAL,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      description : "The number of dimensions to return. Defaults to the "
+                    "model's default."
+    }
+  ];
+
+  // user is the user making the request. It is optional and can be used to
+  // track usage.
+  string user = 5 [
+    (google.api.field_behavior) = OPTIONAL,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      description : "Metadata about the user who is making the request."
+    }
+  ];
+}
+
+// Usage is the usage message for the GenerateEmbedding method.
+message EmbeddingsUsage {
+  option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_schema) = {
+    json_schema : {
+      description : "Usage is the usage message for the GenerateEmbedding "
+                    "method."
+      title : "EmbeddingsUsage"
+    }
+  };
+
+  int32 prompt_tokens = 1 [
+    (google.api.field_behavior) = OUTPUT_ONLY,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      description : "The number of tokens used in the prompt."
+    }
+  ];
+
+  int32 total_tokens = 2 [
+    (google.api.field_behavior) = OUTPUT_ONLY,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      description : "The number of tokens in the input text."
+    }
+  ];
+}
+
+// EmbeddingsResponse is the response message for the GenerateEmbedding method.
+//
+// It contains the generated embeddings and other information about the request.
+message Embedding {
+
+  option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_schema) = {
+    json_schema : {
+      title : "Embedding Response"
+      description : "The response message for the GenerateEmbedding method."
+      required : [ "object", "data", "model", "usage" ]
+    }
+    external_docs : {
+      url : "https://docs.pegwings.com/api/embeddings"
+      description : "Learn more about the Embeddings API"
+    }
+  };
+
+  string id = 1 [
+    (google.api.field_behavior) = OUTPUT_ONLY,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      description : "The unique identifier of the embedding."
+      example : "\"pwg-1234\""
+    }
+  ];
+
+  repeated EmbeddingData data = 2 [
+    (google.api.field_behavior) = OUTPUT_ONLY,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      description : "The list of embeddings."
+    }
+  ];
+
+  string model = 3 [
+    (google.api.field_behavior) = OUTPUT_ONLY,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      description : "The model used for generating the embeddings."
+    }
+  ];
+
+  EmbeddingsUsage usage = 4 [
+    (google.api.field_behavior) = OUTPUT_ONLY,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      description : "The usage of the embeddings."
+    }
+  ];
+}
+
+// EmbeddingData is the data message for the GenerateEmbedding method.
+message EmbeddingData {
+
+  option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_schema) = {
+    json_schema : {
+      title : "Embedding Data"
+      description : "The data message for the GenerateEmbedding method."
+      required : [ "index", "embedding_floats" ]
+    }
+    external_docs : {
+      url : "https://docs.pegwings.com/api/embeddings"
+      description : "Learn more about the Embeddings API"
+    }
+  };
+
+  // index is the index of the embedding in the response. If given multiple
+  // inputs, this will be the index of the input in the response.
+  int32 index = 2 [
+    (google.api.field_behavior) = OUTPUT_ONLY,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      description : "The index of the embedding in the response. If given "
+                    "multiple inputs, this will be the index of the input in "
+                    "the response."
+    }
+  ];
+
+  // embedding_floats is the list of floats representing the embedding.
+  repeated double embedding_floats = 3 [
+    (google.api.field_behavior) = OUTPUT_ONLY,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      description : "The emedding as a list of floats."
+    }
+  ];
+}
+
+// EmbeddingsGetRequest is the request for getting an embedding.
+message EmbeddingsGetRequest {
+  option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_schema) = {
+    json_schema : {
+      title : "Embeddings Get Request"
+      description : "The request for getting an embedding."
+      required : [ "id" ]
+    }
+    external_docs : {
+      url : "https://docs.pegwings.com/api/embeddings"
+      description : "Learn more about the Embeddings API"
+    }
+    example : "{"
+              "\n   \"id\": \"pwg-1234\""
+              "\n}"
+  };
+
+  // id is the id of the embedding.
+  string id = 1 [
+    (google.api.field_behavior) = REQUIRED,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      description : "The id of the embedding."
+      example : "\"pwg-1234\""
+    }
+  ];
+}
+
+// EmbeddingsGetResponse is the response for getting an embedding.
+message EmbeddingsGetResponse {
+  option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_schema) = {
+    json_schema : {
+      title : "Embeddings Get Response"
+      description : "The response for getting an embedding."
+      required : [ "embedding" ]
+    }
+    external_docs : {
+      url : "https://docs.pegwings.com/api/embeddings"
+      description : "Learn more about the Embeddings API"
+    }
+    example : "{"
+              "\n   \"embedding\": {"
+              "\n      \"id\": \"pwg-1234\","
+              "\n      \"data\": ["
+              "\n         {"
+              "\n            \"index\": 0,"
+              "\n            \"embedding_floats\": [0.1, 0.2, 0.3, 0.4]"
+              "\n         }"
+              "\n      ],"
+              "\n      \"model\": \"text-embedding-ada-002\","
+              "\n      \"usage\": {"
+              "\n         \"prompt_tokens\": 10,"
+              "\n         \"total_tokens\": 10"
+              "\n      }"
+              "\n   }"
+              "\n}"
+  };
+  // embedding is the embedding.
+  Embedding embedding = 1 [
+    (google.api.field_behavior) = OUTPUT_ONLY,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      description : "The embedding."
+    }
+  ];
+}

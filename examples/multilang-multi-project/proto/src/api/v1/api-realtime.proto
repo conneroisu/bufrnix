@@ -1,0 +1,495 @@
+syntax = "proto3";
+package realtime.v1;
+// External
+import "google/api/field_behavior.proto";
+import "gateway/protoc-gen-openapiv2/annotations.proto";
+import "google/api/annotations.proto";
+
+option go_package = "github.com/pegwings/pegwings/proto/gen/go/api/v1;api";
+
+// Internal
+import "api/v1/api-tools.proto";
+
+option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_swagger) = {
+  info : {
+    title : "Pegwings REALTIME API"
+    version : "1.0.0"
+    description : "# Pegwings API\n\nThis is the REALTIME API for the Pegwings "
+                  "Platform.\n\n## Authorization\n\nYou can authorize using "
+                  "the following methods:\n\n- **ApiKeyAuth** - API Key\n\n- "
+                  "**OAuth2** - OAuth 2.0\n\n\n"
+    contact : {
+      name : "Conner Ohnsorge"
+      url : "https://github.com/pegwings"
+      email : "conneroisu@outlook.com"
+    }
+  }
+};
+
+service RealtimeService {
+  // RealtimeSessionCreate is the method for creating a realtime session.
+  rpc RealtimeSessionCreate(RealtimeSessionCreateRequest)
+      returns (RealtimeSessionCreateResponse) {
+    option (google.api.http) = {
+      post : "/v1/realtime/sessions"
+      body : "*"
+    };
+    option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+      tags : "realtime"
+      tags : "session"
+      tags : "create"
+      description : "Create a realtime session."
+      summary : "Create a realtime session."
+      external_docs : {
+        url : "https://docs.pegwings.com/v1/realtime/create-realtime-session"
+        description : "Find out more about Realtime Sessions"
+      }
+      responses : {
+        key : "200"
+        value : {description : "A successful response."}
+      }
+      security : {
+        security_requirement : {
+          key : "ApiKeyAuth"
+          value : {}
+        }
+        security_requirement : {
+          key : "OAuth2"
+          value : {scope : "read" scope : "write"}
+        }
+      }
+    };
+  }
+}
+
+// RealtimeSessionCreateRequest is the request message for the
+// RealtimeSessionCreate method.
+message RealtimeSessionCreateRequest {
+  //
+  option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_schema) = {
+    json_schema : {
+      title : "Realtime Session Create Request"
+      description : "The request message for the RealtimeSessionCreate method."
+      required : [ "model", "prompt", "temperature", "max_tokens" ]
+    }
+    external_docs : {
+      url : "https://docs.pegwings.com/api/realtime"
+      description : "Learn more about the Realtime API"
+    }
+  };
+
+  // model is the name of the model to use for the session.
+  string model = 1 [
+    (google.api.field_behavior) = OPTIONAL,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      description : "The name of the model to use for the session."
+      example : "\"k1\""
+      default : "k1"
+    }
+  ];
+
+  // instructions is the prompt to use for the session.
+  string instructions = 2 [
+    (google.api.field_behavior) = OPTIONAL,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      description : "The instructions/prompt to use for the session."
+      example : "\"You are a celebrity stylist. You are a very creative, but "
+                "like to play pranks on people.\""
+    }
+  ];
+
+  repeated tools.v1.Tool tools = 3 [
+    (google.api.field_behavior) = OPTIONAL,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      description : "The list of tools to use for the session."
+      example : "[{\"type\":\"function\","
+                "\"function\":{\"name\":\"get_current_weather\", "
+                "\"arguments\":{\"location\":\"New York\"}}}]"
+    }
+  ];
+
+  // modality is the modality to use for the session.
+  string modality = 4 [
+    (google.api.field_behavior) = OPTIONAL,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      description : "The modality to use for the session."
+      example : "\"text\""
+      enum : [ "text", "audio" ]
+    }
+  ];
+
+  // voice is the voice to use for the session.
+  string voice = 5 [
+    (google.api.field_behavior) = OPTIONAL,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      description : "The voice to use for the session."
+      example : "\"en-US-Wavenet-A\"" // TODO: add voices
+    }
+  ];
+
+  // output_audio_format is the format of output audio. Options are pcm16,
+  // g711_ulaw, or g711_alaw. For pcm16, output audio is sampled at a rate of
+  // 24kHz.
+  string output_audio_format = 6 [
+    (google.api.field_behavior) = OPTIONAL,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      description : "The format of output audio."
+      example : "\"pcm16\""
+      enum : [ "pcm16", "g711_ulaw", "g711_alaw" ]
+    }
+  ];
+
+  // transcriber is the transcriber to use for the session.
+  SessionTranscriber transcriber = 7 [
+    (google.api.field_behavior) = OPTIONAL,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      description : "The transcriber to use for the session."
+      example : "{\"model\":\"visper\",\"language\":\"en\",\"prompt\":\"You "
+                "are a celebrity stylist. You are a very creative, but like "
+                "to play pranks on people.\"}"
+    }
+  ];
+
+  // TurnDetection is the turn detection to use for the session.
+  TurnDetection turn_detection = 8 [
+    (google.api.field_behavior) = OPTIONAL,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      description : "The turn detection to use for the session."
+      example : "{\"type\":\"server_vad\",\"threshold\":0.5,"
+                "\"prefix_padding_ms\":100,\"create_response\":true,"
+                "\"interrupt_response\":true}"
+    }
+  ];
+
+  // temperature is the temperature to use for the session.
+  float temperature = 9 [
+    (google.api.field_behavior) = OPTIONAL,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      description : "The temperature to use for the session."
+      example : "0.5"
+    }
+  ];
+
+  // max_response_output_tokens is the maximum number of tokens to output in
+  // a single response for the session.
+  int32 max_response_output_tokens = 10 [
+    (google.api.field_behavior) = OPTIONAL,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      description : "The maximum number of tokens to output in the response. "
+                    "Infinity is -1."
+      example : "100"
+    }
+  ];
+}
+
+// SessionTranscriber is the message for the SessionTranscriber field.
+message SessionTranscriber {
+  option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_schema) = {
+    json_schema : {
+      title : "Session Transcriber"
+      description : "The message for the SessionTranscriber field."
+      required : [ "model", "language", "prompt" ]
+    }
+    external_docs : {
+      url : "https://docs.pegwings.com/api/realtime"
+      description : "Learn more about the Realtime API"
+    }
+  };
+
+  // model is the name of the model used for the session.
+  string model = 1 [
+    (google.api.field_behavior) = OUTPUT_ONLY,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      description : "The name of the model used for the session."
+      example : "\"visper\""
+    }
+  ];
+
+  // language is the language of the session.
+  string language = 2 [
+    (google.api.field_behavior) = OUTPUT_ONLY,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      description : "The language of the session."
+      example : "\"en\""
+    }
+  ];
+
+  // prompt is the prompt used for the session.
+  string prompt = 3 [
+    (google.api.field_behavior) = OUTPUT_ONLY,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      description : "The prompt used for the session."
+      example : "\"You are a celebrity stylist. You are a very creative, but "
+                "like to play pranks on people.\""
+    }
+  ];
+}
+
+// TurnDetection is the message for the TurnDetection field.
+message TurnDetection {
+  //
+  option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_schema) = {
+    json_schema : {
+      title : "Turn Detection"
+      description : "The message for the TurnDetection field."
+      required : [ "start", "end" ]
+    }
+    external_docs : {
+      url : "https://docs.pegwings.com/api/realtime"
+      description : "Learn more about the Realtime API"
+    }
+  };
+
+  // type is the type of turn detection. Currently, only server_vad is
+  // supported.
+  string type = 1 [
+    (google.api.field_behavior) = OUTPUT_ONLY,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      description : "The type of turn detection."
+      example : "\"start\""
+      enum : [ "server_vad" ]
+    }
+  ];
+
+  // threshold is the threshold for turn detection.
+  float threshold = 2 [
+    (google.api.field_behavior) = OUTPUT_ONLY,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      description : "The threshold for turn detection."
+      example : "0.5"
+    }
+  ];
+
+  // prefix_padding_ms is the prefix padding in milliseconds.
+  int32 prefix_padding_ms = 3 [
+    (google.api.field_behavior) = OUTPUT_ONLY,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      description : "The prefix padding in milliseconds."
+      example : "100"
+    }
+  ];
+
+  // create_response is the setting for if the model should create a response
+  // for the turn.
+  bool create_response = 4 [
+    (google.api.field_behavior) = OUTPUT_ONLY,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      description : "The setting for if the model should create a response for "
+                    "the turn."
+      example : "true"
+    }
+  ];
+
+  // interrupt_response is the setting for if the model should interrupt the
+  // turn.
+  bool interrupt_response = 5 [
+    (google.api.field_behavior) = OUTPUT_ONLY,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      description : "The setting for if the model should interrupt the turn."
+      example : "true"
+    }
+  ];
+}
+
+// ClientSecret is the message for the ClientSecret field in the
+// RealtimeSessionCreateResponse message.
+message ClientSecret {
+  //
+  option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_schema) = {
+    json_schema : {
+      title : "Client Secret"
+      description : "The message for the ClientSecret field in the "
+                    "RealtimeSessionCreateResponse message."
+      required : [ "value", "expires_at" ]
+    }
+    external_docs : {
+      url : "https://docs.pegwings.com/api/realtime"
+      description : "Learn more about the Realtime API"
+    }
+  };
+
+  // value is the client secret value.
+  string value = 1 [
+    (google.api.field_behavior) = OUTPUT_ONLY,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      description : "The client secret value."
+      example : "\"secret\""
+    }
+  ];
+
+  // expires_at is the expiration time of the client secret in seconds.
+  uint32 expires_at = 2 [
+    (google.api.field_behavior) = OUTPUT_ONLY,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      description : "The expiration time of the client secret in seconds."
+      example : "1679086400"
+    }
+  ];
+}
+
+// RealtimeSessionTranscribeRequest is the request message for the
+// RealtimeSessionTranscribe method.
+message RealtimeSessionCreateResponse {
+  //
+  option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_schema) = {
+    json_schema : {
+      title : "Realtime Session Create Response"
+      description : "The response message for the RealtimeSessionCreate method."
+      required : [ "session" ]
+    }
+    external_docs : {
+      url : "https://docs.pegwings.com/api/realtime"
+      description : "Learn more about the Realtime API"
+    }
+  };
+
+  // id is the unique identifier of the session.
+  string id = 1 [
+    (google.api.field_behavior) = OUTPUT_ONLY,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      description : "The unique identifier of the session."
+      example : "\"pwg-rt-1234\""
+    }
+  ];
+
+  // object is the string defining the session object.
+  string object = 2 [
+    (google.api.field_behavior) = OUTPUT_ONLY,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      description : "The object of the session."
+      example : "\"realtime.session\""
+    }
+  ];
+
+  // model is the name/id of the model used for the session.
+  string model = 3 [
+    (google.api.field_behavior) = OUTPUT_ONLY,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      description : "The name of the model used for the session."
+      example : "\"visper\""
+    }
+  ];
+
+  // modalities is the modalities used for the session.
+  repeated string modalities = 4 [
+    (google.api.field_behavior) = OUTPUT_ONLY,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      description : "The modalities used for the session."
+      example : "[\"text\", \"audio\"]"
+    }
+  ];
+
+  // instructions is the prompt used for the session.
+  string instructions = 5 [
+    (google.api.field_behavior) = OUTPUT_ONLY,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      description : "The prompt used for the session."
+      example : "\"You are a celebrity stylist. You are a very creative, but "
+                "like to play pranks on people.\""
+    }
+  ];
+
+  // voice is the voice used for the session.
+  string voice = 6 [
+    (google.api.field_behavior) = OUTPUT_ONLY,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      description : "The voice used for the session."
+      example : "\"en-US-Wavenet-A\""
+    }
+  ];
+
+  // input_audio_format is the format of input audio. Options are pcm16,
+  // g711_ulaw, or g711_alaw. For pcm16, input audio is sampled at a rate of
+  // 24kHz.
+  string input_audio_format = 7 [
+    (google.api.field_behavior) = OUTPUT_ONLY,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      description : "The format of input audio."
+      example : "\"pcm16\""
+      enum : [ "pcm16", "g711_ulaw", "g711_alaw" ]
+    }
+  ];
+
+  // output_audio_format is the format of output audio. Options are pcm16,
+  // g711_ulaw, or g711_alaw. For pcm16, output audio is sampled at a rate of
+  // 24kHz.
+  string output_audio_format = 8 [
+    (google.api.field_behavior) = OUTPUT_ONLY,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      description : "The format of output audio."
+      example : "\"pcm16\""
+      enum : [ "pcm16", "g711_ulaw", "g711_alaw" ]
+    }
+  ];
+
+  // transcriber is the transcriber used for the session.
+  SessionTranscriber transcriber = 9 [
+    (google.api.field_behavior) = OUTPUT_ONLY,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      description : "The transcriber used for the session."
+      example : "{\"model\":\"visper\",\"language\":\"en\",\"prompt\":\"You "
+                "are a celebrity stylist. You are a very creative, but like "
+                "to play pranks on people.\"}"
+    }
+  ];
+
+  // turn_detection is the turn detection used for the session.
+  TurnDetection turn_detection = 10 [
+    (google.api.field_behavior) = OUTPUT_ONLY,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      description : "The turn detection used for the session."
+      example : "{\"type\":\"server_vad\",\"threshold\":0.5,"
+                "\"prefix_padding_ms\":100,\"create_response\":true,"
+                "\"interrupt_response\":true}"
+    }
+  ];
+
+  // tools is the list of tools used for the session.
+  repeated string tools = 11 [
+    (google.api.field_behavior) = OUTPUT_ONLY,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      description : "The list of tools used for the session."
+      example : "[\"get_current_weather\"]"
+    }
+  ];
+
+  // tool_choice is the tool choice used for the session.
+  string tool_choice = 12 [
+    (google.api.field_behavior) = OUTPUT_ONLY,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      description : "The tool choice used for the session."
+      example : "\"get_current_weather\""
+      default : "none"
+    }
+  ];
+
+  // temperature is the temperature used for the session.
+  double temperature = 13 [
+    (google.api.field_behavior) = OUTPUT_ONLY,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      description : "The temperature used for the session."
+      example : "0.0"
+      default : "0.0"
+    }
+  ];
+
+  // max_response_output_tokens is the maximum number of tokens to output in
+  // a single response for the session. Infinity is -1.
+  uint32 max_response_output_tokens = 14 [
+    (google.api.field_behavior) = OUTPUT_ONLY,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      description : "The maximum number of tokens to output in the response. "
+                    "Infinity is -1."
+      example : "100"
+    }
+  ];
+
+  // client_secret is the client secret used for the session.
+  ClientSecret client_secret = 15 [
+    (google.api.field_behavior) = OUTPUT_ONLY,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      description : "The client secret used for the session."
+      example : "{\"value\":\"secret\",\"expires_at\":1679086400}"
+    }
+  ];
+}

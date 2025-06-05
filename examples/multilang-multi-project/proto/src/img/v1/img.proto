@@ -1,0 +1,108 @@
+syntax = "proto3";
+
+package img.v1;
+
+// External
+import "gateway/protoc-gen-openapiv2/annotations.proto";
+import "google/api/field_behavior.proto";
+import "google/api/annotations.proto";
+import "google/protobuf/empty.proto";
+
+// Internal
+import "lib/media.proto";
+
+option go_package = "github.com/pegwings/pegwings/proto/gen/go/img/v1;img";
+
+option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_swagger) = {
+  info : {
+    title : "Internal Image Synthesis API"
+    version : "1.0.0"
+    description : "# Image Synthesis\n\nThis service provides a gRPC API for "
+                  "generating images from prompts and images.\n\n It is "
+                  "part of the internal api of the pegwings platform."
+    contact : {
+      name : "Conner Ohnsorge"
+      url : "https://github.com/pegwings"
+      email : "conneroisu@outlook.com"
+    }
+  }
+};
+
+// ImageService defines the RPC methods for image generation.
+service ImageService {
+
+  // GenerateImage generates an image from a prompt.
+  rpc Generate(GenerateRequest) returns (GenerateResponse) {
+    option (google.api.http) = {
+      post : "/v1/generate"
+      body : "*"
+    };
+    option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+      summary : "Generate an image from a prompt."
+      description : "Generate an image from a prompt."
+      tags : "Image"
+    };
+  }
+
+  // HealthCheck returns a health check response.
+  rpc HealthCheck(google.protobuf.Empty) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      get : "/v1/checkhealth"
+    };
+    option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+      summary : "Health check."
+      description : "Health check."
+      tags : "Image,checkhealth"
+    };
+  }
+}
+
+// GenerateImageRequest represents a request for an image generation.
+message GenerateRequest {
+
+  // prompt is the prompt to generate an image from.
+  string prompt = 1 [
+    (google.api.field_behavior) = REQUIRED,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      description : "The prompt to generate an image from."
+      example : "\"A cat\""
+    }
+  ];
+  // num_images is the number of images to generate.
+  int32 num_images = 2 [
+    (google.api.field_behavior) = OPTIONAL,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      description : "The number of images to generate."
+      example : "1"
+    }
+  ];
+
+  // format is the format of the generated image.
+  string format = 3 [
+    (google.api.field_behavior) = OPTIONAL,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      description : "The format of the generated image."
+      example : "\"png\""
+    }
+  ];
+
+  // size is the size of the generated image.
+  media.v1.ImageSize size = 4 [
+    (google.api.field_behavior) = OPTIONAL,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      description : "The size of the generated image."
+    }
+  ];
+}
+
+// GenerateImageResponse represents a response for an image generation.
+message GenerateResponse {
+
+  // image is the path to the generated image.
+  string image = 1 [
+    (google.api.field_behavior) = REQUIRED,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      description : "The path to the generated image."
+    }
+  ];
+}

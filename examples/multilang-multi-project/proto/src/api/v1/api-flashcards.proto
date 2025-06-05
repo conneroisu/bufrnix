@@ -1,0 +1,281 @@
+syntax = "proto3";
+
+package flashcards.v1;
+
+// External
+import "google/api/field_behavior.proto";
+import "gateway/protoc-gen-openapiv2/annotations.proto";
+
+option go_package = "github.com/pegwings/pegwings/proto/gen/go/api/v1;api";
+
+message FlashcardDeck {
+  option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_schema) = {
+    json_schema : {
+      title : "Flashcard Set"
+      description : "The flashcard set object."
+      required : [ "id", "name" ]
+    }
+    external_docs : {
+      url : "https://docs.pegwings.com/v1/flashcard/create-flashcard"
+      description : "Learn more about the Flashcard API"
+    }
+  };
+
+  string id = 1 [
+    (google.api.field_behavior) = OUTPUT_ONLY,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      description : "The ID of the flashcard set."
+    }
+  ];
+
+  // name is the name of the flashcard set.
+  string name = 2 [
+    (google.api.field_behavior) = OUTPUT_ONLY,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      description : "The name of the flashcard set."
+    }
+  ];
+
+  // cards is the list of flashcards in the flashcard set.
+  repeated Flashcard cards = 3 [
+    (google.api.field_behavior) = OUTPUT_ONLY,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      description : "The flashcards in the flashcard set."
+    }
+  ];
+}
+
+message Flashcard {
+  option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_schema) = {
+    json_schema : {
+      title : "Flashcard"
+      description : "The flashcard object."
+      required : [ "front", "back" ]
+    }
+    external_docs : {
+      url : "https://docs.pegwings.com/v1/flashcard/create-flashcard"
+      description : "Learn more about the Flashcard API"
+    }
+  };
+
+  string id = 1 [
+    (google.api.field_behavior) = OUTPUT_ONLY,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      description : "The ID of the flashcard."
+    }
+  ];
+
+  // front is the front of the flashcard.
+  string front = 2 [
+    (google.api.field_behavior) = OUTPUT_ONLY,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      description : "The front of the flashcard."
+    }
+  ];
+
+  // back is the back of the flashcard.
+  string back = 3 [
+    (google.api.field_behavior) = OUTPUT_ONLY,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      description : "The back of the flashcard."
+    }
+  ];
+}
+
+// OrganizationFlashcardSetCreateRequest is the request message for creating a
+// flashcard deck.
+//
+// It contains the input text and other parameters for the flashcard set
+// creation.
+message OrganizationFlashcardDeckCreateRequest {
+  option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_schema) = {
+    json_schema : {
+      title : "Flashcard Set Request"
+      description : "The request message for the FlashcardSetCreate method."
+      required : [ "name" ]
+    }
+    external_docs : {
+      // TODO: Update this to the actual external docs
+      url : "https://docs.pegwings.com/v1/flashcard/create-flashcard-set"
+      description : "Learn more about the Flashcard API"
+    }
+    // TODO: Add example
+  };
+
+  // name is the name of the flashcard set.
+  string name = 1 [
+    (google.api.field_behavior) = REQUIRED,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      description : "The name of the flashcard set."
+    }
+  ];
+}
+
+// FlashcardCreateRequest is the request message for the FlashcardCreate method.
+//
+// It contains the input text and other parameters for the flashcard creation.
+message FlashcardCreateRequest {
+  option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_schema) = {
+    json_schema : {
+      title : "Flashcard Request"
+      description : "The request message for the FlashcardCreate method."
+      required : [ "input" ]
+    }
+    external_docs : {
+      // TODO: Update this to the actual external docs
+      url : "https://docs.pegwings.com/v1/flashcard/create-flashcard"
+      description : "Learn more about the Flashcard API"
+    }
+    example : "{\n  \"input\": \"The food was delicious and the waiter...\"\n}"
+  };
+
+  string set_id = 1 [
+    (google.api.field_behavior) = REQUIRED,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      description : "The id of the set to create the flashcard on."
+    }
+  ];
+
+  // front is the input text to create the front of the flashcard on.
+  string front = 2 [
+    (google.api.field_behavior) = REQUIRED,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      description : "The input text to create the front of the flashcard on."
+    }
+  ];
+
+  // back is the input text to create the back of the flashcard on.
+  string back = 3 [
+    (google.api.field_behavior) = REQUIRED,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      description : "The input text to create the back of the flashcard on."
+    }
+  ];
+}
+
+// FlashcardCreateResponse is the response message for the FlashcardCreate
+// method.
+//
+// It contains the details of the flashcard that was created.
+message FlashcardCreateResponse {
+
+  option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_schema) = {
+    json_schema : {
+      title : "Flashcard Response"
+      description : "The response message returned by the flashcard endpoint "
+                    "in "
+                    "response to a create flashcard request."
+      required : [ "flashcard" ]
+    }
+    external_docs : {
+      url : "https://docs.pegwings.com/v1/flashcard/create-flashcard"
+      description : "Learn more about the Flashcard API"
+    }
+  };
+
+  // flashcard is the flashcard object returned by the flashcard endpoint in
+  // response to a create flashcard request.
+  Flashcard flashcard = 1 [
+    (google.api.field_behavior) = OUTPUT_ONLY,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      description : "The flashcard object returned by the flashcard endpoint "
+                    "in "
+                    "response to a create flashcard request."
+    }
+  ];
+}
+
+// FlashcardGetRequest is the request message for the Get method.
+message FlashcardGetRequest {
+  option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_schema) = {
+    json_schema : {description : "The request message for the Get method."}
+  };
+  string org_id = 1 [
+    (google.api.field_behavior) = REQUIRED,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      description : "The resource name of the organization to retrieve the "
+                    "flashcard from."
+    }
+  ];
+  // id is the resource name of the flashcard to retrieve.
+  string id = 2 [
+    (google.api.field_behavior) = REQUIRED,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      description : "The resource name of the flashcard to retrieve."
+    }
+  ];
+}
+
+// FlashcardDecksListRequest is the request message for the List method.
+message FlashcardDecksListRequest {
+  option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_schema) = {
+    json_schema : {description : "The request message for the List method."}
+  };
+  // org_id is the id of the organization to list flashcard decks for.
+  string org_id = 1 [
+    (google.api.field_behavior) = REQUIRED,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      description : "The id of the organization to list flashcard decks for."
+    }
+  ];
+}
+
+// FlashcardDecksListResponse is the response message for the List method.
+message FlashcardDecksListResponse {
+  option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_schema) = {
+    json_schema : {description : "The response message for the List method."}
+  };
+  // decks is the list of flashcard decks.
+  repeated FlashcardDeck decks = 1 [
+    (google.api.field_behavior) = OUTPUT_ONLY,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      description : "The list of flashcard decks."
+    }
+  ];
+}
+
+// OrganizationFlashcardDeckDeleteRequest is the request message for the
+// OrganizationFlashcardDeckDelete method.
+message OrganizationFlashcardDeckDeleteRequest {
+  option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_schema) = {
+    json_schema : {description : "The request message for the Delete method."}
+  };
+  // org_id is the id of the organization.
+  string org_id = 1 [
+    (google.api.field_behavior) = REQUIRED,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      description : "The id of the organization."
+      example : "org-id"
+    }
+  ]; // The id of the organization.
+  // id is the id of the flashcard deck.
+  string id = 2 [
+    (google.api.field_behavior) = REQUIRED,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      description : "The id of the flashcard deck."
+      example : "deck-id"
+    }
+  ];
+}
+
+message OrganizationFlashcardDeleteRequest {
+  option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_schema) = {
+    json_schema : {description : "The request message for the Delete method."}
+  };
+  // org_id is the id of the organization.
+  string org_id = 1 [
+    (google.api.field_behavior) = REQUIRED,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      description : "The id of the organization."
+      example : "org-id"
+    }
+  ]; // The id of the organization.
+  // id is the id of the flashcard.
+  string id = 2 [
+    (google.api.field_behavior) = REQUIRED,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      description : "The id of the flashcard."
+      example : "flashcard-id"
+    }
+  ];
+}
