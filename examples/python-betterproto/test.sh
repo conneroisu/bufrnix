@@ -7,6 +7,12 @@ echo "===================================="
 # Clean previous runs
 rm -rf proto/gen
 
+# Show proto files that will be processed
+echo "Proto files to process:"
+proto_files=$(find "proto" -type f -name "*.proto" | sort)
+echo "$proto_files"
+echo ""
+
 # Initialize and generate
 bufrnix_init
 bufrnix
