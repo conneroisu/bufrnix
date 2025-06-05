@@ -2,8 +2,6 @@ syntax = "proto3";
 
 package modern;
 
-import "google/protobuf/timestamp.proto";
-
 message Product {
   string id = 1;
   string name = 2;
@@ -11,7 +9,6 @@ message Product {
   double price = 4;
   repeated string categories = 5;
   map<string, string> attributes = 6;
-  google.protobuf.Timestamp created_at = 7;
 }
 
 message CreateProductRequest {
