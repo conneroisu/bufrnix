@@ -49,7 +49,7 @@ test_example() {
         echo -e "${RED}✗ Example directory $example_dir does not exist${NC}"
         echo -e "${RED}   Current directory: $(pwd)${NC}"
         echo -e "${RED}   Available examples:${NC}"
-        ls -la examples/ 2>/dev/null | grep '^d' | awk '{print $NF}' | grep -v '^\.$\|^\.\.$' | sed 's/^/     - /'
+        find examples/ -mindepth 1 -maxdepth 1 -type d -printf '     - %f\n' 2>/dev/null
         FAILED_TESTS+=("$example_name: directory not found")
         return 1
     fi
@@ -70,7 +70,8 @@ test_example() {
     fi
     
     # Get the output path
-    local output_path=$(nix build --extra-experimental-features "nix-command flakes" "./$example_dir#default" --print-out-paths 2>/dev/null)
+    local output_path
+    output_path=$(nix build --extra-experimental-features "nix-command flakes" "./$example_dir#default" --print-out-paths 2>/dev/null)
     
     if [ "$VERBOSE" = true ]; then
         echo -e "  ${BLUE}Output path: $output_path${NC}"
