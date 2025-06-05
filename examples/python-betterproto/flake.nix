@@ -43,6 +43,8 @@
           python3
           python3Packages.betterproto
           python3Packages.grpclib # betterproto uses grpclib instead of grpcio
+          python3Packages.black   # Required for betterproto compiler
+          python3Packages.isort   # Required for betterproto compiler
           protobuf
         ];
 
