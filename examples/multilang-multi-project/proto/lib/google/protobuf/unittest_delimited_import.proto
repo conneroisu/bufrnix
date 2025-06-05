@@ -2,6 +2,7 @@ edition = "2023";
 
 package google.protobuf.editions_unittest;
 
+
 option java_multiple_files = true;
 
 message MessageImport {
