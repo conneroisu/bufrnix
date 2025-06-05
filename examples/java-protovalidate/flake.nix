@@ -3,6 +3,7 @@
 
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
+    # bufrnix.url = "github:conneroisu/bufrnix";
     bufrnix.url = "path:../..";
     bufrnix.inputs.nixpkgs.follows = "nixpkgs";
   };

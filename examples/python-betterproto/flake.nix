@@ -4,6 +4,7 @@
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
     flake-utils.url = "github:numtide/flake-utils";
+    # bufrnix.url = "github:conneroisu/bufrnix";
     bufrnix.url = "path:../..";
     bufrnix.inputs.nixpkgs.follows = "nixpkgs";
   };
@@ -42,6 +43,8 @@
           python3
           python3Packages.betterproto
           python3Packages.grpclib # betterproto uses grpclib instead of grpcio
+          python3Packages.black   # Required for betterproto compiler
+          python3Packages.isort   # Required for betterproto compiler
           protobuf
         ];
 

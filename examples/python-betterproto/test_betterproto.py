@@ -6,16 +6,20 @@ import sys
 sys.path.insert(0, '.')
 
 # Import will be from betterproto generated code
-# The import path may differ from standard protobuf
+# Betterproto generates modules differently than standard protobuf
 try:
-    from proto.gen.python.modern import Product, ProductServiceStub, CreateProductRequest
+    from proto.gen.python.modern import Product, ProductService, CreateProductRequest
 except ImportError:
-    print("Note: Betterproto may generate different import paths")
+    print("Note: Betterproto generates different import paths")
     print("Checking alternative paths...")
-    from proto.gen.python import modern
-    Product = modern.Product
-    ProductServiceStub = modern.ProductServiceStub
-    CreateProductRequest = modern.CreateProductRequest
+    try:
+        from proto.gen.python import modern_pb2 as modern
+        Product = modern.Product
+        ProductService = modern.ProductService
+        CreateProductRequest = modern.CreateProductRequest
+    except ImportError:
+        print("Error: Generated files not found. Run 'nix run .#default' first")
+        sys.exit(1)
 
 
 async def test_dataclasses():
@@ -68,7 +72,7 @@ async def test_service():
     # Note: Betterproto generates async-first service clients
     # Example (would need actual server):
     # async with grpclib.client.Channel('localhost', 50051) as channel:
-    #     service = ProductServiceClient(channel)
+    #     service = ProductService(channel)
     #     response = await service.create_product(request)
 
 

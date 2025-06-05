@@ -64,7 +64,7 @@ with pkgs.lib; let
         package = pkgs.protobuf;
         grpc.package = pkgs.python3Packages.grpcio-tools;
         pyi.package = pkgs.protobuf;
-        betterproto.package = pkgs.callPackage ../languages/python/betterproto-package.nix {};
+        betterproto.package = pkgs.callPackage ../packages/betterproto {};
         mypy.package = pkgs.python3Packages.mypy-protobuf;
       };
       swift = {
