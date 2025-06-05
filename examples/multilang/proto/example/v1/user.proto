@@ -1,0 +1,141 @@
+syntax = "proto3";
+
+package example.v1;
+
+import "google/protobuf/timestamp.proto";
+
+option go_package = "github.com/example/multilang/proto/gen/go/example/v1;examplev1";
+
+// User represents a user in the system
+message User {
+  // Unique identifier for the user
+  uint64 id = 1;
+  
+  // User's email address
+  string email = 2;
+  
+  // User's full name
+  string name = 3;
+  
+  // User's age
+  uint32 age = 4;
+  
+  // User's preferences
+  UserPreferences preferences = 5;
+  
+  // When the user was created
+  google.protobuf.Timestamp created_at = 6;
+  
+  // User's status
+  UserStatus status = 7;
+}
+
+// User preferences
+message UserPreferences {
+  // User's preferred language
+  string language = 1;
+  
+  // User's timezone
+  string timezone = 2;
+  
+  // Whether the user wants email notifications
+  bool email_notifications = 3;
+  
+  // User's theme preference
+  Theme theme = 4;
+}
+
+// User status enumeration
+enum UserStatus {
+  USER_STATUS_UNSPECIFIED = 0;
+  USER_STATUS_ACTIVE = 1;
+  USER_STATUS_INACTIVE = 2;
+  USER_STATUS_SUSPENDED = 3;
+}
+
+// Theme enumeration
+enum Theme {
+  THEME_UNSPECIFIED = 0;
+  THEME_LIGHT = 1;
+  THEME_DARK = 2;
+  THEME_AUTO = 3;
+}
+
+// Service for managing users
+service UserService {
+  // Get a user by ID
+  rpc GetUser(GetUserRequest) returns (GetUserResponse);
+  
+  // Create a new user
+  rpc CreateUser(CreateUserRequest) returns (CreateUserResponse);
+  
+  // Update an existing user
+  rpc UpdateUser(UpdateUserRequest) returns (UpdateUserResponse);
+  
+  // Delete a user
+  rpc DeleteUser(DeleteUserRequest) returns (DeleteUserResponse);
+  
+  // List users with pagination
+  rpc ListUsers(ListUsersRequest) returns (ListUsersResponse);
+}
+
+// Get user request
+message GetUserRequest {
+  uint64 id = 1;
+}
+
+// Get user response
+message GetUserResponse {
+  User user = 1;
+}
+
+// Create user request
+message CreateUserRequest {
+  string email = 1;
+  string name = 2;
+  uint32 age = 3;
+  UserPreferences preferences = 4;
+}
+
+// Create user response
+message CreateUserResponse {
+  User user = 1;
+}
+
+// Update user request
+message UpdateUserRequest {
+  uint64 id = 1;
+  string email = 2;
+  string name = 3;
+  uint32 age = 4;
+  UserPreferences preferences = 5;
+}
+
+// Update user response
+message UpdateUserResponse {
+  User user = 1;
+}
+
+// Delete user request
+message DeleteUserRequest {
+  uint64 id = 1;
+}
+
+// Delete user response
+message DeleteUserResponse {
+  bool success = 1;
+}
+
+// List users request
+message ListUsersRequest {
+  uint32 page_size = 1;
+  string page_token = 2;
+  UserStatus status_filter = 3;
+}
+
+// List users response
+message ListUsersResponse {
+  repeated User users = 1;
+  string next_page_token = 2;
+  uint32 total_count = 3;
+}

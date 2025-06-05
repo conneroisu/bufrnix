@@ -1,0 +1,56 @@
+syntax = "proto3";
+package video.v1;
+
+// External
+import "google/api/field_behavior.proto";
+import "gateway/protoc-gen-openapiv2/annotations.proto";
+import "buf/validate/validate.proto";
+
+// Internal
+import "lib/media.proto";
+
+option go_package = "github.com/pegwings/pegwings/proto/gen/go/api/v1;api";
+
+message VideoCreateRequest {
+  option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_schema) = {
+    json_schema : {
+      title : "VideoCreateRequest"
+      description : "The request for the VideoCreateRequest."
+    }
+  };
+  string prompt = 1 [
+    (validate.rules).string.min_len = 1,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      description : "The prompt for the video."
+      example : "\"A man is walking down the street.\""
+    }
+  ];
+
+  // image_size is the size of the image.
+  media.v1.ImageSize image_size = 2 [
+    (google.api.field_behavior) = OPTIONAL,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      description : "The size of the image."
+      example : "{\"width\":640,\"height\":480}"
+    }
+  ];
+}
+
+// VideoCreateResponse is the response for the VideoCreateRequest.
+message VideoCreateResponse {
+  option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_schema) = {
+    json_schema : {
+      title : "VideoCreateResponse"
+      description : "The response for the VideoCreateRequest."
+    }
+  };
+  // id is the id of the video.
+  string id = 1 [
+    (google.api.field_behavior) = OUTPUT_ONLY,
+    (validate.rules).string.min_len = 1,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      description : "The id of the video."
+      example : "\"1234567890\""
+    }
+  ];
+}

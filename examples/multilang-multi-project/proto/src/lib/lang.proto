@@ -1,0 +1,567 @@
+syntax = "proto3";
+
+package language.v1;
+
+// External
+import "gateway/protoc-gen-openapiv2/annotations.proto";
+option go_package = "github.com/pegwings/pegwings/proto/gen/go/lib;lib";
+
+// ISO 639-1 language codes
+// Source: ISO 639 standard
+enum LanguageCode {
+  option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_enum) = {
+    title : "LanguageCode"
+    description : "ISO 639-1 language codes"
+  };
+  // Default unspecified value
+  LANGUAGE_UNSPECIFIED = 0;
+
+  // Abkhazian
+  LANGUAGE_AB = 1;
+
+  // Afar
+  LANGUAGE_AA = 2;
+
+  // Afrikaans
+  LANGUAGE_AF = 3;
+
+  // Akan
+  LANGUAGE_AK = 4;
+
+  // Albanian
+  LANGUAGE_SQ = 5;
+
+  // Amharic
+  LANGUAGE_AM = 6;
+
+  // Arabic
+  LANGUAGE_AR = 7;
+
+  // Aragonese
+  LANGUAGE_AN = 8;
+
+  // Armenian
+  LANGUAGE_HY = 9;
+
+  // Assamese
+  LANGUAGE_AS = 10;
+
+  // Avaric
+  LANGUAGE_AV = 11;
+
+  // Avestan
+  LANGUAGE_AE = 12;
+
+  // Aymara
+  LANGUAGE_AY = 13;
+
+  // Azerbaijani
+  LANGUAGE_AZ = 14;
+
+  // Bambara
+  LANGUAGE_BM = 15;
+
+  // Bashkir
+  LANGUAGE_BA = 16;
+
+  // Basque
+  LANGUAGE_EU = 17;
+
+  // Belarusian
+  LANGUAGE_BE = 18;
+
+  // Bengali
+  LANGUAGE_BN = 19;
+
+  // Bislama
+  LANGUAGE_BI = 20;
+
+  // Bosnian
+  LANGUAGE_BS = 21;
+
+  // Breton
+  LANGUAGE_BR = 22;
+
+  // Bulgarian
+  LANGUAGE_BG = 23;
+
+  // Burmese
+  LANGUAGE_MY = 24;
+
+  // Catalan, Valencian
+  LANGUAGE_CA = 25;
+
+  // Central Khmer
+  LANGUAGE_KM = 26;
+
+  // Chamorro
+  LANGUAGE_CH = 27;
+
+  // Chechen
+  LANGUAGE_CE = 28;
+
+  // Chichewa, Chewa, Nyanja
+  LANGUAGE_NY = 29;
+
+  // Chinese
+  LANGUAGE_ZH = 30;
+
+  // Church Slavonic, Old Slavonic, Old Church Slavonic
+  LANGUAGE_CU = 31;
+
+  // Chuvash
+  LANGUAGE_CV = 32;
+
+  // Cornish
+  LANGUAGE_KW = 33;
+
+  // Corsican
+  LANGUAGE_CO = 34;
+
+  // Cree
+  LANGUAGE_CR = 35;
+
+  // Croatian
+  LANGUAGE_HR = 36;
+
+  // Czech
+  LANGUAGE_CS = 37;
+
+  // Danish
+  LANGUAGE_DA = 38;
+
+  // Divehi, Dhivehi, Maldivian
+  LANGUAGE_DV = 39;
+
+  // Dutch, Flemish
+  LANGUAGE_NL = 40;
+
+  // Dzongkha
+  LANGUAGE_DZ = 41;
+
+  // English
+  LANGUAGE_EN = 42;
+
+  // Esperanto
+  LANGUAGE_EO = 43;
+
+  // Estonian
+  LANGUAGE_ET = 44;
+
+  // Ewe
+  LANGUAGE_EE = 45;
+
+  // Faroese
+  LANGUAGE_FO = 46;
+
+  // Fijian
+  LANGUAGE_FJ = 47;
+
+  // Finnish
+  LANGUAGE_FI = 48;
+
+  // French
+  LANGUAGE_FR = 49;
+
+  // Fulah
+  LANGUAGE_FF = 50;
+
+  // Gaelic, Scottish Gaelic
+  LANGUAGE_GD = 51;
+
+  // Galician
+  LANGUAGE_GL = 52;
+
+  // Ganda
+  LANGUAGE_LG = 53;
+
+  // Georgian
+  LANGUAGE_KA = 54;
+
+  // German
+  LANGUAGE_DE = 55;
+
+  // Greek, Modern (1453–)
+  LANGUAGE_EL = 56;
+
+  // Guarani
+  LANGUAGE_GN = 57;
+
+  // Gujarati
+  LANGUAGE_GU = 58;
+
+  // Haitian, Haitian Creole
+  LANGUAGE_HT = 59;
+
+  // Hausa
+  LANGUAGE_HA = 60;
+
+  // Hebrew
+  LANGUAGE_HE = 61;
+
+  // Herero
+  LANGUAGE_HZ = 62;
+
+  // Hindi
+  LANGUAGE_HI = 63;
+
+  // Hiri Motu
+  LANGUAGE_HO = 64;
+
+  // Hungarian
+  LANGUAGE_HU = 65;
+
+  // Icelandic
+  LANGUAGE_IS = 66;
+
+  // Ido
+  LANGUAGE_IO = 67;
+
+  // Igbo
+  LANGUAGE_IG = 68;
+
+  // Indonesian
+  LANGUAGE_ID = 69;
+
+  // Interlingua (International Auxiliary Language Association)
+  LANGUAGE_IA = 70;
+
+  // Interlingue, Occidental
+  LANGUAGE_IE = 71;
+
+  // Inuktitut
+  LANGUAGE_IU = 72;
+
+  // Inupiaq
+  LANGUAGE_IK = 73;
+
+  // Irish
+  LANGUAGE_GA = 74;
+
+  // Italian
+  LANGUAGE_IT = 75;
+
+  // Japanese
+  LANGUAGE_JA = 76;
+
+  // Javanese
+  LANGUAGE_JV = 77;
+
+  // Kalaallisut, Greenlandic
+  LANGUAGE_KL = 78;
+
+  // Kannada
+  LANGUAGE_KN = 79;
+
+  // Kanuri
+  LANGUAGE_KR = 80;
+
+  // Kashmiri
+  LANGUAGE_KS = 81;
+
+  // Kazakh
+  LANGUAGE_KK = 82;
+
+  // Kikuyu, Gikuyu
+  LANGUAGE_KI = 83;
+
+  // Kinyarwanda
+  LANGUAGE_RW = 84;
+
+  // Komi
+  LANGUAGE_KV = 85;
+
+  // Kongo
+  LANGUAGE_KG = 86;
+
+  // Korean
+  LANGUAGE_KO = 87;
+
+  // Kuanyama, Kwanyama
+  LANGUAGE_KJ = 88;
+
+  // Kurdish
+  LANGUAGE_KU = 89;
+
+  // Kyrgyz, Kirghiz
+  LANGUAGE_KY = 90;
+
+  // Lao
+  LANGUAGE_LO = 91;
+
+  // Latin
+  LANGUAGE_LA = 92;
+
+  // Latvian
+  LANGUAGE_LV = 93;
+
+  // Limburgan, Limburger, Limburgish
+  LANGUAGE_LI = 94;
+
+  // Lingala
+  LANGUAGE_LN = 95;
+
+  // Lithuanian
+  LANGUAGE_LT = 96;
+
+  // Luba-Katanga
+  LANGUAGE_LU = 97;
+
+  // Luxembourgish, Letzeburgesch
+  LANGUAGE_LB = 98;
+
+  // Macedonian
+  LANGUAGE_MK = 99;
+
+  // Malagasy
+  LANGUAGE_MG = 100;
+
+  // Malay
+  LANGUAGE_MS = 101;
+
+  // Malayalam
+  LANGUAGE_ML = 102;
+
+  // Maltese
+  LANGUAGE_MT = 103;
+
+  // Manx
+  LANGUAGE_GV = 104;
+
+  // Maori
+  LANGUAGE_MI = 105;
+
+  // Marathi
+  LANGUAGE_MR = 106;
+
+  // Marshallese
+  LANGUAGE_MH = 107;
+
+  // Mongolian
+  LANGUAGE_MN = 108;
+
+  // Nauru
+  LANGUAGE_NA = 109;
+
+  // Navajo, Navaho
+  LANGUAGE_NV = 110;
+
+  // Ndonga
+  LANGUAGE_NG = 111;
+
+  // Nepali
+  LANGUAGE_NE = 112;
+
+  // North Ndebele
+  LANGUAGE_ND = 113;
+
+  // Northern Sami
+  LANGUAGE_SE = 114;
+
+  // Norwegian
+  LANGUAGE_NO = 115;
+
+  // Norwegian Bokmål
+  LANGUAGE_NB = 116;
+
+  // Norwegian Nynorsk
+  LANGUAGE_NN = 117;
+
+  // Occitan
+  LANGUAGE_OC = 118;
+
+  // Ojibwa
+  LANGUAGE_OJ = 119;
+
+  // Oriya
+  LANGUAGE_OR = 120;
+
+  // Oromo
+  LANGUAGE_OM = 121;
+
+  // Ossetian, Ossetic
+  LANGUAGE_OS = 122;
+
+  // Pali
+  LANGUAGE_PI = 123;
+
+  // Pashto, Pushto
+  LANGUAGE_PS = 124;
+
+  // Persian
+  LANGUAGE_FA = 125;
+
+  // Polish
+  LANGUAGE_PL = 126;
+
+  // Portuguese
+  LANGUAGE_PT = 127;
+
+  // Punjabi, Panjabi
+  LANGUAGE_PA = 128;
+
+  // Quechua
+  LANGUAGE_QU = 129;
+
+  // Romanian, Moldavian, Moldovan
+  LANGUAGE_RO = 130;
+
+  // Romansh
+  LANGUAGE_RM = 131;
+
+  // Rundi
+  LANGUAGE_RN = 132;
+
+  // Russian
+  LANGUAGE_RU = 133;
+
+  // Samoan
+  LANGUAGE_SM = 134;
+
+  // Sango
+  LANGUAGE_SG = 135;
+
+  // Sanskrit
+  LANGUAGE_SA = 136;
+
+  // Sardinian
+  LANGUAGE_SC = 137;
+
+  // Serbian
+  LANGUAGE_SR = 138;
+
+  // Shona
+  LANGUAGE_SN = 139;
+
+  // Sichuan Yi, Nuosu
+  LANGUAGE_II = 140;
+
+  // Sindhi
+  LANGUAGE_SD = 141;
+
+  // Sinhala, Sinhalese
+  LANGUAGE_SI = 142;
+
+  // Slovak
+  LANGUAGE_SK = 143;
+
+  // Slovenian
+  LANGUAGE_SL = 144;
+
+  // Somali
+  LANGUAGE_SO = 145;
+
+  // South Ndebele
+  LANGUAGE_NR = 146;
+
+  // Southern Sotho
+  LANGUAGE_ST = 147;
+
+  // Spanish, Castilian
+  LANGUAGE_ES = 148;
+
+  // Sundanese
+  LANGUAGE_SU = 149;
+
+  // Swahili
+  LANGUAGE_SW = 150;
+
+  // Swati
+  LANGUAGE_SS = 151;
+
+  // Swedish
+  LANGUAGE_SV = 152;
+
+  // Tagalog
+  LANGUAGE_TL = 153;
+
+  // Tahitian
+  LANGUAGE_TY = 154;
+
+  // Tajik
+  LANGUAGE_TG = 155;
+
+  // Tamil
+  LANGUAGE_TA = 156;
+
+  // Tatar
+  LANGUAGE_TT = 157;
+
+  // Telugu
+  LANGUAGE_TE = 158;
+
+  // Thai
+  LANGUAGE_TH = 159;
+
+  // Tibetan
+  LANGUAGE_BO = 160;
+
+  // Tigrinya
+  LANGUAGE_TI = 161;
+
+  // Tonga (Tonga Islands)
+  LANGUAGE_TO = 162;
+
+  // Tsonga
+  LANGUAGE_TS = 163;
+
+  // Tswana
+  LANGUAGE_TN = 164;
+
+  // Turkish
+  LANGUAGE_TR = 165;
+
+  // Turkmen
+  LANGUAGE_TK = 166;
+
+  // Twi
+  LANGUAGE_TW = 167;
+
+  // Uighur, Uyghur
+  LANGUAGE_UG = 168;
+
+  // Ukrainian
+  LANGUAGE_UK = 169;
+
+  // Urdu
+  LANGUAGE_UR = 170;
+
+  // Uzbek
+  LANGUAGE_UZ = 171;
+
+  // Venda
+  LANGUAGE_VE = 172;
+
+  // Vietnamese
+  LANGUAGE_VI = 173;
+
+  // Volapük
+  LANGUAGE_VO = 174;
+
+  // Walloon
+  LANGUAGE_WA = 175;
+
+  // Welsh
+  LANGUAGE_CY = 176;
+
+  // Western Frisian
+  LANGUAGE_FY = 177;
+
+  // Wolof
+  LANGUAGE_WO = 178;
+
+  // Xhosa
+  LANGUAGE_XH = 179;
+
+  // Yiddish
+  LANGUAGE_YI = 180;
+
+  // Yoruba
+  LANGUAGE_YO = 181;
+
+  // Zhuang, Chuang
+  LANGUAGE_ZA = 182;
+
+  // Zulu
+  LANGUAGE_ZU = 183;
+}

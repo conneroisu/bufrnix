@@ -1,0 +1,305 @@
+syntax = "proto3";
+
+package asr.v1;
+
+// External
+import "google/api/annotations.proto";
+import "google/protobuf/empty.proto";
+import "gateway/protoc-gen-openapiv2/annotations.proto";
+import "google/api/field_behavior.proto";
+
+option go_package = "github.com/pegwings/pegwings/proto/gen/go/asr/v1;asr";
+
+option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_swagger) = {
+  info : {
+    title : "Automatic Speech Recognition API"
+    version : "1.0.0"
+    description : "# Automatic Speech Recognition API\n\nThis is the interal "
+                  "pegwings API for automatic speech recognition."
+    contact : {
+      name : "Conner Ohnsorge"
+      url : "https://github.com/pegwings"
+      email : "conneroisu@outlook.com"
+    }
+  }
+};
+
+// ASRService is the service for the ASR API.
+service ASRService {
+  // ASR transcribes an audio file.
+  rpc ASR(ASRRequest) returns (ASRResponse) {
+    option (google.api.http) = {
+      post : "/v1/audio/speech"
+      body : "*"
+    };
+  }
+
+  // HealthCheck returns the health of the service
+  rpc HealthCheck(google.protobuf.Empty) returns (HealthCheckResponse) {
+    option (google.api.http) = {
+      get : "/v1/health"
+    };
+    option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+      summary : "Health check"
+      description : "Returns the health of the service"
+      tags : "Health"
+    };
+  }
+}
+
+// ASRRequest is the request message for the TranscribeAudio method.
+message ASRRequest {
+  // file_path is the path to audio file in private storage
+  string file_path = 1 [
+    (google.api.field_behavior) = REQUIRED,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      description : "Path to audio file in private storage"
+      // TODO: Add examples.
+    }
+  ];
+
+  string model = 3 [
+    (google.api.field_behavior) = REQUIRED,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      description : "Model to use for transcription"
+      // TODO: Add examples.
+    }
+  ];
+
+  // language is the ISO-639-1 language code
+  string language = 4 [
+    (google.api.field_behavior) = REQUIRED,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      description : "Language to use for transcription"
+      // TODO: Add examples.
+    }
+  ];
+
+  // prompt is the prompt to use for transcription
+  string prompt = 5 [
+    (google.api.field_behavior) = REQUIRED,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      description : "Prompt to use for transcription"
+      // TODO: Add examples.
+    }
+  ];
+  // temperature is the entropy  to use for transcription
+  optional float temperature = 7 [
+    (google.api.field_behavior) = OPTIONAL,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      description : "Temperature to use for transcription"
+      // TODO: Add examples.
+    }
+  ];
+  // Options: "word", "segment". Only for verbose_json
+  repeated string timestamp_granularities = 8 [
+    (google.api.field_behavior) = OPTIONAL,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      description : "Timestamp granularities to include in verbose json"
+      // TODO: Add examples.
+      enum : [ "word", "segment" ]
+    }
+  ];
+}
+
+// ASRResponse is the response message for the TranscribeAudio method.
+message ASRResponse {
+  option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_schema) = {
+    json_schema : {
+      description : "ASRResponse is the response message for the "
+                    "TranscribeAudio "
+                    "method."
+      // TODO: Add examples.
+    }
+  };
+  oneof response {
+
+    // json is the json response
+    JsonResponse json = 1 [
+      (google.api.field_behavior) = OUTPUT_ONLY,
+      (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+        description : "JSON response"
+        // TODO: Add examples.
+      }
+    ];
+
+    // text is the text response
+    string text = 2 [
+      (google.api.field_behavior) = OUTPUT_ONLY,
+      (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+        description : "Text response"
+        // TODO: Add examples.
+      }
+    ];
+    // srt is the srt response
+    string srt = 3 [
+      (google.api.field_behavior) = OUTPUT_ONLY,
+      (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+        description : "SRT response"
+        // TODO: Add examples.
+      }
+    ];
+    // verbose_json is the verbose json response
+    VerboseJsonResponse verbose_json = 4 [
+      (google.api.field_behavior) = OUTPUT_ONLY,
+      (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+        description : "Verbose JSON response"
+        // TODO: Add examples.
+      }
+    ];
+    // vtt is the vtt response
+    string vtt = 5 [
+      (google.api.field_behavior) = OUTPUT_ONLY,
+      (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+        description : "VTT response"
+        // TODO: Add examples.
+      }
+    ];
+  }
+}
+
+// JsonResponse is the response message for the TranscribeAudio method.
+message JsonResponse {
+  option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_schema) = {
+    json_schema : {
+      description : "JsonResponse is the response message for the "
+                    "TranscribeAudio "
+                    "method."
+      // TODO: Add examples.
+    }
+  };
+  // text is the text response
+  string text = 1 [
+    (google.api.field_behavior) = OUTPUT_ONLY,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      description : "Text response"
+      // TODO: Add examples.
+    }
+  ];
+}
+
+// VerboseJsonResponse is a verbose json response message for the
+// TranscribeAudio method.
+message VerboseJsonResponse {
+  option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_schema) = {
+    json_schema : {
+      description : "VerboseJsonResponse is a verbose json response message "
+                    "for the TranscribeAudio method."
+      // TODO: Add examples.
+    }
+  };
+  // text is the text response
+  string text = 1 [
+    (google.api.field_behavior) = OUTPUT_ONLY,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      description : "Text response"
+      // TODO: Add examples.
+    }
+  ];
+
+  // segments are the segments of the response
+  repeated Segment segments = 2 [
+    (google.api.field_behavior) = OUTPUT_ONLY,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      description : "Segments response"
+      // TODO: Add examples.
+    }
+  ];
+
+  // Only populated if word timestamps requested
+  repeated Word words = 3 [
+    (google.api.field_behavior) = OUTPUT_ONLY,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      description : "Words response"
+      // TODO: Add examples.
+    }
+  ];
+}
+
+// Segment is a segment of the transcription.
+message Segment {
+  // text is the text of the segment.
+  string text = 1 [
+    (google.api.field_behavior) = OUTPUT_ONLY,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      description : "Text response"
+      // TODO: Add examples.
+    }
+  ];
+
+  // start is the start time in seconds
+  float start = 2 [
+    (google.api.field_behavior) = OUTPUT_ONLY,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      description : "Start time response"
+      // TODO: Add examples.
+    }
+  ];
+
+  // end is the end time in seconds
+  float end = 3 [
+    (google.api.field_behavior) = OUTPUT_ONLY,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      description : "End time response"
+      // TODO: Add examples.
+    }
+  ];
+
+  // tokens are the tokens of the segment
+  repeated int32 tokens = 4 [
+    (google.api.field_behavior) = OUTPUT_ONLY,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      description : "Tokens response"
+      // TODO: Add examples.
+    }
+  ];
+}
+
+// Word is a word of the transcription.
+message Word {
+  option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_schema) = {
+    json_schema : {
+      description : "Word is a word of the transcription."
+      // TODO: Add examples.
+    }
+  };
+
+  // word is the actual text of the word
+  string word = 1 [
+    (google.api.field_behavior) = OUTPUT_ONLY,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      description : "Word response"
+      // TODO: Add examples.
+    }
+  ];
+
+  // start is the start time in seconds
+  float start = 2 [
+    (google.api.field_behavior) = OUTPUT_ONLY,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      description : "Start time response"
+      // TODO: Add examples.
+    }
+  ];
+
+  // end is the end time in seconds
+  float end = 3 [
+    (google.api.field_behavior) = OUTPUT_ONLY,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      description : "End time response"
+      // TODO: Add examples.
+    }
+  ];
+
+  // confidence is the model's confidence of the word
+  float confidence = 4 [
+    (google.api.field_behavior) = OUTPUT_ONLY,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      description : "Confidence response"
+      // TODO: Add examples.
+    }
+  ];
+}
+
+// HealthCheckResponse is the response message for the HealthCheck method.
+message HealthCheckResponse { bool healthy = 1; }

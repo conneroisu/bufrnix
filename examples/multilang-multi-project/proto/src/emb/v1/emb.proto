@@ -1,0 +1,85 @@
+// -----------------------------------------------------------------------------
+// Text Embedding gRPC Service Definition (proto3)
+// -----------------------------------------------------------------------------
+//
+// This file defines a gRPC AI inference service for embedding data. The service
+// allows clients to send a request to embed data and receive the corresponding
+// embedding vectors.
+//
+// -----------------------------------------------------------------------------
+//
+// Note: This example uses proto3 syntax and is designed to be used with gRPC.
+//       To compile this file, you would use the Protocol Buffers compiler
+//       (protoc) along with the gRPC plugin for your target language.
+//
+// Copyright 2025 Pegwings All rights reserved.
+// -----------------------------------------------------------------------------
+
+syntax = "proto3";
+
+package emb.v1;
+
+// External
+import "gateway/protoc-gen-openapiv2/annotations.proto";
+
+option go_package = "github.com/pegwings/pegwings/proto/gen/go/emb/v1;emb";
+
+option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_swagger) = {
+  info : {
+    title : "Internal Tokenization/Embedding API"
+    version : "1.0.0"
+    description : "# Embeddings\n\nThis service provides a gRPC API for "
+                  "embedding text data and returning the corresponding "
+                  "embedding vectors.\n\n It is part of the internal api of "
+                  "the pegwings platform."
+    contact : {
+      name : "Conner Ohnsorge"
+      url : "https://github.com/pegwings"
+      email : "conneroisu@outlook.com"
+    }
+  }
+};
+
+// EmbeddingService is the service for the Embedding API.
+service EmbeddingService {
+  rpc GenerateEmbedding(EmbeddingRequest) returns (FullEmbeddingResponse);
+  rpc CheckHealth(HealthCheckRequest) returns (HealthCheckResponse);
+}
+
+// EmbeddingRequest is the request message for the GenerateEmbedding method.
+// It contains the input text and other parameters for the embedding generation.
+message EmbeddingRequest {
+  string input = 1;
+  string model = 2;
+  int64 dimensions = 4;
+  string user = 5;
+}
+
+// EmbeddingData is the data message for the GenerateEmbedding method.
+message EmbeddingData {
+  int32 index = 2;
+  repeated double embedding_floats = 3;
+}
+
+// Usage is the usage message for the GenerateEmbedding method.
+message Usage {
+  int32 prompt_tokens = 1;
+  int32 total_tokens = 2;
+}
+
+// FullEmbeddingResponse is the response message for the GenerateEmbedding.
+message FullEmbeddingResponse {
+  string object = 1;
+  repeated EmbeddingData data = 2;
+  string model = 3;
+  Usage usage = 4;
+}
+
+// HealthCheckRequest is the request message for the CheckHealth method.
+message HealthCheckRequest {}
+
+// HealthCheckResponse is the response message for the CheckHealth method.
+message HealthCheckResponse {
+  bool ok = 1;
+  string message = 2;
+}

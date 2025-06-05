@@ -1,0 +1,126 @@
+// ----------------------------------------------------------------------------
+// Image Variation API
+// ----------------------------------------------------------------------------
+// This service provides a gRPC API for generating images from prompts and
+// image variations.
+// ----------------------------------------------------------------------------
+// Copyright 2025 Pegwings All rights reserved.
+// ----------------------------------------------------------------------------
+
+syntax = "proto3";
+
+package vari.v1;
+
+// External
+import "gateway/protoc-gen-openapiv2/annotations.proto";
+import "google/api/annotations.proto";
+import "google/protobuf/empty.proto";
+import "google/api/field_behavior.proto";
+
+// Internal
+import "lib/media.proto";
+
+option go_package = "github.com/pegwings/pegwings/proto/gen/go/vari/v1;vari";
+
+option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_swagger) = {
+  info : {
+    title : "Image Variation API"
+    version : "1.0.0"
+    description : "# Image Variation API\n\nThis service provides a gRPC API "
+                  "for generating images from prompts and variations.\n\n## "
+                  "FEATURES\n\nYou can generate images using the following "
+                  "methods:\n\n\n- **Variation** - Generate an image variation "
+                  "from a prompt and image.\n\n\n"
+    contact : {
+      name : "Conner Ohnsorge"
+      url : "https://github.com/pegwings"
+      email : "conneroisu@outlook.com"
+    }
+  }
+};
+
+service VariationImageService {
+  // VariationImage edits an image from a prompt and image.
+  rpc VariationImage(VariationRequest) returns (VariationResponse) {
+    option (google.api.http) = {
+      post : "/v1/variation"
+      body : "*"
+    };
+    option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+      summary : "Generate an image variation from a prompt and image."
+      description : "Generate an image variation from a prompt and image."
+      tags : "Image"
+    };
+  }
+
+  // CheckHealthRequest represents a request for a health check.
+  rpc CheckHealth(google.protobuf.Empty) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      get : "/v1/checkhealth"
+    };
+    option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+      summary : "Check the health of the service."
+      description : "Check the health of the service."
+      tags : "checkhealth"
+    };
+  }
+}
+
+// VariationRequest represents a request for an image variation.
+message VariationRequest {
+  // prompt is the prompt to generate an image variation from.
+  string prompt = 1 [
+    (google.api.field_behavior) = REQUIRED,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      description : "The prompt to generate an image variation from."
+      example : "\"A cat\""
+    }
+  ];
+
+  // image is the path to the image to create the variation from.
+  string image = 2 [
+    (google.api.field_behavior) = REQUIRED,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      description : "The path to the image to create the variation from."
+      example : "\"/tmp/image.png\""
+    }
+  ];
+
+  // num_images is the number of images to generate.
+  int32 num_images = 3 [
+    (google.api.field_behavior) = OPTIONAL,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      description : "The number of images to generate."
+      example : "1"
+    }
+  ];
+
+  // format is the format of the variation to generate.
+  string format = 4 [
+    (google.api.field_behavior) = REQUIRED,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      description : "The format of the variation to generate."
+      example : "\"png\""
+    }
+  ];
+
+  // size is the size of the variation to generate.
+  media.v1.ImageSize size = 5 [
+    (google.api.field_behavior) = OPTIONAL,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      description : "The size of the variation to generate."
+      example : "{\"width\": 512, \"height\": 512}"
+    }
+  ];
+}
+
+// VariationResponse represents a response for an image variation.
+message VariationResponse {
+  // image is the path to the variation.
+  string image = 1 [
+    (google.api.field_behavior) = REQUIRED,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      description : "The path to the variation."
+    }
+  ];
+}

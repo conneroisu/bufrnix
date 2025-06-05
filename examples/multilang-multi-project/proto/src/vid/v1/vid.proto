@@ -1,0 +1,86 @@
+// -----------------------------------------------------------------------------
+// Text to Speech gRPC Service Definition (proto3)
+// -----------------------------------------------------------------------------
+//
+// This file defines a gRPC AI inference service for generating speech from
+// text. The service allows clients to send a request to generate speech from
+// text and receive the corresponding audio data.
+//
+// This service is part of the internal api of the pegwings platform.
+// -----------------------------------------------------------------------------
+//
+// Note: This example uses proto3 syntax and is designed to be used with gRPC.
+//       To compile this file, you would use the Protocol Buffers compiler
+//       (protoc) along with the gRPC plugin for your target language.
+//
+// Copyright 2025 Pegwings All rights reserved.
+// -----------------------------------------------------------------------------
+syntax = "proto3";
+
+package vid.v1;
+
+// External
+import "gateway/protoc-gen-openapiv2/annotations.proto";
+
+option go_package = "github.com/pegwings/pegwings/proto/gen/go/vid/v1;vid";
+
+option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_swagger) = {
+  info : {
+    title : "Internal Text/Image to Video API"
+    version : "1.0.0"
+    description : "# Text/Image to Video\n\nThis service provides a gRPC API "
+                  "for "
+                  "generating videos from text and images.\n\n It is part of "
+                  "the "
+                  "internal api of the pegwings platform."
+    contact : {
+      name : "Conner Ohnsorge"
+      url : "https://github.com/pegwings"
+      email : "conneroisu@outlook.com"
+    }
+  }
+};
+
+// VIDService is the service for the VID API.
+service VIDService {
+  // VID transcribes an audio file.
+  rpc VID(VIDRequest) returns (VIDResponse) {}
+  // HealthCheck returns the health of the service
+  rpc HealthCheck(HealthCheckRequest) returns (HealthCheckResponse) {}
+}
+
+// Top-level request message.
+message VIDRequest {
+  string model = 1;
+  string prompt = 2;
+  string negative_prompt = 3;
+  float cfg_scale = 4;
+  int32 duration = 5; // Duration in seconds (assuming int).
+  string aspect_ratio = 6;
+  CameraControl camera_control = 7;
+  string mode = 8;
+}
+
+// CameraControl and its inner config.
+message CameraControl {
+  string type = 1;
+  CameraControlConfig config = 2;
+}
+
+message CameraControlConfig {
+  float horizontal = 1;
+  float vertical = 2;
+  float pan = 3;
+  float tilt = 4;
+  float roll = 5;
+  float zoom = 6;
+}
+
+// VIDResponse is the response message for the TranscribeAudio method.
+message VIDResponse { string url = 1; }
+
+// HealthCheckRequest is the request message for the HealthCheck method.
+message HealthCheckRequest {}
+
+// HealthCheckResponse is the response message for the HealthCheck method.
+message HealthCheckResponse { bool healthy = 1; }

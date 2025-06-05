@@ -1,0 +1,1180 @@
+syntax = "proto3";
+package chat.v1;
+
+// External
+import "google/protobuf/timestamp.proto";
+import "google/api/field_behavior.proto";
+import "gateway/protoc-gen-openapiv2/annotations.proto";
+import "buf/validate/validate.proto";
+
+// Internal
+import "api/v1/api-tools.proto";
+
+option go_package = "github.com/pegwings/pegwings/proto/gen/go/api/v1;api";
+
+message ChatCompletionCreateRequest {
+  option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_schema) = {
+    json_schema : {
+      title : "Chat Completion Request"
+      description : "A request to generate a chat completion."
+      required : [ "messages", "model" ]
+    }
+    external_docs : {
+      url : "https://docs.pegwings.com/v1/chat/chat-completion-request"
+      description : "Find out more about Chat Completions"
+    }
+    example : "{\n"
+              "    \"messages\": ["
+              "       {"
+              "          \"name\":\"USER\","
+              "          \"content\":\"Create an "
+              "example of a http server in Go\"}],\"model\":\"k1\"}"
+  };
+
+  // model is the actual model to use for the chat completion.
+  string model = 1 [
+    (google.api.field_behavior) = REQUIRED,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      title : "Model"
+      description : "Model to use for the chat completion."
+      example : "\"k1\""
+    }
+  ];
+
+  // messages is the list of messages to send to the model.
+  repeated CompletionMessage messages = 2 [
+    (google.api.field_behavior) = REQUIRED,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      title : "Messages"
+      description : "Messages to send to the model."
+      example : "[\n"
+                "  {\n"
+                "    \"name\": \"USER\",\n"
+                "    \"content\": \"Create an example of a http server in "
+                "Go\"\n"
+                "  }\n"
+                "]"
+    }
+  ];
+
+  // max_completion_tokens is the maximum number of tokens to generate.
+  int32 max_completion_tokens = 3 [
+    (google.api.field_behavior) = OPTIONAL,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      title : "Max Completion Tokens"
+      description : "The maximum number of tokens to generate."
+      example : "2048"
+    }
+  ];
+
+  // temperature is the temperature to use for the completion.
+  float temperature = 4 [
+    (google.api.field_behavior) = OPTIONAL,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      title : "Temperature"
+      description : "Temperature to use for the completion."
+      example : "0.7"
+      maximum : 1.0
+      minimum : 0.0
+    },
+    (validate.rules).float.gte = 0.0,
+    (validate.rules).float.lte = 1.0
+  ];
+
+  // top_p is the top-p (nucleus sampling) value to use for the completion.
+  float top_p = 5 [
+    (google.api.field_behavior) = OPTIONAL,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      title : "Top P"
+      description : "The top-p (nucleus sampling) value to use for the "
+                    "completion."
+      example : "0.7"
+      maximum : 1.0
+      minimum : 0.0
+    },
+    (validate.rules).float.gte = 0.0,
+    (validate.rules).float.lte = 1.0
+  ];
+
+  // reasoning_effort is the reasoning effort to use for the completion.
+  string reasoning_effort = 6 [
+    (google.api.field_behavior) = OPTIONAL,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      title : "Reasoning Effort"
+      description : "The reasoning effort to use for the completion. Allowed "
+                    "values are \"low\", \"medium\", and \"high\"."
+      enum : [ "low", "medium", "high" ]
+      example : "\"low\""
+    }
+  ];
+
+  // n is the number of completions to generate.
+  int32 n = 7 [
+    (google.api.field_behavior) = OPTIONAL,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      title : "Number of Completions"
+      description : "Number of completions to generate. Note that caller will "
+                    "be charged for each completion. Keep n as 1 to minimize "
+                    "the cost."
+      maximum : 10
+      minimum : 1
+      example : "1"
+    },
+    (validate.rules).int32.gte = 1,
+    (validate.rules).int32.lte = 10
+  ];
+
+  // stream is whether to stream the response.
+  bool stream = 8 [
+    (google.api.field_behavior) = OPTIONAL,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      title : "Stream"
+      description : "If true, the response will be streamed."
+      example : "false"
+      default : "false"
+    }
+  ];
+
+  // stop is a list of up to 4 token strings where the completion should stop.
+  repeated string stop = 9 [
+    (google.api.field_behavior) = OPTIONAL,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      title : "Stop"
+      description : "A list of up to 4 token strings where the completion "
+                    "should stop."
+      example : "[\"stop\"]"
+      default : "[]"
+    },
+    (validate.rules).repeated .min_items = 1,
+    (validate.rules).repeated .max_items = 4
+  ];
+
+  // presence_penalty is the penalty for introducing new tokens.
+  float presence_penalty = 10 [
+    (google.api.field_behavior) = OPTIONAL,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      title : "Presence Penalty"
+      description : "The presence penalty to use for the completion."
+      example : "0.7"
+    },
+    (validate.rules).float.gte = -2.0,
+    (validate.rules).float.lte = 2.0
+  ];
+
+  // response_format is the response format to use for the completion.
+  ChatCompletionResponseFormat response_format = 11 [
+    (google.api.field_behavior) = OPTIONAL,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      title : "Response Format"
+      description : "The response format to use for the completion."
+      default : "{\"type\":\"text\"}"
+      example : "{\"type\":\"text\"}"
+    }
+  ];
+
+  // seed is the seed to use for random generation.
+  int32 seed = 12 [
+    (google.api.field_behavior) = OPTIONAL,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      title : "Seed"
+      description : "The seed to use for random generation."
+      example : "12345"
+    }
+  ];
+
+  // frequency_penalty is the frequency penalty for tokens in the completion.
+  float frequency_penalty = 13 [
+    (google.api.field_behavior) = OPTIONAL,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      title : "Frequency Penalty"
+      description : "The frequency penalty to use for the completion."
+      example : "0.7"
+    }
+  ];
+
+  // logit_bias is a mapping from tokens to their bias values.
+  map<string, int32> logit_bias = 14 [
+    (google.api.field_behavior) = OPTIONAL,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      title : "Logit Bias"
+      description : "A mapping from tokens to their bias values."
+      example : "{\"token1\":-100,\"token2\":100}"
+    }
+  ];
+
+  // logprobs indicates whether to include log probability information.
+  bool logprobs = 15 [
+    (google.api.field_behavior) = OPTIONAL,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      title : "Log Probabilities"
+      description : "If true, the model will return log probabilities for each "
+                    "token."
+      example : "false"
+      default : "false"
+    }
+  ];
+
+  // top_logprobs is the number of top log probabilities to return.
+  int32 top_logprobs = 16 [
+    (google.api.field_behavior) = OPTIONAL,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      title : "Top Log Probabilities"
+      description : "The number of top log probabilities to return."
+      example : "10"
+    }
+  ];
+
+  // user is the identifier for the end-user.
+  string user = 17 [
+    (google.api.field_behavior) = OPTIONAL,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      title : "User"
+      description : "The identifier for the end-user."
+      example : "\"user-123\""
+    }
+  ];
+
+  // tools is the list of tools to be used during chat completion.
+  repeated tools.v1.Tool tools = 18 [
+    (google.api.field_behavior) = OPTIONAL,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      title : "Tools"
+      description : "The list of tools to be used during chat completion."
+      example : "[{\"type\":\"function\","
+                "\"function\":{\"name\":\"get_current_weather\", "
+                "\"arguments\":{\"location\":\"New York\"}}}]"
+    }
+  ];
+
+  // stream_options is the options for streaming behavior.
+  StreamOptions stream_options = 20 [
+    (google.api.field_behavior) = OPTIONAL,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      title : "Stream Options"
+      description : "Settings related to streaming behavior."
+      example : "{\"include_usage\":true}"
+    }
+  ];
+
+  // parallel_tool_calls is whether to allow parallel tool calls.
+  bool parallel_tool_calls = 21 [
+    (google.api.field_behavior) = OPTIONAL,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      description : "If true, the model will be able to generate multiple "
+                    "tool calls and return them in the response."
+      example : "false"
+      default : "true"
+    }
+  ];
+}
+
+// ChatCompletionCreateResponse is a response to a chat completion create
+message ChatCompletionCreateResponse {
+
+  option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_schema) = {
+    json_schema : {
+      title : "Chat Completion Create Response"
+      description : "A response to a chat completion create request."
+      required : [ "id", "object", "created", "model", "choices" ]
+    }
+    external_docs : {
+      url : "https://docs.pegwings.com/v1/chat/chat-completion-create-response"
+      description : "Find out more about Chat Completion Create Responses"
+    }
+    example : "{\"id\":\"pwg-6x3t3a1b-e1a2-4c3d-a4b5-1234567890ab\","
+              "\"object\":\"chat.completion\","
+              "\"created\":1677659200,"
+              "\"model\":\"k1\","
+              "\"choices\":[{\"index\":0,\"message\":{\"role\":\"assistant\","
+              "\"content\":\"Hello!\"}}]}"
+  };
+
+  oneof response {
+    ChatCompletionResponse regular = 1 [
+      (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+        title : "Regular"
+        description : "Regular response to a chat completion generation request"
+        ref : "#/components/schemas/ChatCompletionResponse"
+      }
+    ];
+    ChatCompletionStreamResponse stream = 2;
+  }
+}
+
+message ChatCompletionResponse {
+  // id is the unique identifier for the response.
+  // It is generated by the server can be used to retrieve the response at a
+  // later time.
+  string id = 1 [
+    (google.api.field_behavior) = OUTPUT_ONLY,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      title : "ID"
+      description : "The unique identifier for the response."
+      example : "\"pwg-6x3t3a1b-e1a2-4c3d-a4b5-1234567890ab\""
+    }
+  ];
+
+  // object is the type of the response (e.g. "chat.completion").
+  string object = 2 [
+    (google.api.field_behavior) = OUTPUT_ONLY,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      title : "Object"
+      description : "The type of the response (e.g. \"chat.completion\")."
+      example : "\"chat.completion\""
+    }
+  ];
+
+  // created is the creation time of the response.
+  google.protobuf.Timestamp created = 3 [
+    (google.api.field_behavior) = OUTPUT_ONLY,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      title : "Created"
+      description : "The creation time of the response."
+      example : "\"2023-03-14T16:15:07.000Z\""
+    }
+  ];
+
+  // model is the model that generated the response.
+  string model = 4 [
+    (google.api.field_behavior) = OUTPUT_ONLY,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      title : "Model"
+      description : "The model that generated the response."
+      example : "\"k1\""
+    }
+  ];
+
+  // choices are the list of completion choices provided.
+  repeated CompletionChoice choices = 5 [
+    (google.api.field_behavior) = OUTPUT_ONLY,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      title : "Choices"
+      description : "The list of completion choices provided."
+      example : "[{\"index\":0,\"message\":{\"name\":\"USER\",\"content\":"
+                "\"Hello!\",\"role\":\"user\"}}]"
+    }
+  ];
+
+  // usage is the token usage statistics.
+  Usage usage = 6 [
+    (google.api.field_behavior) = OUTPUT_ONLY,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      title : "Usage"
+      description : "The token usage statistics."
+      example : "{\"prompt_tokens\":0,\"completion_tokens\":0,\"total_tokens\":"
+                "0}"
+    }
+  ];
+
+  // system_fingerprint is the system fingerprint of the response.
+  string system_fingerprint = 7 [
+    (google.api.field_behavior) = OUTPUT_ONLY,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      title : "System Fingerprint"
+      description : "The system fingerprint of the response."
+      example : "\"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b78"
+                "52b855\""
+    }
+  ];
+}
+
+// ChatCompletionStreamResponse is a response to a chat completion stream
+// request.
+message ChatCompletionStreamResponse {
+  option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_schema) = {
+    json_schema : {
+      title : "Chat Completion Stream Response"
+      description : "A response to a chat completion stream request."
+      required : [ "id", "object", "created", "model", "choices" ]
+    }
+    external_docs : {
+      url : "https://docs.pegwings.com/v1/chat/chat-completion-stream-response"
+      description : "Find out more about Chat Completion Stream Responses"
+    }
+    example : "{\"id\":\"chat-123\","
+              "\"object\":\"chat.completion.chunk\","
+              "\"created\":1677659200,"
+              "\"model\":\"k1\","
+              "\"choices\":[{\"index\":0,\"delta\":{\"content\":\"Hello!\","
+              "\"role\":\"assistant\"}}]}"
+  };
+
+  // id is the identifier for this streamed response.
+  string id = 1 [
+    (google.api.field_behavior) = OUTPUT_ONLY,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      title : "Id"
+      description : "The identifier for this streamed response. It indexes the "
+                    "completions in the stream."
+      example : "\"chat-123\""
+    }
+  ];
+
+  // object is the object type of this streamed response.
+  string object = 2 [
+    (google.api.field_behavior) = OUTPUT_ONLY,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      title : "Object"
+      description : "The object type of this streamed response."
+      example : "\"chat.completion.chunk\""
+    }
+  ];
+
+  // created is the creation time of the streamed response.
+  google.protobuf.Timestamp created = 3 [
+    (google.api.field_behavior) = OUTPUT_ONLY,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      title : "Created"
+      description : "The creation time of the response."
+      example : "\"2023-03-14T16:15:07.000Z\""
+    }
+  ];
+
+  // model is the model used for generating the streamed response.
+  string model = 4 [
+    (google.api.field_behavior) = OUTPUT_ONLY,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      title : "Model"
+      description : "The model used for generating the streamed response."
+      example : "\"gpt-3.5-turbo\""
+    }
+  ];
+
+  // choices are the incremental updates (choices) of the streamed response.
+  repeated CompletionStreamChoice choices = 5 [
+    (google.api.field_behavior) = OUTPUT_ONLY,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      title : "Choices"
+      description : "The incremental updates (choices) of the streamed "
+                    "response."
+      example : "[{\"index\":0,\"delta\":{\"content\":\"Hello!\",\"role\":"
+                "\"assistant\"}}]"
+    }
+  ];
+
+  // system_fingerprint is the system fingerprint for the streamed response.
+  string system_fingerprint = 6 [
+    (google.api.field_behavior) = OUTPUT_ONLY,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      title : "System Fingerprint"
+      description : "The system fingerprint for the streamed response."
+      example : "\"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b78"
+                "52b855\""
+    }
+  ];
+
+  // prompt_annotations are annotations associated with the prompt.
+  repeated PromptAnnotation prompt_annotations = 7 [
+    (google.api.field_behavior) = OUTPUT_ONLY,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      title : "Prompt Annotations"
+      description : "Annotations associated with the prompt."
+      example : "[{\"prompt_index\":0}]"
+    }
+  ];
+
+  // prompt_filter_results are the results from any prompt filtering.
+  repeated PromptFilterResult prompt_filter_results = 8;
+
+  // usage is optionally included if stream_options.include_usage was set.
+  // On all but the final chunk, this field may be empty.
+  Usage usage = 9;
+}
+
+// CompletionMessage represents an individual chat message in a conversation.
+message CompletionMessage {
+  option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_schema) = {
+    json_schema : {
+      title : "CompletionMessage"
+      description : "A message in a chat conversation."
+    }
+    external_docs : {
+      url : "https://docs.pegwings.com/v1/chat/completion-message"
+      description : "Find out more about Completion Messages"
+    }
+    example : "{\"name\":\"USER\",\"content\":\"Hello!\",\"role\":\"user\"}"
+  };
+
+  string name = 1 [
+    (google.api.field_behavior) = REQUIRED,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      title : "Name"
+      description : "The name of the chat message sender."
+      example : "\"USER\""
+    }
+  ];
+
+  Role role = 2 [
+    (google.api.field_behavior) = REQUIRED,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      title : "Role"
+      description : "The role of the message sender."
+      example : "\"user\""
+      enum : [ "user", "assistant", "system", "function", "tool" ]
+    }
+  ];
+
+  string content = 3 [
+    (google.api.field_behavior) = OPTIONAL,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      title : "Content"
+      description : "The text content of the chat message. If multi_content is "
+                    "provided, this field should be empty."
+      example : "\"Hello!\""
+    }
+  ];
+
+  repeated MessagePart multi_content = 4 [
+    (google.api.field_behavior) = OPTIONAL,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      title : "Multi Content"
+      description : "A multi-part representation of the message content. It is "
+                    "mutually exclusive with the content field."
+    }
+  ];
+
+  repeated tools.v1.ToolCall tool_calls = 5 [
+    (google.api.field_behavior) = OPTIONAL,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      title : "Tool Calls"
+      description : "Generated tool call details for function calls."
+    }
+  ];
+
+  // tool_call_id is used for messages where Role=tool;
+  // it should match the ID from a prior assistant message.
+  string tool_call_id = 6;
+
+  // refusal is the refusal of the message.
+  // This field is only set if the message is refused by the model.
+  string Refusal = 7;
+}
+
+// MessagePart represents one part of a multi-part chat message.
+message MessagePart {
+  option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_schema) = {
+    json_schema : {
+      title : "Message Part"
+      description : "A part of a multi-part chat message."
+      required : [ "text", "type" ]
+    }
+    external_docs : {
+      url : "https://docs.pegwings.com/v1/chat/message-part"
+      description : "Find out more about Message Parts"
+    }
+    example : "{\"text\":\"Hello!\",\"type\":\"text\"}"
+  };
+  // text is the text of this message part.
+  string text = 1
+      [ (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+        title : "Text"
+        description : "The text of this message part."
+        example : "\"Hello!\""
+      } ];
+
+  // type indicates the type of this message part.
+  MessagePartType type = 2
+      [ (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+        title : "Type"
+        description : "The type of this message part."
+        example : "\"text\""
+      } ];
+
+  // image_url contains the image URL information if this part is an image.
+  MessageImageURL image_url = 3
+      [ (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+        title : "Image URL"
+        description : "The image URL information if this part is an image."
+        example : "{\"url\":\"https://example.com/image.png\"}"
+      } ];
+}
+
+// MessageImageURL represents an image URL and its details.
+message MessageImageURL {
+  // url is the URL of the image.
+  string url = 1;
+
+  // detail describes the image detail quality.
+  // See ImageURLDetail enum.
+  ImageURLDetail detail = 2;
+}
+
+// PromptAnnotation represents an annotation for a prompt.
+message PromptAnnotation {
+  option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_schema) = {
+    json_schema : {
+      title : "Prompt Annotation"
+      description : "An annotation for a prompt."
+      required : [ "prompt_index" ]
+    }
+    external_docs : {
+      url : "https://docs.pegwings.com/v1/chat/prompt-annotation"
+      description : "Find out more about Prompt Annotations"
+    }
+    example : "{\"prompt_index\":0}"
+  };
+  int32 prompt_index = 1
+      [ (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+        title : "Prompt Index"
+        description : "The index of the prompt in the request."
+        example : "0"
+      } ];
+}
+
+// PromptFilterResult represents the result of prompt filtering.
+message PromptFilterResult {
+  // index is the index corresponding to the filter result.
+  int32 index = 1;
+}
+
+// -----------------------------------------------------------------------------
+// Enums
+// -----------------------------------------------------------------------------
+
+// Role represents the role of a chat message.
+enum Role {
+  option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_enum) = {
+    title : "Chat Message Role"
+    description : "Roles for chat messages."
+    external_docs : {
+      url : "https://docs.pegwings.com/v1/chat/message-role"
+      description : "Find out more about Chat Message Roles"
+    }
+    example : "\"user\""
+  };
+  ROLE_UNSPECIFIED = 0;
+  // system indicates a system-level message.
+  ROLE_SYSTEM = 1;
+  // user indicates a message from the end-user.
+  ROLE_USER = 2;
+  // assistant indicates a message from the assistant.
+  ROLE_ASSISTANT = 3;
+  // function indicates a message generated by a function call.
+  ROLE_FUNCTION = 4;
+  // tool indicates a message coming from a tool.
+  ROLE_TOOL = 5;
+}
+
+// MessagePartType represents the type of a chat message part.
+enum MessagePartType {
+  option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_enum) = {
+    title : "Chat Message Part Type"
+    description : "Types for chat message parts."
+    external_docs : {
+      url : "https://docs.pegwings.com/v1/chat/message-part-type"
+      description : "Find out more about Chat Message Part Types"
+    }
+    example : "\"text\""
+  };
+  MESSAGE_PART_TYPE_UNSPECIFIED = 0;
+  // text indicates the part is plain text.
+  MESSAGE_PART_TYPE_TEXT = 1;
+  // image_url indicates the part contains an image URL.
+  MESSAGE_PART_TYPE_IMAGE_URL = 2;
+}
+
+// ImageURLDetail represents the quality/detail of an image URL.
+enum ImageURLDetail {
+  option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_enum) = {
+    title : "Image URL Detail"
+    description : "Detail levels for image URLs."
+    external_docs : {
+      url : "https://docs.pegwings.com/v1/chat/image-url-detail"
+      description : "Find out more about Image URL Detail"
+    }
+    example : "\"high\""
+  };
+  IMAGE_URL_DETAIL_UNSPECIFIED = 0;
+  // high indicates a high quality/detail image URL.
+  IMAGE_URL_DETAIL_HIGH = 1;
+  // low indicates a low quality/detail image URL.
+  IMAGE_URL_DETAIL_LOW = 2;
+  // auto indicates an automatically determined image detail.
+  IMAGE_URL_DETAIL_AUTO = 3;
+}
+
+// FinishReason indicates why the completion finished.
+enum FinishReason {
+  option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_enum) = {
+    title : "Finish Reason"
+    description : "Reasons for stopping of a chat completion."
+    external_docs : {
+      url : "https://docs.pegwings.com/v1/chat/finish-reason"
+      description : "Find out more about Finish Reasons"
+    }
+    example : "\"stop\""
+  };
+
+  FINISH_REASON_STOP = 0;
+  FINISH_REASON_LENGTH = 1;
+  FINISH_REASON_TOOL_CALLS = 2;
+  FINISH_REASON_CONTENT_FILTER = 3;
+  FINISH_REASON_NULL = 4;
+}
+
+// Format represents the format of the chat completion response.
+enum Format {
+  option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_enum) = {
+    title : "Chat Completion Response Format"
+    description : "Reasons for stopping of a chat completion."
+    external_docs : {
+      url : "https://docs.pegwings.com/v1/chat/finish-reason"
+      description : "Find out more about Finish Reasons"
+    }
+    example : "\"stop\""
+  };
+  FORMAT_TEXT = 0;
+  FORMAT_JSON = 1;
+}
+
+// -----------------------------------------------------------------------------
+// Additional types
+// -----------------------------------------------------------------------------
+
+message ChatCompletionResponseFormat {
+  option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_schema) = {
+    json_schema : {
+      title : "Chat Completion Response Format"
+      description : "The format of the chat completion response."
+      required : [ "type" ]
+    }
+    external_docs : {
+      url : "https://docs.pegwings.com/v1/chat/chat-completion-response-format"
+      description : "Find out more about Chat Completion Response Formats"
+    }
+    example : "{\"type\":\"json\","
+              "\"json_schema\":{\"name\":\"JSON schema for the response "
+              "format.\","
+              "\"description\":\"A description of the JSON schema.\","
+              "\"schema\":\"{\\\"type\\\":\\\"object\\\","
+              "\\\"properties\\\":{\\\"name\\\":{\\\"type\\\":\\\"string\\\"},"
+              "\\\"age\\\":{\\\"type\\\":\\\"integer\\\"}},"
+              "\\\"required\\\":[\\\"name\\\"]}\"}}"
+  };
+
+  // type indicates the type of response format.
+  Format type = 1 [
+    (google.api.field_behavior) = REQUIRED,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      title : "Type"
+      description : "The type of response format."
+      example : "\"json\""
+    }
+  ];
+
+  // json_schema is the JSON schema definition for the response format.
+  ChatCompletionResponseFormatJSONSchema json_schema = 2 [
+    (google.api.field_behavior) = OPTIONAL,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      title : "JSON Schema"
+      description : "The JSON schema definition for the response format."
+    }
+  ];
+}
+
+// ChatCompletionResponseFormatJSONSchema defines the JSON schema details.
+message ChatCompletionResponseFormatJSONSchema {
+  // name is used to further identify the schema.
+  string name = 1 [
+    (google.api.field_behavior) = OPTIONAL,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      title : "Name"
+      description : "A name for the JSON schema."
+      example : "\"JSON schema for the response format.\""
+    }
+  ];
+
+  // description provides a description of the JSON schema.
+  string description = 2 [
+    (google.api.field_behavior) = OPTIONAL,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      title : "Description"
+      description : "A description of the JSON schema."
+      example : "\"A description of the JSON schema.\""
+    }
+  ];
+
+  // schema contains the actual JSON schema as a string.
+  string schema = 3 [
+    (google.api.field_behavior) = REQUIRED,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      title : "Schema"
+      description : "The actual JSON schema as a string."
+      // TODO: Add example
+    }
+  ];
+
+  // strict determines whether to enforce the schema strictly.
+  bool strict = 4 [
+    (google.api.field_behavior) = OPTIONAL,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      title : "Strict"
+      description : "If the schema should be strictly enforced."
+      example : "false"
+      default : "false"
+    }
+  ];
+}
+
+// LogProb represents log probability information for a token.
+message LogProb {
+  // token is the token associated with this log probability.
+  string token = 1
+      [ (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+        description : "The token associated with this log probability."
+        example : "\"the\""
+      } ];
+
+  // logprob is the log probability of the token.
+  double logprob = 2 [
+    (google.api.field_behavior) = OUTPUT_ONLY,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      description : "The log probability of the token."
+      example : "-0.001"
+    }
+  ];
+
+  // bytes contains the raw bytes of the token, if available.
+  bytes bytes = 3 [
+    (google.api.field_behavior) = OUTPUT_ONLY,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      description : "The raw bytes of the token, if available."
+      example : "\"the\""
+    }
+  ];
+}
+
+// LogProbsContent contains log probability details for one token position.
+message LogProbsContent {
+  // logprob is the primary log probability for this token.
+  LogProb logprob = 1
+      [ (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+        description : "The primary log probability for this token."
+        example : "{\"token\":\"the\",\"logprob\":-0.001}"
+      } ];
+
+  // top_logprobs is a list of the most likely tokens and their log
+  // probabilities.
+  repeated LogProb top_logprobs = 2
+      [ (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+        description : "A list of the most likely tokens and their log "
+                      "probabilities."
+        example : "[{\"token\":\"the\",\"logprob\":-0.001},{\"token\":\"cat\","
+                  "\"logprob\":-0.002}]"
+      } ];
+}
+
+// LogProbs contains log probability information for the content.
+message LogProbs {
+  // content is a list of log probability details for each token position.
+  repeated LogProbsContent content = 1
+      [ (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+        description : "The log probability details for each token position."
+        example : "[{\"token\":\"the\",\"logprob\":-0.001},{\"token\":\"cat\","
+                  "\"logprob\":-0.002}]"
+      } ];
+}
+
+// CompletionChoice represents a single completion choice.
+message CompletionChoice {
+  // index is the index of this choice.
+  int32 index = 1
+      [ (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+        description : "The index of this choice."
+        example : "0"
+      } ];
+
+  // message is the chat message for this completion choice.
+  CompletionMessage message = 2
+      [ (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+        description : "The chat message for this completion choice."
+        // TODO: Add example
+      } ];
+
+  // finish_reason indicates why the completion ended.
+  FinishReason finish_reason = 3
+      [ (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+        description : "The reason why the completion ended."
+        // TODO: Add example
+      } ];
+
+  // logprobs contains the log probability data for this choice.
+  LogProbs logprobs = 4
+      [ (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+        description : "The log probability data for this choice."
+      } ];
+}
+
+// CompletionStreamChoiceDelta represents incremental update data for a stream.
+message CompletionStreamChoiceDelta {
+  // content is the incremental text content in this update.
+  string content = 1;
+
+  // role is the role of the sender for this update.
+  string role = 2;
+
+  // function_call contains details of a function call, if present.
+  tools.v1.FunctionCall function_call = 3;
+
+  // tool_calls contains details of any tool calls in this update.
+  repeated tools.v1.ToolCall tool_calls = 4;
+}
+
+// CompletionStreamChoice represents one choice in a streamed response.
+message CompletionStreamChoice {
+  option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_schema) = {
+    json_schema : {
+      title : "Completion Stream Choice"
+      description : "A choice in a streamed chat completion."
+      required : [ "index", "delta" ]
+    }
+    external_docs : {
+      url : "https://docs.pegwings.com/v1/chat/completion-stream-choice"
+      description : "Find out more about Completion Stream Choices"
+    }
+    example : "{\"index\":0,\"delta\":{\"content\":\"Hello!\",\"role\":"
+              "\"user\"}}"
+  };
+  // index is the index of this choice.
+  int32 index = 1 [
+    (google.api.field_behavior) = OUTPUT_ONLY,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      description : "The index of this choice."
+    }
+  ];
+
+  // delta contains the incremental update for this choice.
+  CompletionStreamChoiceDelta delta = 2 [
+    (google.api.field_behavior) = OUTPUT_ONLY,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      description : "The incremental update for this choice."
+    }
+  ];
+
+  // finish_reason indicates why the stream for this choice ended.
+  FinishReason finish_reason = 3 [
+    (google.api.field_behavior) = OUTPUT_ONLY,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      description : "The reason why the stream for this choice ended."
+    }
+  ];
+}
+
+// StreamOptions represents options for streaming responses.
+message StreamOptions {
+  // include_usage if true, will include an extra final chunk containing token
+  // usage statistics.
+  bool include_usage = 1 [ (grpc.gateway.protoc_gen_openapiv2.options
+                                .openapiv2_field) = {
+    description : "If true, will include an extra final chunk containing token "
+                  "usage statistics."
+  } ];
+}
+
+message Usage {
+  option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_schema) = {
+    json_schema : {
+      title : "Usage"
+      description : "Usage statistics for a chat completion."
+      required : [ "prompt_tokens", "completion_tokens", "total_tokens" ]
+    }
+    external_docs : {
+      url : "https://docs.pegwings.com/v1/chat/usage"
+      description : "Find out more about Usage"
+    }
+    example : "{\"prompt_tokens\":0,\"completion_tokens\":0,\"total_tokens\":0}"
+  };
+
+  // prompt_tokens is the number of tokens in the prompt.
+  int32 prompt_tokens = 1 [
+    (google.api.field_behavior) = OUTPUT_ONLY,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      description : "The number of tokens in the prompt."
+    }
+  ];
+
+  // completion_tokens is the number of tokens generated in the completion.
+  int32 completion_tokens = 2 [
+    (google.api.field_behavior) = OUTPUT_ONLY,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      description : "The number of tokens generated in the completion."
+    }
+  ];
+
+  // total_tokens is the total number of tokens in the request.
+  int32 total_tokens = 3 [
+    (google.api.field_behavior) = OUTPUT_ONLY,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      description : "The total number of tokens in the request."
+    }
+  ];
+}
+
+// GetRequest is a request to get a chat completion.
+message GetChatCompletionRequest {
+
+  option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_schema) = {
+    json_schema : {
+      title : "Get Completion Request"
+      description : "A request to get a chat completion."
+      required : [ "id" ]
+    }
+    external_docs : {
+      url : "https://docs.pegwings.com/v1/chat/get-completion-request"
+      description : "Find out more about Get Completion Requests"
+    }
+    example : "{\"id\":\"pwg-6x3t3a1b-e1a2-4c3d-a4b5-1234567890ab\"}"
+  };
+
+  string id = 1 [
+    (google.api.field_behavior) = REQUIRED,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      title : "ID"
+      description : "The ID of the completion to get."
+      example : "\"pwg-6x3t3a1b-e1a2-4c3d-a4b5-1234567890ab\""
+    }
+  ];
+
+  string after = 2 [
+    (google.api.field_behavior) = OPTIONAL,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      title : "After"
+      description : "The ID of the completion to get."
+      example : "\"pwg-6x3t3a1b-e1a2-4c3d-a4b5-1234567890ab\""
+    }
+  ];
+
+  // limit is the maximum number of completions to return.
+  int32 limit = 3 [
+    (google.api.field_behavior) = OPTIONAL,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      title : "Limit"
+      description : "The maximum number of completions to return."
+      example : "10"
+      default : "1"
+    },
+    (validate.rules).int32.gte = 1,
+    (validate.rules).int32.lte = 10
+  ];
+
+  // order is the order to return completions in.
+  string order = 4 [
+    (google.api.field_behavior) = OPTIONAL,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      title : "Order"
+      description : "The order to return completions in. (asc for ascending or "
+                    "desc for descending)"
+      example : "\"desc\""
+      enum : [ "asc", "desc" ]
+    }
+  ];
+}
+
+// ChatCompletionsListRequest is a request to list chat completions.
+message ChatCompletionsListRequest {
+  option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_schema) = {
+    json_schema : {
+      title : "List Request"
+      description : "A request to list chat completions."
+      required : [ "model" ]
+    }
+    external_docs : {
+      url : "https://docs.pegwings.com/v1/chat/list-request"
+      description : "Find out more about List Requests"
+    }
+    example : "{\"model\":\"k1\"}"
+  };
+
+  // model is the ai model to use for the chat completion.
+  string model = 1 [
+    (google.api.field_behavior) = REQUIRED,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      title : "Model"
+      description : "The model to used to get chat completions."
+      example : "\"k1\""
+    }
+  ];
+
+  // metadata is metadata to use for the completion. It is a string of the form
+  // "metadata[key]=value". Useful for tracking usage.
+  string metadata = 2 [
+    (google.api.field_behavior) = UNORDERED_LIST,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      title : "Metadata"
+      description : "Metadata to use for the completion."
+      example : "\"metadata[key1]=value1&metadata[key2]=value2\""
+    }
+  ];
+
+  // limit is the maximum number of created completions to return.
+  int32 limit = 3 [
+    (google.api.field_behavior) = OPTIONAL,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      title : "Limit"
+      description : "The maximum number of created completions to return."
+      example : "10"
+    }
+  ];
+
+  // order is the time order to return completions in.
+  string order = 4 [
+    (google.api.field_behavior) = OPTIONAL,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      title : "Order"
+      description : "The time order to return completions in. (asc for "
+                    "ascending or desc for descending)"
+      example : "\"desc\""
+      enum : [ "asc", "desc" ]
+    }
+  ];
+}
+
+// ChatCompletionsListResponse is the response to a list completions request.
+message ChatCompletionsListResponse {
+  repeated chat.v1.ChatCompletionCreateResponse completions = 1 [
+    (google.api.field_behavior) = OUTPUT_ONLY,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      title : "Completions"
+      description : "The list of completions."
+      // TODO: Clean up example
+      example : "[\n"
+                "\t {"
+                "\n\t\t \"id\":\"pwg-6x3t3a1b-e1a2-4c3d-a4b5-1234567890ab\","
+                "\"object\":\"chat.completion\","
+                "\"created\":1677659200,\"model\":\"k1\","
+                "\"choices\":[{\"index\":0,\"message\":{\"role\":\"assistant\","
+                "\"content\":\"Hello!\"}}]}]"
+    }
+  ];
+
+  // first_id is the ID of the first completion in the list.
+  string first_id = 2 [
+    (google.api.field_behavior) = OUTPUT_ONLY,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      title : "First ID"
+      description : "The ID of the first completion in the list."
+      example : "\"pwg-6x3t3a1b-e1a2-4c3d-a4b5-1234567890ab\""
+    }
+  ];
+
+  // last_id is the ID of the last completion in the list.
+  string last_id = 3 [
+    (google.api.field_behavior) = OUTPUT_ONLY,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      title : "Last ID"
+      description : "The ID of the last completion in the list."
+      example : "\"pwg-6x3t3a1b-e1a2-4c3d-a4b5-1234567890ab\""
+    }
+  ];
+
+  // has_more indicates that there are more completions available.
+  bool has_more = 4 [
+    (google.api.field_behavior) = OUTPUT_ONLY,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      title : "Has More"
+      description : "Indicates that there are more completions available."
+      example : "true"
+      default : "false"
+    }
+  ];
+}

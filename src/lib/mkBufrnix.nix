@@ -177,7 +177,6 @@ in
       protoc_cmd="${pkgs.protobuf}/bin/protoc"
       protoc_args="--proto_path=${concatStringsSep " -I " cfg.protoc.includeDirectories}"
 
-
       # Add language-specific protocol plugins from the loaded modules
       ${concatMapStrings (
           module:

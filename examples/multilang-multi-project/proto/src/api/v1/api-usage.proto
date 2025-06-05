@@ -1,0 +1,516 @@
+syntax = "proto3";
+package usage.v1;
+
+// External
+import "google/api/field_behavior.proto";
+import "gateway/protoc-gen-openapiv2/annotations.proto";
+import "buf/validate/validate.proto";
+
+option go_package = "github.com/pegwings/pegwings/proto/gen/go/api/v1;api";
+
+// OrganizationChatUsageGetRequest is the request to get chat usage for an
+// organization.
+message ChatUsageGetRequest {
+  option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_schema) = {
+    json_schema : {
+      title : "OrganizationChatUsageGetRequest"
+      description : "Request to get chat usage for an organization"
+    }
+  };
+
+  // org_id is the id of the organization to get chat usage for.
+  string org_id = 1 [
+    (google.api.field_behavior) = REQUIRED,
+    (validate.rules).string.min_len = 1,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      title : "Organization ID"
+      description : "The id of the organization to get chat usage for."
+      example : "\"1234567890\""
+    }
+  ];
+
+  // group_by is the group by parameter to get chat usage for.
+  GroupBy group_by = 2 [
+    (validate.rules).enum.defined_only = true,
+    (google.api.field_behavior) = OPTIONAL,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      title : "Group By"
+      description : "The group by parameter to get chat usage for."
+      example : "\"day\""
+    }
+  ];
+
+  repeated string models = 3 [
+    (google.api.field_behavior) = OPTIONAL,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      title : "Models"
+      description : "The models to get chat usage for."
+      example : "\"gpt-3.5-turbo\""
+    }
+  ];
+
+  // project_ids is the project ids to get chat usage for.
+  repeated string project_ids = 4 [
+    (google.api.field_behavior) = OPTIONAL,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      title : "Project IDs"
+      description : "The project ids to get chat usage for."
+      example : "\"1234567890\""
+    }
+  ];
+
+  // user_ids is the user ids to get chat usage for.
+  repeated string user_ids = 5 [
+    (google.api.field_behavior) = OPTIONAL,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      title : "User IDs"
+      description : "The user ids to get chat usage for."
+      example : "\"1234567890\""
+    }
+  ];
+
+  string page = 8 [
+    (validate.rules).string.min_len = 1,
+    (google.api.field_behavior) = OPTIONAL,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      title : "Page"
+      description : "The page to get chat usage for."
+      example : "\"pg-12143242342\""
+    }
+  ];
+}
+
+// GroupBy is the group by parameter to get chat usage for.
+//
+// It allows for grouping chat usage by project, user, API key, model, or
+// batch.
+enum GroupBy {
+  option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_enum) = {
+    description : "The group by parameter to get chat usage for."
+  };
+  project_id = 0;
+  user_id = 1;
+  api_key_id = 2;
+  model = 3;
+  batch = 4;
+}
+
+// ChatUsageGetResponse is the response to get chat usage for an
+// organization.
+message ChatUsageGetResponse {
+  option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_schema) = {
+    json_schema : {
+      title : "OrganizationChatUsageGetResponse"
+      description : "Response to get chat usage for an organization"
+    }
+  };
+
+  // api_key_id is the id of the API key used to get the chat usage.
+  string api_key_id = 1 [
+    (google.api.field_behavior) = OUTPUT_ONLY,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      title : "API Key ID"
+      description : "The id of the API key used to get the chat usage."
+      example : "\"pwg-1234567890\""
+    }
+  ];
+
+  // inputs_tokens is the number of tokens used to get the chat usage.
+  int64 inputs_tokens = 2 [
+    (google.api.field_behavior) = OUTPUT_ONLY,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      title : "Inputs Tokens"
+      description : "The number of tokens used to get the chat usage."
+      example : "100"
+    }
+  ];
+
+  // input_cached_tokens is the number of cached tokens that have been cached
+  // from previous requests.
+  int64 input_cached_tokens = 3 [
+    (google.api.field_behavior) = OUTPUT_ONLY,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      title : "Input Cached Tokens"
+      description : "The number of cached tokens that have been cached from "
+                    "previous requests."
+      example : "100"
+    }
+  ];
+
+  // output_tokens is the number of tokens used to get the chat usage.
+  int64 output_tokens = 4 [
+    (google.api.field_behavior) = OUTPUT_ONLY,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      title : "Output Tokens"
+      description : "The number of tokens used to get the chat usage."
+      example : "100"
+    }
+  ];
+
+  // has_more indicates whether there are more chat usage results to get using
+  // the returned next page token.
+  bool has_more = 5 [
+    (google.api.field_behavior) = OUTPUT_ONLY,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      title : "Has More"
+      description : "Whether there are more chat usage results to get."
+      example : "true"
+    }
+  ];
+
+  // grouped_by is the grouped by parameter used to get chat usage.
+  GroupBy grouped_by = 6 [
+    (validate.rules).enum.defined_only = true,
+    (google.api.field_behavior) = OUTPUT_ONLY,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      title : "Grouped By"
+      description : "The grouped by parameter used to get chat usage."
+      example : "\"day\""
+    }
+  ];
+
+  string next_page_token = 7 [
+    (google.api.field_behavior) = OUTPUT_ONLY,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      title : "Next Page Token"
+      description : "The next page token to get chat usage for."
+      example : "\"pg-12143242342\""
+    }
+  ];
+}
+
+// EmbeddingsUsageListRequest is the request to get embeddings usage for an
+// organization.
+message EmbeddingsUsageListRequest {
+  option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_schema) = {
+    json_schema : {
+      title : "EmbeddingsUsageListRequest"
+      description : "Request to get embeddings usage for an organization"
+    }
+  };
+
+  // org_id is the id of the organization to get embeddings usage for.
+  string org_id = 1 [
+    (google.api.field_behavior) = REQUIRED,
+    (validate.rules).string.min_len = 1,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      title : "Organization ID"
+      description : "The id of the organization to get embeddings usage for."
+      example : "\"1234567890\""
+    }
+  ];
+
+  // group_by is the group by parameter to get embeddings usage for.
+  GroupBy group_by = 2 [
+    (validate.rules).enum.defined_only = true,
+    (google.api.field_behavior) = OPTIONAL,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      title : "Group By"
+      description : "The group by parameter to get embeddings usage for."
+      example : "\"day\""
+    }
+  ];
+
+  repeated string models = 3 [
+    (google.api.field_behavior) = OPTIONAL,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      title : "Models"
+      description : "The models to get embeddings usage for."
+      example : "\"gpt-3.5-turbo\""
+    }
+  ];
+
+  // project_ids is the project ids to get embeddings usage for.
+  repeated string project_ids = 4 [
+    (google.api.field_behavior) = OPTIONAL,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      title : "Project IDs"
+      description : "The project ids to get embeddings usage for."
+      example : "\"1234567890\""
+    }
+  ];
+
+  string page = 8 [
+    (validate.rules).string.min_len = 1,
+    (google.api.field_behavior) = OPTIONAL,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      title : "Page"
+      description : "The page to get embeddings usage for."
+      example : "\"pg-12143242342\""
+    }
+  ];
+}
+
+// EmbeddingsUsageListResponse is the response to get embeddings usage for an
+// organization.
+message EmbeddingsUsageListResponse {
+  option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_schema) = {
+    json_schema : {
+      title : "EmbeddingsUsageListResponse"
+      description : "Response to get embeddings usage for an organization"
+    }
+  };
+
+  // api_key_id is the id of the API key used to get the embeddings usage.
+  string api_key_id = 1 [
+    (google.api.field_behavior) = OUTPUT_ONLY,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      title : "API Key ID"
+      description : "The id of the API key used to get the embeddings usage."
+      example : "\"pwg-1234567890\""
+    }
+  ];
+
+  // inputs_tokens is the number of tokens used to get the embeddings usage.
+  int64 inputs_tokens = 2 [
+    (google.api.field_behavior) = OUTPUT_ONLY,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      title : "Inputs Tokens"
+      description : "The number of tokens used to get the embeddings usage."
+      example : "100"
+    }
+  ];
+}
+
+// TranscriptionUsageListRequest is the request to get transcription usage for a
+// project.
+message TranscriptionUsageListRequest {
+  option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_schema) = {
+    json_schema : {
+      title : "TranscriptionUsageListRequest"
+      description : "Request to get transcription usage for a project"
+    }
+  };
+  // group_by is the group by parameter to get transcription usage for.
+  GroupBy group_by = 2 [
+    (validate.rules).enum.defined_only = true,
+    (google.api.field_behavior) = OPTIONAL,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      title : "Group By"
+      description : "The group by parameter to get transcription usage for."
+      example : "\"day\""
+    }
+  ];
+}
+
+message TranscriptionUsageListResponse {
+  option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_schema) = {
+    json_schema : {
+      title : "TranscriptionUsageListResponse"
+      description : "Response to get transcription usage for a project"
+    }
+  };
+  string next_page_token = 1 [
+    (google.api.field_behavior) = OUTPUT_ONLY,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      title : "Next Page Token"
+      description : "The next page token to get transcription usage for."
+      example : "\"pg-12143242342\""
+    }
+  ];
+}
+
+message TranslationUsageListRequest {
+  option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_schema) = {
+    json_schema : {
+      title : "TranslationUsageListRequest"
+      description : "Request to get translation usage for a project"
+    }
+  };
+  // group_by is the group by parameter to get translation usage for.
+  GroupBy group_by = 1 [
+    (validate.rules).enum.defined_only = true,
+    (google.api.field_behavior) = OPTIONAL,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      title : "Group By"
+      description : "The group by parameter to get translation usage for."
+      example : "\"day\""
+    }
+  ];
+}
+
+message TranslationUsageListResponse {
+  option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_schema) = {
+    json_schema : {
+      title : "TranslationUsageListResponse"
+      description : "Response to get translation usage for a project"
+    }
+  };
+  string next_page_token = 1 [
+    (google.api.field_behavior) = OUTPUT_ONLY,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      title : "Next Page Token"
+      description : "The next page token to get translation usage for."
+      example : "\"pg-12143242342\""
+    }
+  ];
+}
+
+// SpeechUsageListRequest is the request for getting speech usage.
+message SpeechUsageListRequest {
+  // group_by is the group by parameter to get speech usage for.
+  GroupBy group_by = 1 [
+    (validate.rules).enum.defined_only = true,
+    (google.api.field_behavior) = OPTIONAL,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      title : "Group By"
+      description : "The group by parameter to get speech usage for."
+      example : "\"day\""
+    }
+  ];
+}
+
+// SpeechUsageListResponse is the response for getting speech usage.
+message SpeechUsageListResponse {
+  string next_page_token = 1 [
+    (google.api.field_behavior) = OUTPUT_ONLY,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      title : "Next Page Token"
+      description : "The next page token to get speech usage for."
+      example : "\"pg-12143242342\""
+    }
+  ];
+}
+
+// OrgImageUsageListRequest is the request for getting image usage.
+message OrgImageUsageListRequest {
+  option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_schema) = {
+    json_schema : {
+      title : "ImageUsageListRequest"
+      description : "Request to get image usage for an organization"
+    }
+  };
+
+  // org_id is the id of the organization to get image usage for.
+  string org_id = 1 [
+    (google.api.field_behavior) = REQUIRED,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      title : "Organization ID"
+      description : "The organization ID"
+      example : "\"org-1234567890\""
+    }
+  ];
+
+  // next_page_token is the next page token to get image usage for.
+  string next_page_token = 2 [
+    (google.api.field_behavior) = INPUT_ONLY,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      title : "Next Page Token"
+      description : "The next page token to get image usage for."
+      example : "\"pg-12143242342\""
+    }
+  ];
+
+  // type is the type of image usage to get.
+  ImageUsageType type = 3 [
+    (validate.rules).enum.defined_only = true,
+    (google.api.field_behavior) = OPTIONAL,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      title : "Type"
+      description : "The type of image usage to get."
+      example : "\"generate\""
+    }
+  ];
+}
+
+// ImageUsageType is the type of image usage to get.
+enum ImageUsageType {
+  // GENERATE is the type of image usage to get for generating images.
+  GENERATE = 0;
+  // SEGMENT is the type of image usage to get for segmenting images.
+  SEGMENT = 1;
+  // VARIATION is the type of image usage to get for variation images.
+  VARIATION = 2;
+  // EDIT is the type of image usage to get for editing images.
+  EDIT = 3;
+}
+
+// ImageUsageListResponse is the response for getting image usage.
+message OrgImageUsageListResponse {
+  option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_schema) = {
+    json_schema : {
+      title : "Image Usage List Response"
+      description : "The response for getting image usage."
+    }
+  };
+
+  // org_id is the organization ID.
+  string org_id = 1 [
+    (google.api.field_behavior) = OUTPUT_ONLY,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      title : "Organization ID"
+      description : "The organization ID."
+      example : "\"org-1234567890\""
+    }
+  ];
+
+  // next_page_token is the next page token to get image usage for.
+  string next_page_token = 2 [
+    (google.api.field_behavior) = OUTPUT_ONLY,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      title : "Next Page Token"
+      description : "The next page token to get image usage for."
+      example : "\"pg-12143242342\""
+    }
+  ];
+}
+
+// VideoUsageListRequest is the request for getting video usage.
+message VideoUsageListRequest {
+  option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_schema) = {
+    json_schema : {
+      title : "Video Usage List Request"
+      description : "The request for getting video usage."
+    }
+  };
+
+  // org_id is the organization ID.
+  string org_id = 1 [
+    (google.api.field_behavior) = REQUIRED,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      title : "Organization ID"
+      description : "The organization ID."
+      example : "\"org-1234567890\""
+    }
+  ];
+
+  // next_page_token is the next page token to get video usage for.
+  string next_page_token = 2 [
+    (google.api.field_behavior) = INPUT_ONLY,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      title : "Next Page Token"
+      description : "The next page token to get video usage for."
+      example : "\"pg-12143242342\""
+    }
+  ];
+}
+
+// VideoUsageListResponse is the response for getting video usage.
+message OrgVideoUsageListResponse {
+  option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_schema) = {
+    json_schema : {
+      title : "Video Usage List Response"
+      description : "The response for getting video usage."
+    }
+  };
+
+  // org_id is the organization ID.
+  string org_id = 1 [
+    (google.api.field_behavior) = OUTPUT_ONLY,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      title : "Organization ID"
+      description : "The organization ID."
+      example : "\"org-1234567890\""
+    }
+  ];
+
+  // next_page_token is the next page token to get video usage for.
+  string next_page_token = 2 [
+    (google.api.field_behavior) = OUTPUT_ONLY,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      title : "Next Page Token"
+      description : "The next page token to get video usage for."
+      example : "\"pg-12143242342\""
+    }
+  ];
+}

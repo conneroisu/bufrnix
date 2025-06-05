@@ -1,0 +1,1122 @@
+// -----------------------------------------------------------------------------
+// Text Embedding gRPC Service Definition (proto3)
+// -----------------------------------------------------------------------------
+//
+// This file defines a gRPC AI inference service for embedding data. The service
+// allows clients to send a request to embed data and receive the corresponding
+// embedding vectors.
+//
+// This service is part of the internal api of the pegwings platform.
+// -----------------------------------------------------------------------------
+//
+// Note: This example uses proto3 syntax and is designed to be used with gRPC.
+//       To compile this file, you would use the Protocol Buffers compiler
+//       (protoc) along with the gRPC plugin for your target language.
+//
+// Copyright 2025 Pegwings All rights reserved.
+// -----------------------------------------------------------------------------
+
+syntax = "proto3";
+
+package llm.v1;
+
+// External
+import "gateway/protoc-gen-openapiv2/annotations.proto";
+import "google/protobuf/any.proto";
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/wrappers.proto";
+import "google/api/field_behavior.proto";
+import "google/api/annotations.proto";
+
+option go_package = "github.com/pegwings/pegwings/proto/gen/go/llm/v1;llm";
+
+option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_swagger) = {
+  info : {
+    title : "Internal LLM API"
+    version : "1.0.0"
+    description : "# LLM\n\nThis service provides a gRPC API for "
+                  "generating text from prompts and variations.\n\n It is "
+                  "part of the internal api of the pegwings platform."
+    contact : {
+      name : "Conner Ohnsorge"
+      url : "https://github.com/pegwings"
+      email : "conneroisu@outlook.com"
+    }
+  }
+};
+
+// LLMService defines the RPC methods for chat completions.
+service LLMService {
+  // Chat receives a ChatCompletionRequest and returns a
+  // ChatCompletionResponse.
+  rpc Chat(ChatCompletionRequest) returns (ChatCompletionResponse) {
+    option (google.api.http) = {
+      post : "/v1/chat/completions"
+      body : "*"
+    };
+    option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+      security : {
+        security_requirement : {
+          key : "ApiKeyAuth"
+          value : {}
+        }
+        security_requirement : {
+          key : "OAuth2"
+          value : {scope : "read" scope : "write"}
+        }
+      }
+    };
+  }
+
+  // Stream receives a ChatCompletionRequest and returns a stream of
+  // ChatCompletionStreamResponse messages.
+  rpc Stream(ChatCompletionRequest)
+      returns (stream ChatCompletionStreamResponse) {
+    option (google.api.http) = {
+      post : "/v1/chat/stream"
+      body : "*"
+    };
+    option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+      operation_id : "Stream"
+      summary : "Stream"
+      description : "Stream"
+    };
+  }
+
+  // HealthCheck returns a health check response.
+  rpc HealthCheck(HealthCheckRequest) returns (HealthCheckResponse);
+}
+
+message ChatCompletionRequest {
+
+  // messages are the messages to send to the model.
+  repeated CompletionMessage messages = 1 [
+    (google.api.field_behavior) = REQUIRED,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      description : "The messages to send to the model."
+    }
+  ];
+
+  // max_completion_tokens is the maximum number of tokens to generate.
+  // This field is optional.
+  google.protobuf.Int32Value max_completion_tokens = 2 [
+    (google.api.field_behavior) = OPTIONAL,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      description : "The maximum number of tokens to generate."
+      example : "100"
+    }
+  ];
+
+  float temperature = 3 [
+    (google.api.field_behavior) = OPTIONAL,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      description : "The temperature to use for the completion."
+      example : "0.5"
+    }
+  ];
+
+  float top_p = 4 [
+    (google.api.field_behavior) = OPTIONAL,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      description : "The top-p (nucleus sampling) value to use for the "
+                    "completion."
+      example : "0.5"
+    }
+  ];
+
+  string reasoning_effort = 5 [
+    (google.api.field_behavior) = OPTIONAL,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      description : "The reasoning effort to use for the completion."
+      example : "\"high\""
+    }
+  ];
+
+  // n is the number of completions to generate.
+  // Allowed values: from 0 to 9.
+  int32 n = 6 [
+    (google.api.field_behavior) = OPTIONAL,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      description : "The number of completions to generate."
+      example : "1"
+    }
+  ];
+
+  // stream indicates whether to stream the response.
+  bool stream = 7 [
+    (google.api.field_behavior) = OPTIONAL,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      description : "Indicates whether to stream the response."
+      example : "true"
+    }
+  ];
+
+  // stop is a list of token strings where the completion should stop.
+  repeated string stop = 8 [
+    (google.api.field_behavior) = OPTIONAL,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      description : "A list of up to 4 token strings where the completion "
+                    "should stop."
+      example : "[\"stop\"]"
+      default : "[]"
+    }
+  ];
+
+  // presence_penalty is the penalty for introducing new tokens.
+  float presence_penalty = 9 [
+    (google.api.field_behavior) = OPTIONAL,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      description : "The penalty for introducing new tokens."
+      example : "0.5"
+    }
+  ];
+
+  // response_format specifies the format of the response.
+  ChatCompletionResponseFormat response_format = 10 [
+    (google.api.field_behavior) = REQUIRED,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      description : "Mapping of property names to their definitions."
+      // TODO: Add examples.
+    }
+  ];
+
+  // seed is an optional field for random generation seeding.
+  google.protobuf.Int32Value seed = 11 [
+    (google.api.field_behavior) = REQUIRED,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      description : "Mapping of property names to their definitions."
+      // TODO: Add examples.
+    }
+  ];
+
+  // frequency_penalty is the penalty for repeating tokens.
+  float frequency_penalty = 12 [
+    (google.api.field_behavior) = REQUIRED,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      description : "Mapping of property names to their definitions."
+      // TODO: Add examples.
+    }
+  ];
+
+  // logit_bias is a mapping from tokens (as strings) to their bias values.
+  map<string, int32> logit_bias = 13 [
+    (google.api.field_behavior) = REQUIRED,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      description : "Mapping of property names to their definitions."
+      // TODO: Add examples.
+    }
+  ];
+
+  // logprobs indicates whether to include log probability information.
+  bool logprobs = 14 [
+    (google.api.field_behavior) = REQUIRED,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      description : "Mapping of property names to their definitions."
+      // TODO: Add examples.
+    }
+  ];
+
+  // top_logprobs specifies the number of top log probabilities to return.
+  int32 top_logprobs = 15 [
+    (google.api.field_behavior) = REQUIRED,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      description : "Mapping of property names to their definitions."
+      // TODO: Add examples.
+    }
+  ];
+
+  // user is the identifier for the end-user.
+  string user = 16 [
+    (google.api.field_behavior) = REQUIRED,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      description : "Mapping of property names to their definitions."
+      // TODO: Add examples.
+    }
+  ];
+
+  // tools is the list of tools to be used during chat completion.
+  repeated Tool tools = 17 [
+    (google.api.field_behavior) = REQUIRED,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      description : "Mapping of property names to their definitions."
+      // TODO: Add examples.
+    }
+  ];
+
+  // tool_choice can contain any type of data; here we use google.protobuf.Any.
+  google.protobuf.Any tool_choice = 18 [
+    (google.api.field_behavior) = REQUIRED,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      description : "Mapping of property names to their definitions."
+      // TODO: Add examples.
+    }
+  ];
+
+  // stream_options contains settings related to streaming behavior.
+  StreamOptions stream_options = 19 [
+    (google.api.field_behavior) = REQUIRED,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      description : "Mapping of property names to their definitions."
+      // TODO: Add examples.
+    }
+  ];
+
+  // parallel_tool_calls can contain any type of data; here we use
+  // google.protobuf.Any.
+  google.protobuf.Any parallel_tool_calls = 20 [
+
+    (google.api.field_behavior) = REQUIRED,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      description : "Mapping of property names to their definitions."
+      // TODO: Add examples.
+    }
+  ];
+}
+
+// ChatCompletionResponse represents the response for a chat completion request.
+message ChatCompletionResponse {
+  // id is the unique identifier for the response.
+  string id = 1 [
+    (google.api.field_behavior) = REQUIRED,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      description : "Mapping of property names to their definitions."
+      // TODO: Add examples.
+    }
+  ];
+
+  // object is the type of the response (e.g. "chat.completion").
+  string object = 2 [
+    (google.api.field_behavior) = REQUIRED,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      description : "Mapping of property names to their definitions."
+      // TODO: Add examples.
+    }
+  ];
+
+  // created is the creation time of the response.
+  google.protobuf.Timestamp created = 3 [
+    (google.api.field_behavior) = REQUIRED,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      description : "Mapping of property names to their definitions."
+      // TODO: Add examples.
+    }
+  ];
+
+  // model is the model that generated the response.
+  string model = 4 [
+    (google.api.field_behavior) = REQUIRED,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      description : "Mapping of property names to their definitions."
+      // TODO: Add examples.
+    }
+  ];
+
+  // choices is the list of completion choices provided.
+  repeated CompletionChoice choices = 5 [
+    (google.api.field_behavior) = REQUIRED,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      description : "Mapping of property names to their definitions."
+      // TODO: Add examples.
+    }
+  ];
+
+  // usage contains the token usage statistics.
+  Usage usage = 6 [
+    (google.api.field_behavior) = REQUIRED,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      description : "Mapping of property names to their definitions."
+      // TODO: Add examples.
+    }
+  ];
+
+  // system_fingerprint is the system fingerprint of the response.
+  string system_fingerprint = 7 [
+    (google.api.field_behavior) = REQUIRED,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      description : "Mapping of property names to their definitions."
+      // TODO: Add examples.
+    }
+  ];
+}
+
+// ChatCompletionStreamResponse represents a streamed response for chat
+// completions.
+message ChatCompletionStreamResponse {
+  // id is the identifier for this streamed response.
+  string id = 1 [
+    (google.api.field_behavior) = REQUIRED,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      description : "Mapping of property names to their definitions."
+      // TODO: Add examples.
+    }
+  ];
+
+  // object is the object type of this streamed response.
+  string object = 2 [
+    (google.api.field_behavior) = REQUIRED,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      description : "Mapping of property names to their definitions."
+      // TODO: Add examples.
+    }
+  ];
+
+  google.protobuf.Timestamp created = 3 [
+    (google.api.field_behavior) = REQUIRED,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      description : "Mapping of property names to their definitions."
+      // TODO: Add examples.
+    }
+  ];
+
+  // model is the model used for generating the streamed response.
+  string model = 4 [
+    (google.api.field_behavior) = REQUIRED,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      description : "Mapping of property names to their definitions."
+      // TODO: Add examples.
+    }
+  ];
+
+  // choices are the incremental updates (choices) of the streamed response.
+  repeated CompletionStreamChoice choices = 5 [
+    (google.api.field_behavior) = REQUIRED,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      description : "Mapping of property names to their definitions."
+      // TODO: Add examples.
+    }
+  ];
+
+  // system_fingerprint is the system fingerprint for the streamed response.
+  string system_fingerprint = 6 [
+    (google.api.field_behavior) = REQUIRED,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      description : "Mapping of property names to their definitions."
+      // TODO: Add examples.
+    }
+  ];
+
+  // prompt_annotations are annotations associated with the prompt.
+  repeated PromptAnnotation prompt_annotations = 7 [
+    (google.api.field_behavior) = REQUIRED,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      description : "Mapping of property names to their definitions."
+      // TODO: Add examples.
+    }
+  ];
+
+  // prompt_filter_results are the results from any prompt filtering.
+  repeated PromptFilterResult prompt_filter_results = 8 [
+    (google.api.field_behavior) = REQUIRED,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      description : "Mapping of property names to their definitions."
+      // TODO: Add examples.
+    }
+  ];
+
+  // usage is optionally included if stream_options.include_usage was set.
+  // On all but the final chunk, this field may be empty.
+  Usage usage = 9 [
+    (google.api.field_behavior) = REQUIRED,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      description : "Mapping of property names to their definitions."
+      // TODO: Add examples.
+    }
+  ];
+}
+
+// -----------------------------------------------------------------------------
+// Message types used in chat completions
+// -----------------------------------------------------------------------------
+
+// CompletionMessage represents an individual chat message in a conversation.
+message CompletionMessage {
+  // name is the name of the chat message sender.
+  string name = 1 [
+    (google.api.field_behavior) = REQUIRED,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      description : "Mapping of property names to their definitions."
+      // TODO: Add examples.
+    }
+  ];
+
+  // role indicates the role of the message sender.
+  Role role = 2 [
+    (google.api.field_behavior) = REQUIRED,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      description : "Mapping of property names to their definitions."
+      // TODO: Add examples.
+    }
+  ];
+
+  // content is the text content of the chat message.
+  // If multi_content is provided, this field should be empty.
+  string content = 3 [
+    (google.api.field_behavior) = REQUIRED,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      description : "Mapping of property names to their definitions."
+      // TODO: Add examples.
+    }
+  ];
+
+  // multi_content is a multi-part representation of the message content.
+  // It is mutually exclusive with the content field.
+  repeated MessagePart multi_content = 4 [
+    (google.api.field_behavior) = REQUIRED,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      description : "Mapping of property names to their definitions."
+      // TODO: Add examples.
+    }
+  ];
+
+  // tool_calls are generated tool call details for function calls.
+  repeated ToolCall tool_calls = 5 [
+    (google.api.field_behavior) = REQUIRED,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      description : "Mapping of property names to their definitions."
+      // TODO: Add examples.
+    }
+  ];
+
+  // tool_call_id is used for messages where Role=tool;
+  // it should match the ID from a prior assistant message.
+  string tool_call_id = 6 [
+    (google.api.field_behavior) = REQUIRED,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      description : "Mapping of property names to their definitions."
+      // TODO: Add examples.
+    }
+  ];
+}
+
+// MessagePart represents one part of a multi-part chat message.
+message MessagePart {
+  // text is the text of this message part.
+  string text = 1;
+
+  // type indicates the type of this message part.
+  MessagePartType type = 2;
+
+  // image_url contains the image URL information if this part is an image.
+  MessageImageURL image_url = 3;
+}
+
+// MessageImageURL represents an image URL and its details.
+message MessageImageURL {
+  // url is the URL of the image.
+  string url = 1 [
+    (google.api.field_behavior) = REQUIRED,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      description : "The image URL."
+    }
+  ];
+
+  // detail describes the image detail quality.
+  // See ImageURLDetail enum.
+  ImageURLDetail detail = 2 [
+    (google.api.field_behavior) = REQUIRED,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      description : "The detail of the image."
+    }
+  ];
+}
+
+// PromptAnnotation represents an annotation for a prompt.
+message PromptAnnotation {
+  // prompt_index indicates the index of the prompt in the request.
+  int32 prompt_index = 1;
+}
+
+// PromptFilterResult represents the result of prompt filtering.
+message PromptFilterResult {
+  // index is the index corresponding to the filter result.
+  int32 index = 1;
+}
+
+// -----------------------------------------------------------------------------
+// Enums
+// -----------------------------------------------------------------------------
+
+// Role represents the role of a chat message.
+enum Role {
+  ROLE_UNSPECIFIED = 0;
+  // system indicates a system-level message.
+  ROLE_SYSTEM = 1;
+  // user indicates a message from the end-user.
+  ROLE_USER = 2;
+  // assistant indicates a message from the assistant.
+  ROLE_ASSISTANT = 3;
+  // function indicates a message generated by a function call.
+  ROLE_FUNCTION = 4;
+  // tool indicates a message coming from a tool.
+  ROLE_TOOL = 5;
+}
+
+// MessagePartType represents the type of a chat message part.
+enum MessagePartType {
+  MESSAGE_PART_TYPE_UNSPECIFIED = 0;
+  // text indicates the part is plain text.
+  MESSAGE_PART_TYPE_TEXT = 1;
+  // image_url indicates the part contains an image URL.
+  MESSAGE_PART_TYPE_IMAGE_URL = 2;
+}
+
+// ImageURLDetail represents the quality/detail of an image URL.
+enum ImageURLDetail {
+  IMAGE_URL_DETAIL_UNSPECIFIED = 0;
+  // high indicates a high quality/detail image URL.
+  IMAGE_URL_DETAIL_HIGH = 1;
+  // low indicates a low quality/detail image URL.
+  IMAGE_URL_DETAIL_LOW = 2;
+  // auto indicates an automatically determined image detail.
+  IMAGE_URL_DETAIL_AUTO = 3;
+}
+
+// FinishReason indicates why the completion finished.
+enum FinishReason {
+  FINISH_REASON_UNSPECIFIED = 0;
+  // stop indicates the completion stopped because a stop token was encountered.
+  FINISH_REASON_STOP = 1;
+  // length indicates the completion stopped because the maximum token length
+  // was reached.
+  FINISH_REASON_LENGTH = 2;
+  // tool_calls indicates the completion stopped due to tool calls.
+  FINISH_REASON_TOOL_CALLS = 3;
+  // content_filter indicates the completion was stopped by content filtering.
+  FINISH_REASON_CONTENT_FILTER = 4;
+  // null indicates no finish reason was provided.
+  FINISH_REASON_NULL = 5;
+}
+
+// Format represents the format of the chat completion response.
+enum Format {
+  FORMAT_UNSPECIFIED = 0;
+  // text indicates the default plain text format.
+  FORMAT_TEXT = 1;
+  // json indicates the JSON format.
+  FORMAT_JSON = 2;
+  // json_object indicates the response is a JSON object.
+  FORMAT_JSON_OBJECT = 3;
+  // json_schema indicates the response adheres to a JSON schema.
+  FORMAT_JSON_SCHEMA = 4;
+}
+
+// -----------------------------------------------------------------------------
+// Additional types
+// -----------------------------------------------------------------------------
+
+// ChatCompletionResponseFormat defines the response format for a chat
+// completion.
+message ChatCompletionResponseFormat {
+  // type indicates the type of response format.
+  Format type = 1 [
+    (google.api.field_behavior) = REQUIRED,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      description : "Mapping of property names to their definitions."
+      // TODO: Add examples.
+    }
+  ];
+
+  // json_schema is the JSON schema definition for the response format.
+  ChatCompletionResponseFormatJSONSchema json_schema = 2 [
+    (google.api.field_behavior) = REQUIRED,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      description : "Mapping of property names to their definitions."
+      // TODO: Add examples.
+    }
+  ];
+}
+
+// ChatCompletionResponseFormatJSONSchema defines the JSON schema details.
+message ChatCompletionResponseFormatJSONSchema {
+  // name is used to further identify the schema.
+  string name = 1 [
+    (google.api.field_behavior) = REQUIRED,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      description : "Mapping of property names to their definitions."
+      // TODO: Add examples.
+    }
+  ];
+
+  // description provides a description of the JSON schema.
+  string description = 2 [
+    (google.api.field_behavior) = REQUIRED,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      description : "Mapping of property names to their definitions."
+      // TODO: Add examples.
+    }
+  ];
+
+  // schema contains the actual JSON schema as a string.
+  string schema = 3 [
+    (google.api.field_behavior) = REQUIRED,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      description : "Mapping of property names to their definitions."
+      // TODO: Add examples.
+    }
+  ];
+
+  // strict determines whether to enforce the schema strictly.
+  bool strict = 4 [
+    (google.api.field_behavior) = REQUIRED,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      description : "Mapping of property names to their definitions."
+      // TODO: Add examples.
+    }
+  ];
+}
+
+// LogProb represents log probability information for a token.
+message LogProb {
+  // token is the token associated with this log probability.
+  string token = 1 [
+    (google.api.field_behavior) = REQUIRED,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      description : "Mapping of property names to their definitions."
+      // TODO: Add examples.
+    }
+  ];
+
+  // logprob is the log probability of the token.
+  double logprob = 2 [
+    (google.api.field_behavior) = REQUIRED,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      description : "Mapping of property names to their definitions."
+      // TODO: Add examples.
+    }
+  ];
+
+  // bytes contains the raw bytes of the token, if available.
+  bytes bytes = 3 [
+    (google.api.field_behavior) = REQUIRED,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      description : "Mapping of property names to their definitions."
+      // TODO: Add examples.
+    }
+  ];
+}
+
+// LogProbsContent contains log probability details for one token position.
+message LogProbsContent {
+  // logprob is the primary log probability for this token.
+  LogProb logprob = 1 [
+    (google.api.field_behavior) = REQUIRED,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      description : "Mapping of property names to their definitions."
+      // TODO: Add examples.
+    }
+  ];
+
+  // top_logprobs is a list of the most likely tokens and their log
+  // probabilities.
+  repeated LogProb top_logprobs = 2 [
+    (google.api.field_behavior) = REQUIRED,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      description : "Mapping of property names to their definitions."
+      // TODO: Add examples.
+    }
+  ];
+}
+
+// LogProbs contains log probability information for the content.
+message LogProbs {
+  option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_schema) = {
+    json_schema : {
+      description : "LogProbs contains log probability information for the "
+                    "content."
+    }
+  };
+  // content is a list of log probability details for each token position.
+  repeated LogProbsContent content = 1 [
+    (google.api.field_behavior) = REQUIRED,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      description : "Mapping of property names to their definitions."
+      // TODO: Add examples.
+    }
+  ];
+}
+
+// CompletionChoice represents a single completion choice.
+message CompletionChoice {
+  // index is the index of this choice.
+  int32 index = 1 [
+    (google.api.field_behavior) = REQUIRED,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      description : "Mapping of property names to their definitions."
+      // TODO: Add examples.
+    }
+  ];
+
+  // message is the chat message for this completion choice.
+  CompletionMessage message = 2 [
+    (google.api.field_behavior) = REQUIRED,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      description : "Mapping of property names to their definitions."
+      // TODO: Add examples.
+    }
+  ];
+
+  // finish_reason indicates why the completion ended.
+  FinishReason finish_reason = 3 [
+    (google.api.field_behavior) = REQUIRED,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      description : "Mapping of property names to their definitions."
+      // TODO: Add examples.
+    }
+  ];
+
+  // logprobs contains the log probability data for this choice.
+  LogProbs logprobs = 4 [
+    (google.api.field_behavior) = REQUIRED,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      description : "Mapping of property names to their definitions."
+      // TODO: Add examples.
+    }
+  ];
+}
+
+// CompletionStreamChoiceDelta represents incremental update data for a stream.
+message CompletionStreamChoiceDelta {
+  // content is the incremental text content in this update.
+  string content = 1 [
+    (google.api.field_behavior) = REQUIRED,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      description : "Mapping of property names to their definitions."
+      // TODO: Add examples.
+    }
+  ];
+
+  // role is the role of the sender for this update.
+  string role = 2 [
+    (google.api.field_behavior) = REQUIRED,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      description : "Mapping of property names to their definitions."
+      // TODO: Add examples.
+    }
+  ];
+
+  // function_call contains details of a function call, if present.
+  FunctionCall function_call = 3 [
+    (google.api.field_behavior) = REQUIRED,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      description : "Mapping of property names to their definitions."
+      // TODO: Add examples.
+    }
+  ];
+
+  // tool_calls contains details of any tool calls in this update.
+  repeated ToolCall tool_calls = 4 [
+    (google.api.field_behavior) = REQUIRED,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      description : "Mapping of property names to their definitions."
+      // TODO: Add examples.
+    }
+  ];
+}
+
+// CompletionStreamChoice represents one choice in a streamed response.
+message CompletionStreamChoice {
+  // index is the index of this choice.
+  int32 index = 1 [
+    (google.api.field_behavior) = REQUIRED,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      description : "Mapping of property names to their definitions."
+      // TODO: Add examples.
+    }
+  ];
+
+  // delta contains the incremental update for this choice.
+  CompletionStreamChoiceDelta delta = 2 [
+    (google.api.field_behavior) = REQUIRED,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      description : "Mapping of property names to their definitions."
+      // TODO: Add examples.
+    }
+  ];
+
+  // finish_reason indicates why the stream for this choice ended.
+  FinishReason finish_reason = 3 [
+    (google.api.field_behavior) = REQUIRED,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      description : "Mapping of property names to their definitions."
+      // TODO: Add examples.
+    }
+  ];
+}
+
+// StreamOptions represents options for streaming responses.
+message StreamOptions {
+  // include_usage if true, will include an extra final chunk containing token
+  // usage statistics.
+  bool include_usage = 1 [
+    (google.api.field_behavior) = REQUIRED,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      description : "Mapping of property names to their definitions."
+      // TODO: Add examples.
+    }
+  ];
+}
+
+// Usage represents the token usage statistics for a request.
+message Usage {
+  // prompt_tokens is the number of tokens in the prompt.
+  int32 prompt_tokens = 1 [
+    (google.api.field_behavior) = REQUIRED,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      description : "Mapping of property names to their definitions."
+      // TODO: Add examples.
+    }
+  ];
+
+  // completion_tokens is the number of tokens generated in the completion.
+  int32 completion_tokens = 2 [
+    (google.api.field_behavior) = REQUIRED,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      description : "Mapping of property names to their definitions."
+      // TODO: Add examples.
+    }
+  ];
+
+  // total_tokens is the sum of prompt_tokens and completion_tokens.
+  int32 total_tokens = 3 [
+    (google.api.field_behavior) = REQUIRED,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      description : "Mapping of property names to their definitions."
+      // TODO: Add examples.
+    }
+  ];
+}
+
+// -----------------------------------------------------------------------------
+// Tool and Function related types
+// -----------------------------------------------------------------------------
+
+// Tool represents a tool with its type and functional definition.
+message Tool {
+  // type is the type of the tool (as a string).
+  string type = 1 [
+    (google.api.field_behavior) = REQUIRED,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      description : "Mapping of property names to their definitions."
+      // TODO: Add examples.
+    }
+  ];
+
+  // function is the functional definition of the tool.
+  FunctionDefinition function = 2 [
+    (google.api.field_behavior) = REQUIRED,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      description : "Mapping of property names to their definitions."
+      // TODO: Add examples.
+    }
+  ];
+}
+
+// ToolChoice represents a selected tool choice.
+message ToolChoice {
+  // type is the type of the tool choice (as a string).
+  string type = 1 [
+    (google.api.field_behavior) = REQUIRED,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      description : "Mapping of property names to their definitions."
+      // TODO: Add examples.
+    }
+  ];
+
+  // function is the tool function details.
+  ToolFunction function = 2 [
+    (google.api.field_behavior) = REQUIRED,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      description : "Mapping of property names to their definitions."
+      // TODO: Add examples.
+    }
+  ];
+}
+
+// ToolFunction represents the function details of a tool choice.
+message ToolFunction {
+  // name is the name of the tool function.
+  string name = 1 [
+    (google.api.field_behavior) = REQUIRED,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      description : "Mapping of property names to their definitions."
+      // TODO: Add examples.
+    }
+  ];
+}
+
+// FunctionDefinition represents the definition of a function for a tool.
+message FunctionDefinition {
+  // name is the name of the function.
+  string name = 1 [
+    (google.api.field_behavior) = REQUIRED,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      description : "Mapping of property names to their definitions."
+      // TODO: Add examples.
+    }
+  ];
+
+  // description describes what the function does.
+  string description = 2 [
+    (google.api.field_behavior) = REQUIRED,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      description : "Mapping of property names to their definitions."
+      // TODO: Add examples.
+    }
+  ];
+
+  // parameters define the parameters required by the function.
+  FunctionParameters parameters = 3 [
+    (google.api.field_behavior) = REQUIRED,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      description : "Mapping of property names to their definitions."
+      // TODO: Add examples.
+    }
+  ];
+}
+
+// FunctionParameters represents the parameters for a function.
+message FunctionParameters {
+  // type is the type descriptor of the parameters.
+  string type = 1 [
+    (google.api.field_behavior) = REQUIRED,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      description : "Mapping of property names to their definitions."
+      // TODO: Add examples.
+    }
+  ];
+
+  // properties is a mapping of property names to their definitions.
+  map<string, PropertyDefinition> properties = 2 [
+    (google.api.field_behavior) = REQUIRED,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      description : "Mapping of property names to their definitions."
+      // TODO: Add examples.
+    }
+  ];
+
+  // required is a list of property names that are required.
+  repeated string required = 3 [
+    (google.api.field_behavior) = REQUIRED,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      description : "A list of property names that are required."
+      // TODO: Add examples.
+    }
+  ];
+
+  // additional_properties indicates if additional properties are allowed.
+  bool additional_properties = 4;
+}
+
+// PropertyDefinition represents the definition of a single property.
+message PropertyDefinition {
+  // type is the data type of the property.
+  string type = 1 [
+    (google.api.field_behavior) = REQUIRED,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      description : "The data type of the property."
+      // TODO: Add examples.
+    }
+  ];
+
+  // description describes the property.
+  string description = 2 [
+    (google.api.field_behavior) = REQUIRED,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      description : "The description of the property."
+      // TODO: Add examples.
+    }
+  ];
+}
+
+// ToolCall represents a tool call that may occur during a chat completion.
+//
+// The index field is only set in chunked responses.
+message ToolCall {
+  option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_schema) = {
+    json_schema : {
+      title : "Tool Call"
+      description : "A tool call that may occur during a chat completion."
+    }
+    external_docs : {url : "null", description : "null"}
+  };
+  // index is an optional field representing the position/index in a streamed
+  // response.
+  google.protobuf.Int32Value index = 1 [
+    (google.api.field_behavior) = REQUIRED,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      description : "The index of the tool call in the response."
+      // TODO: Add examples.
+    }
+  ];
+
+  // id is the identifier for the tool call.
+  string id = 2 [
+    (google.api.field_behavior) = REQUIRED,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      description : "The identifier for the tool call."
+      // TODO: Add examples.
+    }
+  ];
+
+  // type is the type of the tool call.
+  string type = 3 [
+    (google.api.field_behavior) = REQUIRED,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      description : "The type of the tool call."
+      // TODO: Add examples.
+    }
+  ];
+
+  // function contains details of the function call.
+  FunctionCall function = 4 [
+    (google.api.field_behavior) = REQUIRED,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      description : "The function call details."
+      // TODO: Add examples.
+    }
+  ];
+}
+
+// FunctionCall represents the details of a function call.
+message FunctionCall {
+  option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_schema) = {
+    json_schema : {
+      title : "Function Call"
+      description : "Function call details."
+    }
+    external_docs : {url : "null", description : "null"}
+  };
+
+  // name is the name of the function being called.
+  string name = 1 [
+    (google.api.field_behavior) = REQUIRED,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      description : "The name of the function being called."
+      // TODO: Add examples.
+    }
+  ];
+
+  // arguments are the function call arguments in JSON format.
+  string arguments = 2 [
+    (google.api.field_behavior) = REQUIRED,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      description : "The function call arguments in JSON format."
+      // TODO: Add examples.
+    }
+  ];
+}
+
+// HealthCheckRequest represents a request for a health check.
+message HealthCheckRequest {}
+
+// HealthCheckResponse represents a response for a health check.
+message HealthCheckResponse {
+  // status is the health check status.
+  string status = 1 [
+    (google.api.field_behavior) = OUTPUT_ONLY,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      description : "The health check status."
+      // TODO: Add examples.
+    }
+  ];
+}

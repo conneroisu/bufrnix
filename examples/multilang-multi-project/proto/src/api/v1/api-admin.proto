@@ -1,0 +1,1451 @@
+syntax = "proto3";
+
+package admin.v1;
+
+// External
+import "google/api/field_behavior.proto";
+import "google/protobuf/timestamp.proto";
+import "gateway/protoc-gen-openapiv2/annotations.proto";
+import "buf/validate/validate.proto";
+
+option go_package = "github.com/pegwings/pegwings/proto/gen/go/api/v1;api";
+
+// ListAdminAPIKeysResponse is the response message for the ListAdminAPIKeys
+// endpoint.
+message AdminAPIKeysListResponse {
+  option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_schema) = {
+    json_schema : {
+      title : "ListAdminAPIKeysResponse"
+      description : "ListAdminAPIKeysResponse is the response message for the "
+                    "ListAdminAPIKeys endpoint."
+      required : [ "keys" ]
+    }
+    external_docs : {
+      url : "https://docs.pegwings.com/api/administration/api-keys"
+      description : "Find out more about API Keys"
+    }
+    example : "{\"keys\": [\"key1\", \"key2\"]}"
+  };
+
+  // keys is the list of Admin API keys.
+  repeated string keys = 1 [
+    (google.api.field_behavior) = REQUIRED,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      description : "The list of API keys."
+      example : "[\"key1\", \"key2\"]"
+    }
+  ];
+}
+
+// ListAdminAPIKeysRequest is the request message for the ListAdminAPIKeys
+// endpoint.
+message AdminAPIKeysListRequest {
+
+  option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_schema) = {
+    json_schema : {
+      title : "ListAdminAPIKeysRequest"
+      description : "The ListAdminAPIKeysRequest is the request message for "
+                    "the "
+                    "ListAdminAPIKeys endpoint."
+    }
+    external_docs : {
+      url : "https://docs.pegwings.com/api/administration/api-keys"
+      description : "Find out more about API Keys"
+    }
+    example : "{}"
+  };
+
+  string org_id = 1 [
+    (google.api.field_behavior) = REQUIRED,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      description : "The id of the organization."
+      example : "org-123"
+    }
+  ];
+
+  // after is the key to start listing from.
+  string after = 2 [
+    (google.api.field_behavior) = OPTIONAL,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      description : "The key to start listing from."
+      example : "\"key1\""
+    }
+  ];
+
+  // order is the order to list the keys in. e.g. asc or desc.
+  string order = 3 [
+    (google.api.field_behavior) = OPTIONAL,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      description : "The order to list the keys in."
+      example : "\"asc\""
+      enum : [ "asc", "desc" ]
+      default : "asc"
+    },
+    (validate.rules).string.max_len = 4,
+    (validate.rules).string.min_len = 3
+  ];
+
+  // limit is the maximum number of keys to return.
+  int32 limit = 4 [
+    (google.api.field_behavior) = OPTIONAL,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      description : "The maximum number of keys to return."
+      example : "10"
+      default : "20"
+    },
+    (validate.rules).int32.gte = 1,
+    (validate.rules).int32.lte = 100
+  ];
+}
+
+// CreateAdminAPIKeyResponse is the response message for the CreateAdminAPIKey
+// endpoint.
+message CreateAdminAPIKeyResponse {
+  option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_schema) = {
+    json_schema : {
+      title : "CreateAdminAPIKeyResponse"
+      description : "CreateAdminAPIKeyResponse is the response message for the "
+                    "CreateAdminAPIKey endpoint."
+      required : [ "key" ]
+    }
+    external_docs : {
+      url : "https://docs.pegwings.com/api/administration/api-keys"
+      description : "Find out more about API Keys"
+    }
+    example : "{\"key\": \"key1\"}"
+  };
+
+  // key is the key of the API key that was created.
+  string key = 1 [
+    (google.api.field_behavior) = REQUIRED,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      description : "The administrator API key that was created."
+      example : "\"key1\""
+    }
+  ];
+}
+
+// CreateAdminAPIKeyRequest is the request message for the CreateAdminAPIKey
+// endpoint.
+message OrganizationAdminAPIKeyCreateRequest {
+  option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_schema) = {
+    json_schema : {
+      title : "organization.admin.keys.create"
+      description : "The CreateAdminAPIKeyRequest is the request message for "
+                    "the "
+                    "CreateAdminAPIKey endpoint."
+      required : [ "name" ]
+    }
+    external_docs : {
+      url : "https://docs.pegwings.com/api/administration/api-keys"
+      description : "Find out more about API Keys"
+    }
+    example : "{\"org_id\": \"org-abc\", \"name\": \"key1\"}"
+  };
+
+  // org_id is the id of the organization.
+  string org_id = 1 [
+    (google.api.field_behavior) = REQUIRED,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      description : "The id of the organization."
+      example : "\"org-abc\""
+    }
+  ];
+
+  // name is the name of the administrator API key to create.
+  string name = 2 [
+    (google.api.field_behavior) = REQUIRED,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      description : "The name of the API key."
+      example : "\"key1\""
+    }
+  ];
+}
+
+// GetAdminAPIKeyResponse is the response message for the GetAdminAPIKey
+// endpoint.
+message AdminAPIKeyGetResponse {
+  option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_schema) = {
+    json_schema : {
+      title : "GetAdminAPIKeyResponse"
+      description : "GetAdminAPIKeyResponse is the response message for the "
+                    "GetAdminAPIKey endpoint."
+      required : [ "key" ]
+    }
+    external_docs : {
+      url : "https://docs.pegwings.com/api/administration/api-keys"
+      description : "Find out more about API Keys"
+    }
+    example : "{\"key\": \"key1\"}"
+  };
+
+  // key is the key of the API key that was created.
+  string key = 1 [
+    (google.api.field_behavior) = REQUIRED,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      description : "The administrator API key that was created."
+      example : "\"key1\""
+    }
+  ];
+}
+
+// GetAdminAPIKeyRequest is the request message for the GetAdminAPIKey
+// endpoint.
+message AdminAPIKeyGetRequest {
+  option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_schema) = {
+    json_schema : {
+      title : "GetAdminAPIKeyRequest"
+      description : "The request message for the GetAdminAPIKey endpoint."
+    }
+  };
+
+  // key_id is the ID of the API key to get.
+  string key_id = 1 [
+    (google.api.field_behavior) = REQUIRED,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      description : "The ID of the API key to get."
+      example : "\"key1\""
+    }
+  ];
+}
+
+// DeleteAdminAPIKeyResponse is the response message for the DeleteAdminAPIKey
+// endpoint.
+message AdminAPIKeyDeleteResponse {
+  option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_schema) = {
+    json_schema : {
+      title : "DeleteAdminAPIKeyResponse"
+      description : "DeleteAdminAPIKeyResponse is the response message for the "
+                    "DeleteAdminAPIKey endpoint."
+    }
+    external_docs : {
+      url : "https://docs.pegwings.com/api/administration/api-keys"
+      description : "Find out more about API Keys"
+    }
+    example : "{}"
+  };
+  string id = 1 [
+    (google.api.field_behavior) = OUTPUT_ONLY,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      description : "The ID of the API key that was deleted."
+      example : "\"key1\""
+    }
+  ];
+  bool deleted = 2 [
+    (google.api.field_behavior) = OUTPUT_ONLY,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      description : "Whether the API key was deleted."
+      example : "true"
+      enum : [ "true", "false" ]
+    }
+  ];
+}
+
+// DeleteAdminAPIKeyRequest is the request message for the DeleteAdminAPIKey
+// endpoint.
+message AdminAPIKeyDeleteRequest {
+  option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_schema) = {
+    json_schema : {
+      title : "DeleteAdminAPIKeyRequest"
+      description : "The DeleteAdminAPIKeyRequest is the request message for "
+                    "the "
+                    "DeleteAdminAPIKey endpoint."
+    }
+    external_docs : {
+      url : "https://docs.pegwings.com/api/administration/api-keys"
+      description : "Find out more about API Keys"
+    }
+    example : "{\"key_id\": \"key1\"}"
+  };
+
+  // org_id is the ID of the organization.
+  string org_id = 1 [
+    (google.api.field_behavior) = REQUIRED,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      description : "The ID of the organization."
+      example : "\"org1\""
+    }
+  ];
+  // key_id is the ID of the API key to delete.
+  string key_id = 2 [
+    (google.api.field_behavior) = REQUIRED,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      description : "The ID of the API key to delete."
+      example : "\"key1\""
+    }
+  ];
+}
+
+// ListProjectInvitesRequest is the request message for the ListInvites method.
+message ProjectInvitesListRequest {
+  option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_schema) = {
+    json_schema : {
+      title : "ListInvitesRequest"
+      description : "The request message for the ListInvites method."
+    }
+  };
+
+  // limit is the maximum number of invites to return in the response. If
+  // unspecified, the server will pick an appropriate default.
+  int32 limit = 1 [
+    (google.api.field_behavior) = OPTIONAL,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      description : "The maximum number of invites to return in the response."
+      example : "10"
+      default : "20"
+      minimum : 1
+      maximum : 100
+    },
+    (validate.rules).int32.gte = 1,
+    (validate.rules).int32.lte = 100
+  ];
+
+  string after = 2 [
+    (google.api.field_behavior) = OPTIONAL,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {}
+  ];
+}
+
+// ListProjectInvitesResponse is the response message for the ListInvites
+// method.
+message ProjectInvitesListResponse {
+  option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_schema) = {
+    json_schema : {
+      title : "ListInvitesResponse"
+      description : "The response message for the ListInvites method."
+    }
+  };
+
+  // invites is the list of invites.
+  repeated Invite invites = 1 [
+    (google.api.field_behavior) = OUTPUT_ONLY,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      description : "The list of invites."
+    }
+  ];
+}
+
+message Invite {
+  option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_schema) = {
+    json_schema : {title : "Invite" description : "An organization invite."}
+  };
+
+  // id is the unique ID of the invite.
+  string id = 1 [
+    (google.api.field_behavior) = OUTPUT_ONLY,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      description : "The unique ID of the invite."
+      example : "\"invite-abc\""
+    }
+  ];
+
+  // email is the email address of the invited user.
+  string email = 2 [
+    (google.api.field_behavior) = OUTPUT_ONLY,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      description : "The email address of the invited user."
+      example : "\"user@example.com\""
+    }
+  ];
+
+  // role is the role of the invited user.
+  string role = 3 [
+    (google.api.field_behavior) = OUTPUT_ONLY,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      description : "The role of the invited user."
+      example : "\"owner\""
+    }
+  ];
+
+  // status is the status of the invite.
+  string status = 4 [
+    (google.api.field_behavior) = OUTPUT_ONLY,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      description : "The status of the invite."
+      example : "\"accepted\""
+    }
+  ];
+
+  // invited_at is the time the invite was created.
+  google.protobuf.Timestamp invited_at = 5 [
+    (google.api.field_behavior) = OUTPUT_ONLY,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      description : "The time the invite was created."
+    }
+  ];
+
+  // expires_at is the time the invite will expire.
+  google.protobuf.Timestamp expires_at = 6 [
+    (google.api.field_behavior) = OUTPUT_ONLY,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      description : "The time the invite will expire."
+    }
+  ];
+
+  // accepted_at is the time the invite was accepted.
+  google.protobuf.Timestamp accepted_at = 7 [
+    (google.api.field_behavior) = OUTPUT_ONLY,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      description : "The time the invite was accepted."
+    }
+  ];
+
+  // projects is the list of projects that the invited user is a member of.
+  repeated ProjectInvite projects = 8 [
+    (google.api.field_behavior) = OUTPUT_ONLY,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      description : "The list of projects that the invited user is a member of."
+    }
+  ];
+}
+
+// ProjectInvite represents a project invite.
+message ProjectInvite {
+  option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_schema) = {
+    json_schema : {title : "ProjectInvite" description : "A project invite."}
+  };
+
+  // id is the unique ID of the project invite.
+  string id = 1 [
+    (google.api.field_behavior) = OUTPUT_ONLY,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      description : "The unique ID of the project invite."
+      example : "\"project-invite-abc\""
+    }
+  ];
+
+  // role is project membership role of the invite.
+  string role = 2 [
+    (google.api.field_behavior) = REQUIRED,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      description : "The role of the project invite."
+      example : "\"OWNER\""
+      enum : [ "OWNER", "READER" ]
+    }
+  ];
+
+  // status is the status of the project invite.
+  string status = 3 [
+    (google.api.field_behavior) = REQUIRED,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      description : "The status of the project invite."
+      example : "\"ACCEPTED\""
+    }
+  ];
+
+  google.protobuf.Timestamp created_at = 4 [
+    (google.api.field_behavior) = OUTPUT_ONLY,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      description : "The time the project invite was created."
+    }
+  ];
+
+  google.protobuf.Timestamp expires_at = 5 [
+    (google.api.field_behavior) = OUTPUT_ONLY,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      description : "The time the project invite will expire."
+    }
+  ];
+
+  google.protobuf.Timestamp accepted_at = 6 [
+    (google.api.field_behavior) = OUTPUT_ONLY,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      description : "The time the project invite was accepted."
+    }
+  ];
+
+  // projects is the list of projects that the invited user is a member of.
+  repeated OrganizationProject projects = 8 [
+    (google.api.field_behavior) = OUTPUT_ONLY,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      description : "The list of projects that the invited user is a member of."
+    }
+  ];
+}
+
+// Project is a project.
+message OrganizationProject {
+  option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_schema) = {
+    json_schema : {title : "Project" description : "A project."}
+  };
+
+  // id is the unique ID of the project.
+  string id = 1 [
+    (google.api.field_behavior) = OUTPUT_ONLY,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      description : "The unique ID of the project."
+      example : "\"project-abc\""
+    }
+  ];
+}
+
+// OrganizationProjectInvitesGetRequest is the request for getting a project
+// invite.
+message OrganizationProjectInviteGetRequest {
+  option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_schema) = {
+    json_schema : {
+      title : "ProjectInviteGetRequest"
+      description : "The request for getting a project invite."
+      required : [ "org_id", "id" ]
+    }
+  };
+
+  // org_id is the id of the organization.
+  string org_id = 1 [
+    (google.api.field_behavior) = REQUIRED,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      description : "The id of the organization."
+      example : "\"org-abc\""
+    }
+  ];
+
+  // id is the id of the project invite.
+  string id = 2 [
+    (google.api.field_behavior) = REQUIRED,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      description : "The id of the project invite."
+      example : "\"123\""
+    }
+  ];
+}
+
+// ProjectInvitesGetResponse is the response for getting a project invite.
+message OrganizationProjectInviteGetResponse {
+  // project_invite is the project invite.
+  ProjectInvite project_invite = 1 [
+    (google.api.field_behavior) = OUTPUT_ONLY,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      description : "The project invite."
+      example : "{\"id\":\"123\",\"email\":\"test@test.com\",\"role\":"
+                "\"OWNER\"}"
+    }
+  ];
+}
+
+// OrganizationProjectInviteDeleteRequest is the request for deleting a project
+// invite.
+message OrganizationProjectInviteDeleteRequest {
+
+  option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_schema) = {
+    json_schema : {
+      description : "The request for deleting a project invite."
+      example : "{\"org_id\":\"123\",\"id\":\"123\"}"
+    }
+  };
+
+  // org_id is the id of the organization.
+  string org_id = 1 [
+    (google.api.field_behavior) = REQUIRED,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      description : "The id of the organization."
+      example : "\"123\""
+    }
+  ];
+
+  // invite_id is the id of the project invite.
+  string invite_id = 2 [
+    (google.api.field_behavior) = REQUIRED,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      description : "The id of the project invite."
+      example : "\"123\""
+    }
+  ];
+}
+
+// ProjectInviteDeleteResponse is the response for deleting a project invite.
+message OrganizationProjectInviteDeleteResponse {
+  // id is the id of the project invite.
+  string id = 1 [
+    (google.api.field_behavior) = OUTPUT_ONLY,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      description : "The id of the project invite."
+      example : "\"123\""
+    }
+  ];
+  bool deleted = 2 [
+    (google.api.field_behavior) = OUTPUT_ONLY,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      description : "Whether the project invite was deleted."
+      example : "true"
+      enum : [ "true", "false" ]
+    }
+  ];
+}
+
+// ProjectUsersListRequest is the request for listing project users.
+message ProjectUsersListRequest {
+  option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_schema) = {
+    json_schema : {
+      title : "ProjectUsersListRequest"
+      description : "The request message for the ProjectUsersList method."
+    }
+  };
+
+  // org_id is the id of the organization to list users for.
+  string org_id = 1 [
+    (google.api.field_behavior) = REQUIRED,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      description : "The id of the organization to list users for."
+      example : "\"org-abc\""
+    }
+  ];
+
+  // project_id is the id of the project to list users for.
+  string project_id = 2 [
+    (google.api.field_behavior) = REQUIRED,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      description : "The id of the project to list users for."
+      example : "\"project-abc\""
+    }
+  ];
+
+  // limit is the maximum number of users to return in the response. If
+  // unspecified, the server will pick an appropriate default.
+  int32 limit = 3 [
+    (google.api.field_behavior) = OPTIONAL,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      description : "The maximum number of users to return in the response."
+      example : "10"
+      default : "20"
+      minimum : 1
+      maximum : 100
+    }
+  ];
+
+  string after = 4 [
+    (google.api.field_behavior) = OPTIONAL,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {}
+  ];
+}
+
+// ProjectUsersListResponse is the response for listing project users.
+message ProjectUsersListResponse {
+  option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_schema) = {
+    json_schema : {
+      title : "ProjectUsersListResponse"
+      description : "The response message for the ProjectUsersList method."
+    }
+  };
+
+  // users is the list of users.
+  repeated User users = 1 [
+    (google.api.field_behavior) = OUTPUT_ONLY,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      description : "The list of users."
+    }
+  ];
+}
+
+// User is a user in a project.
+message User {
+  option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_schema) = {
+    json_schema : {title : "User" description : "A user in a project."}
+  };
+
+  // id is the unique ID of the user.
+  string id = 1 [
+    (google.api.field_behavior) = OUTPUT_ONLY,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      description : "The unique ID of the user."
+      example : "\"user-abc\""
+    }
+  ];
+
+  // email is the email address of the user.
+  string email = 2 [
+    (google.api.field_behavior) = OUTPUT_ONLY,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      description : "The email address of the user."
+      example : "\"user@example.com\""
+    }
+  ];
+
+  // role is the role of the user.
+  string role = 3 [
+    (google.api.field_behavior) = OUTPUT_ONLY,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      description : "The role of the user."
+      example : "\"owner\""
+    }
+  ];
+
+  // created_at is the time the user was created.
+  google.protobuf.Timestamp created_at = 5 [
+    (google.api.field_behavior) = OUTPUT_ONLY,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      description : "The time the user was created."
+    }
+  ];
+}
+
+// ProjectUserGetRequest is the request for getting a project user.
+message ProjectUserGetRequest {
+  option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_schema) = {
+    json_schema : {
+      title : "ProjectUserGetRequest"
+      description : "The request for getting a project user."
+    }
+    external_docs : {
+      url : "https://docs.pegwings.com/api/administration/api-keys"
+      description : "Find out more about API Keys"
+    }
+    example : "{\"org_id\":\"pegwings\",\"project_id\":\"armegeddon\","
+              "\"user_id\":\"user1\"}"
+  };
+
+  // org_id is the id of the organization.
+  string org_id = 1 [
+    (google.api.field_behavior) = REQUIRED,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      description : "The id of the organization."
+    }
+  ];
+
+  // project_id is the id of the project.
+  string project_id = 2 [
+    (google.api.field_behavior) = REQUIRED,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      description : "The id of the project."
+      example : "123"
+    }
+  ];
+
+  // user_id is the id of the user.
+  string user_id = 3 [
+    (google.api.field_behavior) = REQUIRED,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      description : "The id of the user."
+      example : "123"
+    }
+  ];
+}
+
+message ProjectUserGetResponse {
+  // user is the user.
+  User user = 1 [
+    (google.api.field_behavior) = OUTPUT_ONLY,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      description : "The user."
+      example : "{\"id\":\"123\",\"email\":\"test@test.com\",\"role\":"
+                "\"OWNER\"}"
+    }
+  ];
+}
+
+// ProjectUserDeleteRequest is the request for deleting a user from a project.
+message OrgProjectUserDeleteRequest {
+
+  option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_schema) = {
+    external_docs : {
+      // TODO: Update the external_docs
+      url : "https://github.com/grpc-ecosystem/grpc-gateway/blob/master/"
+            "examples/proto/chat/chat.proto"
+      description : "Find out more about Chat API"
+    }
+    json_schema : {
+      title : "ProjectUserDeleteRequest"
+
+      required : [ "org_id", "user_id" ]
+    }
+    // TODO: Add example
+  };
+
+  // org_id is the id of the organization
+  string org_id = 1 [
+    (google.api.field_behavior) = REQUIRED,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      description : "The id of the organization."
+      example : "\"123\""
+    }
+  ];
+
+  // project_id is the id of the project.
+  string project_id = 2 [
+    (google.api.field_behavior) = REQUIRED,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      description : "The id of the project."
+      example : "\"123\""
+    }
+  ];
+
+  // user_id is the id of the user.
+  string user_id = 3 [
+    (google.api.field_behavior) = REQUIRED,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      description : "The id of the user."
+      example : "\"123\""
+    }
+  ];
+}
+
+// ProjectUserDeleteResponse is the response for deleting a user from a project.
+message OrgProjectUserDeleteResponse {
+
+  option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_schema) = {
+    external_docs : {
+      // TODO: Update the external_docs
+      url : "https://github.com/grpc-ecosystem/grpc-gateway/blob/master/"
+            "examples/proto/chat/chat.proto"
+      description : "Find out more about Chat API"
+    }
+    json_schema : {
+      title : "ProjectUserDeleteResponse"
+      required : [ "user", "deleted" ]
+    }
+    // TODO: Add example
+  };
+
+  User user = 1 [
+    (google.api.field_behavior) = OUTPUT_ONLY,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      description : "The user."
+      example : "{\"id\":\"123\",\"email\":\"test@test.com\",\"role\":"
+                "\"OWNER\"}"
+    }
+  ];
+
+  bool deleted = 2 [
+    (google.api.field_behavior) = OUTPUT_ONLY,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      description : "Whether the user was deleted."
+      example : "true"
+      enum : [ "true", "false" ]
+    }
+  ];
+}
+
+// OrganizationProjectUserUpdateRequest is the request for updating a project
+message OrganizationProjectUserUpdateRequest {
+  option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_schema) = {
+    json_schema : {
+      title : "ProjectUserUpdateRequest"
+      description : "The request for updating a project user."
+      required : [ "org_id", "project_id", "user_id" ]
+    }
+    external_docs : {
+      url : "https://docs.pegwings.com/api/administration/api-keys"
+      description : "Find out more about API Keys"
+    }
+    example : "{\"org_id\":\"pegwings\",\"project_id\":\"armegeddon\","
+              "\"user_id\":\"user1\"}"
+  };
+
+  // org_id is the id of the organization.
+  string org_id = 1 [
+    (google.api.field_behavior) = REQUIRED,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      description : "The id of the organization."
+      example : "123"
+    }
+  ];
+
+  // project_id is the id of the project.
+  string project_id = 2 [
+    (google.api.field_behavior) = REQUIRED,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      description : "The id of the project."
+      example : "123"
+    }
+  ];
+
+  // user_id is the id of the user.
+  string user_id = 3 [
+    (google.api.field_behavior) = REQUIRED,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      description : "The id of the user."
+      example : "123"
+    }
+  ];
+
+  // role is the new role of the user.
+  string role = 4 [
+    (google.api.field_behavior) = REQUIRED,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      description : "The role of the user."
+      example : "\"OWNER\""
+      enum : [ "OWNER", "READER" ]
+    }
+  ];
+}
+
+// OrganizationProjectsListRequest is the request for listing projects.
+message OrganizationProjectsListRequest {
+  option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_schema) = {
+    json_schema : {
+      title : "ProjectsListRequest"
+      description : "The request for listing projects."
+      // TODO: Add example
+    }
+  };
+  // org_id is the id of the organization.
+  string org_id = 1 [
+    (google.api.field_behavior) = REQUIRED,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      description : "The id of the organization."
+      example : "123"
+    }
+  ];
+}
+
+// ProjectsListResponse is the response for listing projects.
+message OrganizationProjectsListResponse {
+  // projects is the list of projects.
+  repeated OrganizationProject projects = 1 [
+    (google.api.field_behavior) = OUTPUT_ONLY,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      description : "The list of projects."
+      example : "[{\"id\":\"123\",\"name\":\"test\",\"description\":\"test\","
+                "\"created_at\":\"2023-01-01T00:00:00Z\"}]"
+    }
+  ];
+}
+
+// ProjectCreateRequest is the request for creating a project.
+message OrganizationProjectCreateRequest {
+  option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_schema) = {
+    json_schema : {
+      title : "ProjectCreateRequest"
+      description : "The request for creating a project."
+      required : [ "org_id", "name" ]
+    }
+    external_docs : {
+      url : "https://docs.pegwings.com/api/administration/api-keys"
+      description : "Find out more about API Keys"
+    }
+    example : "{\"org_id\":\"pegwings\",\"name\":\"test\"}"
+  };
+
+  // org_id is the id of the organization.
+  string org_id = 1 [
+    (google.api.field_behavior) = REQUIRED,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      description : "The id of the organization."
+      example : "\"pegwings\""
+      format : "string"
+    }
+  ];
+
+  // name is the name of the project.
+  string name = 2 [
+    (google.api.field_behavior) = REQUIRED,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      description : "The name of the project."
+      example : "\"test\""
+    }
+  ];
+
+  // description is the description of the project.
+  string description = 3 [
+    (google.api.field_behavior) = OPTIONAL,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      description : "The description of the project."
+      example : "\"Project for DocuVetr, a project management tool for "
+                "veterinarians.\""
+    }
+  ];
+}
+
+// OrganizationProjectGetRequest is the request for getting a project.
+message OrganizationProjectGetRequest {
+
+  option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_schema) = {
+    json_schema : {
+      title : "ProjectGetRequest"
+      description : "The request for getting a project."
+      required : [ "org_id", "project_id" ]
+    }
+    external_docs : {
+      url : "https://docs.pegwings.com/api/administration/api-keys"
+      description : "Find out more about API Keys"
+    }
+    example : "{\"org_id\":\"pegwings\",\"project_id\":\"armegeddon\"}"
+  };
+
+  // org_id is the id of the organization.
+  string org_id = 1 [
+    (google.api.field_behavior) = REQUIRED,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      description : "The id of the organization."
+      example : "123"
+      format : "int64"
+    }
+  ];
+
+  // project_id is the id of the project.
+  string project_id = 2 [
+    (google.api.field_behavior) = REQUIRED,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      description : "The id of the project."
+      example : "123"
+      format : "int64"
+    }
+  ];
+}
+
+// OrganizationProjectArchiveRequest is the request for archiving a project.
+message OrganizationProjectArchiveRequest {
+
+  option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_schema) = {
+    json_schema : {
+      title : "ProjectArchiveRequest"
+      description : "The request for archiving a project."
+      required : [ "org_id", "project_id" ]
+    }
+    external_docs : {
+      url : "https://docs.pegwings.com/api/administration/api-keys"
+      description : "Find out more about API Keys"
+    }
+    example : "{\"org_id\":\"pegwings\",\"project_id\":\"armegeddon\"}"
+  };
+
+  // org_id is the id of the organization.
+  string org_id = 1 [
+    (google.api.field_behavior) = REQUIRED,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      description : "The id of the organization."
+      example : "123"
+      format : "int64"
+    }
+  ];
+
+  // project_id is the id of the project.
+  string project_id = 2 [
+    (google.api.field_behavior) = REQUIRED,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      description : "The id of the project."
+      example : "123"
+      format : "int64"
+    }
+  ];
+}
+
+// OrganizationProjectAPIKeysListRequest is the request for listing all API keys
+// for a project.
+message OrganizationProjectAPIKeysListRequest {
+  option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_schema) = {
+    json_schema : {
+      title : "ProjectAPIKeysListRequest"
+      description : "The request for listing all API keys for a project."
+    }
+    external_docs : {
+      url : "https://docs.pegwings.com/api/administration/api-keys"
+      description : "Find out more about API Keys"
+    }
+    example : "{\"org_id\":\"pegwings\",\"project_id\":\"armegeddon\"}"
+  };
+
+  string org_id = 1 [
+    (google.api.field_behavior) = REQUIRED,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      description : "The id of the organization."
+      example : "123"
+      format : "int64"
+    }
+  ];
+
+  string project_id = 2 [
+    (google.api.field_behavior) = REQUIRED,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      description : "The id of the project."
+      example : "123"
+      format : "int64"
+    }
+  ];
+}
+
+// OrganizationProjectAPIKeysListResponse is the response for listing all API
+// keys for a project.
+message OrganizationProjectAPIKeysListResponse {
+  option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_schema) = {
+    json_schema : {
+      description : "The list of API keys."
+      example : "123"
+      format : "int64"
+    }
+    external_docs : {
+      url : "https://cloud.google.com/resource-manager/docs/reference/rest/v3/"
+            "projects.serviceAccounts/list"
+      description : "Lists service accounts."
+    }
+    example : "{\"api_keys\":[{\"id\":\"key1\",\"name\":\"pwg-3md\",\"key\":"
+              "\"123\"}]}"
+  };
+
+  repeated ProjectAPIKey api_keys = 1 [
+    (google.api.field_behavior) = OUTPUT_ONLY,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      description : "The list of API keys."
+      example : "[{\"id\":\"key1\",\"name\":\"pwg-3md\",\"created_at\":\"2023-"
+                "01-01T00:00:00Z\"}]"
+      format : "int64"
+    }
+  ];
+}
+
+// APIKey is an API key for a project.
+message ProjectAPIKey {
+  option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_schema) = {
+    json_schema : {
+      title : "ProjectAPIKey"
+      description : "An API key for a project."
+    }
+    external_docs : {
+      url : "https://docs.pegwings.com/api/administration/api-keys"
+      description : "Find out more about API Keys"
+    }
+    example : "{\"id\":\"key1\",\"name\":\"pwg-3md...\",\"created_at\":\"2023-"
+              "01-01T00:00:00Z\"}"
+  };
+
+  string id = 1 [
+    (google.api.field_behavior) = OUTPUT_ONLY,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      description : "The unique ID of the API key."
+      example : "\"api-key-abc\""
+    }
+  ];
+
+  string name = 2 [
+    (google.api.field_behavior) = OUTPUT_ONLY,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      description : "The name of the API key."
+      example : "\"api-key-abc\""
+    }
+  ];
+
+  google.protobuf.Timestamp created_at = 3 [
+    (google.api.field_behavior) = OUTPUT_ONLY,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      description : "The time the API key was created."
+    }
+  ];
+}
+
+// ProjectAPIKeyCreateRequest is the request for creating an API key for a
+// project.
+message ProjectAPIKeyCreateRequest {
+  option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_schema) = {
+    json_schema : {
+      title : "ProjectAPIKeyCreateRequest"
+      description : "The request for creating a project API key."
+    }
+    external_docs : {
+      url : "https://docs.pegwings.com/api/administration/api-keys"
+      description : "Find out more about API Keys"
+    }
+    example : "{\"org_id\":\"pegwings\",\"project_id\":\"armegeddon\","
+              "\"name\":\"pwg-3md...\"}"
+  };
+
+  string org_id = 1 [
+    (google.api.field_behavior) = REQUIRED,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      description : "The id of the organization to create the API key for."
+      example : "\"pegwings\""
+    }
+  ];
+
+  string project_id = 2 [
+    (google.api.field_behavior) = REQUIRED,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      description : "The id of the project to create the API key for."
+      example : "\"armegeddon\""
+    }
+  ];
+
+  string name = 3 [
+    (google.api.field_behavior) = REQUIRED,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      description : "The name of the API key."
+      example : "\"pwg-3md...\""
+    }
+  ];
+}
+
+// OrganizationProjectAPIKeyGetRequest is the request for getting an API key for
+// a project in an organization.
+message OrganizationProjectAPIKeyGetRequest {
+
+  option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_schema) = {
+    json_schema : {
+      title : "ProjectAPIKeyGetRequest"
+      description : "Request message for getting an API key for a single "
+                    "project in an organization."
+    }
+    external_docs : {
+      url : "https://docs.pegwings.com/api/administration/api-keys"
+      description : "Find out more about API Keys"
+    }
+    example : "{\"org_id\":\"pegwings\",\"project_id\":\"armegeddon\","
+              "\"key_id\":\"key1\"}"
+  };
+
+  // org_id is the id of the organization.
+  string org_id = 1 [
+    (google.api.field_behavior) = REQUIRED,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      description : "The id of the organization."
+      example : "123"
+      format : "int64"
+    }
+  ];
+
+  // project_id is the id of the project.
+  string project_id = 2 [
+    (google.api.field_behavior) = REQUIRED,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      description : "The id of the project."
+      example : "123"
+      format : "int64"
+    }
+  ];
+
+  string key_id = 3 [
+    (google.api.field_behavior) = REQUIRED,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      description : "The id of the API key."
+      example : "123"
+      format : "int64"
+    }
+  ];
+}
+
+// OrganizationProjectAPIKeyDeleteRequest is the request when deleting a project
+// API key.
+message OrganizationProjectAPIKeyDeleteRequest {
+
+  option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_schema) = {
+    json_schema : {
+      title : "ProjectAPIKeyDeleteRequest"
+      description : "The request when deleting a project API key."
+    }
+    external_docs : {
+      url : "https://docs.pegwings.com/api/administration/api-keys"
+      description : "Find out more about API Keys"
+    }
+    example : "{\"org_id\":\"pegwings\",\"project_id\":\"armegeddon\","
+              "\"key_id\":\"key1\"}"
+  };
+
+  // org_id is the id of the organization.
+  string org_id = 1 [
+    (google.api.field_behavior) = REQUIRED,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      description : "The id of the organization."
+      example : "123"
+      format : "int64"
+    }
+  ];
+
+  // project_id is the id of the project.
+  string project_id = 2 [
+    (google.api.field_behavior) = REQUIRED,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      description : "The id of the project."
+      example : "123"
+      format : "int64"
+    }
+  ];
+
+  // key_id is the id of the API key.
+  string key_id = 3 [
+    (google.api.field_behavior) = REQUIRED,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      description : "The id of the API key."
+      example : "123"
+      format : "int64"
+    }
+  ];
+}
+
+// ProjectAPIKeyDeleteResponse is the response when deleting a project API key.
+message OrganizationProjectAPIKeyDeleteResponse {
+
+  option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_schema) = {
+    json_schema : {
+      title : "ProjectAPIKeyDeleteResponse"
+      description : "The response when deleting a project API key."
+      type : STRING
+    }
+    external_docs : {
+      url : "https://docs.pegwings.com/api/administration/api-keys"
+      description : "Find out more about API Keys"
+    }
+    example : "{\"id\":\"key1\",\"deleted\":true}"
+  };
+
+  // id is the id of the API key.
+  string id = 1 [
+    (google.api.field_behavior) = OUTPUT_ONLY,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      description : "The id of the API key."
+      example : "123"
+      format : "int64"
+    }
+  ];
+
+  // deleted is whether the API key was deleted.
+  bool deleted = 2 [
+    (google.api.field_behavior) = OUTPUT_ONLY,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      description : "Whether the API key was deleted."
+      example : "true"
+      enum : [ "true", "false" ]
+    }
+  ];
+}
+
+// OrganizationUserGetRequest is the request for getting an user in an
+// organization.
+message OrganizationUserGetRequest {
+
+  option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_schema) = {
+    json_schema : {
+      title : "OrganizationUserGetRequest"
+      description : "The request for getting an organization user."
+      required : [ "org_id", "user_id" ]
+    }
+    external_docs : {
+      url : "https://docs.pegwings.com/api/administration/api-keys"
+      description : "Find out more about API Keys"
+    }
+    example : "{\"org_id\":\"pegwings\",\"user_id\":\"user1\"}"
+  };
+
+  // org_id is the id of the organization.
+  string org_id = 1 [
+    (google.api.field_behavior) = REQUIRED,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      description : "The id of the organization."
+      example : "123"
+      format : "int64"
+    }
+  ];
+
+  // user_id is the id of the user.
+  string user_id = 2 [
+    (google.api.field_behavior) = REQUIRED,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      description : "The id of the user."
+      example : "\"123\""
+      format : "int64"
+    }
+  ];
+}
+
+message OrganizationUserDeleteRequest {
+  option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_schema) = {
+    json_schema : {
+      title : "OrganizationUserDeleteRequest"
+      description : "The request for deleting an organization user."
+      required : [ "org_id", "user_id" ]
+    }
+    external_docs : {
+      url : "https://docs.pegwings.com/api/administration/api-keys"
+      description : "Find out more about API Keys"
+    }
+    example : "{\"org_id\":\"pegwings\",\"user_id\":\"user1\"}"
+  };
+  // org_id is the id of the organization.
+  string org_id = 1 [
+    (google.api.field_behavior) = REQUIRED,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      description : "The id of the organization."
+      example : "\"123\""
+      format : "int64"
+    }
+  ];
+
+  // user_id is the id of the user.
+  string user_id = 2 [
+    (google.api.field_behavior) = REQUIRED,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      description : "The id of the user."
+      example : "\"123\""
+      format : "int64"
+    }
+  ];
+}
+
+// OrganizationUserDeleteResponse is the response for deleting an user from an
+// organization.
+message OrganizationUserDeleteResponse {
+
+  option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_schema) = {
+    json_schema : {
+      title : "OrganizationUserDeleteResponse"
+      description : "Response message for deleting an user in an organization."
+    }
+    external_docs : {
+      url : "https://docs.pegwings.com/api/administration/api-keys"
+      description : "Find out more about API Keys"
+    }
+    example : "{\"user\":{\"id\":\"123\",\"email\":\"test@test.com\",\"role\":"
+              "\"OWNER\"},\"deleted\":true}"
+  };
+
+  // user is the user.
+  User user = 1 [
+    (google.api.field_behavior) = OUTPUT_ONLY,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      description : "The user."
+      example : "{\"id\":\"123\",\"email\":\"test@test.com\",\"role\":"
+                "\"OWNER\"}"
+    }
+  ];
+
+  // deleted is whether the user was deleted.
+  bool deleted = 2 [
+    (google.api.field_behavior) = OUTPUT_ONLY,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      description : "Whether the user was deleted."
+      example : "true"
+      enum : [ "true", "false" ]
+    }
+  ];
+}
+
+// OrgnaizationUserUpdateRequest is a request message for updating an user in an
+// organization.
+message OrganizationUserUpdateRequest {
+  option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_schema) = {
+    json_schema : {
+      title : "OrganizationUserUpdateRequest"
+      description : "Request message for updating an user in an organization."
+    }
+    external_docs : {
+      url : "https://docs.pegwings.com/api/administration/api-keys"
+      description : "Find out more about API Keys"
+    }
+    example : "{\"org_id\":\"pegwings\",\"user_id\":\"user1\","
+              "\"user\":{\"name\":\"John "
+              "Doe\",\"email\":\"john.doe@example.com\"}}"
+  };
+
+  // org_id is the id of the organization.
+  string org_id = 1 [
+    (google.api.field_behavior) = REQUIRED,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      description : "The organization id."
+      example : "org-123"
+    }
+  ];
+
+  // user_id is the id of the user.
+  string user_id = 2 [
+    (google.api.field_behavior) = REQUIRED,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      description : "The user id."
+      example : "\"user-123\""
+    }
+  ];
+
+  // user is the user to update.
+  User user = 3 [
+    (google.api.field_behavior) = REQUIRED,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      description : "The user to update."
+      example : "{\"name\":\"John Doe\",\"email\":\"john.doe@example.com\"}"
+    }
+  ];
+}
