@@ -174,9 +174,8 @@ in
         ''
       }
 
-      # Build the protoc command dynamically using language modules
       protoc_cmd="${pkgs.protobuf}/bin/protoc"
-      protoc_args="--proto_path=${concatStringsSep " --proto_path=" cfg.protoc.includeDirectories}"
+      protoc_args="--proto_path=${concatStringsSep " --I " cfg.protoc.includeDirectories}"
 
       # Add language-specific protocol plugins from the loaded modules
       ${concatMapStrings (

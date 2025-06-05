@@ -7,26 +7,8 @@
 with lib; let
   enabled = cfg.enable or false;
   outputPath = cfg.outputPath or "gen/c/nanopb";
-  options = cfg.options or [];
 
-  # Build nanopb-specific options
-  nanopbOptions =
-    options
-    ++ optionals (cfg.maxSize != 1024) [
-      "max_size=${toString cfg.maxSize}"
-    ]
-    ++ optionals cfg.fixedLength [
-      "fixed_length=true"
-    ]
-    ++ optionals cfg.noUnions [
-      "no_unions=true"
-    ]
-    ++ optionals (cfg.msgidType != "") [
-      "msgid_type=${cfg.msgidType}"
-    ];
-
-  # Build nanopb from source with proper Python module structure
-  nanopbFixed = pkgs.stdenv.mkDerivation rec {
+  nanopbOptions = pkgs.stdenv.mkDerivation {
     pname = "nanopb-fixed";
     version = "0.4.9.1-bufrnix-fix2";
 
@@ -98,7 +80,7 @@ with lib; let
 
   # Use our custom-built nanopb if no package is specified
   # Force using our fixed version for now
-  nanopbPackage = nanopbFixed;
+  nanopbPackage = nanopbOptions;
 in {
   runtimeInputs = optionals enabled [
     nanopbPackage
