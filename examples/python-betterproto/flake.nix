@@ -49,14 +49,15 @@
           echo "Python Betterproto Example"
           echo "========================="
           echo "Commands:"
-          echo "  bufrnix_init - Initialize project"
-          echo "  bufrnix - Generate betterproto code"
+          echo "  nix run .#default - Generate betterproto code"
           echo "  python test_betterproto.py - Run test"
           echo ""
           echo "Note: Betterproto generates modern Python dataclasses"
           echo "      with async support and cleaner API"
           echo ""
-          ${bufrnixConfig.shellHook}
+          
+          # Add the bufrnix package to PATH
+          export PATH="${bufrnixConfig}/bin:$PATH"
         '';
       };
     });
