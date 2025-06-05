@@ -8,11 +8,14 @@ sys.path.insert(0, '.')
 # Import will be from betterproto generated code
 # The import path may differ from standard protobuf
 try:
-    from proto.gen.python.modern import Product, ProductService, CreateProductRequest
+    from proto.gen.python.modern import Product, ProductServiceStub, CreateProductRequest
 except ImportError:
     print("Note: Betterproto may generate different import paths")
     print("Checking alternative paths...")
     from proto.gen.python import modern
+    Product = modern.Product
+    ProductServiceStub = modern.ProductServiceStub
+    CreateProductRequest = modern.CreateProductRequest
 
 
 async def test_dataclasses():
@@ -40,7 +43,7 @@ async def test_dataclasses():
     print(f"\nSerialized size: {len(data)} bytes")
     
     # Deserialization with parse
-    parsed = Product.parse(data)
+    parsed = Product().parse(data)
     print(f"Parsed product: {parsed.name}")
     
     # Equality works naturally
