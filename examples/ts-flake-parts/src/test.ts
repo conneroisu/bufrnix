@@ -27,25 +27,13 @@ interface TestResult {
 
 const results: TestResult[] = [];
 
-function test(name: string, testFn: () => void | Promise<void>): void {
+async function test(name: string, testFn: () => void | Promise<void>): Promise<void> {
   console.log(`🧪 Running test: ${name}`);
-  
+
   try {
-    const result = testFn();
-    if (result instanceof Promise) {
-      result
-        .then(() => {
-          results.push({ name, passed: true });
-          console.log(`✅ ${name}`);
-        })
-        .catch((error) => {
-          results.push({ name, passed: false, error: error.message });
-          console.log(`❌ ${name}: ${error.message}`);
-        });
-    } else {
-      results.push({ name, passed: true });
-      console.log(`✅ ${name}`);
-    }
+    await testFn();
+    results.push({ name, passed: true });
+    console.log(`✅ ${name}`);
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : String(error);
     results.push({ name, passed: false, error: errorMessage });
