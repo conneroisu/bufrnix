@@ -304,6 +304,15 @@ test_example "java-basic" \
     "gen/java/build.gradle" \
     "gen/java/pom.xml"
 
+# Test Go multiple outputs example  
+test_example "go-multiple-outputs" \
+    "gen/go/orders/v1/order.pb.go" \
+    "gen/go/payments/v1/payment.pb.go" \
+    "services/order/proto/orders/v1/order.pb.go" \
+    "services/payment/proto/payments/v1/payment.pb.go" \
+    "services/shared/proto/orders/v1/order.pb.go" \
+    "pkg/common/proto/orders/v1/order.pb.go"
+
 # Test Java gRPC example
 test_example "java-grpc" \
     "gen/java/com/example/grpc/v1/HelloRequest.java" \

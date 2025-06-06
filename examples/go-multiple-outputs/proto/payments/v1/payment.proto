@@ -1,0 +1,222 @@
+syntax = "proto3";
+
+package payments.v1;
+
+option go_package = "github.com/example/proto/payments/v1;paymentsv1";
+
+import "google/protobuf/timestamp.proto";
+
+// Payment represents a payment transaction
+message Payment {
+  // Unique identifier for the payment
+  string id = 1;
+  
+  // Order ID this payment is for
+  string order_id = 2;
+  
+  // Customer ID who made the payment
+  string customer_id = 3;
+  
+  // Payment amount in cents
+  int64 amount_cents = 4;
+  
+  // Currency code (e.g., USD, EUR)
+  string currency = 5;
+  
+  // Payment method used
+  PaymentMethod method = 6;
+  
+  // Payment status
+  PaymentStatus status = 7;
+  
+  // Payment processor transaction ID
+  string processor_transaction_id = 8;
+  
+  // Payment creation timestamp
+  google.protobuf.Timestamp created_at = 9;
+  
+  // Payment processing timestamp
+  google.protobuf.Timestamp processed_at = 10;
+  
+  // Additional metadata
+  map<string, string> metadata = 11;
+}
+
+// PaymentMethod represents the method used for payment
+message PaymentMethod {
+  // Type of payment method
+  PaymentMethodType type = 1;
+  
+  // Card details (if type is CARD)
+  CardDetails card = 2;
+  
+  // Bank account details (if type is BANK_TRANSFER)
+  BankAccountDetails bank_account = 3;
+  
+  // Digital wallet details (if type is DIGITAL_WALLET)
+  DigitalWalletDetails digital_wallet = 4;
+}
+
+// CardDetails represents credit/debit card information
+message CardDetails {
+  // Last 4 digits of the card
+  string last_four = 1;
+  
+  // Card brand (e.g., VISA, MASTERCARD)
+  string brand = 2;
+  
+  // Expiration month
+  int32 exp_month = 3;
+  
+  // Expiration year
+  int32 exp_year = 4;
+  
+  // Cardholder name
+  string cardholder_name = 5;
+}
+
+// BankAccountDetails represents bank account information
+message BankAccountDetails {
+  // Bank name
+  string bank_name = 1;
+  
+  // Account holder name
+  string account_holder_name = 2;
+  
+  // Last 4 digits of account number
+  string account_last_four = 3;
+  
+  // Routing number (masked)
+  string routing_number_masked = 4;
+}
+
+// DigitalWalletDetails represents digital wallet information
+message DigitalWalletDetails {
+  // Wallet provider (e.g., PAYPAL, APPLE_PAY, GOOGLE_PAY)
+  string provider = 1;
+  
+  // Wallet account identifier (masked)
+  string account_id_masked = 2;
+}
+
+// PaymentMethodType enum
+enum PaymentMethodType {
+  PAYMENT_METHOD_TYPE_UNSPECIFIED = 0;
+  PAYMENT_METHOD_TYPE_CARD = 1;
+  PAYMENT_METHOD_TYPE_BANK_TRANSFER = 2;
+  PAYMENT_METHOD_TYPE_DIGITAL_WALLET = 3;
+  PAYMENT_METHOD_TYPE_CRYPTOCURRENCY = 4;
+}
+
+// PaymentStatus represents the current status of a payment
+enum PaymentStatus {
+  PAYMENT_STATUS_UNSPECIFIED = 0;
+  PAYMENT_STATUS_PENDING = 1;
+  PAYMENT_STATUS_AUTHORIZED = 2;
+  PAYMENT_STATUS_CAPTURED = 3;
+  PAYMENT_STATUS_SETTLED = 4;
+  PAYMENT_STATUS_FAILED = 5;
+  PAYMENT_STATUS_CANCELLED = 6;
+  PAYMENT_STATUS_REFUNDED = 7;
+  PAYMENT_STATUS_PARTIALLY_REFUNDED = 8;
+}
+
+// PaymentService provides operations for managing payments
+service PaymentService {
+  // Process a new payment
+  rpc ProcessPayment(ProcessPaymentRequest) returns (ProcessPaymentResponse);
+  
+  // Get a payment by ID
+  rpc GetPayment(GetPaymentRequest) returns (GetPaymentResponse);
+  
+  // Capture an authorized payment
+  rpc CapturePayment(CapturePaymentRequest) returns (CapturePaymentResponse);
+  
+  // Refund a payment (full or partial)
+  rpc RefundPayment(RefundPaymentRequest) returns (RefundPaymentResponse);
+  
+  // List payments with pagination and filtering
+  rpc ListPayments(ListPaymentsRequest) returns (ListPaymentsResponse);
+  
+  // Get payment status
+  rpc GetPaymentStatus(GetPaymentStatusRequest) returns (GetPaymentStatusResponse);
+}
+
+// Request message for ProcessPayment
+message ProcessPaymentRequest {
+  string order_id = 1;
+  string customer_id = 2;
+  int64 amount_cents = 3;
+  string currency = 4;
+  PaymentMethod payment_method = 5;
+  map<string, string> metadata = 6;
+}
+
+// Response message for ProcessPayment
+message ProcessPaymentResponse {
+  Payment payment = 1;
+  bool requires_action = 2;
+  string action_url = 3;
+}
+
+// Request message for GetPayment
+message GetPaymentRequest {
+  string id = 1;
+}
+
+// Response message for GetPayment
+message GetPaymentResponse {
+  Payment payment = 1;
+}
+
+// Request message for CapturePayment
+message CapturePaymentRequest {
+  string id = 1;
+  int64 amount_cents = 2; // Optional: for partial capture
+}
+
+// Response message for CapturePayment
+message CapturePaymentResponse {
+  Payment payment = 1;
+}
+
+// Request message for RefundPayment
+message RefundPaymentRequest {
+  string id = 1;
+  int64 amount_cents = 2; // Optional: for partial refund
+  string reason = 3;
+}
+
+// Response message for RefundPayment
+message RefundPaymentResponse {
+  Payment payment = 1;
+  string refund_id = 2;
+}
+
+// Request message for ListPayments
+message ListPaymentsRequest {
+  string customer_id = 1;
+  string order_id = 2;
+  PaymentStatus status_filter = 3;
+  int32 page_size = 4;
+  string page_token = 5;
+}
+
+// Response message for ListPayments
+message ListPaymentsResponse {
+  repeated Payment payments = 1;
+  string next_page_token = 2;
+  int32 total_count = 3;
+}
+
+// Request message for GetPaymentStatus
+message GetPaymentStatusRequest {
+  string id = 1;
+}
+
+// Response message for GetPaymentStatus
+message GetPaymentStatusResponse {
+  string id = 1;
+  PaymentStatus status = 2;
+  google.protobuf.Timestamp status_updated_at = 3;
+}
