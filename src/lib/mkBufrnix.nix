@@ -104,6 +104,10 @@ with pkgs.lib; let
   # Merge defaults with user config
   cfg = recursiveUpdate (recursiveUpdate defaultConfig packageDefaults) config;
 
+  # Helper function to normalize outputPath from string or array to array
+  normalizeOutputPath = path:
+    if builtins.isList path then path else [path];
+
   # Load language modules based on configuration
   languageNames = attrNames cfg.languages;
 
@@ -131,6 +135,51 @@ with pkgs.lib; let
 
   # Extract code generation hooks from language modules
   languageGenerateHooks = concatMapStrings (module: module.generateHooks or "") loadedLanguageModules;
+
+  # Generate protoc commands for each enabled language with multiple output paths
+  generateProtocCommands = 
+    let
+      enabledLanguages = filter (lang: cfg.languages.${lang}.enable) languageNames;
+      
+      # For each enabled language, get the normalized output paths and generate commands
+      languageCommands = map (language:
+        let
+          langCfg = cfg.languages.${language};
+          module = loadLanguageModule language;
+          outputPaths = normalizeOutputPath langCfg.outputPath;
+          
+          # Generate a command for each output path
+          pathCommands = map (outputPath:
+            let
+              # Create modified cfg with single outputPath for this iteration
+              modifiedLangCfg = langCfg // { outputPath = outputPath; };
+              modifiedCfg = cfg // { 
+                languages = cfg.languages // { 
+                  ${language} = modifiedLangCfg; 
+                }; 
+              };
+              
+              # Load module with modified config
+              modifiedModule = import ../languages/${language} {
+                inherit pkgs;
+                inherit (pkgs) lib;
+                config = modifiedCfg;
+                cfg = modifiedLangCfg;
+              };
+            in {
+              inherit outputPath;
+              runtimeInputs = modifiedModule.runtimeInputs or [];
+              protocPlugins = modifiedModule.protocPlugins or [];
+              initHooks = modifiedModule.initHooks or "";
+              generateHooks = modifiedModule.generateHooks or "";
+            }
+          ) outputPaths;
+        in {
+          inherit language;
+          commands = pathCommands;
+        }
+      ) enabledLanguages;
+    in languageCommands;
 in
   pkgs.writeShellApplication {
     name = "bufrnix";
@@ -149,7 +198,7 @@ in
       # Language-specific directory creation
       ${languageGenerateHooks}
 
-      ${debug.log 1 "Starting code generation" cfg}
+      ${debug.log 1 "Starting code generation with multiple output paths support" cfg}
 
       # Expand proto file globs if needed
       proto_files=""
@@ -175,35 +224,45 @@ in
       }
 
       protoc_cmd="${pkgs.protobuf}/bin/protoc"
-      protoc_args="--proto_path=${concatStringsSep " -I " cfg.protoc.includeDirectories}"
-
-      # Add language-specific protocol plugins from the loaded modules
-      ${concatMapStrings (
-          module:
-            if module ? protocPlugins
-            then ''
-              # Add plugin options
-              ${concatMapStrings (plugin: ''
-                  protoc_args="$protoc_args ${plugin}"
-                '')
-                module.protocPlugins}
-            ''
-            else ""
-        )
-        loadedLanguageModules}
+      base_protoc_args="-I ${concatStringsSep " -I " cfg.protoc.includeDirectories}"
 
       # Handle nanopb options files if nanopb is enabled
+      nanopb_opts=""
       ${optionalString (cfg.languages.c.enable && cfg.languages.c.nanopb.enable) ''
         # Find nanopb options files and add them to protoc_args
         options_file=$(find . -name "*.options" -type f 2>/dev/null | head -1)
         if [ -n "$options_file" ]; then
           echo "Found nanopb options file: $options_file"
-          protoc_args="$protoc_args --nanopb_opt=-f$options_file"
+          nanopb_opts="--nanopb_opt=-f$options_file"
         fi
       ''}
 
-      # Execute protoc with expanded file list
-      eval "$protoc_cmd $protoc_args $proto_files"
-      ${debug.log 1 "Code generation completed successfully" cfg}
+      # Generate protoc commands for each unique output path combination
+      ${concatMapStrings (langCmd: 
+          concatMapStrings (pathCmd: ''
+            echo "Generating ${langCmd.language} code for output path: ${pathCmd.outputPath}"
+            
+            # Run initialization hooks for this path
+            ${pathCmd.initHooks}
+            
+            # Create directory for this output path
+            mkdir -p "${pathCmd.outputPath}"
+            
+            # Build protoc command for this specific output path
+            protoc_args="$base_protoc_args $nanopb_opts"
+            ${concatMapStrings (plugin: ''
+              protoc_args="$protoc_args ${plugin}"
+            '') pathCmd.protocPlugins}
+            
+            # Execute protoc for this output path
+            eval "$protoc_cmd $protoc_args $proto_files"
+            
+            # Run generation hooks for this path
+            ${pathCmd.generateHooks}
+            
+          '') langCmd.commands
+        ) generateProtocCommands}
+
+      ${debug.log 1 "Multiple output path code generation completed successfully" cfg}
     '';
   }

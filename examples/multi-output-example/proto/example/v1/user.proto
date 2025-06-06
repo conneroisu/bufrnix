@@ -1,0 +1,118 @@
+syntax = "proto3";
+
+package example.v1;
+
+option go_package = "github.com/example/proto/example/v1;examplev1";
+
+// User represents a user in the system
+message User {
+  // Unique identifier for the user
+  string id = 1;
+  
+  // User's display name
+  string name = 2;
+  
+  // User's email address  
+  string email = 3;
+  
+  // User's profile information
+  UserProfile profile = 4;
+  
+  // User's account status
+  UserStatus status = 5;
+}
+
+// UserProfile contains profile information
+message UserProfile {
+  // User's first name
+  string first_name = 1;
+  
+  // User's last name
+  string last_name = 2;
+  
+  // User's avatar URL
+  string avatar_url = 3;
+  
+  // User's bio/description
+  string bio = 4;
+}
+
+// UserStatus represents the current status of a user
+enum UserStatus {
+  USER_STATUS_UNSPECIFIED = 0;
+  USER_STATUS_ACTIVE = 1;
+  USER_STATUS_INACTIVE = 2;
+  USER_STATUS_SUSPENDED = 3;
+}
+
+// UserService provides operations for managing users
+service UserService {
+  // Create a new user
+  rpc CreateUser(CreateUserRequest) returns (CreateUserResponse);
+  
+  // Get a user by ID
+  rpc GetUser(GetUserRequest) returns (GetUserResponse);
+  
+  // Update an existing user
+  rpc UpdateUser(UpdateUserRequest) returns (UpdateUserResponse);
+  
+  // Delete a user
+  rpc DeleteUser(DeleteUserRequest) returns (DeleteUserResponse);
+  
+  // List users with pagination
+  rpc ListUsers(ListUsersRequest) returns (ListUsersResponse);
+}
+
+// Request message for CreateUser
+message CreateUserRequest {
+  User user = 1;
+}
+
+// Response message for CreateUser
+message CreateUserResponse {
+  User user = 1;
+}
+
+// Request message for GetUser
+message GetUserRequest {
+  string id = 1;
+}
+
+// Response message for GetUser
+message GetUserResponse {
+  User user = 1;
+}
+
+// Request message for UpdateUser
+message UpdateUserRequest {
+  User user = 1;
+}
+
+// Response message for UpdateUser
+message UpdateUserResponse {
+  User user = 1;
+}
+
+// Request message for DeleteUser
+message DeleteUserRequest {
+  string id = 1;
+}
+
+// Response message for DeleteUser
+message DeleteUserResponse {
+  bool success = 1;
+}
+
+// Request message for ListUsers
+message ListUsersRequest {
+  int32 page_size = 1;
+  string page_token = 2;
+  string filter = 3;
+}
+
+// Response message for ListUsers
+message ListUsersResponse {
+  repeated User users = 1;
+  string next_page_token = 2;
+  int32 total_count = 3;
+}

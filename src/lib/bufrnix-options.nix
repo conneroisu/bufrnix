@@ -67,9 +67,16 @@ with lib; {
         };
 
         outputPath = mkOption {
-          type = types.str;
+          type = types.either types.str (types.listOf types.str);
           default = "gen/go";
-          description = "Output directory for generated Go code";
+          description = "Output directory(ies) for generated Go code";
+          example = literalExpression ''
+            [
+              "gen/go"
+              "pkg/proto"
+              "internal/shared/proto"
+            ]
+          '';
         };
 
         options = mkOption {
@@ -341,9 +348,15 @@ with lib; {
         };
 
         outputPath = mkOption {
-          type = types.str;
+          type = types.either types.str (types.listOf types.str);
           default = "gen/cpp";
-          description = "Output directory for generated C++ code";
+          description = "Output directory(ies) for generated C++ code";
+          example = literalExpression ''
+            [
+              "gen/cpp"
+              "src/proto"
+            ]
+          '';
         };
 
         options = mkOption {
@@ -476,9 +489,16 @@ with lib; {
         };
 
         outputPath = mkOption {
-          type = types.str;
+          type = types.either types.str (types.listOf types.str);
           default = "gen/php";
-          description = "Output directory for generated PHP code";
+          description = "Output directory(ies) for generated PHP code";
+          example = literalExpression ''
+            [
+              "gen/php"
+              "src/proto"
+              "app/Proto"
+            ]
+          '';
         };
 
         options = mkOption {
@@ -716,9 +736,17 @@ with lib; {
         };
 
         outputPath = mkOption {
-          type = types.str;
+          type = types.either types.str (types.listOf types.str);
           default = "gen/js";
-          description = "Output directory for generated JavaScript code";
+          description = "Output directory(ies) for generated JavaScript code";
+          example = literalExpression ''
+            [
+              "gen/js"
+              "src/proto"
+              "packages/frontend/src/proto"
+              "packages/backend/src/proto"
+            ]
+          '';
         };
 
         options = mkOption {
@@ -954,9 +982,15 @@ with lib; {
         };
 
         outputPath = mkOption {
-          type = types.str;
+          type = types.either types.str (types.listOf types.str);
           default = "gen/java";
-          description = "Output directory for generated Java code";
+          description = "Output directory(ies) for generated Java code";
+          example = literalExpression ''
+            [
+              "gen/java"
+              "src/main/java"
+            ]
+          '';
         };
 
         options = mkOption {
@@ -1033,9 +1067,15 @@ with lib; {
         };
 
         outputPath = mkOption {
-          type = types.str;
+          type = types.either types.str (types.listOf types.str);
           default = "lib/proto";
-          description = "Output directory for generated Dart code";
+          description = "Output directory(ies) for generated Dart code";
+          example = literalExpression ''
+            [
+              "lib/proto"
+              "lib/generated"
+            ]
+          '';
         };
 
         options = mkOption {
@@ -1086,9 +1126,15 @@ with lib; {
         };
 
         outputPath = mkOption {
-          type = types.str;
+          type = types.either types.str (types.listOf types.str);
           default = "gen/doc";
-          description = "Output directory for generated documentation";
+          description = "Output directory(ies) for generated documentation";
+          example = literalExpression ''
+            [
+              "gen/doc"
+              "docs/api"
+            ]
+          '';
         };
 
         options = mkOption {
@@ -1154,9 +1200,15 @@ with lib; {
           };
 
           outputPath = mkOption {
-            type = types.str;
+            type = types.either types.str (types.listOf types.str);
             default = "./doc/src/content/docs/reference";
-            description = "Output directory for MDX documentation (relative to project root)";
+            description = "Output directory(ies) for MDX documentation (relative to project root)";
+            example = literalExpression ''
+              [
+                "./doc/src/content/docs/reference"
+                "./docs/api"
+              ]
+            '';
           };
         };
       };
@@ -1176,9 +1228,15 @@ with lib; {
         };
 
         outputPath = mkOption {
-          type = types.str;
+          type = types.either types.str (types.listOf types.str);
           default = "gen/svg";
-          description = "Output directory for generated SVG diagrams";
+          description = "Output directory(ies) for generated SVG diagrams";
+          example = literalExpression ''
+            [
+              "gen/svg"
+              "docs/diagrams"
+            ]
+          '';
         };
 
         options = mkOption {
@@ -1203,9 +1261,17 @@ with lib; {
         };
 
         outputPath = mkOption {
-          type = types.str;
+          type = types.either types.str (types.listOf types.str);
           default = "gen/python";
-          description = "Output directory for generated Python code";
+          description = "Output directory(ies) for generated Python code";
+          example = literalExpression ''
+            [
+              "gen/python"
+              "src/proto"
+              "dist/mypackage/proto"
+              "tests/fixtures/proto"
+            ]
+          '';
         };
 
         options = mkOption {
@@ -1310,9 +1376,15 @@ with lib; {
         };
 
         outputPath = mkOption {
-          type = types.str;
+          type = types.either types.str (types.listOf types.str);
           default = "gen/swift";
-          description = "Output directory for generated Swift code";
+          description = "Output directory(ies) for generated Swift code";
+          example = literalExpression ''
+            [
+              "gen/swift"
+              "Sources/Proto"
+            ]
+          '';
         };
 
         options = mkOption {
@@ -1343,9 +1415,15 @@ with lib; {
         };
 
         outputPath = mkOption {
-          type = types.str;
+          type = types.either types.str (types.listOf types.str);
           default = "gen/csharp";
-          description = "Output directory for generated C# code";
+          description = "Output directory(ies) for generated C# code";
+          example = literalExpression ''
+            [
+              "gen/csharp"
+              "src/Proto"
+            ]
+          '';
         };
 
         options = mkOption {
@@ -1487,21 +1565,39 @@ with lib; {
         };
 
         outputPath = mkOption {
-          type = types.str;
+          type = types.either types.str (types.listOf types.str);
           default = "gen/kotlin";
-          description = "Base output directory for generated code";
+          description = "Base output directory(ies) for generated code";
+          example = literalExpression ''
+            [
+              "gen/kotlin"
+              "src/main/proto"
+            ]
+          '';
         };
 
         javaOutputPath = mkOption {
-          type = types.str;
+          type = types.either types.str (types.listOf types.str);
           default = "gen/kotlin/java";
-          description = "Output directory for generated Java code (required for Kotlin)";
+          description = "Output directory(ies) for generated Java code (required for Kotlin)";
+          example = literalExpression ''
+            [
+              "gen/kotlin/java"
+              "src/main/java"
+            ]
+          '';
         };
 
         kotlinOutputPath = mkOption {
-          type = types.str;
+          type = types.either types.str (types.listOf types.str);
           default = "gen/kotlin/kotlin";
-          description = "Output directory for generated Kotlin code";
+          description = "Output directory(ies) for generated Kotlin code";
+          example = literalExpression ''
+            [
+              "gen/kotlin/kotlin"
+              "src/main/kotlin"
+            ]
+          '';
         };
 
         options = mkOption {
@@ -1640,9 +1736,15 @@ with lib; {
         };
 
         outputPath = mkOption {
-          type = types.str;
+          type = types.either types.str (types.listOf types.str);
           default = "gen/c";
-          description = "Output directory for generated C code";
+          description = "Output directory(ies) for generated C code";
+          example = literalExpression ''
+            [
+              "gen/c"
+              "src/proto"
+            ]
+          '';
         };
 
         # protobuf-c support
@@ -1660,9 +1762,15 @@ with lib; {
           };
 
           outputPath = mkOption {
-            type = types.str;
+            type = types.either types.str (types.listOf types.str);
             default = "gen/c/protobuf-c";
-            description = "Output directory for generated protobuf-c code";
+            description = "Output directory(ies) for generated protobuf-c code";
+            example = literalExpression ''
+              [
+                "gen/c/protobuf-c"
+                "src/proto/c"
+              ]
+            '';
           };
 
           options = mkOption {
@@ -1687,9 +1795,15 @@ with lib; {
           };
 
           outputPath = mkOption {
-            type = types.str;
+            type = types.either types.str (types.listOf types.str);
             default = "gen/c/nanopb";
-            description = "Output directory for generated nanopb code";
+            description = "Output directory(ies) for generated nanopb code";
+            example = literalExpression ''
+              [
+                "gen/c/nanopb"
+                "embedded/proto"
+              ]
+            '';
           };
 
           options = mkOption {
@@ -1739,9 +1853,15 @@ with lib; {
           };
 
           outputPath = mkOption {
-            type = types.str;
+            type = types.either types.str (types.listOf types.str);
             default = "gen/c/upb";
-            description = "Output directory for generated upb code";
+            description = "Output directory(ies) for generated upb code";
+            example = literalExpression ''
+              [
+                "gen/c/upb"
+                "src/proto/upb"
+              ]
+            '';
           };
 
           options = mkOption {
@@ -1767,9 +1887,15 @@ with lib; {
         };
         
         outputPath = mkOption {
-          type = types.str;
+          type = types.either types.str (types.listOf types.str);
           default = "gen/scala";
-          description = "Output directory for generated Scala code";
+          description = "Output directory(ies) for generated Scala code";
+          example = literalExpression ''
+            [
+              "gen/scala"
+              "src/main/scala"
+            ]
+          '';
         };
         
         options = mkOption {

@@ -1,0 +1,138 @@
+syntax = "proto3";
+
+package example.v1;
+
+option go_package = "github.com/example/proto/example/v1;examplev1";
+
+import "google/protobuf/timestamp.proto";
+
+// Product represents a product in the catalog
+message Product {
+  // Unique identifier for the product
+  string id = 1;
+  
+  // Product name
+  string name = 2;
+  
+  // Product description
+  string description = 3;
+  
+  // Product price in cents
+  int64 price_cents = 4;
+  
+  // Product category
+  string category = 5;
+  
+  // Product availability status
+  ProductStatus status = 6;
+  
+  // Product creation timestamp
+  google.protobuf.Timestamp created_at = 7;
+  
+  // Product last update timestamp
+  google.protobuf.Timestamp updated_at = 8;
+  
+  // Product metadata
+  map<string, string> metadata = 9;
+  
+  // Product tags
+  repeated string tags = 10;
+}
+
+// ProductStatus represents the availability of a product
+enum ProductStatus {
+  PRODUCT_STATUS_UNSPECIFIED = 0;
+  PRODUCT_STATUS_AVAILABLE = 1;
+  PRODUCT_STATUS_OUT_OF_STOCK = 2;
+  PRODUCT_STATUS_DISCONTINUED = 3;
+}
+
+// ProductService provides operations for managing products
+service ProductService {
+  // Create a new product
+  rpc CreateProduct(CreateProductRequest) returns (CreateProductResponse);
+  
+  // Get a product by ID
+  rpc GetProduct(GetProductRequest) returns (GetProductResponse);
+  
+  // Update an existing product
+  rpc UpdateProduct(UpdateProductRequest) returns (UpdateProductResponse);
+  
+  // Delete a product
+  rpc DeleteProduct(DeleteProductRequest) returns (DeleteProductResponse);
+  
+  // List products with filtering and pagination
+  rpc ListProducts(ListProductsRequest) returns (ListProductsResponse);
+  
+  // Search products by query
+  rpc SearchProducts(SearchProductsRequest) returns (SearchProductsResponse);
+}
+
+// Request message for CreateProduct
+message CreateProductRequest {
+  Product product = 1;
+}
+
+// Response message for CreateProduct
+message CreateProductResponse {
+  Product product = 1;
+}
+
+// Request message for GetProduct
+message GetProductRequest {
+  string id = 1;
+}
+
+// Response message for GetProduct
+message GetProductResponse {
+  Product product = 1;
+}
+
+// Request message for UpdateProduct
+message UpdateProductRequest {
+  Product product = 1;
+}
+
+// Response message for UpdateProduct
+message UpdateProductResponse {
+  Product product = 1;
+}
+
+// Request message for DeleteProduct
+message DeleteProductRequest {
+  string id = 1;
+}
+
+// Response message for DeleteProduct
+message DeleteProductResponse {
+  bool success = 1;
+}
+
+// Request message for ListProducts
+message ListProductsRequest {
+  int32 page_size = 1;
+  string page_token = 2;
+  string category_filter = 3;
+  ProductStatus status_filter = 4;
+}
+
+// Response message for ListProducts
+message ListProductsResponse {
+  repeated Product products = 1;
+  string next_page_token = 2;
+  int32 total_count = 3;
+}
+
+// Request message for SearchProducts
+message SearchProductsRequest {
+  string query = 1;
+  int32 page_size = 2;
+  string page_token = 3;
+}
+
+// Response message for SearchProducts
+message SearchProductsResponse {
+  repeated Product products = 1;
+  string next_page_token = 2;
+  int32 total_count = 3;
+}
