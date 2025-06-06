@@ -251,6 +251,10 @@ test_example "js-grpc-web" \
 test_example "js-protovalidate" \
     "proto/gen/js/example/v1/user_pb.ts"
 
+# Test TypeScript flake-parts example
+test_example "ts-flake-parts" \
+    "gen/js/example/v1/user_pb.ts"
+
 # TODO: Fix PHP features test (complex multi-config setup)
 # test_example "php-features-test" \
 #     "gen/php/basic/Test/V1/TestMessage.php"

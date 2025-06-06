@@ -1,0 +1,127 @@
+syntax = "proto3";
+
+package example.v1;
+
+import "google/protobuf/timestamp.proto";
+
+// User role enumeration
+enum Role {
+  ROLE_UNSPECIFIED = 0;
+  USER = 1;
+  ADMIN = 2;
+  MODERATOR = 3;
+}
+
+// User message representing a user in the system
+message User {
+  // Unique identifier for the user
+  string id = 1;
+  
+  // User's email address
+  string email = 2;
+  
+  // User's display name
+  string name = 3;
+  
+  // User's role in the system
+  Role role = 4;
+  
+  // Whether the user account is active
+  bool is_active = 5;
+  
+  // When the user was created
+  optional google.protobuf.Timestamp created_at = 6;
+  
+  // When the user was last updated
+  optional google.protobuf.Timestamp updated_at = 7;
+}
+
+// Request to create a new user
+message CreateUserRequest {
+  // The user to create
+  User user = 1;
+}
+
+// Response from creating a user
+message CreateUserResponse {
+  // The created user with server-assigned fields
+  User user = 1;
+}
+
+// Request to get a user by ID
+message GetUserRequest {
+  // The user ID to retrieve
+  string id = 1;
+}
+
+// Response containing the requested user
+message GetUserResponse {
+  // The requested user
+  User user = 1;
+}
+
+// Request to list users with pagination and filtering
+message ListUsersRequest {
+  // Maximum number of users to return
+  int32 page_size = 1;
+  
+  // Token for pagination (empty for first page)
+  string page_token = 2;
+  
+  // Filter string (e.g., "role:ADMIN", "active:true")
+  optional string filter = 3;
+}
+
+// Response containing a list of users
+message ListUsersResponse {
+  // The list of users
+  repeated User users = 1;
+  
+  // Token for next page (empty if no more pages)
+  string next_page_token = 2;
+  
+  // Total number of users matching the filter
+  int32 total_count = 3;
+}
+
+// Request to update an existing user
+message UpdateUserRequest {
+  // The user to update (must include ID)
+  User user = 1;
+}
+
+// Response from updating a user
+message UpdateUserResponse {
+  // The updated user
+  User user = 1;
+}
+
+// Request to delete a user
+message DeleteUserRequest {
+  // The ID of the user to delete
+  string id = 1;
+}
+
+// Response from deleting a user
+message DeleteUserResponse {
+  // Whether the deletion was successful
+  bool success = 1;
+}
+
+// User service providing CRUD operations
+service UserService {
+  // Create a new user
+  rpc CreateUser(CreateUserRequest) returns (CreateUserResponse);
+  
+  // Get a user by ID
+  rpc GetUser(GetUserRequest) returns (GetUserResponse);
+  
+  // List users with pagination and filtering
+  rpc ListUsers(ListUsersRequest) returns (ListUsersResponse);
+  
+  // Update an existing user
+  rpc UpdateUser(UpdateUserRequest) returns (UpdateUserResponse);
+  
+  // Delete a user
+  rpc DeleteUser(DeleteUserRequest) returns (DeleteUserResponse);
+}
