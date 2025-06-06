@@ -4,7 +4,6 @@ import (
 	"context"
 	"fmt"
 	"log"
-	"net"
 
 	pb "github.com/example/flakeparts/proto/gen/go/example/v1"
 	"google.golang.org/grpc"
@@ -45,11 +44,11 @@ func (s *server) GetUser(ctx context.Context, req *pb.GetUserRequest) (*pb.GetUs
 }
 
 func main() {
-	// Create a gRPC server
-	lis, err := net.Listen("tcp", ":50051")
-	if err != nil {
-		log.Fatalf("failed to listen: %v", err)
-	}
+	// Create a gRPC server (commented out to avoid port conflicts in example)
+	// _, err := net.Listen("tcp", ":50051")
+	// if err != nil {
+	// 	log.Fatalf("failed to listen: %v", err)
+	// }
 
 	s := grpc.NewServer()
 	userServer := &server{
