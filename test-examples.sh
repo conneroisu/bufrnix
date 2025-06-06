@@ -285,6 +285,11 @@ test_example "python-typed" \
     "proto/gen/python/typed/v1/typed_pb2.pyi" \
     "proto/gen/python/typed/v1/typed_pb2_grpc.py"
 
+# Test Python flake-parts example
+test_example "python-flake-parts" \
+    "gen/example/v1/user_pb2.py" \
+    "gen/example/v1/user_pb2_grpc.py"
+
 # Test SVG example
 test_example "svg-example" \
     "proto/gen/svg/example/v1/example.svg" \
