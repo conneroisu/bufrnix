@@ -5,10 +5,9 @@
  * even though the specific protobuf-es API may need adjusting.
  */
 
-// Import the generated types (this shows that generation worked)
-// Note: Using @ts-ignore to bypass strict type checking for demo purposes
-// The generation works but protobuf-es v2 API differences need adjustment
-// @ts-ignore
+// Import the generated types (this shows that generation worked).
+// The generated code is compatible with the TypeScript compiler
+// when using the protobuf-es v2 configuration.
 import type { 
   User,
   Role 
