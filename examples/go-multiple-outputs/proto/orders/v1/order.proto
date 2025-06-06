@@ -1,0 +1,172 @@
+syntax = "proto3";
+
+package orders.v1;
+
+option go_package = "github.com/example/proto/orders/v1;ordersv1";
+
+import "google/protobuf/timestamp.proto";
+
+// Order represents an order in the system
+message Order {
+  // Unique identifier for the order
+  string id = 1;
+  
+  // Customer ID who placed the order
+  string customer_id = 2;
+  
+  // Total amount in cents
+  int64 total_cents = 3;
+  
+  // Order status
+  OrderStatus status = 4;
+  
+  // Items in the order
+  repeated OrderItem items = 5;
+  
+  // Shipping address
+  Address shipping_address = 6;
+  
+  // Order creation timestamp
+  google.protobuf.Timestamp created_at = 7;
+  
+  // Order last update timestamp
+  google.protobuf.Timestamp updated_at = 8;
+}
+
+// OrderItem represents an item within an order
+message OrderItem {
+  // Product ID
+  string product_id = 1;
+  
+  // Product name
+  string name = 2;
+  
+  // Quantity ordered
+  int32 quantity = 3;
+  
+  // Price per unit in cents
+  int64 unit_price_cents = 4;
+  
+  // Total price for this item (quantity * unit_price)
+  int64 total_price_cents = 5;
+}
+
+// Address represents a shipping or billing address
+message Address {
+  // Street address
+  string street = 1;
+  
+  // City
+  string city = 2;
+  
+  // State or province
+  string state = 3;
+  
+  // Postal/ZIP code
+  string postal_code = 4;
+  
+  // Country
+  string country = 5;
+}
+
+// OrderStatus represents the current status of an order
+enum OrderStatus {
+  ORDER_STATUS_UNSPECIFIED = 0;
+  ORDER_STATUS_PENDING = 1;
+  ORDER_STATUS_CONFIRMED = 2;
+  ORDER_STATUS_PROCESSING = 3;
+  ORDER_STATUS_SHIPPED = 4;
+  ORDER_STATUS_DELIVERED = 5;
+  ORDER_STATUS_CANCELLED = 6;
+  ORDER_STATUS_REFUNDED = 7;
+}
+
+// OrderService provides operations for managing orders
+service OrderService {
+  // Create a new order
+  rpc CreateOrder(CreateOrderRequest) returns (CreateOrderResponse);
+  
+  // Get an order by ID
+  rpc GetOrder(GetOrderRequest) returns (GetOrderResponse);
+  
+  // Update an existing order
+  rpc UpdateOrder(UpdateOrderRequest) returns (UpdateOrderResponse);
+  
+  // Cancel an order
+  rpc CancelOrder(CancelOrderRequest) returns (CancelOrderResponse);
+  
+  // List orders with pagination and filtering
+  rpc ListOrders(ListOrdersRequest) returns (ListOrdersResponse);
+  
+  // Get order status
+  rpc GetOrderStatus(GetOrderStatusRequest) returns (GetOrderStatusResponse);
+}
+
+// Request message for CreateOrder
+message CreateOrderRequest {
+  Order order = 1;
+}
+
+// Response message for CreateOrder
+message CreateOrderResponse {
+  Order order = 1;
+}
+
+// Request message for GetOrder
+message GetOrderRequest {
+  string id = 1;
+}
+
+// Response message for GetOrder
+message GetOrderResponse {
+  Order order = 1;
+}
+
+// Request message for UpdateOrder
+message UpdateOrderRequest {
+  Order order = 1;
+}
+
+// Response message for UpdateOrder
+message UpdateOrderResponse {
+  Order order = 1;
+}
+
+// Request message for CancelOrder
+message CancelOrderRequest {
+  string id = 1;
+  string reason = 2;
+}
+
+// Response message for CancelOrder
+message CancelOrderResponse {
+  bool success = 1;
+  Order order = 2;
+}
+
+// Request message for ListOrders
+message ListOrdersRequest {
+  string customer_id = 1;
+  OrderStatus status_filter = 2;
+  int32 page_size = 3;
+  string page_token = 4;
+}
+
+// Response message for ListOrders
+message ListOrdersResponse {
+  repeated Order orders = 1;
+  string next_page_token = 2;
+  int32 total_count = 3;
+}
+
+// Request message for GetOrderStatus
+message GetOrderStatusRequest {
+  string id = 1;
+}
+
+// Response message for GetOrderStatus
+message GetOrderStatusResponse {
+  string id = 1;
+  OrderStatus status = 2;
+  google.protobuf.Timestamp status_updated_at = 3;
+}

@@ -124,17 +124,31 @@ with pkgs.lib; let
       }
     else {};
 
-  # Load all enabled language modules
-  loadedLanguageModules = map loadLanguageModule languageNames;
+  # Load all enabled language modules for extracting runtime inputs only
+  # We need runtime inputs globally, but hooks will be handled per output path
+  loadedLanguageModulesForInputs = map (language:
+    if cfg.languages.${language}.enable
+    then
+      let
+        langCfg = cfg.languages.${language};
+        # Normalize to single path for runtime input extraction
+        normalizedLangCfg = langCfg // {
+          outputPath = if builtins.isList langCfg.outputPath 
+                       then builtins.head langCfg.outputPath
+                       else langCfg.outputPath;
+        };
+      in
+        import ../languages/${language} {
+          inherit pkgs;
+          inherit (pkgs) lib;
+          config = cfg;
+          cfg = normalizedLangCfg;
+        }
+    else {}
+  ) languageNames;
 
   # Extract runtime inputs from language modules
-  languageRuntimeInputs = concatMap (module: module.runtimeInputs or []) loadedLanguageModules;
-
-  # Extract initialization hooks from language modules
-  languageInitHooks = concatMapStrings (module: module.initHooks or "") loadedLanguageModules;
-
-  # Extract code generation hooks from language modules
-  languageGenerateHooks = concatMapStrings (module: module.generateHooks or "") loadedLanguageModules;
+  languageRuntimeInputs = concatMap (module: module.runtimeInputs or []) loadedLanguageModulesForInputs;
 
   # Generate protoc commands for each enabled language with multiple output paths
   generateProtocCommands = 
@@ -192,12 +206,6 @@ in
       ++ languageRuntimeInputs;
 
     text = ''
-      # Language-specific initialization
-      ${languageInitHooks}
-
-      # Language-specific directory creation
-      ${languageGenerateHooks}
-
       ${debug.log 1 "Starting code generation with multiple output paths support" cfg}
 
       # Expand proto file globs if needed
