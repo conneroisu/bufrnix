@@ -11,7 +11,7 @@ import "google/protobuf/empty.proto";
 // Internal
 import "lib/media.proto";
 
-option go_package = "github.com/pegwings/pegwings/proto/gen/go/img/v1;img";
+option go_package = "github.com/conneroisu/bufrnix/examples/multilang-multi-project/proto/gen/go/img/v1;img";
 
 option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_swagger) = {
   info : {

@@ -4,7 +4,7 @@ package models.v1;
 import "google/api/field_behavior.proto";
 import "google/protobuf/timestamp.proto";
 import "gateway/protoc-gen-openapiv2/annotations.proto";
-option go_package = "github.com/pegwings/pegwings/proto/gen/go/api/v1;api";
+option go_package = "github.com/conneroisu/bufrnix/examples/multilang-multi-project/proto/gen/go/api/v1;api";
 
 // ListResponse is the response message returned by the models api in
 // response to an authenticated list request.

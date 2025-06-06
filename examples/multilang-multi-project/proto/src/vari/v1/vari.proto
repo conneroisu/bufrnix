@@ -20,7 +20,7 @@ import "google/api/field_behavior.proto";
 // Internal
 import "lib/media.proto";
 
-option go_package = "github.com/pegwings/pegwings/proto/gen/go/vari/v1;vari";
+option go_package = "github.com/conneroisu/bufrnix/examples/multilang-multi-project/proto/gen/go/vari/v1;vari";
 
 option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_swagger) = {
   info : {

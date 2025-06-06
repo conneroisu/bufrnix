@@ -4,7 +4,7 @@ package language.v1;
 
 // External
 import "gateway/protoc-gen-openapiv2/annotations.proto";
-option go_package = "github.com/pegwings/pegwings/proto/gen/go/lib;lib";
+option go_package = "github.com/conneroisu/bufrnix/examples/multilang-multi-project/proto/gen/go/lib;lib";
 
 // ISO 639-1 language codes
 // Source: ISO 639 standard

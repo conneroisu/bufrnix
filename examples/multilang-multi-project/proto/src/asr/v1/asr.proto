@@ -8,7 +8,7 @@ import "google/protobuf/empty.proto";
 import "gateway/protoc-gen-openapiv2/annotations.proto";
 import "google/api/field_behavior.proto";
 
-option go_package = "github.com/pegwings/pegwings/proto/gen/go/asr/v1;asr";
+option go_package = "github.com/conneroisu/bufrnix/examples/multilang-multi-project/proto/gen/go/asr/v1;asr";
 
 option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_swagger) = {
   info : {

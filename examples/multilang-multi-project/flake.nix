@@ -17,14 +17,38 @@
   }:
     flake-utils.lib.eachDefaultSystem (system: let
       pkgs = nixpkgs.legacyPackages.${system};
+
+        buildWithSpecificGo = pkg:
+          pkg.override {
+            buildGoModule = pkgs.buildGo124Module;
+          };
     in {
       # Main development shell with all tools
       devShells.default = pkgs.mkShell {
         packages = with pkgs; [
+          nixd
+          alejandra
           # Multi-language development tools
           go
           protoc-gen-go
           protoc-gen-go-grpc
+
+              go_1_24 # Go Tools
+              air
+              templ
+              golangci-lint
+              (buildWithSpecificGo revive)
+              (buildWithSpecificGo gopls)
+              (buildWithSpecificGo templ)
+              (buildWithSpecificGo golines)
+              (buildWithSpecificGo golangci-lint-langserver)
+              (buildWithSpecificGo gomarkdoc)
+              (buildWithSpecificGo gotests)
+              (buildWithSpecificGo gotools)
+              (buildWithSpecificGo reftools)
+              pprof
+              graphviz
+
           
           python3
           python3Packages.grpcio
