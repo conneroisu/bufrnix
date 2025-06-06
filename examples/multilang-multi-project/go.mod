@@ -1,16 +1,12 @@
-module github.com/pegwings/multilang-multi-project-example
+module github.com/bufrnix/examples/multilang-multi-project-example
 
 go 1.21
 
 require (
-	github.com/pegwings/pegwings v0.0.0
 	golang.org/x/net v0.38.0
 	google.golang.org/grpc v1.59.0
 	google.golang.org/protobuf v1.31.0
 )
-
-// Use local generated code
-replace github.com/pegwings/pegwings => ../../proto/gen/go
 
 require (
 	github.com/golang/protobuf v1.5.3 // indirect
