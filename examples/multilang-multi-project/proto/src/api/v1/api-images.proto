@@ -9,7 +9,7 @@ import "buf/validate/validate.proto";
 // Internal
 import "lib/media.proto";
 
-option go_package = "github.com/pegwings/pegwings/proto/gen/go/api/v1;api";
+option go_package = "github.com/conneroisu/bufrnix/examples/multilang-multi-project/proto/gen/go/api/v1;api";
 
 // ImageCreateRequest is the request to create an image.
 message ImageCreateRequest {

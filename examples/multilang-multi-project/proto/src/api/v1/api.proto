@@ -19,7 +19,7 @@ import "api/v1/api-usage.proto";
 import "api/v1/api-video.proto";
 import "api/v1/api-images.proto";
 
-option go_package = "github.com/pegwings/pegwings/proto/gen/go/api/v1;api";
+option go_package = "github.com/conneroisu/bufrnix/examples/multilang-multi-project/proto/gen/go/api/v1;api";
 
 option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_swagger) = {
   info : {
