@@ -82,7 +82,7 @@
           echo "Required comment: $REQUIRED_COMMENT"
           
           # Find all flake.nix files in examples directory
-          while IFS= read -r -d ''' flake_file; do
+          while IFS= read -r -d '' flake_file; do
               checked_files=$((checked_files + 1))
               relative_path="''${flake_file#./}"
               
