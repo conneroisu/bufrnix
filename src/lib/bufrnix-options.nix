@@ -1333,6 +1333,12 @@ with lib; {
             description = "The betterproto package to use";
           };
 
+          pydantic = mkOption {
+            type = types.bool;
+            default = false;
+            description = "Enable Pydantic dataclasses for validation support";
+          };
+
           options = mkOption {
             type = types.listOf types.str;
             default = [];
