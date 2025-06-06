@@ -384,10 +384,9 @@ debug = {
 
 ## Performance Notes
 
-- Nix caching significantly improves rebuild times
+- Nix caching significantly improves rebuild times (for inclusion in devShells)
 - Parallel code generation across languages and plugins
 - Content-addressed storage prevents redundant work
-- Local execution typically 60x faster than remote alternatives
 
 ---
 
@@ -398,7 +397,7 @@ debug = {
 nix develop      # Enter development environment
 nix run          # Generate protobuf code
 nix fmt          # Format all files
-lint             # Run Nix linting
+lint             # Run Nix linting (or `nix develop -c lint`)
 ./test-examples.sh   # Comprehensive test suite
 ./check-examples.sh  # Quick validation
 ```
