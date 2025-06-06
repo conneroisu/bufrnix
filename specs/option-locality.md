@@ -1,3 +1,1 @@
-Collect options for each language from their src/languages/**/options.nix. 
-
-
+Collect options for each language from their src/languages/\*\*/options.nix.

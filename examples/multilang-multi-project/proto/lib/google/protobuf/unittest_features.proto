@@ -11,12 +11,18 @@ package pb;
 
 import "google/protobuf/descriptor.proto";
 
-extend google.protobuf.FeatureSet { TestFeatures test = 9999; }
+extend google.protobuf.FeatureSet {
+  TestFeatures test = 9999;
+}
 
 message TestMessage {
-  extend google.protobuf.FeatureSet { TestFeatures test_message = 9998; }
+  extend google.protobuf.FeatureSet {
+    TestFeatures test_message = 9998;
+  }
   message Nested {
-    extend google.protobuf.FeatureSet { TestFeatures test_nested = 9997; }
+    extend google.protobuf.FeatureSet {
+      TestFeatures test_nested = 9997;
+    }
   }
 }
 
@@ -42,23 +48,22 @@ enum EnumFeature {
 enum ValueLifetimeFeature {
   TEST_VALUE_LIFETIME_UNKNOWN = 0;
   VALUE_LIFETIME_INHERITED = 1;
-  VALUE_LIFETIME_SUPPORT = 2 [ feature_support = {
-    edition_introduced : EDITION_99997_TEST_ONLY
-    edition_deprecated : EDITION_99998_TEST_ONLY
-    deprecation_warning : "Custom feature deprecation warning"
-    edition_removed : EDITION_99999_TEST_ONLY
-  } ];
-  VALUE_LIFETIME_EMPTY_SUPPORT = 3 [ feature_support = {} ];
-  VALUE_LIFETIME_FUTURE = 4
-      [ feature_support.edition_introduced = EDITION_99997_TEST_ONLY ];
-  VALUE_LIFETIME_DEPRECATED = 5 [ feature_support = {
-    edition_deprecated : EDITION_99997_TEST_ONLY
-    deprecation_warning : "Custom feature deprecation warning"
-  } ];
-  VALUE_LIFETIME_REMOVED = 6 [ feature_support = {
-    edition_deprecated : EDITION_2023
-    edition_removed : EDITION_99997_TEST_ONLY
-  } ];
+  VALUE_LIFETIME_SUPPORT = 2 [feature_support = {
+    edition_introduced: EDITION_99997_TEST_ONLY
+    edition_deprecated: EDITION_99998_TEST_ONLY
+    deprecation_warning: "Custom feature deprecation warning"
+    edition_removed: EDITION_99999_TEST_ONLY
+  }];
+  VALUE_LIFETIME_EMPTY_SUPPORT = 3 [feature_support = {}];
+  VALUE_LIFETIME_FUTURE = 4 [feature_support.edition_introduced = EDITION_99997_TEST_ONLY];
+  VALUE_LIFETIME_DEPRECATED = 5 [feature_support = {
+    edition_deprecated: EDITION_99997_TEST_ONLY
+    deprecation_warning: "Custom feature deprecation warning"
+  }];
+  VALUE_LIFETIME_REMOVED = 6 [feature_support = {
+    edition_deprecated: EDITION_2023
+    edition_removed: EDITION_99997_TEST_ONLY
+  }];
 }
 
 message TestFeatures {
@@ -66,59 +71,98 @@ message TestFeatures {
     retention = RETENTION_RUNTIME,
     targets = TARGET_TYPE_FILE,
     feature_support.edition_introduced = EDITION_2023,
-    edition_defaults = {edition : EDITION_LEGACY value : "VALUE1"},
-    edition_defaults = {edition : EDITION_PROTO3 value : "VALUE2"},
-    edition_defaults = {edition : EDITION_2023 value : "VALUE3"},
-    edition_defaults = {edition : EDITION_99997_TEST_ONLY value : "VALUE4"},
-    edition_defaults = {edition : EDITION_99998_TEST_ONLY value : "VALUE5"}
+    edition_defaults = {
+      edition: EDITION_LEGACY
+      value: "VALUE1"
+    },
+    edition_defaults = {
+      edition: EDITION_PROTO3
+      value: "VALUE2"
+    },
+    edition_defaults = {
+      edition: EDITION_2023
+      value: "VALUE3"
+    },
+    edition_defaults = {
+      edition: EDITION_99997_TEST_ONLY
+      value: "VALUE4"
+    },
+    edition_defaults = {
+      edition: EDITION_99998_TEST_ONLY
+      value: "VALUE5"
+    }
   ];
   EnumFeature extension_range_feature = 2 [
     retention = RETENTION_RUNTIME,
     targets = TARGET_TYPE_EXTENSION_RANGE,
     feature_support.edition_introduced = EDITION_2023,
-    edition_defaults = {edition : EDITION_LEGACY value : "VALUE1"}
+    edition_defaults = {
+      edition: EDITION_LEGACY
+      value: "VALUE1"
+    }
   ];
   EnumFeature message_feature = 3 [
     retention = RETENTION_RUNTIME,
     targets = TARGET_TYPE_MESSAGE,
     feature_support.edition_introduced = EDITION_2023,
-    edition_defaults = {edition : EDITION_LEGACY value : "VALUE1"}
+    edition_defaults = {
+      edition: EDITION_LEGACY
+      value: "VALUE1"
+    }
   ];
   EnumFeature field_feature = 4 [
     retention = RETENTION_RUNTIME,
     targets = TARGET_TYPE_FIELD,
     feature_support.edition_introduced = EDITION_2023,
-    edition_defaults = {edition : EDITION_LEGACY value : "VALUE1"}
+    edition_defaults = {
+      edition: EDITION_LEGACY
+      value: "VALUE1"
+    }
   ];
   EnumFeature oneof_feature = 5 [
     retention = RETENTION_RUNTIME,
     targets = TARGET_TYPE_ONEOF,
     feature_support.edition_introduced = EDITION_2023,
-    edition_defaults = {edition : EDITION_LEGACY value : "VALUE1"}
+    edition_defaults = {
+      edition: EDITION_LEGACY
+      value: "VALUE1"
+    }
   ];
   EnumFeature enum_feature = 6 [
     retention = RETENTION_RUNTIME,
     targets = TARGET_TYPE_ENUM,
     feature_support.edition_introduced = EDITION_2023,
-    edition_defaults = {edition : EDITION_LEGACY value : "VALUE1"}
+    edition_defaults = {
+      edition: EDITION_LEGACY
+      value: "VALUE1"
+    }
   ];
   EnumFeature enum_entry_feature = 7 [
     retention = RETENTION_RUNTIME,
     targets = TARGET_TYPE_ENUM_ENTRY,
     feature_support.edition_introduced = EDITION_2023,
-    edition_defaults = {edition : EDITION_LEGACY value : "VALUE1"}
+    edition_defaults = {
+      edition: EDITION_LEGACY
+      value: "VALUE1"
+    }
   ];
   EnumFeature service_feature = 8 [
     retention = RETENTION_RUNTIME,
     targets = TARGET_TYPE_SERVICE,
     feature_support.edition_introduced = EDITION_2023,
-    edition_defaults = {edition : EDITION_LEGACY value : "VALUE1"}
+    edition_defaults = {
+      edition: EDITION_LEGACY
+      value: "VALUE1"
+    }
   ];
   EnumFeature method_feature = 9 [
     retention = RETENTION_RUNTIME,
     targets = TARGET_TYPE_METHOD,
     feature_support.edition_introduced = EDITION_2023,
-    edition_defaults = {edition : EDITION_LEGACY value : "VALUE1"}
+    edition_defaults = {
+      edition: EDITION_LEGACY
+      value: "VALUE1"
+    }
   ];
   EnumFeature multiple_feature = 10 [
     retention = RETENTION_RUNTIME,
@@ -132,15 +176,24 @@ message TestFeatures {
     targets = TARGET_TYPE_ONEOF,
     targets = TARGET_TYPE_EXTENSION_RANGE,
     feature_support.edition_introduced = EDITION_2023,
-    edition_defaults = {edition : EDITION_LEGACY value : "VALUE1"}
+    edition_defaults = {
+      edition: EDITION_LEGACY
+      value: "VALUE1"
+    }
   ];
 
   bool bool_field_feature = 11 [
     retention = RETENTION_RUNTIME,
     targets = TARGET_TYPE_FIELD,
     feature_support.edition_introduced = EDITION_2023,
-    edition_defaults = {edition : EDITION_LEGACY value : "false"},
-    edition_defaults = {edition : EDITION_99997_TEST_ONLY value : "true"}
+    edition_defaults = {
+      edition: EDITION_LEGACY
+      value: "false"
+    },
+    edition_defaults = {
+      edition: EDITION_99997_TEST_ONLY
+      value: "true"
+    }
   ];
 
   EnumFeature source_feature = 15 [
@@ -155,7 +208,10 @@ message TestFeatures {
     targets = TARGET_TYPE_ONEOF,
     targets = TARGET_TYPE_EXTENSION_RANGE,
     feature_support.edition_introduced = EDITION_2023,
-    edition_defaults = {edition : EDITION_LEGACY value : "VALUE1"}
+    edition_defaults = {
+      edition: EDITION_LEGACY
+      value: "VALUE1"
+    }
   ];
 
   EnumFeature source_feature2 = 16 [
@@ -170,7 +226,10 @@ message TestFeatures {
     targets = TARGET_TYPE_ONEOF,
     targets = TARGET_TYPE_EXTENSION_RANGE,
     feature_support.edition_introduced = EDITION_2023,
-    edition_defaults = {edition : EDITION_LEGACY value : "VALUE1"}
+    edition_defaults = {
+      edition: EDITION_LEGACY
+      value: "VALUE1"
+    }
   ];
 
   EnumFeature removed_feature = 17 [
@@ -178,23 +237,38 @@ message TestFeatures {
     targets = TARGET_TYPE_FILE,
     targets = TARGET_TYPE_FIELD,
     feature_support = {
-      edition_introduced : EDITION_2023
-      edition_deprecated : EDITION_2023
-      deprecation_warning : "Custom feature deprecation warning"
-      edition_removed : EDITION_2024
+      edition_introduced: EDITION_2023
+      edition_deprecated: EDITION_2023
+      deprecation_warning: "Custom feature deprecation warning"
+      edition_removed: EDITION_2024
     },
-    edition_defaults = {edition : EDITION_LEGACY value : "VALUE1"},
-    edition_defaults = {edition : EDITION_2023 value : "VALUE2"},
-    edition_defaults = {edition : EDITION_2024 value : "VALUE3"}
+    edition_defaults = {
+      edition: EDITION_LEGACY
+      value: "VALUE1"
+    },
+    edition_defaults = {
+      edition: EDITION_2023
+      value: "VALUE2"
+    },
+    edition_defaults = {
+      edition: EDITION_2024
+      value: "VALUE3"
+    }
   ];
 
   EnumFeature future_feature = 18 [
     retention = RETENTION_RUNTIME,
     targets = TARGET_TYPE_FILE,
     targets = TARGET_TYPE_FIELD,
-    feature_support = {edition_introduced : EDITION_2024},
-    edition_defaults = {edition : EDITION_LEGACY value : "VALUE1"},
-    edition_defaults = {edition : EDITION_2024 value : "VALUE2"}
+    feature_support = {edition_introduced: EDITION_2024},
+    edition_defaults = {
+      edition: EDITION_LEGACY
+      value: "VALUE1"
+    },
+    edition_defaults = {
+      edition: EDITION_2024
+      value: "VALUE2"
+    }
   ];
 
   EnumFeature legacy_feature = 19 [
@@ -202,32 +276,41 @@ message TestFeatures {
     targets = TARGET_TYPE_FILE,
     targets = TARGET_TYPE_FIELD,
     feature_support = {
-      edition_introduced : EDITION_PROTO3
-      edition_removed : EDITION_2023
+      edition_introduced: EDITION_PROTO3
+      edition_removed: EDITION_2023
     },
-    edition_defaults = {edition : EDITION_LEGACY value : "VALUE1"},
-    edition_defaults = {edition : EDITION_2023 value : "VALUE2"}
+    edition_defaults = {
+      edition: EDITION_LEGACY
+      value: "VALUE1"
+    },
+    edition_defaults = {
+      edition: EDITION_2023
+      value: "VALUE2"
+    }
   ];
 
   ValueLifetimeFeature value_lifetime_feature = 20 [
     retention = RETENTION_RUNTIME,
     targets = TARGET_TYPE_FILE,
     feature_support = {
-      edition_introduced : EDITION_2023
-      edition_deprecated : EDITION_99998_TEST_ONLY
-      deprecation_warning : "Custom feature deprecation warning"
-      edition_removed : EDITION_99999_TEST_ONLY
+      edition_introduced: EDITION_2023
+      edition_deprecated: EDITION_99998_TEST_ONLY
+      deprecation_warning: "Custom feature deprecation warning"
+      edition_removed: EDITION_99999_TEST_ONLY
     },
     edition_defaults = {
-      edition : EDITION_LEGACY
-      value : "VALUE_LIFETIME_INHERITED"
+      edition: EDITION_LEGACY
+      value: "VALUE_LIFETIME_INHERITED"
     },
     // Verify edition defaults can use future values.
-    edition_defaults = {edition : EDITION_2023 value : "VALUE_LIFETIME_FUTURE"},
+    edition_defaults = {
+      edition: EDITION_2023
+      value: "VALUE_LIFETIME_FUTURE"
+    },
     // Verify edition defaults can use removed values.
     edition_defaults = {
-      edition : EDITION_99999_TEST_ONLY
-      value : "VALUE_LIFETIME_FUTURE"
+      edition: EDITION_99999_TEST_ONLY
+      value: "VALUE_LIFETIME_FUTURE"
     }
   ];
 }

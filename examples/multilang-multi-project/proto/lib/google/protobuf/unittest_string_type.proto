@@ -11,4 +11,6 @@ package proto2_unittest;
 
 import "google/protobuf/cpp_features.proto";
 
-message EntryProto { bytes value = 3 [ features.(pb.cpp).string_type = CORD ]; }
+message EntryProto {
+  bytes value = 3 [features.(pb.cpp).string_type = CORD];
+}

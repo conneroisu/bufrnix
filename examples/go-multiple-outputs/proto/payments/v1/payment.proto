@@ -2,42 +2,42 @@ syntax = "proto3";
 
 package payments.v1;
 
-option go_package = "github.com/example/proto/payments/v1;paymentsv1";
-
 import "google/protobuf/timestamp.proto";
+
+option go_package = "github.com/example/proto/payments/v1;paymentsv1";
 
 // Payment represents a payment transaction
 message Payment {
   // Unique identifier for the payment
   string id = 1;
-  
+
   // Order ID this payment is for
   string order_id = 2;
-  
+
   // Customer ID who made the payment
   string customer_id = 3;
-  
+
   // Payment amount in cents
   int64 amount_cents = 4;
-  
+
   // Currency code (e.g., USD, EUR)
   string currency = 5;
-  
+
   // Payment method used
   PaymentMethod method = 6;
-  
+
   // Payment status
   PaymentStatus status = 7;
-  
+
   // Payment processor transaction ID
   string processor_transaction_id = 8;
-  
+
   // Payment creation timestamp
   google.protobuf.Timestamp created_at = 9;
-  
+
   // Payment processing timestamp
   google.protobuf.Timestamp processed_at = 10;
-  
+
   // Additional metadata
   map<string, string> metadata = 11;
 }
@@ -46,13 +46,13 @@ message Payment {
 message PaymentMethod {
   // Type of payment method
   PaymentMethodType type = 1;
-  
+
   // Card details (if type is CARD)
   CardDetails card = 2;
-  
+
   // Bank account details (if type is BANK_TRANSFER)
   BankAccountDetails bank_account = 3;
-  
+
   // Digital wallet details (if type is DIGITAL_WALLET)
   DigitalWalletDetails digital_wallet = 4;
 }
@@ -61,16 +61,16 @@ message PaymentMethod {
 message CardDetails {
   // Last 4 digits of the card
   string last_four = 1;
-  
+
   // Card brand (e.g., VISA, MASTERCARD)
   string brand = 2;
-  
+
   // Expiration month
   int32 exp_month = 3;
-  
+
   // Expiration year
   int32 exp_year = 4;
-  
+
   // Cardholder name
   string cardholder_name = 5;
 }
@@ -79,13 +79,13 @@ message CardDetails {
 message BankAccountDetails {
   // Bank name
   string bank_name = 1;
-  
+
   // Account holder name
   string account_holder_name = 2;
-  
+
   // Last 4 digits of account number
   string account_last_four = 3;
-  
+
   // Routing number (masked)
   string routing_number_masked = 4;
 }
@@ -94,7 +94,7 @@ message BankAccountDetails {
 message DigitalWalletDetails {
   // Wallet provider (e.g., PAYPAL, APPLE_PAY, GOOGLE_PAY)
   string provider = 1;
-  
+
   // Wallet account identifier (masked)
   string account_id_masked = 2;
 }
@@ -125,19 +125,19 @@ enum PaymentStatus {
 service PaymentService {
   // Process a new payment
   rpc ProcessPayment(ProcessPaymentRequest) returns (ProcessPaymentResponse);
-  
+
   // Get a payment by ID
   rpc GetPayment(GetPaymentRequest) returns (GetPaymentResponse);
-  
+
   // Capture an authorized payment
   rpc CapturePayment(CapturePaymentRequest) returns (CapturePaymentResponse);
-  
+
   // Refund a payment (full or partial)
   rpc RefundPayment(RefundPaymentRequest) returns (RefundPaymentResponse);
-  
+
   // List payments with pagination and filtering
   rpc ListPayments(ListPaymentsRequest) returns (ListPaymentsResponse);
-  
+
   // Get payment status
   rpc GetPaymentStatus(GetPaymentStatusRequest) returns (GetPaymentStatusResponse);
 }

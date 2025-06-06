@@ -18,7 +18,7 @@ The key difference from standard betterproto is the `pydantic = true` option:
 languages.python = {
   enable = true;
   outputPath = "proto/gen/python";
-  
+
   betterproto = {
     enable = true;
     pydantic = true;  # Enable Pydantic dataclasses

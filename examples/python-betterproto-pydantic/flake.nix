@@ -45,8 +45,8 @@
           python3Packages.betterproto
           python3Packages.pydantic # Required for Pydantic dataclasses
           python3Packages.grpclib # betterproto uses grpclib instead of grpcio
-          python3Packages.black   # Required for betterproto compiler
-          python3Packages.isort   # Required for betterproto compiler
+          python3Packages.black # Required for betterproto compiler
+          python3Packages.isort # Required for betterproto compiler
           protobuf
         ];
 
@@ -60,7 +60,7 @@
           echo "Note: Betterproto with Pydantic generates validated dataclasses"
           echo "      with async support, cleaner API, and data validation"
           echo ""
-          
+
           # Add the bufrnix package to PATH
           export PATH="${bufrnixConfig}/bin:$PATH"
         '';

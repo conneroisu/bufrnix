@@ -17,7 +17,7 @@ To enable Scala code generation, add the following to your `flake.nix`:
 ```nix
 protoGen = bufrnix.lib.mkBufrnixPackage {
   inherit pkgs;
-  
+
   config = {
     root = ./proto;
     languages = {
@@ -33,21 +33,21 @@ protoGen = bufrnix.lib.mkBufrnixPackage {
 
 ### Basic Options
 
-| Option | Type | Default | Description |
-|--------|------|---------|-------------|
-| `enable` | boolean | `false` | Enable Scala code generation |
-| `package` | package | `pkgs.scalapb` | The ScalaPB package to use |
-| `outputPath` | string | `"gen/scala"` | Output directory for generated Scala code |
-| `options` | list of strings | `[]` | Options to pass to ScalaPB |
-| `scalaVersion` | string | `"3.3.3"` | Scala version for generated build file |
-| `scalapbVersion` | string | `"1.0.0-alpha.1"` | ScalaPB version |
-| `sbtVersion` | string | `"1.10.5"` | SBT version for generated build file |
-| `sbtProtocVersion` | string | `"1.0.7"` | sbt-protoc plugin version |
-| `projectName` | string | `"generated-protos"` | Project name for generated build file |
-| `projectVersion` | string | `"0.1.0"` | Project version for generated build file |
-| `organization` | string | `"com.example"` | Organization for generated build file |
-| `generateBuildFile` | boolean | `false` | Generate build.sbt file |
-| `generatePackageObject` | boolean | `false` | Generate package objects for proto packages |
+| Option                  | Type            | Default              | Description                                 |
+| ----------------------- | --------------- | -------------------- | ------------------------------------------- |
+| `enable`                | boolean         | `false`              | Enable Scala code generation                |
+| `package`               | package         | `pkgs.scalapb`       | The ScalaPB package to use                  |
+| `outputPath`            | string          | `"gen/scala"`        | Output directory for generated Scala code   |
+| `options`               | list of strings | `[]`                 | Options to pass to ScalaPB                  |
+| `scalaVersion`          | string          | `"3.3.3"`            | Scala version for generated build file      |
+| `scalapbVersion`        | string          | `"1.0.0-alpha.1"`    | ScalaPB version                             |
+| `sbtVersion`            | string          | `"1.10.5"`           | SBT version for generated build file        |
+| `sbtProtocVersion`      | string          | `"1.0.7"`            | sbt-protoc plugin version                   |
+| `projectName`           | string          | `"generated-protos"` | Project name for generated build file       |
+| `projectVersion`        | string          | `"0.1.0"`            | Project version for generated build file    |
+| `organization`          | string          | `"com.example"`      | Organization for generated build file       |
+| `generateBuildFile`     | boolean         | `false`              | Generate build.sbt file                     |
+| `generatePackageObject` | boolean         | `false`              | Generate package objects for proto packages |
 
 ### gRPC Support
 
@@ -106,6 +106,7 @@ scala = {
 ```
 
 Common ScalaPB options:
+
 - `flat_package` - Don't append file name to package
 - `java_conversions` - Generate converters to/from Java protos
 - `grpc` - Generate gRPC service stubs (also available via `grpc.enable`)
@@ -128,6 +129,7 @@ scala = {
 ```
 
 This generates:
+
 - `build.sbt` - Main build file with ScalaPB dependencies
 - `project/plugins.sbt` - SBT plugins including sbt-protoc
 - `project/build.properties` - SBT version configuration
@@ -243,11 +245,13 @@ devShells.default = pkgs.mkShell {
 ### Common Issues
 
 1. **Missing Dependencies**: Ensure your build.sbt includes the ScalaPB runtime:
+
    ```scala
    libraryDependencies += "com.thesamet.scalapb" %% "scalapb-runtime" % scalapb.compiler.Version.scalapbVersion % "protobuf"
    ```
 
 2. **Import Errors**: Make sure the generated code directory is added to your source paths:
+
    ```scala
    Compile / sourceDirectories += file("gen/scala")
    ```

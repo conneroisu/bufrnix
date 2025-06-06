@@ -14,18 +14,21 @@ This example demonstrates Bufrnix's **multiple output paths** feature, which all
 This example shows how to configure multiple output paths for different languages:
 
 **Go Language** - Four different output locations:
+
 - `gen/go` - Main generated code location
 - `pkg/shared/proto` - Shared package for internal use
 - `vendor/proto` - Vendor directory for dependencies
 - `services/common/proto` - Common location for microservices
 
 **JavaScript/TypeScript** - Four different output locations:
+
 - `packages/frontend/src/proto` - Frontend package
 - `packages/backend/src/proto` - Backend package
 - `packages/shared/proto` - Shared utilities
 - `dist/npm-package/proto` - Distribution package for npm
 
 **Python** - Four different output locations:
+
 - `gen/python` - Main development location
 - `src/mypackage/proto` - Package source location
 - `dist/mypackage/proto` - Distribution package
@@ -34,6 +37,7 @@ This example shows how to configure multiple output paths for different language
 ### 🔧 Plugin Support
 
 Each language demonstrates multiple output paths working with various plugins:
+
 - **Go**: Basic protobuf + gRPC + validation
 - **JavaScript**: ES modules + Connect-ES for modern RPC
 - **Python**: Basic protobuf + gRPC + type stubs (.pyi files)
@@ -89,7 +93,7 @@ ls pkg/shared/proto/example/v1/         # Shared package
 ls vendor/proto/example/v1/             # Vendor directory
 ls services/common/proto/example/v1/    # Microservices common
 
-# Check JavaScript outputs  
+# Check JavaScript outputs
 ls packages/frontend/src/proto/example/v1/
 ls packages/backend/src/proto/example/v1/
 ls packages/shared/proto/example/v1/
@@ -116,7 +120,7 @@ outputPath = "gen/go";
 outputPath = [
   "gen/go"
   "pkg/shared/proto"
-  "vendor/proto" 
+  "vendor/proto"
   "services/common/proto"
 ];
 ```
@@ -124,6 +128,7 @@ outputPath = [
 ### Language-Specific Examples
 
 **Go with Multiple gRPC Outputs:**
+
 ```nix
 go = {
   enable = true;
@@ -136,6 +141,7 @@ go = {
 ```
 
 **JavaScript with Module Distribution:**
+
 ```nix
 js = {
   enable = true;
@@ -155,16 +161,18 @@ js = {
 ## Real-World Use Cases
 
 ### 1. **Microservices Architecture**
+
 ```nix
 outputPath = [
   "services/user/proto"     # User service
-  "services/order/proto"    # Order service  
+  "services/order/proto"    # Order service
   "services/inventory/proto" # Inventory service
   "pkg/common/proto"        # Shared definitions
 ];
 ```
 
 ### 2. **Multi-Package Monorepo**
+
 ```nix
 outputPath = [
   "packages/core/src/proto"     # Core package
@@ -175,6 +183,7 @@ outputPath = [
 ```
 
 ### 3. **Development + Distribution**
+
 ```nix
 outputPath = [
   "src/proto"                   # Development location
@@ -187,6 +196,7 @@ outputPath = [
 ## Advanced Features
 
 ### Debug Mode
+
 The example enables debug mode to show detailed generation information:
 
 ```nix
@@ -197,6 +207,7 @@ debug = {
 ```
 
 ### Backward Compatibility
+
 The multiple output paths feature is fully backward compatible. Existing single-path configurations continue to work:
 
 ```nix
@@ -207,7 +218,7 @@ outputPath = "gen/go";
 ## Benefits
 
 1. **🔄 Code Reuse**: Generate the same protobuf code to multiple locations without duplication
-2. **📦 Multi-Module Support**: Support complex project structures with multiple modules  
+2. **📦 Multi-Module Support**: Support complex project structures with multiple modules
 3. **🚀 Distribution Flexibility**: Generate code for both development and distribution simultaneously
 4. **🏗️ Microservices Architecture**: Easily share proto definitions across multiple services
 5. **📚 Vendor Management**: Generate to both local and vendor directories

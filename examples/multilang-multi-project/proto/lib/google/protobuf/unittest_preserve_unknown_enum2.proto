@@ -23,8 +23,7 @@ enum MyEnum {
 message MyMessage {
   MyEnum e = 1;
   repeated MyEnum repeated_e = 2;
-  repeated MyEnum repeated_packed_e = 3
-      [ features.repeated_field_encoding = PACKED ];
+  repeated MyEnum repeated_packed_e = 3 [features.repeated_field_encoding = PACKED];
   repeated MyEnum repeated_packed_unexpected_e = 4; // not packed
   oneof o {
     MyEnum oneof_e_1 = 5;

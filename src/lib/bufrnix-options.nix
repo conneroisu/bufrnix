@@ -1877,7 +1877,7 @@ with lib; {
           };
         };
       };
-      
+
       # Scala language options
       scala = {
         enable = mkOption {
@@ -1885,13 +1885,13 @@ with lib; {
           default = false;
           description = "Enable Scala code generation";
         };
-        
+
         package = mkOption {
           type = types.package;
           defaultText = literalExpression "pkgs.scalapb";
           description = "The ScalaPB package to use";
         };
-        
+
         outputPath = mkOption {
           type = types.either types.str (types.listOf types.str);
           default = "gen/scala";
@@ -1903,67 +1903,67 @@ with lib; {
             ]
           '';
         };
-        
+
         options = mkOption {
           type = types.listOf types.str;
           default = [];
           description = "Options to pass to ScalaPB";
         };
-        
+
         scalaVersion = mkOption {
           type = types.str;
           default = "3.3.3";
           description = "Scala version for generated build file";
         };
-        
+
         scalapbVersion = mkOption {
           type = types.str;
           default = "1.0.0-alpha.1";
           description = "ScalaPB version";
         };
-        
+
         sbtVersion = mkOption {
           type = types.str;
           default = "1.10.5";
           description = "SBT version for generated build file";
         };
-        
+
         sbtProtocVersion = mkOption {
           type = types.str;
           default = "1.0.7";
           description = "sbt-protoc plugin version";
         };
-        
+
         projectName = mkOption {
           type = types.str;
           default = "generated-protos";
           description = "Project name for generated build file";
         };
-        
+
         projectVersion = mkOption {
           type = types.str;
           default = "0.1.0";
           description = "Project version for generated build file";
         };
-        
+
         organization = mkOption {
           type = types.str;
           default = "com.example";
           description = "Organization for generated build file";
         };
-        
+
         generateBuildFile = mkOption {
           type = types.bool;
           default = false;
           description = "Generate build.sbt file";
         };
-        
+
         generatePackageObject = mkOption {
           type = types.bool;
           default = false;
           description = "Generate package objects for proto packages";
         };
-        
+
         # gRPC support
         grpc = {
           enable = mkOption {
@@ -1971,14 +1971,14 @@ with lib; {
             default = false;
             description = "Enable gRPC code generation for Scala";
           };
-          
+
           options = mkOption {
             type = types.listOf types.str;
             default = [];
             description = "Additional options for gRPC generation";
           };
         };
-        
+
         # JSON support
         json = {
           enable = mkOption {
@@ -1986,14 +1986,14 @@ with lib; {
             default = false;
             description = "Enable JSON serialization support";
           };
-          
+
           json4sVersion = mkOption {
             type = types.str;
             default = "0.7.0";
             description = "scalapb-json4s version";
           };
         };
-        
+
         # Validation support
         validate = {
           enable = mkOption {

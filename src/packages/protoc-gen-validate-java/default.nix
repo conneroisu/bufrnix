@@ -12,7 +12,7 @@ pkgs.writeShellScriptBin "protoc-gen-validate-java" ''
   # The actual validation code generation should be handled by
   # including the protovalidate-java runtime library in the Java project
   # and using standard protobuf generation with validation annotations
-  
+
   # For now, we just pass through to standard Java generation
   exec ${pkgs.protobuf}/bin/protoc --java_out="$@"
 ''

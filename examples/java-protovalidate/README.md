@@ -15,24 +15,28 @@ This example demonstrates Java validation using bufrnix with the `bufbuild/proto
 This example showcases various validation constraints defined in the proto file:
 
 ### Field-Level Validations
+
 - **ID validation**: Must be greater than 0
 - **String constraints**: Name length 1-50 characters, email pattern validation
-- **Numeric ranges**: Age between 0-150, Score 0.0-100.0  
+- **Numeric ranges**: Age between 0-150, Score 0.0-100.0
 - **Collection rules**: Phone numbers 1-3 items with uniqueness constraint
 - **Optional field validation**: Website URL pattern validation
 
 ### Message-Level Validations
+
 - **Custom CEL expressions**: UserProfile requires either bio OR website
 - **Cross-field validation**: Complex business logic validation using CEL
 
 ## Architecture
 
 This example uses bufrnix to generate:
+
 - Standard Java protobuf classes with validation annotations
 - Gradle build configuration with protovalidate-java dependency
 - Maven POM.xml as an alternative build option
 
 The validation approach:
+
 - **Code generation**: bufrnix generates standard Java protobuf classes
 - **Runtime validation**: `protovalidate-java` library validates messages at runtime
 - **CEL expressions**: Complex validation logic using Common Expression Language
@@ -40,12 +44,14 @@ The validation approach:
 ## Quick Start
 
 1. **Generate the protobuf code using bufrnix:**
+
    ```bash
    nix build
    ./result/bin/bufrnix
    ```
 
 2. **Enter development environment and build:**
+
    ```bash
    nix develop
    cd gen/java
@@ -67,7 +73,8 @@ The validation approach:
 ⚠️ **API Documentation Needed**: The protovalidate-java 0.9.0 library has a different API than documented in older examples. The basic protobuf functionality with validation constraints works perfectly.
 
 This example demonstrates that bufrnix properly:
-- Generates Java classes from .proto files with buf.validate constraints  
+
+- Generates Java classes from .proto files with buf.validate constraints
 - Creates proper build configurations with compatible dependency versions (protobuf-java:4.31.1, protovalidate:0.9.0)
 - Produces working protobuf message builders and accessors
 - Includes all buf.validate constraint classes for runtime validation
@@ -75,6 +82,7 @@ This example demonstrates that bufrnix properly:
 ## Validation Library
 
 This example uses the `protovalidate-java` runtime library which provides:
+
 - `Validator` class for validating protobuf messages against buf.validate constraints
 - `ValidationException` with detailed violation information including field paths
 - Support for all standard constraint types (string, numeric, repeated, etc.)
@@ -83,10 +91,11 @@ This example uses the `protovalidate-java` runtime library which provides:
 ## Example Output
 
 The validation example tests various scenarios:
+
 - ✅ Valid user with all constraints satisfied
 - ❌ Invalid users with specific constraint violations:
   - Empty name (string.min_len violation)
-  - Invalid email format (string.pattern violation) 
+  - Invalid email format (string.pattern violation)
   - Age out of range (int32.lte violation)
   - Too many phone numbers (repeated.max_items violation)
   - Duplicate phone numbers (repeated.unique violation)
@@ -95,6 +104,7 @@ The validation example tests various scenarios:
 ## Generated Files
 
 Bufrnix generates the following in `gen/java/`:
+
 - **Java protobuf classes**: Standard protobuf message classes
 - **build.gradle**: Gradle build configuration with protovalidate dependency
 - **pom.xml**: Maven alternative build configuration
@@ -103,12 +113,14 @@ Bufrnix generates the following in `gen/java/`:
 ## Dependencies
 
 The generated build files automatically include:
+
 - `com.google.protobuf:protobuf-java:4.30.2` - Protocol Buffers runtime
 - `build.buf:protovalidate:0.1.8` - Protovalidate Java runtime library
 
 ## Constraint Types
 
 The example demonstrates these validation constraint types:
+
 - **String**: `min_len`, `max_len`, `pattern` (regex validation)
 - **Numeric**: `gt`, `gte`, `lt`, `lte` for range validation
 - **Repeated**: `min_items`, `max_items`, `unique` for collection validation

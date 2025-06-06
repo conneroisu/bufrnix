@@ -1,61 +1,63 @@
 syntax = "proto3";
 package realtime.v1;
-// External
-import "google/api/field_behavior.proto";
-import "gateway/protoc-gen-openapiv2/annotations.proto";
-import "google/api/annotations.proto";
-
-option go_package = "github.com/conneroisu/bufrnix/examples/multilang-multi-project/proto/gen/go/api/v1;api";
 
 // Internal
 import "api/v1/api-tools.proto";
+import "gateway/protoc-gen-openapiv2/annotations.proto";
+import "google/api/annotations.proto";
+// External
+import "google/api/field_behavior.proto";
 
+option go_package = "github.com/conneroisu/bufrnix/examples/multilang-multi-project/proto/gen/go/api/v1;api";
 option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_swagger) = {
-  info : {
-    title : "Pegwings REALTIME API"
-    version : "1.0.0"
-    description : "# Pegwings API\n\nThis is the REALTIME API for the Pegwings "
-                  "Platform.\n\n## Authorization\n\nYou can authorize using "
-                  "the following methods:\n\n- **ApiKeyAuth** - API Key\n\n- "
-                  "**OAuth2** - OAuth 2.0\n\n\n"
-    contact : {
-      name : "Conner Ohnsorge"
-      url : "https://github.com/pegwings"
-      email : "conneroisu@outlook.com"
+  info: {
+    title: "Pegwings REALTIME API"
+    version: "1.0.0"
+    description:
+      "# Pegwings API\n\nThis is the REALTIME API for the Pegwings "
+      "Platform.\n\n## Authorization\n\nYou can authorize using "
+      "the following methods:\n\n- **ApiKeyAuth** - API Key\n\n- "
+      "**OAuth2** - OAuth 2.0\n\n\n"
+    contact: {
+      name: "Conner Ohnsorge"
+      url: "https://github.com/pegwings"
+      email: "conneroisu@outlook.com"
     }
   }
 };
 
 service RealtimeService {
   // RealtimeSessionCreate is the method for creating a realtime session.
-  rpc RealtimeSessionCreate(RealtimeSessionCreateRequest)
-      returns (RealtimeSessionCreateResponse) {
+  rpc RealtimeSessionCreate(RealtimeSessionCreateRequest) returns (RealtimeSessionCreateResponse) {
     option (google.api.http) = {
-      post : "/v1/realtime/sessions"
-      body : "*"
+      post: "/v1/realtime/sessions"
+      body: "*"
     };
     option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
-      tags : "realtime"
-      tags : "session"
-      tags : "create"
-      description : "Create a realtime session."
-      summary : "Create a realtime session."
-      external_docs : {
-        url : "https://docs.pegwings.com/v1/realtime/create-realtime-session"
-        description : "Find out more about Realtime Sessions"
+      tags: "realtime"
+      tags: "session"
+      tags: "create"
+      description: "Create a realtime session."
+      summary: "Create a realtime session."
+      external_docs: {
+        url: "https://docs.pegwings.com/v1/realtime/create-realtime-session"
+        description: "Find out more about Realtime Sessions"
       }
-      responses : {
-        key : "200"
-        value : {description : "A successful response."}
+      responses: {
+        key: "200"
+        value: {description: "A successful response."}
       }
-      security : {
-        security_requirement : {
-          key : "ApiKeyAuth"
-          value : {}
+      security: {
+        security_requirement: {
+          key: "ApiKeyAuth"
+          value: {}
         }
-        security_requirement : {
-          key : "OAuth2"
-          value : {scope : "read" scope : "write"}
+        security_requirement: {
+          key: "OAuth2"
+          value: {
+            scope: "read"
+            scope: "write"
+          }
         }
       }
     };
@@ -67,14 +69,19 @@ service RealtimeService {
 message RealtimeSessionCreateRequest {
   //
   option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_schema) = {
-    json_schema : {
-      title : "Realtime Session Create Request"
-      description : "The request message for the RealtimeSessionCreate method."
-      required : [ "model", "prompt", "temperature", "max_tokens" ]
+    json_schema: {
+      title: "Realtime Session Create Request"
+      description: "The request message for the RealtimeSessionCreate method."
+      required: [
+        "model",
+        "prompt",
+        "temperature",
+        "max_tokens"
+      ]
     }
-    external_docs : {
-      url : "https://docs.pegwings.com/api/realtime"
-      description : "Learn more about the Realtime API"
+    external_docs: {
+      url: "https://docs.pegwings.com/api/realtime"
+      description: "Learn more about the Realtime API"
     }
   };
 
@@ -82,9 +89,9 @@ message RealtimeSessionCreateRequest {
   string model = 1 [
     (google.api.field_behavior) = OPTIONAL,
     (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
-      description : "The name of the model to use for the session."
-      example : "\"k1\""
-      default : "k1"
+      description: "The name of the model to use for the session."
+      example: "\"k1\""
+      default: "k1"
     }
   ];
 
@@ -92,19 +99,21 @@ message RealtimeSessionCreateRequest {
   string instructions = 2 [
     (google.api.field_behavior) = OPTIONAL,
     (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
-      description : "The instructions/prompt to use for the session."
-      example : "\"You are a celebrity stylist. You are a very creative, but "
-                "like to play pranks on people.\""
+      description: "The instructions/prompt to use for the session."
+      example:
+        "\"You are a celebrity stylist. You are a very creative, but "
+        "like to play pranks on people.\""
     }
   ];
 
   repeated tools.v1.Tool tools = 3 [
     (google.api.field_behavior) = OPTIONAL,
     (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
-      description : "The list of tools to use for the session."
-      example : "[{\"type\":\"function\","
-                "\"function\":{\"name\":\"get_current_weather\", "
-                "\"arguments\":{\"location\":\"New York\"}}}]"
+      description: "The list of tools to use for the session."
+      example:
+        "[{\"type\":\"function\","
+        "\"function\":{\"name\":\"get_current_weather\", "
+        "\"arguments\":{\"location\":\"New York\"}}}]"
     }
   ];
 
@@ -112,9 +121,12 @@ message RealtimeSessionCreateRequest {
   string modality = 4 [
     (google.api.field_behavior) = OPTIONAL,
     (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
-      description : "The modality to use for the session."
-      example : "\"text\""
-      enum : [ "text", "audio" ]
+      description: "The modality to use for the session."
+      example: "\"text\""
+      enum: [
+        "text",
+        "audio"
+      ]
     }
   ];
 
@@ -122,8 +134,8 @@ message RealtimeSessionCreateRequest {
   string voice = 5 [
     (google.api.field_behavior) = OPTIONAL,
     (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
-      description : "The voice to use for the session."
-      example : "\"en-US-Wavenet-A\"" // TODO: add voices
+      description: "The voice to use for the session."
+      example: "\"en-US-Wavenet-A\"" // TODO: add voices
     }
   ];
 
@@ -133,9 +145,13 @@ message RealtimeSessionCreateRequest {
   string output_audio_format = 6 [
     (google.api.field_behavior) = OPTIONAL,
     (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
-      description : "The format of output audio."
-      example : "\"pcm16\""
-      enum : [ "pcm16", "g711_ulaw", "g711_alaw" ]
+      description: "The format of output audio."
+      example: "\"pcm16\""
+      enum: [
+        "pcm16",
+        "g711_ulaw",
+        "g711_alaw"
+      ]
     }
   ];
 
@@ -143,10 +159,11 @@ message RealtimeSessionCreateRequest {
   SessionTranscriber transcriber = 7 [
     (google.api.field_behavior) = OPTIONAL,
     (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
-      description : "The transcriber to use for the session."
-      example : "{\"model\":\"visper\",\"language\":\"en\",\"prompt\":\"You "
-                "are a celebrity stylist. You are a very creative, but like "
-                "to play pranks on people.\"}"
+      description: "The transcriber to use for the session."
+      example:
+        "{\"model\":\"visper\",\"language\":\"en\",\"prompt\":\"You "
+        "are a celebrity stylist. You are a very creative, but like "
+        "to play pranks on people.\"}"
     }
   ];
 
@@ -154,10 +171,11 @@ message RealtimeSessionCreateRequest {
   TurnDetection turn_detection = 8 [
     (google.api.field_behavior) = OPTIONAL,
     (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
-      description : "The turn detection to use for the session."
-      example : "{\"type\":\"server_vad\",\"threshold\":0.5,"
-                "\"prefix_padding_ms\":100,\"create_response\":true,"
-                "\"interrupt_response\":true}"
+      description: "The turn detection to use for the session."
+      example:
+        "{\"type\":\"server_vad\",\"threshold\":0.5,"
+        "\"prefix_padding_ms\":100,\"create_response\":true,"
+        "\"interrupt_response\":true}"
     }
   ];
 
@@ -165,8 +183,8 @@ message RealtimeSessionCreateRequest {
   float temperature = 9 [
     (google.api.field_behavior) = OPTIONAL,
     (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
-      description : "The temperature to use for the session."
-      example : "0.5"
+      description: "The temperature to use for the session."
+      example: "0.5"
     }
   ];
 
@@ -175,9 +193,10 @@ message RealtimeSessionCreateRequest {
   int32 max_response_output_tokens = 10 [
     (google.api.field_behavior) = OPTIONAL,
     (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
-      description : "The maximum number of tokens to output in the response. "
-                    "Infinity is -1."
-      example : "100"
+      description:
+        "The maximum number of tokens to output in the response. "
+        "Infinity is -1."
+      example: "100"
     }
   ];
 }
@@ -185,14 +204,18 @@ message RealtimeSessionCreateRequest {
 // SessionTranscriber is the message for the SessionTranscriber field.
 message SessionTranscriber {
   option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_schema) = {
-    json_schema : {
-      title : "Session Transcriber"
-      description : "The message for the SessionTranscriber field."
-      required : [ "model", "language", "prompt" ]
+    json_schema: {
+      title: "Session Transcriber"
+      description: "The message for the SessionTranscriber field."
+      required: [
+        "model",
+        "language",
+        "prompt"
+      ]
     }
-    external_docs : {
-      url : "https://docs.pegwings.com/api/realtime"
-      description : "Learn more about the Realtime API"
+    external_docs: {
+      url: "https://docs.pegwings.com/api/realtime"
+      description: "Learn more about the Realtime API"
     }
   };
 
@@ -200,8 +223,8 @@ message SessionTranscriber {
   string model = 1 [
     (google.api.field_behavior) = OUTPUT_ONLY,
     (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
-      description : "The name of the model used for the session."
-      example : "\"visper\""
+      description: "The name of the model used for the session."
+      example: "\"visper\""
     }
   ];
 
@@ -209,8 +232,8 @@ message SessionTranscriber {
   string language = 2 [
     (google.api.field_behavior) = OUTPUT_ONLY,
     (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
-      description : "The language of the session."
-      example : "\"en\""
+      description: "The language of the session."
+      example: "\"en\""
     }
   ];
 
@@ -218,9 +241,10 @@ message SessionTranscriber {
   string prompt = 3 [
     (google.api.field_behavior) = OUTPUT_ONLY,
     (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
-      description : "The prompt used for the session."
-      example : "\"You are a celebrity stylist. You are a very creative, but "
-                "like to play pranks on people.\""
+      description: "The prompt used for the session."
+      example:
+        "\"You are a celebrity stylist. You are a very creative, but "
+        "like to play pranks on people.\""
     }
   ];
 }
@@ -229,14 +253,17 @@ message SessionTranscriber {
 message TurnDetection {
   //
   option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_schema) = {
-    json_schema : {
-      title : "Turn Detection"
-      description : "The message for the TurnDetection field."
-      required : [ "start", "end" ]
+    json_schema: {
+      title: "Turn Detection"
+      description: "The message for the TurnDetection field."
+      required: [
+        "start",
+        "end"
+      ]
     }
-    external_docs : {
-      url : "https://docs.pegwings.com/api/realtime"
-      description : "Learn more about the Realtime API"
+    external_docs: {
+      url: "https://docs.pegwings.com/api/realtime"
+      description: "Learn more about the Realtime API"
     }
   };
 
@@ -245,9 +272,9 @@ message TurnDetection {
   string type = 1 [
     (google.api.field_behavior) = OUTPUT_ONLY,
     (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
-      description : "The type of turn detection."
-      example : "\"start\""
-      enum : [ "server_vad" ]
+      description: "The type of turn detection."
+      example: "\"start\""
+      enum: ["server_vad"]
     }
   ];
 
@@ -255,8 +282,8 @@ message TurnDetection {
   float threshold = 2 [
     (google.api.field_behavior) = OUTPUT_ONLY,
     (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
-      description : "The threshold for turn detection."
-      example : "0.5"
+      description: "The threshold for turn detection."
+      example: "0.5"
     }
   ];
 
@@ -264,8 +291,8 @@ message TurnDetection {
   int32 prefix_padding_ms = 3 [
     (google.api.field_behavior) = OUTPUT_ONLY,
     (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
-      description : "The prefix padding in milliseconds."
-      example : "100"
+      description: "The prefix padding in milliseconds."
+      example: "100"
     }
   ];
 
@@ -274,9 +301,10 @@ message TurnDetection {
   bool create_response = 4 [
     (google.api.field_behavior) = OUTPUT_ONLY,
     (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
-      description : "The setting for if the model should create a response for "
-                    "the turn."
-      example : "true"
+      description:
+        "The setting for if the model should create a response for "
+        "the turn."
+      example: "true"
     }
   ];
 
@@ -285,8 +313,8 @@ message TurnDetection {
   bool interrupt_response = 5 [
     (google.api.field_behavior) = OUTPUT_ONLY,
     (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
-      description : "The setting for if the model should interrupt the turn."
-      example : "true"
+      description: "The setting for if the model should interrupt the turn."
+      example: "true"
     }
   ];
 }
@@ -296,15 +324,19 @@ message TurnDetection {
 message ClientSecret {
   //
   option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_schema) = {
-    json_schema : {
-      title : "Client Secret"
-      description : "The message for the ClientSecret field in the "
-                    "RealtimeSessionCreateResponse message."
-      required : [ "value", "expires_at" ]
+    json_schema: {
+      title: "Client Secret"
+      description:
+        "The message for the ClientSecret field in the "
+        "RealtimeSessionCreateResponse message."
+      required: [
+        "value",
+        "expires_at"
+      ]
     }
-    external_docs : {
-      url : "https://docs.pegwings.com/api/realtime"
-      description : "Learn more about the Realtime API"
+    external_docs: {
+      url: "https://docs.pegwings.com/api/realtime"
+      description: "Learn more about the Realtime API"
     }
   };
 
@@ -312,8 +344,8 @@ message ClientSecret {
   string value = 1 [
     (google.api.field_behavior) = OUTPUT_ONLY,
     (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
-      description : "The client secret value."
-      example : "\"secret\""
+      description: "The client secret value."
+      example: "\"secret\""
     }
   ];
 
@@ -321,8 +353,8 @@ message ClientSecret {
   uint32 expires_at = 2 [
     (google.api.field_behavior) = OUTPUT_ONLY,
     (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
-      description : "The expiration time of the client secret in seconds."
-      example : "1679086400"
+      description: "The expiration time of the client secret in seconds."
+      example: "1679086400"
     }
   ];
 }
@@ -332,14 +364,14 @@ message ClientSecret {
 message RealtimeSessionCreateResponse {
   //
   option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_schema) = {
-    json_schema : {
-      title : "Realtime Session Create Response"
-      description : "The response message for the RealtimeSessionCreate method."
-      required : [ "session" ]
+    json_schema: {
+      title: "Realtime Session Create Response"
+      description: "The response message for the RealtimeSessionCreate method."
+      required: ["session"]
     }
-    external_docs : {
-      url : "https://docs.pegwings.com/api/realtime"
-      description : "Learn more about the Realtime API"
+    external_docs: {
+      url: "https://docs.pegwings.com/api/realtime"
+      description: "Learn more about the Realtime API"
     }
   };
 
@@ -347,8 +379,8 @@ message RealtimeSessionCreateResponse {
   string id = 1 [
     (google.api.field_behavior) = OUTPUT_ONLY,
     (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
-      description : "The unique identifier of the session."
-      example : "\"pwg-rt-1234\""
+      description: "The unique identifier of the session."
+      example: "\"pwg-rt-1234\""
     }
   ];
 
@@ -356,8 +388,8 @@ message RealtimeSessionCreateResponse {
   string object = 2 [
     (google.api.field_behavior) = OUTPUT_ONLY,
     (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
-      description : "The object of the session."
-      example : "\"realtime.session\""
+      description: "The object of the session."
+      example: "\"realtime.session\""
     }
   ];
 
@@ -365,8 +397,8 @@ message RealtimeSessionCreateResponse {
   string model = 3 [
     (google.api.field_behavior) = OUTPUT_ONLY,
     (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
-      description : "The name of the model used for the session."
-      example : "\"visper\""
+      description: "The name of the model used for the session."
+      example: "\"visper\""
     }
   ];
 
@@ -374,8 +406,8 @@ message RealtimeSessionCreateResponse {
   repeated string modalities = 4 [
     (google.api.field_behavior) = OUTPUT_ONLY,
     (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
-      description : "The modalities used for the session."
-      example : "[\"text\", \"audio\"]"
+      description: "The modalities used for the session."
+      example: "[\"text\", \"audio\"]"
     }
   ];
 
@@ -383,9 +415,10 @@ message RealtimeSessionCreateResponse {
   string instructions = 5 [
     (google.api.field_behavior) = OUTPUT_ONLY,
     (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
-      description : "The prompt used for the session."
-      example : "\"You are a celebrity stylist. You are a very creative, but "
-                "like to play pranks on people.\""
+      description: "The prompt used for the session."
+      example:
+        "\"You are a celebrity stylist. You are a very creative, but "
+        "like to play pranks on people.\""
     }
   ];
 
@@ -393,8 +426,8 @@ message RealtimeSessionCreateResponse {
   string voice = 6 [
     (google.api.field_behavior) = OUTPUT_ONLY,
     (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
-      description : "The voice used for the session."
-      example : "\"en-US-Wavenet-A\""
+      description: "The voice used for the session."
+      example: "\"en-US-Wavenet-A\""
     }
   ];
 
@@ -404,9 +437,13 @@ message RealtimeSessionCreateResponse {
   string input_audio_format = 7 [
     (google.api.field_behavior) = OUTPUT_ONLY,
     (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
-      description : "The format of input audio."
-      example : "\"pcm16\""
-      enum : [ "pcm16", "g711_ulaw", "g711_alaw" ]
+      description: "The format of input audio."
+      example: "\"pcm16\""
+      enum: [
+        "pcm16",
+        "g711_ulaw",
+        "g711_alaw"
+      ]
     }
   ];
 
@@ -416,9 +453,13 @@ message RealtimeSessionCreateResponse {
   string output_audio_format = 8 [
     (google.api.field_behavior) = OUTPUT_ONLY,
     (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
-      description : "The format of output audio."
-      example : "\"pcm16\""
-      enum : [ "pcm16", "g711_ulaw", "g711_alaw" ]
+      description: "The format of output audio."
+      example: "\"pcm16\""
+      enum: [
+        "pcm16",
+        "g711_ulaw",
+        "g711_alaw"
+      ]
     }
   ];
 
@@ -426,10 +467,11 @@ message RealtimeSessionCreateResponse {
   SessionTranscriber transcriber = 9 [
     (google.api.field_behavior) = OUTPUT_ONLY,
     (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
-      description : "The transcriber used for the session."
-      example : "{\"model\":\"visper\",\"language\":\"en\",\"prompt\":\"You "
-                "are a celebrity stylist. You are a very creative, but like "
-                "to play pranks on people.\"}"
+      description: "The transcriber used for the session."
+      example:
+        "{\"model\":\"visper\",\"language\":\"en\",\"prompt\":\"You "
+        "are a celebrity stylist. You are a very creative, but like "
+        "to play pranks on people.\"}"
     }
   ];
 
@@ -437,10 +479,11 @@ message RealtimeSessionCreateResponse {
   TurnDetection turn_detection = 10 [
     (google.api.field_behavior) = OUTPUT_ONLY,
     (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
-      description : "The turn detection used for the session."
-      example : "{\"type\":\"server_vad\",\"threshold\":0.5,"
-                "\"prefix_padding_ms\":100,\"create_response\":true,"
-                "\"interrupt_response\":true}"
+      description: "The turn detection used for the session."
+      example:
+        "{\"type\":\"server_vad\",\"threshold\":0.5,"
+        "\"prefix_padding_ms\":100,\"create_response\":true,"
+        "\"interrupt_response\":true}"
     }
   ];
 
@@ -448,8 +491,8 @@ message RealtimeSessionCreateResponse {
   repeated string tools = 11 [
     (google.api.field_behavior) = OUTPUT_ONLY,
     (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
-      description : "The list of tools used for the session."
-      example : "[\"get_current_weather\"]"
+      description: "The list of tools used for the session."
+      example: "[\"get_current_weather\"]"
     }
   ];
 
@@ -457,9 +500,9 @@ message RealtimeSessionCreateResponse {
   string tool_choice = 12 [
     (google.api.field_behavior) = OUTPUT_ONLY,
     (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
-      description : "The tool choice used for the session."
-      example : "\"get_current_weather\""
-      default : "none"
+      description: "The tool choice used for the session."
+      example: "\"get_current_weather\""
+      default: "none"
     }
   ];
 
@@ -467,9 +510,9 @@ message RealtimeSessionCreateResponse {
   double temperature = 13 [
     (google.api.field_behavior) = OUTPUT_ONLY,
     (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
-      description : "The temperature used for the session."
-      example : "0.0"
-      default : "0.0"
+      description: "The temperature used for the session."
+      example: "0.0"
+      default: "0.0"
     }
   ];
 
@@ -478,9 +521,10 @@ message RealtimeSessionCreateResponse {
   uint32 max_response_output_tokens = 14 [
     (google.api.field_behavior) = OUTPUT_ONLY,
     (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
-      description : "The maximum number of tokens to output in the response. "
-                    "Infinity is -1."
-      example : "100"
+      description:
+        "The maximum number of tokens to output in the response. "
+        "Infinity is -1."
+      example: "100"
     }
   ];
 
@@ -488,8 +532,8 @@ message RealtimeSessionCreateResponse {
   ClientSecret client_secret = 15 [
     (google.api.field_behavior) = OUTPUT_ONLY,
     (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
-      description : "The client secret used for the session."
-      example : "{\"value\":\"secret\",\"expires_at\":1679086400}"
+      description: "The client secret used for the session."
+      example: "{\"value\":\"secret\",\"expires_at\":1679086400}"
     }
   ];
 }

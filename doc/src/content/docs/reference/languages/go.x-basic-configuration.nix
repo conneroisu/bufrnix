@@ -45,13 +45,13 @@
 
                   # gRPC support
                   grpc.enable = true;
-                  
+
                   # OpenAPI v2 generation
                   openapiv2 = {
                     enable = true;
                     outputPath = "proto/gen/openapi";
                   };
-                  
+
                   # High-performance vtprotobuf plugin
                   vtprotobuf = {
                     enable = true;
@@ -60,7 +60,7 @@
                       "features=marshal+unmarshal+size+pool"
                     ];
                   };
-                  
+
                   # JSON marshaling support
                   json.enable = true;
                 };

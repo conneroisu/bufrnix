@@ -72,8 +72,10 @@ message TestAllTypes {
   string optional_string = 14;
   bytes optional_bytes = 15;
 
-  message OptionalGroup { int32 a = 17; }
-  OptionalGroup optionalgroup = 16 [ features.message_encoding = DELIMITED ];
+  message OptionalGroup {
+    int32 a = 17;
+  }
+  OptionalGroup optionalgroup = 16 [features.message_encoding = DELIMITED];
 
   NestedMessage optional_nested_message = 18;
   ForeignMessage optional_foreign_message = 19;
@@ -83,17 +85,15 @@ message TestAllTypes {
   ForeignEnum optional_foreign_enum = 22;
   proto2_unittest_import.ImportEnum optional_import_enum = 23;
 
-  string optional_string_piece = 24 [ ctype = STRING_PIECE ];
-  string optional_cord = 25 [ ctype = CORD ];
-  bytes optional_bytes_cord = 86 [ ctype = CORD ];
+  string optional_string_piece = 24 [ctype = STRING_PIECE];
+  string optional_cord = 25 [ctype = CORD];
+  bytes optional_bytes_cord = 86 [ctype = CORD];
 
   // Defined in unittest_import_public.proto
-  proto2_unittest_import.PublicImportMessage optional_public_import_message =
-      26;
+  proto2_unittest_import.PublicImportMessage optional_public_import_message = 26;
 
-  NestedMessage optional_lazy_message = 27 [ lazy = true ];
-  NestedMessage optional_unverified_lazy_message = 28
-      [ unverified_lazy = true ];
+  NestedMessage optional_lazy_message = 27 [lazy = true];
+  NestedMessage optional_unverified_lazy_message = 28 [unverified_lazy = true];
 
   // Repeated
   repeated int32 repeated_int32 = 31;
@@ -112,9 +112,10 @@ message TestAllTypes {
   repeated string repeated_string = 44;
   repeated bytes repeated_bytes = 45;
 
-  message RepeatedGroup { int32 a = 47; }
-  repeated RepeatedGroup repeatedgroup = 46
-      [ features.message_encoding = DELIMITED ];
+  message RepeatedGroup {
+    int32 a = 47;
+  }
+  repeated RepeatedGroup repeatedgroup = 46 [features.message_encoding = DELIMITED];
 
   repeated NestedMessage repeated_nested_message = 48;
   repeated ForeignMessage repeated_foreign_message = 49;
@@ -124,35 +125,40 @@ message TestAllTypes {
   repeated ForeignEnum repeated_foreign_enum = 52;
   repeated proto2_unittest_import.ImportEnum repeated_import_enum = 53;
 
-  repeated string repeated_string_piece = 54 [ ctype = STRING_PIECE ];
-  repeated string repeated_cord = 55 [ ctype = CORD ];
+  repeated string repeated_string_piece = 54 [ctype = STRING_PIECE];
+  repeated string repeated_cord = 55 [ctype = CORD];
 
   repeated NestedMessage repeated_lazy_message = 57;
 
   // Singular with defaults
-  int32 default_int32 = 61 [ default = 41 ];
-  int64 default_int64 = 62 [ default = 42 ];
-  uint32 default_uint32 = 63 [ default = 43 ];
-  uint64 default_uint64 = 64 [ default = 44 ];
-  sint32 default_sint32 = 65 [ default = -45 ];
-  sint64 default_sint64 = 66 [ default = 46 ];
-  fixed32 default_fixed32 = 67 [ default = 47 ];
-  fixed64 default_fixed64 = 68 [ default = 48 ];
-  sfixed32 default_sfixed32 = 69 [ default = 49 ];
-  sfixed64 default_sfixed64 = 70 [ default = -50 ];
-  float default_float = 71 [ default = 51.5 ];
-  double default_double = 72 [ default = 52e3 ];
-  bool default_bool = 73 [ default = true ];
-  string default_string = 74 [ default = "hello" ];
-  bytes default_bytes = 75 [ default = "world" ];
+  int32 default_int32 = 61 [default = 41];
+  int64 default_int64 = 62 [default = 42];
+  uint32 default_uint32 = 63 [default = 43];
+  uint64 default_uint64 = 64 [default = 44];
+  sint32 default_sint32 = 65 [default = -45];
+  sint64 default_sint64 = 66 [default = 46];
+  fixed32 default_fixed32 = 67 [default = 47];
+  fixed64 default_fixed64 = 68 [default = 48];
+  sfixed32 default_sfixed32 = 69 [default = 49];
+  sfixed64 default_sfixed64 = 70 [default = -50];
+  float default_float = 71 [default = 51.5];
+  double default_double = 72 [default = 52e3];
+  bool default_bool = 73 [default = true];
+  string default_string = 74 [default = "hello"];
+  bytes default_bytes = 75 [default = "world"];
 
-  NestedEnum default_nested_enum = 81 [ default = BAR ];
-  ForeignEnum default_foreign_enum = 82 [ default = FOREIGN_BAR ];
-  proto2_unittest_import.ImportEnum default_import_enum = 83
-      [ default = IMPORT_BAR ];
+  NestedEnum default_nested_enum = 81 [default = BAR];
+  ForeignEnum default_foreign_enum = 82 [default = FOREIGN_BAR];
+  proto2_unittest_import.ImportEnum default_import_enum = 83 [default = IMPORT_BAR];
 
-  string default_string_piece = 84 [ ctype = STRING_PIECE, default = "abc" ];
-  string default_cord = 85 [ ctype = CORD, default = "123" ];
+  string default_string_piece = 84 [
+    ctype = STRING_PIECE,
+    default = "abc"
+  ];
+  string default_cord = 85 [
+    ctype = CORD,
+    default = "123"
+  ];
 
   // For oneof test
   oneof oneof_field {
@@ -160,9 +166,9 @@ message TestAllTypes {
     NestedMessage oneof_nested_message = 112;
     string oneof_string = 113;
     bytes oneof_bytes = 114;
-    string oneof_cord = 115 [ ctype = CORD ];
-    string oneof_string_piece = 116 [ ctype = STRING_PIECE ];
-    NestedMessage oneof_lazy_nested_message = 117 [ lazy = true ];
+    string oneof_cord = 115 [ctype = CORD];
+    string oneof_string_piece = 116 [ctype = STRING_PIECE];
+    NestedMessage oneof_lazy_nested_message = 117 [lazy = true];
   }
 }
 
@@ -171,21 +177,23 @@ message NestedTestAllTypes {
   NestedTestAllTypes child = 1;
   TestAllTypes payload = 2;
   repeated NestedTestAllTypes repeated_child = 3;
-  NestedTestAllTypes lazy_child = 4 [ lazy = true ];
-  TestAllTypes eager_child = 5 [ lazy = false ];
+  NestedTestAllTypes lazy_child = 4 [lazy = true];
+  TestAllTypes eager_child = 5 [lazy = false];
 }
 
 message TestDeprecatedFields {
-  int32 deprecated_int32 = 1 [ deprecated = true ];
-  repeated string deprecated_repeated_string = 4 [ deprecated = true ];
-  TestAllTypes.NestedMessage deprecated_message = 3 [ deprecated = true ];
+  int32 deprecated_int32 = 1 [deprecated = true];
+  repeated string deprecated_repeated_string = 4 [deprecated = true];
+  TestAllTypes.NestedMessage deprecated_message = 3 [deprecated = true];
   oneof oneof_fields {
-    int32 deprecated_int32_in_oneof = 2 [ deprecated = true ];
+    int32 deprecated_int32_in_oneof = 2 [deprecated = true];
   }
   TestDeprecatedFields nested = 5;
 }
 
-message TestDeprecatedMessage { option deprecated = true; }
+message TestDeprecatedMessage {
+  option deprecated = true;
+}
 
 // Define these after TestAllTypes to make sure the compiler can handle that.
 message ForeignMessage {
@@ -211,11 +219,17 @@ enum TestReservedEnumFields {
   reserved bar, baz;
 }
 
-message TestAllExtensions { extensions 1 to max; }
+message TestAllExtensions {
+  extensions 1 to max;
+}
 
-message OptionalGroup_extension { int32 a = 17; }
+message OptionalGroup_extension {
+  int32 a = 17;
+}
 
-message RepeatedGroup_extension { int32 a = 47; }
+message RepeatedGroup_extension {
+  int32 a = 47;
+}
 
 extend TestAllExtensions {
   // Singular
@@ -235,8 +249,7 @@ extend TestAllExtensions {
   string optional_string_extension = 14;
   bytes optional_bytes_extension = 15;
 
-  OptionalGroup_extension optionalgroup_extension = 16
-      [ features.message_encoding = DELIMITED ];
+  OptionalGroup_extension optionalgroup_extension = 16 [features.message_encoding = DELIMITED];
 
   TestAllTypes.NestedMessage optional_nested_message_extension = 18;
   ForeignMessage optional_foreign_message_extension = 19;
@@ -246,19 +259,16 @@ extend TestAllExtensions {
   ForeignEnum optional_foreign_enum_extension = 22;
   proto2_unittest_import.ImportEnum optional_import_enum_extension = 23;
 
-  string optional_string_piece_extension = 24 [ ctype = STRING_PIECE ];
+  string optional_string_piece_extension = 24 [ctype = STRING_PIECE];
   // TODO: ctype=CORD is not supported for extension. Add
   // ctype=CORD option back after it is supported.
   string optional_cord_extension = 25;
   bytes optional_bytes_cord_extension = 86;
 
-  proto2_unittest_import.PublicImportMessage
-      optional_public_import_message_extension = 26;
+  proto2_unittest_import.PublicImportMessage optional_public_import_message_extension = 26;
 
-  TestAllTypes.NestedMessage optional_lazy_message_extension = 27
-      [ lazy = true ];
-  TestAllTypes.NestedMessage optional_unverified_lazy_message_extension = 28
-      [ unverified_lazy = true ];
+  TestAllTypes.NestedMessage optional_lazy_message_extension = 27 [lazy = true];
+  TestAllTypes.NestedMessage optional_unverified_lazy_message_extension = 28 [unverified_lazy = true];
 
   // Repeated
   repeated int32 repeated_int32_extension = 31;
@@ -277,54 +287,51 @@ extend TestAllExtensions {
   repeated string repeated_string_extension = 44;
   repeated bytes repeated_bytes_extension = 45;
 
-  repeated RepeatedGroup_extension repeatedgroup_extension = 46
-      [ features.message_encoding = DELIMITED ];
+  repeated RepeatedGroup_extension repeatedgroup_extension = 46 [features.message_encoding = DELIMITED];
 
   repeated TestAllTypes.NestedMessage repeated_nested_message_extension = 48;
   repeated ForeignMessage repeated_foreign_message_extension = 49;
-  repeated proto2_unittest_import.ImportMessage
-      repeated_import_message_extension = 50;
+  repeated proto2_unittest_import.ImportMessage repeated_import_message_extension = 50;
 
   repeated TestAllTypes.NestedEnum repeated_nested_enum_extension = 51;
   repeated ForeignEnum repeated_foreign_enum_extension = 52;
-  repeated proto2_unittest_import.ImportEnum repeated_import_enum_extension =
-      53;
+  repeated proto2_unittest_import.ImportEnum repeated_import_enum_extension = 53;
 
-  repeated string repeated_string_piece_extension = 54 [ ctype = STRING_PIECE ];
+  repeated string repeated_string_piece_extension = 54 [ctype = STRING_PIECE];
   // TODO: ctype=CORD is not supported for extension. Add
   // ctype=CORD option back after it is supported.
   repeated string repeated_cord_extension = 55;
 
-  repeated TestAllTypes.NestedMessage repeated_lazy_message_extension = 57
-      [ lazy = true ];
+  repeated TestAllTypes.NestedMessage repeated_lazy_message_extension = 57 [lazy = true];
 
   // Singular with defaults
-  int32 default_int32_extension = 61 [ default = 41 ];
-  int64 default_int64_extension = 62 [ default = 42 ];
-  uint32 default_uint32_extension = 63 [ default = 43 ];
-  uint64 default_uint64_extension = 64 [ default = 44 ];
-  sint32 default_sint32_extension = 65 [ default = -45 ];
-  sint64 default_sint64_extension = 66 [ default = 46 ];
-  fixed32 default_fixed32_extension = 67 [ default = 47 ];
-  fixed64 default_fixed64_extension = 68 [ default = 48 ];
-  sfixed32 default_sfixed32_extension = 69 [ default = 49 ];
-  sfixed64 default_sfixed64_extension = 70 [ default = -50 ];
-  float default_float_extension = 71 [ default = 51.5 ];
-  double default_double_extension = 72 [ default = 52e3 ];
-  bool default_bool_extension = 73 [ default = true ];
-  string default_string_extension = 74 [ default = "hello" ];
-  bytes default_bytes_extension = 75 [ default = "world" ];
+  int32 default_int32_extension = 61 [default = 41];
+  int64 default_int64_extension = 62 [default = 42];
+  uint32 default_uint32_extension = 63 [default = 43];
+  uint64 default_uint64_extension = 64 [default = 44];
+  sint32 default_sint32_extension = 65 [default = -45];
+  sint64 default_sint64_extension = 66 [default = 46];
+  fixed32 default_fixed32_extension = 67 [default = 47];
+  fixed64 default_fixed64_extension = 68 [default = 48];
+  sfixed32 default_sfixed32_extension = 69 [default = 49];
+  sfixed64 default_sfixed64_extension = 70 [default = -50];
+  float default_float_extension = 71 [default = 51.5];
+  double default_double_extension = 72 [default = 52e3];
+  bool default_bool_extension = 73 [default = true];
+  string default_string_extension = 74 [default = "hello"];
+  bytes default_bytes_extension = 75 [default = "world"];
 
-  TestAllTypes.NestedEnum default_nested_enum_extension = 81 [ default = BAR ];
-  ForeignEnum default_foreign_enum_extension = 82 [ default = FOREIGN_BAR ];
-  proto2_unittest_import.ImportEnum default_import_enum_extension = 83
-      [ default = IMPORT_BAR ];
+  TestAllTypes.NestedEnum default_nested_enum_extension = 81 [default = BAR];
+  ForeignEnum default_foreign_enum_extension = 82 [default = FOREIGN_BAR];
+  proto2_unittest_import.ImportEnum default_import_enum_extension = 83 [default = IMPORT_BAR];
 
-  string default_string_piece_extension = 84
-      [ ctype = STRING_PIECE, default = "abc" ];
+  string default_string_piece_extension = 84 [
+    ctype = STRING_PIECE,
+    default = "abc"
+  ];
   // TODO: ctype=CORD is not supported for extension. Add
   // ctype=CORD option back after it is supported.
-  string default_cord_extension = 85 [ default = "123" ];
+  string default_cord_extension = 85 [default = "123"];
 
   // For oneof test
   uint32 oneof_uint32_extension = 111;
@@ -350,26 +357,29 @@ message TestGroup {
     // field to be parsed by the fast parser, since
     // 89 - 17 = 72 is a multiple of 8.
   }
-  OptionalGroup optionalgroup = 16 [ features.message_encoding = DELIMITED ];
+  OptionalGroup optionalgroup = 16 [features.message_encoding = DELIMITED];
   ForeignEnum optional_foreign_enum = 22;
 }
 
-message TestGroupExtension { extensions 1 to max; }
+message TestGroupExtension {
+  extensions 1 to max;
+}
 
 message TestNestedExtension {
   extend TestAllExtensions {
     // Check for bug where string extensions declared in tested scope did not
     // compile.
-    string test = 1002 [ default = "test" ];
+    string test = 1002 [default = "test"];
     // Used to test if generated extension name is correct when there are
     // underscores.
     string nested_string_extension = 1003;
   }
 
-  message OptionalGroup_extension { int32 a = 17; }
+  message OptionalGroup_extension {
+    int32 a = 17;
+  }
   extend TestGroupExtension {
-    OptionalGroup_extension optionalgroup_extension = 16
-        [ features.message_encoding = DELIMITED ];
+    OptionalGroup_extension optionalgroup_extension = 16 [features.message_encoding = DELIMITED];
     ForeignEnum optional_foreign_enum_extension = 22;
   }
 }
@@ -410,7 +420,7 @@ message TestNestedChildExtensionData {
 // Required and closed enum fields are considered unknown fields if the value is
 // not valid. We need to make sure it functions as expected.
 message TestRequiredEnum {
-  ForeignEnum required_enum = 1 [ features.field_presence = LEGACY_REQUIRED ];
+  ForeignEnum required_enum = 1 [features.field_presence = LEGACY_REQUIRED];
 
   // A dummy optional field.
   int32 a = 2;
@@ -425,7 +435,7 @@ message TestRequiredEnumNoMask {
     BAZ = -1; // Intentionally negative.
   }
 
-  NestedEnum required_enum = 1 [ features.field_presence = LEGACY_REQUIRED ];
+  NestedEnum required_enum = 1 [features.field_presence = LEGACY_REQUIRED];
 
   // A dummy optional field.
   int32 a = 2;
@@ -441,10 +451,10 @@ message TestRequiredEnumMulti {
 
   // Intentionally placed in descending field number to force sorting in closed
   // enum verification.
-  NestedEnum required_enum_4 = 4 [ features.field_presence = LEGACY_REQUIRED ];
+  NestedEnum required_enum_4 = 4 [features.field_presence = LEGACY_REQUIRED];
   int32 a_3 = 3;
-  NestedEnum required_enum_2 = 2 [ features.field_presence = LEGACY_REQUIRED ];
-  ForeignEnum required_enum_1 = 1 [ features.field_presence = LEGACY_REQUIRED ];
+  NestedEnum required_enum_2 = 2 [features.field_presence = LEGACY_REQUIRED];
+  ForeignEnum required_enum_1 = 1 [features.field_presence = LEGACY_REQUIRED];
 }
 
 message TestRequiredNoMaskMulti {
@@ -458,17 +468,14 @@ message TestRequiredNoMaskMulti {
   // Intentionally placed in descending field number to force sorting in closed
   // enum verification. Also, using large field numbers to use tag only
   // matching for fields.
-  fixed32 required_fixed32_80 = 80
-      [ features.field_presence = LEGACY_REQUIRED ];
-  fixed32 required_fixed32_70 = 70
-      [ features.field_presence = LEGACY_REQUIRED ];
+  fixed32 required_fixed32_80 = 80 [features.field_presence = LEGACY_REQUIRED];
+  fixed32 required_fixed32_70 = 70 [features.field_presence = LEGACY_REQUIRED];
 
-  NestedEnum required_enum_64 = 64
-      [ features.field_presence = LEGACY_REQUIRED ];
-  NestedEnum required_enum_4 = 4 [ features.field_presence = LEGACY_REQUIRED ];
+  NestedEnum required_enum_64 = 64 [features.field_presence = LEGACY_REQUIRED];
+  NestedEnum required_enum_4 = 4 [features.field_presence = LEGACY_REQUIRED];
   int32 a_3 = 3;
-  NestedEnum required_enum_2 = 2 [ features.field_presence = LEGACY_REQUIRED ];
-  ForeignEnum required_enum_1 = 1 [ features.field_presence = LEGACY_REQUIRED ];
+  NestedEnum required_enum_2 = 2 [features.field_presence = LEGACY_REQUIRED];
+  ForeignEnum required_enum_1 = 1 [features.field_presence = LEGACY_REQUIRED];
 }
 
 // We have separate messages for testing fields because it's
@@ -477,9 +484,9 @@ message TestRequiredNoMaskMulti {
 // filed because the code output is basically identical to
 // optional fields for all types.
 message TestRequired {
-  int32 a = 1 [ features.field_presence = LEGACY_REQUIRED ];
+  int32 a = 1 [features.field_presence = LEGACY_REQUIRED];
   int32 dummy2 = 2;
-  int32 b = 3 [ features.field_presence = LEGACY_REQUIRED ];
+  int32 b = 3 [features.field_presence = LEGACY_REQUIRED];
 
   extend TestAllExtensions {
     TestRequired single = 1000;
@@ -518,7 +525,7 @@ message TestRequired {
   int32 dummy31 = 31;
   int32 dummy32 = 32;
 
-  int32 c = 33 [ features.field_presence = LEGACY_REQUIRED ];
+  int32 c = 33 [features.field_presence = LEGACY_REQUIRED];
 
   // Add an optional child message to make this non-trivial for go/pdlazy.
   ForeignMessage optional_foreign = 34;
@@ -530,14 +537,13 @@ message TestRequiredForeign {
   int32 dummy = 3;
 
   // Missing fields must not affect verification of child messages.
-  NestedTestAllTypes optional_lazy_message = 4 [ lazy = true ];
+  NestedTestAllTypes optional_lazy_message = 4 [lazy = true];
 }
 
 message TestRequiredMessage {
   TestRequired optional_message = 1;
   repeated TestRequired repeated_message = 2;
-  TestRequired required_message = 3
-      [ features.field_presence = LEGACY_REQUIRED ];
+  TestRequired required_message = 3 [features.field_presence = LEGACY_REQUIRED];
 }
 
 message TestNestedRequiredForeign {
@@ -552,20 +558,26 @@ message TestNestedRequiredForeign {
 }
 
 // Test that we can use NestedMessage from outside TestAllTypes.
-message TestForeignNested { TestAllTypes.NestedMessage foreign_nested = 1; }
+message TestForeignNested {
+  TestAllTypes.NestedMessage foreign_nested = 1;
+}
 
 // TestEmptyMessage is used to test unknown field support.
 message TestEmptyMessage {}
 
 // Like above, but declare all field numbers as potential extensions.  No
 // actual extensions should ever be defined for this type.
-message TestEmptyMessageWithExtensions { extensions 1 to max; }
+message TestEmptyMessageWithExtensions {
+  extensions 1 to max;
+}
 
 // Needed for a Python test.
 message TestPickleNestedMessage {
   message NestedMessage {
     int32 bb = 1;
-    message NestedNestedMessage { int32 cc = 1; }
+    message NestedNestedMessage {
+      int32 cc = 1;
+    }
   }
 }
 
@@ -590,15 +602,19 @@ message TestRecursiveMessage {
 
 // Test that mutual recursion works.
 message TestMutualRecursionA {
-  message SubMessage { TestMutualRecursionB b = 1; }
+  message SubMessage {
+    TestMutualRecursionB b = 1;
+  }
   TestMutualRecursionB bb = 1;
   message SubGroup {
     SubMessage sub_message = 3; // Needed because of bug in javatest
     TestAllTypes not_in_this_scc = 4;
   }
-  SubGroup subgroup = 2 [ features.message_encoding = DELIMITED ];
-  message SubGroupR { TestAllTypes payload = 6; }
-  repeated SubGroupR subgroupr = 5 [ features.message_encoding = DELIMITED ];
+  SubGroup subgroup = 2 [features.message_encoding = DELIMITED];
+  message SubGroupR {
+    TestAllTypes payload = 6;
+  }
+  repeated SubGroupR subgroupr = 5 [features.message_encoding = DELIMITED];
 }
 
 message TestMutualRecursionB {
@@ -609,9 +625,9 @@ message TestMutualRecursionB {
 message TestIsInitialized {
   message SubMessage {
     message SubGroup {
-      int32 i = 2 [ features.field_presence = LEGACY_REQUIRED ];
+      int32 i = 2 [features.field_presence = LEGACY_REQUIRED];
     }
-    SubGroup subgroup = 1 [ features.message_encoding = DELIMITED ];
+    SubGroup subgroup = 1 [features.message_encoding = DELIMITED];
   }
   SubMessage sub_message = 1;
 }
@@ -620,22 +636,32 @@ message TestIsInitialized {
 // parents.  This is NOT possible in proto1; only google.protobuf.  When
 // attempting to compile with proto1, this will emit an error; so we only
 // include it in proto2_unittest_proto.
-message TestDupFieldNumber {   // NO_PROTO1
-  int32 a = 1;                 // NO_PROTO1
-  message Foo { int32 a = 1; } // NO_PROTO1
-  message Bar { int32 a = 1; } // NO_PROTO1
-  Foo foo = 2 [ features.message_encoding = DELIMITED ];
-  Bar bar = 3 [ features.message_encoding = DELIMITED ];
+message TestDupFieldNumber { // NO_PROTO1
+  int32 a = 1; // NO_PROTO1
+  message Foo {
+    int32 a = 1;
+  } // NO_PROTO1
+  message Bar {
+    int32 a = 1;
+  } // NO_PROTO1
+  Foo foo = 2 [features.message_encoding = DELIMITED];
+  Bar bar = 3 [features.message_encoding = DELIMITED];
 } // NO_PROTO1
 
 // Additional messages for testing lazy fields.
-message TestEagerMessage { TestAllTypes sub_message = 1 [ lazy = false ]; }
-message TestLazyMessage { TestAllTypes sub_message = 1 [ lazy = true ]; }
+message TestEagerMessage {
+  TestAllTypes sub_message = 1 [lazy = false];
+}
+message TestLazyMessage {
+  TestAllTypes sub_message = 1 [lazy = true];
+}
 message TestLazyMessageRepeated {
   repeated TestLazyMessage repeated_message = 1;
 }
 message TestEagerMaybeLazy {
-  message NestedMessage { TestPackedTypes packed = 1; }
+  message NestedMessage {
+    TestPackedTypes packed = 1;
+  }
   TestAllTypes message_foo = 1;
   TestAllTypes message_bar = 2;
   NestedMessage message_baz = 3;
@@ -681,15 +707,15 @@ message TestCamelCaseFieldNames {
   string StringField = 2;
   ForeignEnum EnumField = 3;
   ForeignMessage MessageField = 4;
-  string StringPieceField = 5 [ ctype = STRING_PIECE ];
-  string CordField = 6 [ ctype = CORD ];
+  string StringPieceField = 5 [ctype = STRING_PIECE];
+  string CordField = 6 [ctype = CORD];
 
   repeated int32 RepeatedPrimitiveField = 7;
   repeated string RepeatedStringField = 8;
   repeated ForeignEnum RepeatedEnumField = 9;
   repeated ForeignMessage RepeatedMessageField = 10;
-  repeated string RepeatedStringPieceField = 11 [ ctype = STRING_PIECE ];
-  repeated string RepeatedCordField = 12 [ ctype = CORD ];
+  repeated string RepeatedStringPieceField = 11 [ctype = STRING_PIECE];
+  repeated string RepeatedCordField = 12 [ctype = CORD];
 }
 
 // We list fields out of order, to ensure that we're using field number and not
@@ -737,63 +763,78 @@ message TestExtensionOrderings2 {
 }
 
 message TestExtremeDefaultValues {
-  bytes escaped_bytes = 1 [ default = "\0\001\a\b\f\n\r\t\v\\\'\"\xfe" ];
-  uint32 large_uint32 = 2 [ default = 0xFFFFFFFF ];
-  uint64 large_uint64 = 3 [ default = 0xFFFFFFFFFFFFFFFF ];
-  int32 small_int32 = 4 [ default = -0x7FFFFFFF ];
-  int64 small_int64 = 5 [ default = -0x7FFFFFFFFFFFFFFF ];
-  int32 really_small_int32 = 21 [ default = -0x80000000 ];
-  int64 really_small_int64 = 22 [ default = -0x8000000000000000 ];
+  bytes escaped_bytes = 1 [default = "\0\001\a\b\f\n\r\t\v\\\'\"\xfe"];
+  uint32 large_uint32 = 2 [default = 0xFFFFFFFF];
+  uint64 large_uint64 = 3 [default = 0xFFFFFFFFFFFFFFFF];
+  int32 small_int32 = 4 [default = -0x7FFFFFFF];
+  int64 small_int64 = 5 [default = -0x7FFFFFFFFFFFFFFF];
+  int32 really_small_int32 = 21 [default = -0x80000000];
+  int64 really_small_int64 = 22 [default = -0x8000000000000000];
 
   // The default value here is UTF-8 for "\u1234".  (We could also just type
   // the UTF-8 text directly into this text file rather than escape it, but
   // lots of people use editors that would be confused by this.)
-  string utf8_string = 6 [ default = "\341\210\264" ];
+  string utf8_string = 6 [default = "\341\210\264"];
 
   // Tests for single-precision floating-point values.
-  float zero_float = 7 [ default = 0 ];
-  float one_float = 8 [ default = 1 ];
-  float small_float = 9 [ default = 1.5 ];
-  float negative_one_float = 10 [ default = -1 ];
-  float negative_float = 11 [ default = -1.5 ];
+  float zero_float = 7 [default = 0];
+  float one_float = 8 [default = 1];
+  float small_float = 9 [default = 1.5];
+  float negative_one_float = 10 [default = -1];
+  float negative_float = 11 [default = -1.5];
   // Using exponents
-  float large_float = 12 [ default = 2E8 ];
-  float small_negative_float = 13 [ default = -8e-28 ];
+  float large_float = 12 [default = 2E8];
+  float small_negative_float = 13 [default = -8e-28];
 
   // Text for nonfinite floating-point values.
-  double inf_double = 14 [ default = inf ];
-  double neg_inf_double = 15 [ default = -inf ];
-  double nan_double = 16 [ default = nan ];
-  float inf_float = 17 [ default = inf ];
-  float neg_inf_float = 18 [ default = -inf ];
-  float nan_float = 19 [ default = nan ];
+  double inf_double = 14 [default = inf];
+  double neg_inf_double = 15 [default = -inf];
+  double nan_double = 16 [default = nan];
+  float inf_float = 17 [default = inf];
+  float neg_inf_float = 18 [default = -inf];
+  float nan_float = 19 [default = nan];
 
   // Tests for C++ trigraphs.
   // Trigraphs should be escaped in C++ generated files, but they should not be
   // escaped for other languages.
   // Note that in .proto file, "\?" is a valid way to escape ? in string
   // literals.
-  string cpp_trigraph = 20 [ default = "? \? ?? \?? \??? ??/ ?\?-" ];
+  string cpp_trigraph = 20 [default = "? \? ?? \?? \??? ??/ ?\?-"];
 
   // String defaults containing the character '\000'
-  string string_with_zero = 23 [ default = "hel\000lo" ];
-  bytes bytes_with_zero = 24 [ default = "wor\000ld" ];
-  string string_piece_with_zero = 25
-      [ ctype = STRING_PIECE, default = "ab\000c" ];
-  string cord_with_zero = 26 [ ctype = CORD, default = "12\0003" ];
-  string replacement_string = 27 [ default = "${unknown}" ];
+  string string_with_zero = 23 [default = "hel\000lo"];
+  bytes bytes_with_zero = 24 [default = "wor\000ld"];
+  string string_piece_with_zero = 25 [
+    ctype = STRING_PIECE,
+    default = "ab\000c"
+  ];
+  string cord_with_zero = 26 [
+    ctype = CORD,
+    default = "12\0003"
+  ];
+  string replacement_string = 27 [default = "${unknown}"];
 }
 
-message SparseEnumMessage { TestSparseEnum sparse_enum = 1; }
+message SparseEnumMessage {
+  TestSparseEnum sparse_enum = 1;
+}
 
 // Test String and Bytes: string is for valid UTF-8 strings
-message OneString { string data = 1; }
+message OneString {
+  string data = 1;
+}
 
-message MoreString { repeated string data = 1; }
+message MoreString {
+  repeated string data = 1;
+}
 
-message OneBytes { bytes data = 1; }
+message OneBytes {
+  bytes data = 1;
+}
 
-message MoreBytes { repeated bytes data = 1; }
+message MoreBytes {
+  repeated bytes data = 1;
+}
 
 message ManyOptionalString {
   string str1 = 1;
@@ -831,15 +872,25 @@ message ManyOptionalString {
 }
 
 // Test int32, uint32, int64, uint64, and bool are all compatible
-message Int32Message { int32 data = 1; }
+message Int32Message {
+  int32 data = 1;
+}
 
-message Uint32Message { uint32 data = 1; }
+message Uint32Message {
+  uint32 data = 1;
+}
 
-message Int64Message { int64 data = 1; }
+message Int64Message {
+  int64 data = 1;
+}
 
-message Uint64Message { uint64 data = 1; }
+message Uint64Message {
+  uint64 data = 1;
+}
 
-message BoolMessage { bool data = 1; }
+message BoolMessage {
+  bool data = 1;
+}
 
 // Test oneofs.
 message TestOneof {
@@ -851,7 +902,7 @@ message TestOneof {
     int32 foo_int = 1;
     string foo_string = 2;
     TestAllTypes foo_message = 3;
-    FooGroup foogroup = 4 [ features.message_encoding = DELIMITED ];
+    FooGroup foogroup = 4 [features.message_encoding = DELIMITED];
   }
 }
 
@@ -863,7 +914,7 @@ message TestOneofBackwardsCompatible {
     int32 a = 5;
     string b = 6;
   }
-  FooGroup foogroup = 4 [ features.message_encoding = DELIMITED ];
+  FooGroup foogroup = 4 [features.message_encoding = DELIMITED];
 }
 
 message TestOneof2 {
@@ -874,32 +925,43 @@ message TestOneof2 {
   oneof foo {
     int32 foo_int = 1;
     string foo_string = 2;
-    string foo_cord = 3 [ ctype = CORD ];
-    string foo_string_piece = 4 [ ctype = STRING_PIECE ];
+    string foo_cord = 3 [ctype = CORD];
+    string foo_string_piece = 4 [ctype = STRING_PIECE];
     bytes foo_bytes = 5;
     NestedEnum foo_enum = 6;
     NestedMessage foo_message = 7;
-    FooGroup foogroup = 8 [ features.message_encoding = DELIMITED ];
-    NestedMessage foo_lazy_message = 11 [ lazy = true ];
-    bytes foo_bytes_cord = 30 [ ctype = CORD ];
+    FooGroup foogroup = 8 [features.message_encoding = DELIMITED];
+    NestedMessage foo_lazy_message = 11 [lazy = true];
+    bytes foo_bytes_cord = 30 [ctype = CORD];
   }
 
   oneof bar {
-    int32 bar_int = 12 [ default = 5 ];
-    string bar_string = 13 [ default = "STRING" ];
-    string bar_cord = 14 [ ctype = CORD, default = "CORD" ];
-    string bar_string_piece = 15 [ ctype = STRING_PIECE, default = "SPIECE" ];
-    bytes bar_bytes = 16 [ default = "BYTES" ];
-    NestedEnum bar_enum = 17 [ default = BAR ];
-    string bar_string_with_empty_default = 20 [ default = "" ];
-    string bar_cord_with_empty_default = 21 [ ctype = CORD, default = "" ];
-    string bar_string_piece_with_empty_default = 22
-        [ ctype = STRING_PIECE, default = "" ];
-    bytes bar_bytes_with_empty_default = 23 [ default = "" ];
+    int32 bar_int = 12 [default = 5];
+    string bar_string = 13 [default = "STRING"];
+    string bar_cord = 14 [
+      ctype = CORD,
+      default = "CORD"
+    ];
+    string bar_string_piece = 15 [
+      ctype = STRING_PIECE,
+      default = "SPIECE"
+    ];
+    bytes bar_bytes = 16 [default = "BYTES"];
+    NestedEnum bar_enum = 17 [default = BAR];
+    string bar_string_with_empty_default = 20 [default = ""];
+    string bar_cord_with_empty_default = 21 [
+      ctype = CORD,
+      default = ""
+    ];
+    string bar_string_piece_with_empty_default = 22 [
+      ctype = STRING_PIECE,
+      default = ""
+    ];
+    bytes bar_bytes_with_empty_default = 23 [default = ""];
   }
 
   int32 baz_int = 18;
-  string baz_string = 19 [ default = "BAZ" ];
+  string baz_string = 19 [default = "BAZ"];
 
   message NestedMessage {
     int64 moo_int = 1;
@@ -919,142 +981,91 @@ message TestRequiredOneof {
     int32 foo_int = 1;
     string foo_string = 2;
     NestedMessage foo_message = 3;
-    NestedMessage foo_lazy_message = 4 [ lazy = true ];
+    NestedMessage foo_lazy_message = 4 [lazy = true];
   }
   message NestedMessage {
-    double required_double = 1 [ features.field_presence = LEGACY_REQUIRED ];
+    double required_double = 1 [features.field_presence = LEGACY_REQUIRED];
   }
 }
 
 // Test messages for packed fields
 
 message TestPackedTypes {
-  repeated int32 packed_int32 = 90
-      [ features.repeated_field_encoding = PACKED ];
-  repeated int64 packed_int64 = 91
-      [ features.repeated_field_encoding = PACKED ];
-  repeated uint32 packed_uint32 = 92
-      [ features.repeated_field_encoding = PACKED ];
-  repeated uint64 packed_uint64 = 93
-      [ features.repeated_field_encoding = PACKED ];
-  repeated sint32 packed_sint32 = 94
-      [ features.repeated_field_encoding = PACKED ];
-  repeated sint64 packed_sint64 = 95
-      [ features.repeated_field_encoding = PACKED ];
-  repeated fixed32 packed_fixed32 = 96
-      [ features.repeated_field_encoding = PACKED ];
-  repeated fixed64 packed_fixed64 = 97
-      [ features.repeated_field_encoding = PACKED ];
-  repeated sfixed32 packed_sfixed32 = 98
-      [ features.repeated_field_encoding = PACKED ];
-  repeated sfixed64 packed_sfixed64 = 99
-      [ features.repeated_field_encoding = PACKED ];
-  repeated float packed_float = 100
-      [ features.repeated_field_encoding = PACKED ];
-  repeated double packed_double = 101
-      [ features.repeated_field_encoding = PACKED ];
-  repeated bool packed_bool = 102 [ features.repeated_field_encoding = PACKED ];
-  repeated ForeignEnum packed_enum = 103
-      [ features.repeated_field_encoding = PACKED ];
+  repeated int32 packed_int32 = 90 [features.repeated_field_encoding = PACKED];
+  repeated int64 packed_int64 = 91 [features.repeated_field_encoding = PACKED];
+  repeated uint32 packed_uint32 = 92 [features.repeated_field_encoding = PACKED];
+  repeated uint64 packed_uint64 = 93 [features.repeated_field_encoding = PACKED];
+  repeated sint32 packed_sint32 = 94 [features.repeated_field_encoding = PACKED];
+  repeated sint64 packed_sint64 = 95 [features.repeated_field_encoding = PACKED];
+  repeated fixed32 packed_fixed32 = 96 [features.repeated_field_encoding = PACKED];
+  repeated fixed64 packed_fixed64 = 97 [features.repeated_field_encoding = PACKED];
+  repeated sfixed32 packed_sfixed32 = 98 [features.repeated_field_encoding = PACKED];
+  repeated sfixed64 packed_sfixed64 = 99 [features.repeated_field_encoding = PACKED];
+  repeated float packed_float = 100 [features.repeated_field_encoding = PACKED];
+  repeated double packed_double = 101 [features.repeated_field_encoding = PACKED];
+  repeated bool packed_bool = 102 [features.repeated_field_encoding = PACKED];
+  repeated ForeignEnum packed_enum = 103 [features.repeated_field_encoding = PACKED];
 }
 
 // A message with the same fields as TestPackedTypes, but without packing. Used
 // to test packed <-> unpacked wire compatibility.
 message TestUnpackedTypes {
-  repeated int32 unpacked_int32 = 90
-      [ features.repeated_field_encoding = EXPANDED ];
-  repeated int64 unpacked_int64 = 91
-      [ features.repeated_field_encoding = EXPANDED ];
-  repeated uint32 unpacked_uint32 = 92
-      [ features.repeated_field_encoding = EXPANDED ];
-  repeated uint64 unpacked_uint64 = 93
-      [ features.repeated_field_encoding = EXPANDED ];
-  repeated sint32 unpacked_sint32 = 94
-      [ features.repeated_field_encoding = EXPANDED ];
-  repeated sint64 unpacked_sint64 = 95
-      [ features.repeated_field_encoding = EXPANDED ];
-  repeated fixed32 unpacked_fixed32 = 96
-      [ features.repeated_field_encoding = EXPANDED ];
-  repeated fixed64 unpacked_fixed64 = 97
-      [ features.repeated_field_encoding = EXPANDED ];
-  repeated sfixed32 unpacked_sfixed32 = 98
-      [ features.repeated_field_encoding = EXPANDED ];
-  repeated sfixed64 unpacked_sfixed64 = 99
-      [ features.repeated_field_encoding = EXPANDED ];
-  repeated float unpacked_float = 100
-      [ features.repeated_field_encoding = EXPANDED ];
-  repeated double unpacked_double = 101
-      [ features.repeated_field_encoding = EXPANDED ];
-  repeated bool unpacked_bool = 102
-      [ features.repeated_field_encoding = EXPANDED ];
-  repeated ForeignEnum unpacked_enum = 103
-      [ features.repeated_field_encoding = EXPANDED ];
+  repeated int32 unpacked_int32 = 90 [features.repeated_field_encoding = EXPANDED];
+  repeated int64 unpacked_int64 = 91 [features.repeated_field_encoding = EXPANDED];
+  repeated uint32 unpacked_uint32 = 92 [features.repeated_field_encoding = EXPANDED];
+  repeated uint64 unpacked_uint64 = 93 [features.repeated_field_encoding = EXPANDED];
+  repeated sint32 unpacked_sint32 = 94 [features.repeated_field_encoding = EXPANDED];
+  repeated sint64 unpacked_sint64 = 95 [features.repeated_field_encoding = EXPANDED];
+  repeated fixed32 unpacked_fixed32 = 96 [features.repeated_field_encoding = EXPANDED];
+  repeated fixed64 unpacked_fixed64 = 97 [features.repeated_field_encoding = EXPANDED];
+  repeated sfixed32 unpacked_sfixed32 = 98 [features.repeated_field_encoding = EXPANDED];
+  repeated sfixed64 unpacked_sfixed64 = 99 [features.repeated_field_encoding = EXPANDED];
+  repeated float unpacked_float = 100 [features.repeated_field_encoding = EXPANDED];
+  repeated double unpacked_double = 101 [features.repeated_field_encoding = EXPANDED];
+  repeated bool unpacked_bool = 102 [features.repeated_field_encoding = EXPANDED];
+  repeated ForeignEnum unpacked_enum = 103 [features.repeated_field_encoding = EXPANDED];
 }
 
-message TestPackedExtensions { extensions 1 to max; }
+message TestPackedExtensions {
+  extensions 1 to max;
+}
 
 extend TestPackedExtensions {
-  repeated int32 packed_int32_extension = 90
-      [ features.repeated_field_encoding = PACKED ];
-  repeated int64 packed_int64_extension = 91
-      [ features.repeated_field_encoding = PACKED ];
-  repeated uint32 packed_uint32_extension = 92
-      [ features.repeated_field_encoding = PACKED ];
-  repeated uint64 packed_uint64_extension = 93
-      [ features.repeated_field_encoding = PACKED ];
-  repeated sint32 packed_sint32_extension = 94
-      [ features.repeated_field_encoding = PACKED ];
-  repeated sint64 packed_sint64_extension = 95
-      [ features.repeated_field_encoding = PACKED ];
-  repeated fixed32 packed_fixed32_extension = 96
-      [ features.repeated_field_encoding = PACKED ];
-  repeated fixed64 packed_fixed64_extension = 97
-      [ features.repeated_field_encoding = PACKED ];
-  repeated sfixed32 packed_sfixed32_extension = 98
-      [ features.repeated_field_encoding = PACKED ];
-  repeated sfixed64 packed_sfixed64_extension = 99
-      [ features.repeated_field_encoding = PACKED ];
-  repeated float packed_float_extension = 100
-      [ features.repeated_field_encoding = PACKED ];
-  repeated double packed_double_extension = 101
-      [ features.repeated_field_encoding = PACKED ];
-  repeated bool packed_bool_extension = 102
-      [ features.repeated_field_encoding = PACKED ];
-  repeated ForeignEnum packed_enum_extension = 103
-      [ features.repeated_field_encoding = PACKED ];
+  repeated int32 packed_int32_extension = 90 [features.repeated_field_encoding = PACKED];
+  repeated int64 packed_int64_extension = 91 [features.repeated_field_encoding = PACKED];
+  repeated uint32 packed_uint32_extension = 92 [features.repeated_field_encoding = PACKED];
+  repeated uint64 packed_uint64_extension = 93 [features.repeated_field_encoding = PACKED];
+  repeated sint32 packed_sint32_extension = 94 [features.repeated_field_encoding = PACKED];
+  repeated sint64 packed_sint64_extension = 95 [features.repeated_field_encoding = PACKED];
+  repeated fixed32 packed_fixed32_extension = 96 [features.repeated_field_encoding = PACKED];
+  repeated fixed64 packed_fixed64_extension = 97 [features.repeated_field_encoding = PACKED];
+  repeated sfixed32 packed_sfixed32_extension = 98 [features.repeated_field_encoding = PACKED];
+  repeated sfixed64 packed_sfixed64_extension = 99 [features.repeated_field_encoding = PACKED];
+  repeated float packed_float_extension = 100 [features.repeated_field_encoding = PACKED];
+  repeated double packed_double_extension = 101 [features.repeated_field_encoding = PACKED];
+  repeated bool packed_bool_extension = 102 [features.repeated_field_encoding = PACKED];
+  repeated ForeignEnum packed_enum_extension = 103 [features.repeated_field_encoding = PACKED];
 }
 
-message TestUnpackedExtensions { extensions 1 to max; }
+message TestUnpackedExtensions {
+  extensions 1 to max;
+}
 
 extend TestUnpackedExtensions {
-  repeated int32 unpacked_int32_extension = 90
-      [ features.repeated_field_encoding = EXPANDED ];
-  repeated int64 unpacked_int64_extension = 91
-      [ features.repeated_field_encoding = EXPANDED ];
-  repeated uint32 unpacked_uint32_extension = 92
-      [ features.repeated_field_encoding = EXPANDED ];
-  repeated uint64 unpacked_uint64_extension = 93
-      [ features.repeated_field_encoding = EXPANDED ];
-  repeated sint32 unpacked_sint32_extension = 94
-      [ features.repeated_field_encoding = EXPANDED ];
-  repeated sint64 unpacked_sint64_extension = 95
-      [ features.repeated_field_encoding = EXPANDED ];
-  repeated fixed32 unpacked_fixed32_extension = 96
-      [ features.repeated_field_encoding = EXPANDED ];
-  repeated fixed64 unpacked_fixed64_extension = 97
-      [ features.repeated_field_encoding = EXPANDED ];
-  repeated sfixed32 unpacked_sfixed32_extension = 98
-      [ features.repeated_field_encoding = EXPANDED ];
-  repeated sfixed64 unpacked_sfixed64_extension = 99
-      [ features.repeated_field_encoding = EXPANDED ];
-  repeated float unpacked_float_extension = 100
-      [ features.repeated_field_encoding = EXPANDED ];
-  repeated double unpacked_double_extension = 101
-      [ features.repeated_field_encoding = EXPANDED ];
-  repeated bool unpacked_bool_extension = 102
-      [ features.repeated_field_encoding = EXPANDED ];
-  repeated ForeignEnum unpacked_enum_extension = 103
-      [ features.repeated_field_encoding = EXPANDED ];
+  repeated int32 unpacked_int32_extension = 90 [features.repeated_field_encoding = EXPANDED];
+  repeated int64 unpacked_int64_extension = 91 [features.repeated_field_encoding = EXPANDED];
+  repeated uint32 unpacked_uint32_extension = 92 [features.repeated_field_encoding = EXPANDED];
+  repeated uint64 unpacked_uint64_extension = 93 [features.repeated_field_encoding = EXPANDED];
+  repeated sint32 unpacked_sint32_extension = 94 [features.repeated_field_encoding = EXPANDED];
+  repeated sint64 unpacked_sint64_extension = 95 [features.repeated_field_encoding = EXPANDED];
+  repeated fixed32 unpacked_fixed32_extension = 96 [features.repeated_field_encoding = EXPANDED];
+  repeated fixed64 unpacked_fixed64_extension = 97 [features.repeated_field_encoding = EXPANDED];
+  repeated sfixed32 unpacked_sfixed32_extension = 98 [features.repeated_field_encoding = EXPANDED];
+  repeated sfixed64 unpacked_sfixed64_extension = 99 [features.repeated_field_encoding = EXPANDED];
+  repeated float unpacked_float_extension = 100 [features.repeated_field_encoding = EXPANDED];
+  repeated double unpacked_double_extension = 101 [features.repeated_field_encoding = EXPANDED];
+  repeated bool unpacked_bool_extension = 102 [features.repeated_field_encoding = EXPANDED];
+  repeated ForeignEnum unpacked_enum_extension = 103 [features.repeated_field_encoding = EXPANDED];
 }
 
 // Used by ExtensionSetTest/DynamicExtensions.  The test actually builds
@@ -1067,7 +1078,9 @@ message TestDynamicExtensions {
     DYNAMIC_BAR = 2201;
     DYNAMIC_BAZ = 2202;
   }
-  message DynamicMessageType { int32 dynamic_field = 2100; }
+  message DynamicMessageType {
+    int32 dynamic_field = 2100;
+  }
 
   fixed32 scalar_extension = 2000;
   ForeignEnum enum_extension = 2001;
@@ -1077,8 +1090,7 @@ message TestDynamicExtensions {
   DynamicMessageType dynamic_message_extension = 2004;
 
   repeated string repeated_extension = 2005;
-  repeated sint32 packed_extension = 2006
-      [ features.repeated_field_encoding = PACKED ];
+  repeated sint32 packed_extension = 2006 [features.repeated_field_encoding = PACKED];
 }
 
 message TestRepeatedString {
@@ -1118,22 +1130,28 @@ message TestParsingMerge {
     repeated TestAllTypes field1 = 1;
     repeated TestAllTypes field2 = 2;
     repeated TestAllTypes field3 = 3;
-    message Group1 { TestAllTypes field1 = 11; }
-    repeated Group1 group1 = 10 [ features.message_encoding = DELIMITED ];
-    message Group2 { TestAllTypes field1 = 21; }
-    repeated Group2 group2 = 20 [ features.message_encoding = DELIMITED ];
+    message Group1 {
+      TestAllTypes field1 = 11;
+    }
+    repeated Group1 group1 = 10 [features.message_encoding = DELIMITED];
+    message Group2 {
+      TestAllTypes field1 = 21;
+    }
+    repeated Group2 group2 = 20 [features.message_encoding = DELIMITED];
     repeated TestAllTypes ext1 = 1000;
     repeated TestAllTypes ext2 = 1001;
   }
-  TestAllTypes required_all_types = 1
-      [ features.field_presence = LEGACY_REQUIRED ];
+  TestAllTypes required_all_types = 1 [features.field_presence = LEGACY_REQUIRED];
   TestAllTypes optional_all_types = 2;
   repeated TestAllTypes repeated_all_types = 3;
-  message OptionalGroup { TestAllTypes optional_group_all_types = 11; }
-  OptionalGroup optionalgroup = 10 [ features.message_encoding = DELIMITED ];
-  message RepeatedGroup { TestAllTypes repeated_group_all_types = 21; }
-  repeated RepeatedGroup repeatedgroup = 20
-      [ features.message_encoding = DELIMITED ];
+  message OptionalGroup {
+    TestAllTypes optional_group_all_types = 11;
+  }
+  OptionalGroup optionalgroup = 10 [features.message_encoding = DELIMITED];
+  message RepeatedGroup {
+    TestAllTypes repeated_group_all_types = 21;
+  }
+  repeated RepeatedGroup repeatedgroup = 20 [features.message_encoding = DELIMITED];
   extensions 1000 to max;
   extend TestParsingMerge {
     TestAllTypes optional_ext = 1000;
@@ -1143,11 +1161,13 @@ message TestParsingMerge {
 
 // Test that the correct exception is thrown by parseFrom in a corner case
 // involving merging, extensions, and fields.
-message TestMergeException { TestAllExtensions all_extensions = 1; }
+message TestMergeException {
+  TestAllExtensions all_extensions = 1;
+}
 
 message TestCommentInjectionMessage {
   // */ <- This should not close the generated doc comment
-  string a = 1 [ default = "*/ <- Neither should this." ];
+  string a = 1 [default = "*/ <- Neither should this."];
 }
 
 // Used to check that the c++ code generator re-orders messages to reduce
@@ -1163,8 +1183,10 @@ message TestMessageSize {
 
 // Tests eager verification of a lazy message field.
 message TestEagerlyVerifiedLazyMessage {
-  message LazyMessage { bytes bytes_field = 1; }
-  LazyMessage lazy_message = 1 [ lazy = true ];
+  message LazyMessage {
+    bytes bytes_field = 1;
+  }
+  LazyMessage lazy_message = 1 [lazy = true];
 }
 
 // Test that RPC services work.
@@ -1183,26 +1205,25 @@ message TestJsonName {
   int32 FieldName3 = 3;
   int32 _field_name4 = 4;
   int32 FIELD_NAME5 = 5;
-  int32 field_name6 = 6 [ json_name = "@type" ];
+  int32 field_name6 = 6 [json_name = "@type"];
   int32 fieldname7 = 7;
 }
 
 message TestHugeFieldNumbers {
   int32 optional_int32 = 536870000;
   int32 fixed_32 = 536870001;
-  repeated int32 repeated_int32 = 536870002
-      [ features.repeated_field_encoding = EXPANDED ];
-  repeated int32 packed_int32 = 536870003
-      [ features.repeated_field_encoding = PACKED ];
+  repeated int32 repeated_int32 = 536870002 [features.repeated_field_encoding = EXPANDED];
+  repeated int32 packed_int32 = 536870003 [features.repeated_field_encoding = PACKED];
 
   ForeignEnum optional_enum = 536870004;
   string optional_string = 536870005;
   bytes optional_bytes = 536870006;
   ForeignMessage optional_message = 536870007;
 
-  message OptionalGroup { int32 group_a = 536870009; }
-  OptionalGroup optionalgroup = 536870008
-      [ features.message_encoding = DELIMITED ];
+  message OptionalGroup {
+    int32 group_a = 536870009;
+  }
+  OptionalGroup optionalgroup = 536870008 [features.message_encoding = DELIMITED];
 
   map<string, string> string_string_map = 536870010;
 
@@ -1213,14 +1234,16 @@ message TestHugeFieldNumbers {
     bytes oneof_bytes = 536870014;
   }
 
-  extensions 536860000 to 536869999 [ declaration = {
-    number : 536860000
-    full_name : ".edition_unittest.test_all_types"
-    type : ".edition_unittest.TestAllTypes"
-  } ];
+  extensions 536860000 to 536869999 [declaration = {
+    number: 536860000
+    full_name: ".edition_unittest.test_all_types"
+    type: ".edition_unittest.TestAllTypes"
+  }];
 }
 
-extend TestHugeFieldNumbers { TestAllTypes test_all_types = 536860000; }
+extend TestHugeFieldNumbers {
+  TestAllTypes test_all_types = 536860000;
+}
 
 message TestExtensionInsideTable {
   int32 field1 = 1;
@@ -1243,30 +1266,21 @@ extend TestExtensionInsideTable {
 message TestNestedGroupExtensionOuter {
   message Layer1OptionalGroup {
     message Layer2RepeatedGroup {
-      extensions 3 /* NOTE: extension metadata is not supported due to targets
-                      such as */
-          /* `//google/protobuf_legacy_opensource/src:shell_scripts_test`, */
-          /* eee https://screenshot.googleplex.com/Axz2QD8nxjdpyFF */
-          /* [metadata = { */ /* NOTE: can't write type there due to some clever
-                                 build gen code at */
-          /* http://google3/google/protobuf/BUILD;l=1247;rcl=411090862 */ /* type:
-                                                                             "edition_unittest.TestNestedGroupExtensionInnerExtension",
-                                                                           */
-          /* name: "inner", */ /* }] */;
+      extensions 3 /* NOTE: extension metadata is not supported due to targets such as */ /* `//google/protobuf_legacy_opensource/src:shell_scripts_test`, */ /* eee https://screenshot.googleplex.com/Axz2QD8nxjdpyFF */ /* [metadata = { */ /* NOTE: can't write type there due to some clever build gen code at */ /* http://google3/google/protobuf/BUILD;l=1247;rcl=411090862 */ /* type: "edition_unittest.TestNestedGroupExtensionInnerExtension", */ /* name: "inner", */ /* }] */;
       string another_field = 6;
     }
-    message Layer2AnotherOptionalRepeatedGroup { string but_why_tho = 5; }
-    repeated Layer2RepeatedGroup layer2repeatedgroup = 2
-        [ features.message_encoding = DELIMITED ];
-    repeated Layer2AnotherOptionalRepeatedGroup
-        layer2anotheroptionalrepeatedgroup = 4
-        [ features.message_encoding = DELIMITED ];
+    message Layer2AnotherOptionalRepeatedGroup {
+      string but_why_tho = 5;
+    }
+    repeated Layer2RepeatedGroup layer2repeatedgroup = 2 [features.message_encoding = DELIMITED];
+    repeated Layer2AnotherOptionalRepeatedGroup layer2anotheroptionalrepeatedgroup = 4 [features.message_encoding = DELIMITED];
   }
-  Layer1OptionalGroup lay1optionalgroup = 1
-      [ features.message_encoding = DELIMITED ];
+  Layer1OptionalGroup lay1optionalgroup = 1 [features.message_encoding = DELIMITED];
 }
 
-message TestNestedGroupExtensionInnerExtension { string inner_name = 1; }
+message TestNestedGroupExtensionInnerExtension {
+  string inner_name = 1;
+}
 
 extend TestNestedGroupExtensionOuter.Layer1OptionalGroup.Layer2RepeatedGroup {
   TestNestedGroupExtensionInnerExtension inner = 3;
@@ -1547,12 +1561,9 @@ message EnumParseTester {
   repeated SeqSmall0 repeated_seq_small_0_lowfield = 2;
   repeated SeqSmall0 repeated_seq_small_0_midfield = 1002;
   repeated SeqSmall0 repeated_seq_small_0_hifield = 1000002;
-  repeated SeqSmall0 packed_seq_small_0_lowfield = 3
-      [ features.repeated_field_encoding = PACKED ];
-  repeated SeqSmall0 packed_seq_small_0_midfield = 1003
-      [ features.repeated_field_encoding = PACKED ];
-  repeated SeqSmall0 packed_seq_small_0_hifield = 1000003
-      [ features.repeated_field_encoding = PACKED ];
+  repeated SeqSmall0 packed_seq_small_0_lowfield = 3 [features.repeated_field_encoding = PACKED];
+  repeated SeqSmall0 packed_seq_small_0_midfield = 1003 [features.repeated_field_encoding = PACKED];
+  repeated SeqSmall0 packed_seq_small_0_hifield = 1000003 [features.repeated_field_encoding = PACKED];
 
   enum SeqSmall1 {
     UNKNOWN = 0;
@@ -1566,12 +1577,9 @@ message EnumParseTester {
   repeated SeqSmall1 repeated_seq_small_1_lowfield = 5;
   repeated SeqSmall1 repeated_seq_small_1_midfield = 1005;
   repeated SeqSmall1 repeated_seq_small_1_hifield = 1000005;
-  repeated SeqSmall1 packed_seq_small_1_lowfield = 6
-      [ features.repeated_field_encoding = PACKED ];
-  repeated SeqSmall1 packed_seq_small_1_midfield = 1006
-      [ features.repeated_field_encoding = PACKED ];
-  repeated SeqSmall1 packed_seq_small_1_hifield = 1000006
-      [ features.repeated_field_encoding = PACKED ];
+  repeated SeqSmall1 packed_seq_small_1_lowfield = 6 [features.repeated_field_encoding = PACKED];
+  repeated SeqSmall1 packed_seq_small_1_midfield = 1006 [features.repeated_field_encoding = PACKED];
+  repeated SeqSmall1 packed_seq_small_1_hifield = 1000006 [features.repeated_field_encoding = PACKED];
 
   enum SeqLarge {
     SEQ_LARGE_DEFAULT = -1;
@@ -1616,12 +1624,9 @@ message EnumParseTester {
   repeated SeqLarge repeated_seq_large_lowfield = 8;
   repeated SeqLarge repeated_seq_large_midfield = 1008;
   repeated SeqLarge repeated_seq_large_hifield = 1000008;
-  repeated SeqLarge packed_seq_large_lowfield = 9
-      [ features.repeated_field_encoding = PACKED ];
-  repeated SeqLarge packed_seq_large_midfield = 1009
-      [ features.repeated_field_encoding = PACKED ];
-  repeated SeqLarge packed_seq_large_hifield = 1000009
-      [ features.repeated_field_encoding = PACKED ];
+  repeated SeqLarge packed_seq_large_lowfield = 9 [features.repeated_field_encoding = PACKED];
+  repeated SeqLarge packed_seq_large_midfield = 1009 [features.repeated_field_encoding = PACKED];
+  repeated SeqLarge packed_seq_large_hifield = 1000009 [features.repeated_field_encoding = PACKED];
 
   enum Arbitrary {
     ARBITRARY_DEFAULT = -123123;
@@ -1637,19 +1642,15 @@ message EnumParseTester {
   repeated Arbitrary repeated_arbitrary_lowfield = 11;
   repeated Arbitrary repeated_arbitrary_midfield = 1011;
   repeated Arbitrary repeated_arbitrary_hifield = 1000011;
-  repeated Arbitrary packed_arbitrary_lowfield = 12
-      [ features.repeated_field_encoding = PACKED ];
-  repeated Arbitrary packed_arbitrary_midfield = 1012
-      [ features.repeated_field_encoding = PACKED ];
-  repeated Arbitrary packed_arbitrary_hifield = 1000012
-      [ features.repeated_field_encoding = PACKED ];
+  repeated Arbitrary packed_arbitrary_lowfield = 12 [features.repeated_field_encoding = PACKED];
+  repeated Arbitrary packed_arbitrary_midfield = 1012 [features.repeated_field_encoding = PACKED];
+  repeated Arbitrary packed_arbitrary_hifield = 1000012 [features.repeated_field_encoding = PACKED];
 
   extensions 2000000 to max;
   extend EnumParseTester {
     Arbitrary optional_arbitrary_ext = 2000000;
     repeated Arbitrary repeated_arbitrary_ext = 2000001;
-    repeated Arbitrary packed_arbitrary_ext = 2000002
-        [ features.repeated_field_encoding = PACKED ];
+    repeated Arbitrary packed_arbitrary_ext = 2000002 [features.repeated_field_encoding = PACKED];
   }
 
   // An arbitrary field we can append to to break the runs of repeated fields.
@@ -1665,19 +1666,15 @@ message BoolParseTester {
   repeated bool repeated_bool_lowfield = 2;
   repeated bool repeated_bool_midfield = 1002;
   repeated bool repeated_bool_hifield = 1000002;
-  repeated bool packed_bool_lowfield = 3
-      [ features.repeated_field_encoding = PACKED ];
-  repeated bool packed_bool_midfield = 1003
-      [ features.repeated_field_encoding = PACKED ];
-  repeated bool packed_bool_hifield = 1000003
-      [ features.repeated_field_encoding = PACKED ];
+  repeated bool packed_bool_lowfield = 3 [features.repeated_field_encoding = PACKED];
+  repeated bool packed_bool_midfield = 1003 [features.repeated_field_encoding = PACKED];
+  repeated bool packed_bool_hifield = 1000003 [features.repeated_field_encoding = PACKED];
 
   extensions 2000000 to max;
   extend BoolParseTester {
     bool optional_bool_ext = 2000000;
     repeated bool repeated_bool_ext = 2000001;
-    repeated bool packed_bool_ext = 2000002
-        [ features.repeated_field_encoding = PACKED ];
+    repeated bool packed_bool_ext = 2000002 [features.repeated_field_encoding = PACKED];
   }
 
   // An arbitrary field we can append to to break the runs of repeated fields.
@@ -1691,19 +1688,15 @@ message Int32ParseTester {
   repeated int32 repeated_int32_lowfield = 2;
   repeated int32 repeated_int32_midfield = 1002;
   repeated int32 repeated_int32_hifield = 1000002;
-  repeated int32 packed_int32_lowfield = 3
-      [ features.repeated_field_encoding = PACKED ];
-  repeated int32 packed_int32_midfield = 1003
-      [ features.repeated_field_encoding = PACKED ];
-  repeated int32 packed_int32_hifield = 1000003
-      [ features.repeated_field_encoding = PACKED ];
+  repeated int32 packed_int32_lowfield = 3 [features.repeated_field_encoding = PACKED];
+  repeated int32 packed_int32_midfield = 1003 [features.repeated_field_encoding = PACKED];
+  repeated int32 packed_int32_hifield = 1000003 [features.repeated_field_encoding = PACKED];
 
   extensions 2000000 to max;
   extend Int32ParseTester {
     int32 optional_int32_ext = 2000000;
     repeated int32 repeated_int32_ext = 2000001;
-    repeated int32 packed_int32_ext = 2000002
-        [ features.repeated_field_encoding = PACKED ];
+    repeated int32 packed_int32_ext = 2000002 [features.repeated_field_encoding = PACKED];
   }
 
   // An arbitrary field we can append to to break the runs of repeated fields.
@@ -1717,19 +1710,15 @@ message Int64ParseTester {
   repeated int64 repeated_int64_lowfield = 2;
   repeated int64 repeated_int64_midfield = 1002;
   repeated int64 repeated_int64_hifield = 1000002;
-  repeated int64 packed_int64_lowfield = 3
-      [ features.repeated_field_encoding = PACKED ];
-  repeated int64 packed_int64_midfield = 1003
-      [ features.repeated_field_encoding = PACKED ];
-  repeated int64 packed_int64_hifield = 1000003
-      [ features.repeated_field_encoding = PACKED ];
+  repeated int64 packed_int64_lowfield = 3 [features.repeated_field_encoding = PACKED];
+  repeated int64 packed_int64_midfield = 1003 [features.repeated_field_encoding = PACKED];
+  repeated int64 packed_int64_hifield = 1000003 [features.repeated_field_encoding = PACKED];
 
   extensions 2000000 to max;
   extend Int64ParseTester {
     int64 optional_int64_ext = 2000000;
     repeated int64 repeated_int64_ext = 2000001;
-    repeated int64 packed_int64_ext = 2000002
-        [ features.repeated_field_encoding = PACKED ];
+    repeated int64 packed_int64_ext = 2000002 [features.repeated_field_encoding = PACKED];
   }
 
   // An arbitrary field we can append to to break the runs of repeated fields.
@@ -1770,27 +1759,28 @@ message BadFieldNames {
 
 message TestNestedMessageRedaction {
   string optional_unredacted_nested_string = 1;
-  string optional_redacted_nested_string = 2 [ debug_redact = true ];
+  string optional_redacted_nested_string = 2 [debug_redact = true];
 }
 
 message RedactedFields {
-  string optional_redacted_string = 1 [ debug_redact = true ];
+  string optional_redacted_string = 1 [debug_redact = true];
   string optional_unredacted_string = 2;
-  repeated string repeated_redacted_string = 3 [ debug_redact = true ];
+  repeated string repeated_redacted_string = 3 [debug_redact = true];
   repeated string repeated_unredacted_string = 4;
-  TestNestedMessageRedaction optional_redacted_message = 5
-      [ debug_redact = true ];
+  TestNestedMessageRedaction optional_redacted_message = 5 [debug_redact = true];
   TestNestedMessageRedaction optional_unredacted_message = 6;
-  repeated TestNestedMessageRedaction repeated_redacted_message = 7
-      [ debug_redact = true ];
+  repeated TestNestedMessageRedaction repeated_redacted_message = 7 [debug_redact = true];
   repeated TestNestedMessageRedaction repeated_unredacted_message = 8;
-  map<string, string> map_redacted_string = 9 [ debug_redact = true ];
+  map<string, string> map_redacted_string = 9 [debug_redact = true];
   map<string, string> map_unredacted_string = 10;
 }
 
 message TestCord {
-  bytes optional_bytes_cord = 1 [ ctype = CORD ];
-  bytes optional_bytes_cord_default = 2 [ ctype = CORD, default = "hello" ];
+  bytes optional_bytes_cord = 1 [ctype = CORD];
+  bytes optional_bytes_cord_default = 2 [
+    ctype = CORD,
+    default = "hello"
+  ];
 }
 
 message TestPackedEnumSmallRange {
@@ -1800,7 +1790,7 @@ message TestPackedEnumSmallRange {
     BAR = 2;
     BAZ = 3;
   }
-  repeated NestedEnum vals = 1 [ features.repeated_field_encoding = PACKED ];
+  repeated NestedEnum vals = 1 [features.repeated_field_encoding = PACKED];
 }
 
 message EnumsForBenchmark {

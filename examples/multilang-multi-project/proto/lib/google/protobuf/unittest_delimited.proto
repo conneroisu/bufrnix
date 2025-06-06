@@ -33,7 +33,7 @@ message TestDelimited {
   LengthPrefixed lengthprefixed = 1;
 
   // Nested field for nested tests.
-  TestDelimited nested = 2 [ features.message_encoding = DELIMITED ];
+  TestDelimited nested = 2 [features.message_encoding = DELIMITED];
 
   message GroupLike {
     int32 a = 1;
@@ -41,17 +41,16 @@ message TestDelimited {
   }
 
   // Truly group-like field.
-  GroupLike grouplike = 3 [ features.message_encoding = DELIMITED ];
+  GroupLike grouplike = 3 [features.message_encoding = DELIMITED];
 
   // Delimited field that isn't group-like solely because of its name.
-  GroupLike notgrouplike = 4 [ features.message_encoding = DELIMITED ];
+  GroupLike notgrouplike = 4 [features.message_encoding = DELIMITED];
 
   // Delimited field that isn't group-like because of the scope of its type.
-  NotGroupLikeScope notgrouplikescope = 5
-      [ features.message_encoding = DELIMITED ];
+  NotGroupLikeScope notgrouplikescope = 5 [features.message_encoding = DELIMITED];
 
   // Delimited field that's grouplike except that it's an imported type.
-  MessageImport messageimport = 6 [ features.message_encoding = DELIMITED ];
+  MessageImport messageimport = 6 [features.message_encoding = DELIMITED];
 
   extensions 1000 to max;
 }
@@ -61,17 +60,14 @@ extend TestDelimited {
   LengthPrefixed lengthprefixed = 1004;
 
   // Truly group-like extension.
-  GroupLikeFileScope grouplikefilescope = 1000
-      [ features.message_encoding = DELIMITED ];
+  GroupLikeFileScope grouplikefilescope = 1000 [features.message_encoding = DELIMITED];
 
   // Delimited extension that isn't group-like because of its name.
-  NotGroupLikeScope not_group_like_scope = 1001
-      [ features.message_encoding = DELIMITED ];
+  NotGroupLikeScope not_group_like_scope = 1001 [features.message_encoding = DELIMITED];
 
   // Delimited extension that isn't group-like because of the scope of its type.
-  TestDelimited.GroupLike grouplike = 1002
-      [ features.message_encoding = DELIMITED ];
+  TestDelimited.GroupLike grouplike = 1002 [features.message_encoding = DELIMITED];
 
   // Delimited extension that's grouplike except that it's an imported type.
-  MessageImport messageimport = 1003 [ features.message_encoding = DELIMITED ];
+  MessageImport messageimport = 1003 [features.message_encoding = DELIMITED];
 }

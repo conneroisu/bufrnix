@@ -33,7 +33,7 @@ languages = {
     enable = true;
     outputPath = [
       "gen/go"
-      "internal/proto" 
+      "internal/proto"
       "pkg/shared/proto"
     ];
     grpc.enable = true;
@@ -81,14 +81,14 @@ Update all language modules in `src/languages/` to handle array-based paths:
 ```nix
 # Example for Go module
 let
-  outputPaths = if builtins.isList cfg.outputPath 
-                then cfg.outputPath 
+  outputPaths = if builtins.isList cfg.outputPath
+                then cfg.outputPath
                 else [ cfg.outputPath ];
-  
+
   generateForPath = outputPath: ''
     protoc ${protocArgs} --go_out=${outputPath} ${protoFiles}
   '';
-  
+
   allGenerateCommands = map generateForPath outputPaths;
 in
 ```
@@ -103,7 +103,7 @@ languages = {
     enable = true;
     outputPath = [
       "gen/go"                    # Main generated code
-      "vendor/proto"              # Vendor directory for dependencies  
+      "vendor/proto"              # Vendor directory for dependencies
       "pkg/shared/proto"          # Shared package location
     ];
     grpc= {
@@ -120,12 +120,13 @@ languages = {
 ### Example 2: Multi-Module Project
 
 The following example shows how to generate the same code to multiple directories for js:
+
 ```nix
 languages = {
   js = {
     enable = true;
     outputPath = [
-      "packages/frontend/src/proto" 
+      "packages/frontend/src/proto"
       "packages/backend/src/proto"
       "packages/shared/proto"
     ];
@@ -160,7 +161,7 @@ languages = {
     enable = true;
     outputPath = [
       "services/user/proto"
-      "services/order/proto"  
+      "services/order/proto"
       "services/inventory/proto"
       "pkg/common/proto"
     ];
@@ -257,18 +258,18 @@ Here's a simplified example of how the core logic might look:
 ```nix
 # In mkBufrnix.nix
 let
-  normalizeOutputPath = path: 
+  normalizeOutputPath = path:
     if builtins.isList path then path else [path];
-    
+
   generateForLanguage = lang: config:
-    let 
+    let
       outputPaths = normalizeOutputPath config.outputPath;
-      
+
       generateForPath = outputPath: ''
         mkdir -p ${outputPath}
         ${protocCommand} --${lang}_out=${outputPath} ${protoFiles}
       '';
-      
+
     in builtins.concatStringsSep "\n" (map generateForPath outputPaths);
 ```
 

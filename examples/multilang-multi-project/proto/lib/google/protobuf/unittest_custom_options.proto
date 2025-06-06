@@ -22,56 +22,60 @@ import "google/protobuf/descriptor.proto";
 
 // Some generic_services option(s) added automatically.
 // See:  http://go/proto2-generic-services-default
-option cc_generic_services = true;   // auto-added
+option cc_generic_services = true; // auto-added
 option java_generic_services = true; // auto-added
 option py_generic_services = true;
 // A custom file option (defined below).
 option (file_opt1) = 9876543210;
 // Try using AggregateOption at different points in the proto grammar
 option (fileopt) = {
-  s : 'FileAnnotation'
+  s: 'FileAnnotation'
   // Also test the handling of comments
   /* of both types */
-  i : 100
+  i: 100
 
-  sub : {s : 'NestedFileAnnotation'}
+  sub: {s: 'NestedFileAnnotation'}
 
   // Include a google.protobuf.FileOptions and recursively extend it with
   // another fileopt.
-  file : {
-    [proto2_unittest.fileopt] : {s : 'FileExtensionAnnotation'}
+  file: {
+    [proto2_unittest.fileopt]: {s: 'FileExtensionAnnotation'}
   }
 
   // A message set inside an option value
-  mset : {
-    [proto2_unittest.AggregateMessageSetElement.message_set_extension] : {
-      s : 'EmbeddedMessageSetElement'
-    }
+  mset: {
+    [proto2_unittest.AggregateMessageSetElement.message_set_extension]: {s: 'EmbeddedMessageSetElement'}
   }
 
-  any : {
-    [type.googleapis.com/proto2_unittest.AggregateMessageSetElement] : {
-      s : 'EmbeddedMessageSetElement'
-    }
+  any: {
+    [type.googleapis.com/proto2_unittest.AggregateMessageSetElement]: {s: 'EmbeddedMessageSetElement'}
   }
 };
 
 // Some simple test custom options of various types.
 
-extend google.protobuf.FileOptions { optional uint64 file_opt1 = 7736974; }
+extend google.protobuf.FileOptions {
+  optional uint64 file_opt1 = 7736974;
+}
 
-extend google.protobuf.MessageOptions { optional int32 message_opt1 = 7739036; }
+extend google.protobuf.MessageOptions {
+  optional int32 message_opt1 = 7739036;
+}
 
 extend google.protobuf.FieldOptions {
   optional fixed64 field_opt1 = 7740936;
   // This is useful for testing that we correctly register default values for
   // extension options.
-  optional int32 field_opt2 = 7753913 [ default = 42 ];
+  optional int32 field_opt2 = 7753913 [default = 42];
 }
 
-extend google.protobuf.OneofOptions { optional int32 oneof_opt1 = 7740111; }
+extend google.protobuf.OneofOptions {
+  optional int32 oneof_opt1 = 7740111;
+}
 
-extend google.protobuf.EnumOptions { optional sfixed32 enum_opt1 = 7753576; }
+extend google.protobuf.EnumOptions {
+  optional sfixed32 enum_opt1 = 7753576;
+}
 
 extend google.protobuf.EnumValueOptions {
   optional int32 enum_value_opt1 = 1560678;
@@ -96,7 +100,10 @@ message TestMessageWithCustomOptions {
   option message_set_wire_format = false;
   option (message_opt1) = -56;
 
-  optional string field1 = 1 [ ctype = CORD, (field_opt1) = 8765432109 ];
+  optional string field1 = 1 [
+    ctype = CORD,
+    (field_opt1) = 8765432109
+  ];
 
   oneof AnOneof {
     option (oneof_opt1) = -99;
@@ -104,13 +111,13 @@ message TestMessageWithCustomOptions {
     int32 oneof_field = 2;
   }
 
-  map<string, string> map_field = 3 [ (field_opt1) = 12345 ];
+  map<string, string> map_field = 3 [(field_opt1) = 12345];
 
   enum AnEnum {
     option (enum_opt1) = -789;
 
     ANENUM_VAL1 = 1;
-    ANENUM_VAL2 = 2 [ (enum_value_opt1) = 123 ];
+    ANENUM_VAL2 = 2 [(enum_value_opt1) = 123];
   }
 }
 
@@ -263,7 +270,9 @@ message ComplexOptionType2 {
 message ComplexOptionType3 {
   optional int32 moo = 1;
 
-  optional group ComplexOptionType5 = 2 { optional int32 plugh = 3; }
+  optional group ComplexOptionType5 = 2 {
+    optional int32 plugh = 3;
+  }
 }
 
 extend ComplexOptionType1 {
@@ -280,7 +289,9 @@ extend google.protobuf.MessageOptions {
   optional proto2_unittest.ComplexOptionType1 complex_opt1 = 7646756;
   optional ComplexOptionType2 complex_opt2 = 7636949;
   optional ComplexOptionType3 complex_opt3 = 7636463;
-  optional group ComplexOpt6 = 7595468 { optional int32 xyzzy = 7593951; }
+  optional group ComplexOpt6 = 7595468 {
+    optional int32 xyzzy = 7593951;
+  }
 }
 
 // Note that we try various different ways of naming the same extension.
@@ -300,12 +311,8 @@ message VariousComplexOptions {
   option (complex_opt2).(proto2_unittest.garply).(corge).moo = 2121;
   option (ComplexOptionType2.ComplexOptionType4.complex_opt4).waldo = 1971;
   option (complex_opt2).fred.waldo = 321;
-  option (complex_opt2).barney = {
-    waldo : 101
-  };
-  option (complex_opt2).barney = {
-    waldo : 212
-  };
+  option (complex_opt2).barney = {waldo: 101};
+  option (complex_opt2).barney = {waldo: 212};
   option (proto2_unittest.complex_opt3).moo = 9;
   option (complex_opt3).complexoptiontype5.plugh = 22;
   option (complexopt6).xyzzy = 24;
@@ -338,7 +345,9 @@ message Aggregate {
 
   // To test the parsing of extensions inside aggregate values
   optional google.protobuf.FileOptions file = 4;
-  extend google.protobuf.FileOptions { optional Aggregate nested = 15476903; }
+  extend google.protobuf.FileOptions {
+    optional Aggregate nested = 15476903;
+  }
 
   // An embedded message set
   optional AggregateMessageSet mset = 5;
@@ -349,10 +358,18 @@ message Aggregate {
 
 // Allow Aggregate to be used as an option at all possible locations
 // in the .proto grammar.
-extend google.protobuf.FileOptions { optional Aggregate fileopt = 15478479; }
-extend google.protobuf.MessageOptions { optional Aggregate msgopt = 15480088; }
-extend google.protobuf.FieldOptions { optional Aggregate fieldopt = 15481374; }
-extend google.protobuf.EnumOptions { optional Aggregate enumopt = 15483218; }
+extend google.protobuf.FileOptions {
+  optional Aggregate fileopt = 15478479;
+}
+extend google.protobuf.MessageOptions {
+  optional Aggregate msgopt = 15480088;
+}
+extend google.protobuf.FieldOptions {
+  optional Aggregate fieldopt = 15481374;
+}
+extend google.protobuf.EnumOptions {
+  optional Aggregate enumopt = 15483218;
+}
 extend google.protobuf.EnumValueOptions {
   optional Aggregate enumvalopt = 15486921;
 }
@@ -365,31 +382,25 @@ extend google.protobuf.MethodOptions {
 
 message AggregateMessage {
   option (msgopt) = {
-    i : 101
-    s : 'MessageAnnotation'
+    i: 101
+    s: 'MessageAnnotation'
   };
 
-  optional int32 fieldname = 1 [ (fieldopt) = {s : 'FieldAnnotation'} ];
+  optional int32 fieldname = 1 [(fieldopt) = {s: 'FieldAnnotation'}];
 }
 
 service AggregateService {
-  option (serviceopt) = {
-    s : 'ServiceAnnotation'
-  };
+  option (serviceopt) = {s: 'ServiceAnnotation'};
 
   rpc Method(AggregateMessage) returns (AggregateMessage) {
-    option (methodopt) = {
-      s : 'MethodAnnotation'
-    };
+    option (methodopt) = {s: 'MethodAnnotation'};
   }
 }
 
 enum AggregateEnum {
-  option (enumopt) = {
-    s : 'EnumAnnotation'
-  };
+  option (enumopt) = {s: 'EnumAnnotation'};
 
-  VALUE = 1 [ (enumvalopt) = {s : 'EnumValueAnnotation'} ];
+  VALUE = 1 [(enumvalopt) = {s: 'EnumValueAnnotation'}];
 }
 
 // Test custom options for nested type.
@@ -397,15 +408,15 @@ message NestedOptionType {
   message NestedMessage {
     option (message_opt1) = 1001;
 
-    optional int32 nested_field = 1 [ (field_opt1) = 1002 ];
+    optional int32 nested_field = 1 [(field_opt1) = 1002];
   }
   enum NestedEnum {
     option (enum_opt1) = 1003;
 
-    NESTED_ENUM_VALUE = 1 [ (enum_value_opt1) = 1004 ];
+    NESTED_ENUM_VALUE = 1 [(enum_value_opt1) = 1004];
   }
   extend google.protobuf.FileOptions {
-    optional int32 nested_extension = 7912573 [ (field_opt2) = 1005 ];
+    optional int32 nested_extension = 7912573 [(field_opt2) = 1005];
   }
 }
 
@@ -433,7 +444,5 @@ extend google.protobuf.MessageOptions {
 
 // Test message using the "required_enum_opt" option defined above.
 message TestMessageWithRequiredEnumOption {
-  option (required_enum_opt) = {
-    value : OLD_VALUE
-  };
+  option (required_enum_opt) = {value: OLD_VALUE};
 }

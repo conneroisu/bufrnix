@@ -62,7 +62,7 @@
         };
 
         devShells.default = pkgs.mkShell {
-packages = with pkgs; [
+          packages = with pkgs; [
             dotnetCorePackages.sdk_8_0
             protobuf
             grpc

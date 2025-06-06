@@ -8,16 +8,16 @@ option go_package = "github.com/example/proto/example/v1;examplev1";
 message User {
   // Unique identifier for the user
   string id = 1;
-  
+
   // User's display name
   string name = 2;
-  
-  // User's email address  
+
+  // User's email address
   string email = 3;
-  
+
   // User's profile information
   UserProfile profile = 4;
-  
+
   // User's account status
   UserStatus status = 5;
 }
@@ -26,13 +26,13 @@ message User {
 message UserProfile {
   // User's first name
   string first_name = 1;
-  
+
   // User's last name
   string last_name = 2;
-  
+
   // User's avatar URL
   string avatar_url = 3;
-  
+
   // User's bio/description
   string bio = 4;
 }
@@ -49,16 +49,16 @@ enum UserStatus {
 service UserService {
   // Create a new user
   rpc CreateUser(CreateUserRequest) returns (CreateUserResponse);
-  
+
   // Get a user by ID
   rpc GetUser(GetUserRequest) returns (GetUserResponse);
-  
+
   // Update an existing user
   rpc UpdateUser(UpdateUserRequest) returns (UpdateUserResponse);
-  
+
   // Delete a user
   rpc DeleteUser(DeleteUserRequest) returns (DeleteUserResponse);
-  
+
   // List users with pagination
   rpc ListUsers(ListUsersRequest) returns (ListUsersResponse);
 }

@@ -56,14 +56,10 @@ message Profile {
   string bio = 1 [(buf.validate.field).string.max_len = 500];
 
   // Website must be a valid URL if provided
-  string website = 2 [(buf.validate.field).string = {
-    uri: true
-  }];
+  string website = 2 [(buf.validate.field).string = {uri: true}];
 
   // Phone number must match a simple pattern if provided
-  string phone = 3 [(buf.validate.field).string = {
-    pattern: "^\\+?[1-9]\\d{1,14}$"
-  }];
+  string phone = 3 [(buf.validate.field).string = {pattern: "^\\+?[1-9]\\d{1,14}$"}];
 }
 
 // CreateUserRequest validates the user creation request

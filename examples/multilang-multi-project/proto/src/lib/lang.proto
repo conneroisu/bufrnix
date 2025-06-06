@@ -4,14 +4,15 @@ package language.v1;
 
 // External
 import "gateway/protoc-gen-openapiv2/annotations.proto";
+
 option go_package = "github.com/conneroisu/bufrnix/examples/multilang-multi-project/proto/gen/go/lib;lib";
 
 // ISO 639-1 language codes
 // Source: ISO 639 standard
 enum LanguageCode {
   option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_enum) = {
-    title : "LanguageCode"
-    description : "ISO 639-1 language codes"
+    title: "LanguageCode"
+    description: "ISO 639-1 language codes"
   };
   // Default unspecified value
   LANGUAGE_UNSPECIFIED = 0;

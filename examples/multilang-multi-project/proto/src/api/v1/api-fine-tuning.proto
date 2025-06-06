@@ -2,9 +2,9 @@ syntax = "proto3";
 
 package finetuning.v1;
 
+import "gateway/protoc-gen-openapiv2/annotations.proto";
 // External
 import "google/api/field_behavior.proto";
-import "gateway/protoc-gen-openapiv2/annotations.proto";
 
 option go_package = "github.com/conneroisu/bufrnix/examples/multilang-multi-project/proto/gen/go/api/v1;api";
 
@@ -15,25 +15,27 @@ option go_package = "github.com/conneroisu/bufrnix/examples/multilang-multi-proj
 // creation.
 message FinetuningCreateRequest {
   option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_schema) = {
-    json_schema : {
-      title : "Finetuning Job Request"
-      description : "The request message for the CreateFinetuningJob method."
-      required : [ "model", "input" ]
+    json_schema: {
+      title: "Finetuning Job Request"
+      description: "The request message for the CreateFinetuningJob method."
+      required: [
+        "model",
+        "input"
+      ]
     }
-    external_docs : {
-      url : "https://docs.pegwings.com/api/fine-tuning"
-      description : "Learn more about the Fine-Tuning API"
+    external_docs: {
+      url: "https://docs.pegwings.com/api/fine-tuning"
+      description: "Learn more about the Fine-Tuning API"
     }
-    example : "{\n"
-              "   \"model\": \"k1\",\n"
-              "   \"input\": \"The food was delicious and the waiter...\"\n"
-              "}"
+    example:
+      "{\n"
+      "   \"model\": \"k1\",\n"
+      "   \"input\": \"The food was delicious and the waiter...\"\n"
+      "}"
   };
   string input = 1 [
     (google.api.field_behavior) = REQUIRED,
-    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
-      description : "The input text to fine-tune the model on."
-    }
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {description: "The input text to fine-tune the model on."}
   ];
 }
 
@@ -42,53 +44,54 @@ message FinetuningCreateRequest {
 //
 // It contains the details of the fine-tuning job that was created.
 message FinetuningCreateResponse {
-
   option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_schema) = {
-    json_schema : {
-      title : "Finetuning Job Response"
-      description : "The response message returned by the fine-tuning endpoint "
-                    "in response to a create request."
-      required : [ "object", "data", "model", "usage" ]
+    json_schema: {
+      title: "Finetuning Job Response"
+      description:
+        "The response message returned by the fine-tuning endpoint "
+        "in response to a create request."
+      required: [
+        "object",
+        "data",
+        "model",
+        "usage"
+      ]
     }
-    external_docs : {
-      url : "https://docs.pegwings.com/api/fine-tuning"
-      description : "Learn more about the Fine-Tuning API"
+    external_docs: {
+      url: "https://docs.pegwings.com/api/fine-tuning"
+      description: "Learn more about the Fine-Tuning API"
     }
   };
 
   // object is the type of object returned, in this case a fine-tuning job.
   string object = 1 [
     (google.api.field_behavior) = OUTPUT_ONLY,
-    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
-      description : "The type of object returned, in this case a fine-tuning "
-                    "job."
-    }
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {description:
+        "The type of object returned, in this case a fine-tuning "
+        "job."
+}
   ];
 
   // data is the data returned by the fine-tuning endpoint in response to a
   // create request.
   string data = 2 [
     (google.api.field_behavior) = OUTPUT_ONLY,
-    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
-      description : "The data returned by the fine-tuning endpoint in response "
-                    "to a create request."
-    }
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {description:
+        "The data returned by the fine-tuning endpoint in response "
+        "to a create request."
+}
   ];
 
   // model is the model used for fine-tuning.
   string model = 3 [
     (google.api.field_behavior) = OUTPUT_ONLY,
-    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
-      description : "The model used for fine-tuning."
-    }
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {description: "The model used for fine-tuning."}
   ];
 
   // usage is the usage statistics for the client who created the fine-tuning
   // job.
   string usage = 4 [
     (google.api.field_behavior) = OUTPUT_ONLY,
-    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
-      description : "The usage of the fine-tuning job."
-    }
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {description: "The usage of the fine-tuning job."}
   ];
 }

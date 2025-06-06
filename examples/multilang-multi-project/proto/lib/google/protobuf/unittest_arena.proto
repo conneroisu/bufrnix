@@ -13,6 +13,10 @@ option cc_enable_arenas = true;
 // Use expanded encoding for repeated fields by default (proto2 behavior).
 option features.repeated_field_encoding = EXPANDED;
 
-message NestedMessage { int32 d = 1; }
+message NestedMessage {
+  int32 d = 1;
+}
 
-message ArenaMessage { repeated NestedMessage repeated_nested_message = 1; }
+message ArenaMessage {
+  repeated NestedMessage repeated_nested_message = 1;
+}

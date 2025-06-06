@@ -36,11 +36,11 @@
                   enable = true;
                   # Generate Go code to multiple microservice directories
                   outputPath = [
-                    "gen/go"                      # Main generated code location
-                    "services/order/proto"        # Order service proto
-                    "services/payment/proto"      # Payment service proto
-                    "services/shared/proto"       # Shared across all services
-                    "pkg/common/proto"            # Common package for libraries
+                    "gen/go" # Main generated code location
+                    "services/order/proto" # Order service proto
+                    "services/payment/proto" # Payment service proto
+                    "services/shared/proto" # Shared across all services
+                    "pkg/common/proto" # Common package for libraries
                   ];
                   grpc = {
                     enable = true;
@@ -61,7 +61,7 @@
                   };
                 };
               };
-              
+
               debug = {
                 enable = true;
                 verbosity = 2;
@@ -78,7 +78,7 @@
             protoc-gen-go-grpc
             buf
           ];
-          
+
           shellHook = ''
             echo "🚀 Go Multiple Output Paths Example"
             echo "=================================="

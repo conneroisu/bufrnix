@@ -25,12 +25,12 @@ message TestMessageSet {
 
   extensions 4 to 529999999;
 
-  extensions 530000000 to max
-  [declaration = {
-    number : 1952731290
-    full_name : ".proto2_unittest_v1api.TestMessageSetExtension3.message_set_"
-                "extension"
-    type : ".proto2_unittest_v1api.TestMessageSetExtension3"
+  extensions 530000000 to max [declaration = {
+    number: 1952731290
+    full_name:
+      ".proto2_unittest_v1api.TestMessageSetExtension3.message_set_"
+      "extension"
+    type: ".proto2_unittest_v1api.TestMessageSetExtension3"
   }];
 }
 
