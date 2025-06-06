@@ -31,6 +31,12 @@ dx
 
 # Check all examples work correctly
 ./check-examples.sh
+
+# Run comprehensive test suite (with detailed output)
+./test-examples.sh
+
+# Run test suite with verbose output for debugging
+./test-examples.sh -v
 ```
 
 ### Documentation Development
@@ -97,12 +103,47 @@ php -S localhost:8080 -t src/
    - Comprehensive guides and API reference
    - Language-specific tutorials and troubleshooting
 
+### Language Module Architecture
+
+Each language module follows a standardized, composable pattern:
+
+```nix
+# Standard interface implemented by all language modules
+{
+  runtimeInputs = [ /* required packages for generation */ ];
+  protocPlugins = [ /* protoc command-line arguments */ ];
+  initHooks = "/* shell commands for pre-generation setup */";
+  generateHooks = "/* shell commands for post-generation processing */";
+}
+```
+
+**Composable Plugin System**:
+- **Base module** (`default.nix`): Core protobuf message generation
+- **Plugin modules** (e.g., `grpc.nix`, `validate.nix`): Feature-specific extensions
+- **Framework modules** (e.g., `laravel.nix`, `symfony.nix`): Integration helpers
+- **Main module**: Unified interface composing all sub-modules
+
+**Example: Go Language Structure**
+```
+src/languages/go/
+├── default.nix              # Basic protoc-gen-go
+├── grpc.nix                 # gRPC service generation
+├── connect.nix              # Connect protocol support
+├── gateway.nix              # grpc-gateway REST API
+├── validate.nix             # protovalidate validation
+├── vtprotobuf.nix           # Performance optimizations
+└── struct-transformer.nix   # Custom struct transformations
+```
+
 ### Data Flow
 
 1. **Configuration**: User defines protobuf files and language targets in `flake.nix`
-2. **Validation**: Configuration is validated against the schema in `bufrnix-options.nix`
-3. **Code Generation**: `mkBufrnix.nix` orchestrates protoc with appropriate plugins
-4. **Output**: Generated code is placed in specified output directories
+2. **Module Loading**: `mkBufrnix.nix` dynamically loads enabled language modules
+3. **Validation**: Configuration is validated against the schema in `bufrnix-options.nix`
+4. **Plugin Assembly**: Language modules provide protoc plugins and runtime dependencies
+5. **Code Generation**: `mkBufrnix.nix` orchestrates protoc with assembled plugins
+6. **Post-processing**: Language-specific hooks handle file organization and additional processing
+7. **Output**: Generated code is placed in specified output directories
 
 ## Language Support
 
@@ -128,6 +169,44 @@ php -S localhost:8080 -t src/
 2. Define configuration options in `src/lib/bufrnix-options.nix`
 3. Create example project in `examples/[language]-[type]/`
 4. Update documentation in `doc/src/content/docs/reference/languages/`
+
+## Testing Architecture
+
+### Multi-layered Testing Strategy
+
+Bufrnix uses a comprehensive testing approach to ensure reliability across all supported languages and plugins:
+
+1. **Nix Flake Checks (`nix flake check`)**
+   - Example linting to ensure consistent documentation patterns
+   - Configuration validation and type checking
+   - Build verification across all platforms
+
+2. **Comprehensive Example Testing (`./test-examples.sh`)**
+   - Tests 25+ different language/plugin combinations
+   - Validates actual code generation with expected file outputs
+   - Provides colored output with detailed error reporting
+   - Supports verbose mode (`-v`) for debugging plugin execution
+   - Covers: Go (6 variants), JavaScript (4 variants), Python (5 variants), PHP (2 variants), and 10+ other languages
+
+3. **Integration Testing**
+   - Each example is a complete, runnable project
+   - Real protocol definitions with services, messages, and enums
+   - Language-specific best practices demonstration
+   - Independent example validation for debugging specific issues
+
+4. **Plugin Compatibility Testing**
+   - Multi-plugin scenarios (e.g., Go with gRPC + validation + gateway)
+   - Cross-language generation consistency
+   - Advanced plugin features (struct transformers, protovalidate, Connect-ES)
+
+### Test Coverage Examples
+
+```bash
+# Test specific language combinations
+cd examples/go-advanced && nix run    # Go with gRPC + OpenAPI + validation
+cd examples/js-grpc-web && nix run    # JavaScript with gRPC-Web + TypeScript
+cd examples/php-grpc-roadrunner && nix run  # PHP with gRPC + RoadRunner
+```
 
 ## Configuration Reference
 
@@ -205,10 +284,12 @@ debug = {
 
 ### Testing Changes
 
-1. **Test examples**: Run `./check-examples.sh` to verify all examples work
-2. **Test specific language**: Navigate to relevant example and run `nix run`
-3. **Test documentation**: Build docs with `cd doc && bun run build`
-4. **Lint code**: Run `nix fmt` and `lint` commands
+1. **Test examples**: Run `./test-examples.sh` for comprehensive testing (25+ examples)
+2. **Quick check**: Run `./check-examples.sh` for faster validation
+3. **Test specific language**: Navigate to relevant example and run `nix run`
+4. **Test documentation**: Build docs with `cd doc && bun run build`
+5. **Lint code**: Run `nix fmt` and `lint` commands
+6. **Nix flake checks**: Run `nix flake check` to validate all checks
 
 ### Adding New Features
 
@@ -225,7 +306,9 @@ debug = {
 - **`src/lib/mkBufrnix.nix`**: Core Bufrnix package creation function
 - **`src/lib/bufrnix-options.nix`**: Configuration schema and validation
 - **`src/languages/*/default.nix`**: Language-specific implementations
-- **`check-examples.sh`**: Script to verify all examples work correctly
+- **`check-examples.sh`**: Quick validation script for CI/CD
+- **`test-examples.sh`**: Comprehensive test suite covering 25+ language examples
+- **`lint-examples.sh`**: Ensures example flake.nix files have proper documentation
 
 ### Directory Structure Patterns
 
@@ -316,7 +399,8 @@ nix develop      # Enter development environment
 nix run          # Generate protobuf code
 nix fmt          # Format all files
 lint             # Run Nix linting
-./check-examples.sh  # Test all examples
+./test-examples.sh   # Comprehensive test suite
+./check-examples.sh  # Quick validation
 ```
 
 ### Key Configuration Sections
