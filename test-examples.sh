@@ -190,6 +190,10 @@ test_example "csharp-grpc" \
     "gen/csharp/GreeterGrpc.cs" \
     "gen/csharp/GreeterProtos.csproj"
 
+# Test C# flake-parts example
+test_example "csharp-flake-parts" \
+    "gen/csharp/ExampleProtos.csproj"
+
 # Test Kotlin basic example
 test_example "kotlin-basic" \
     "gen/kotlin/java/com/example/protos/v1/UserProto.java" \
