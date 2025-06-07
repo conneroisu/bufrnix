@@ -68,7 +68,7 @@ async def test_pydantic_validation():
     except ValidationError as e:
         print(f"✓ Validation correctly caught invalid price: {e}")
     except Exception as e:
-        print(f"  Product created without validation: {invalid_product.name}")
+        print(f"  Product created without validation: {e}")
         print("  Note: Pydantic validation depends on proto field options")
     
     # Test with missing required fields
