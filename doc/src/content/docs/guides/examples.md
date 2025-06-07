@@ -197,6 +197,32 @@ nix run .#server
 nix run .#client
 ```
 
+## C# Flake-parts Example
+
+Demonstrates using flake-parts with Bufrnix for C# projects.
+
+### Features
+
+- Uses `flake-parts` for modular flake configuration
+- Generates a .NET project with Protocol Buffers
+
+### Source Code
+
+Check out the [csharp-flake-parts](https://github.com/conneroisu/bufrnix/tree/main/examples/csharp-flake-parts) on GitHub.
+
+### Running the Example
+
+```bash
+# Navigate to the example directory
+cd examples/csharp-flake-parts
+
+# Generate the proto code
+nix build .#proto
+
+# Build and run the example
+nix run .#app
+```
+
 ## Kotlin Basic Example
 
 Demonstrates basic Protocol Buffers usage with Kotlin.
@@ -296,6 +322,7 @@ swift run
 - [PHP Twirp README](https://github.com/conneroisu/bufrnix/blob/main/examples/php-twirp/README.md) - PHP and Twirp integration
 - [C# Basic README](https://github.com/conneroisu/bufrnix/blob/main/examples/csharp-basic/README.md) - C# and .NET integration
 - [C# gRPC README](https://github.com/conneroisu/bufrnix/blob/main/examples/csharp-grpc/README.md) - C# gRPC with ASP.NET Core
+- [C# Flake-parts README](https://github.com/conneroisu/bufrnix/blob/main/examples/csharp-flake-parts/README.md) - Using flake-parts with C#
 - [Kotlin Basic README](https://github.com/conneroisu/bufrnix/blob/main/examples/kotlin-basic/README.md) - Kotlin with DSL builders
 - [Kotlin gRPC README](https://github.com/conneroisu/bufrnix/blob/main/examples/kotlin-grpc/README.md) - Kotlin gRPC with coroutines
 - [Swift Example README](https://github.com/conneroisu/bufrnix/blob/main/examples/swift-example/README.md) - Swift and SwiftProtobuf integration

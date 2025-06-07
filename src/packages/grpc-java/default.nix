@@ -32,11 +32,11 @@ in
         if platform == "linux-x86_64"
         then "12a9z4f04wzs016rz47wbwnywznqqrlrvdpyhsn50j7svbhab64r"
         else if platform == "linux-aarch_64"
-        then "sha256-BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB="
+        then "05r7a92grp064yid4909r9222xgpdl7xy2dfry77c7q61jqcm7s3"
         else if platform == "osx-x86_64"
-        then "sha256-CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC="
+        then "1plfvx7k5drh1dvd2zia901acd3anvgj58bfws071vlqk43hqv5v"
         else if platform == "osx-aarch_64"
-        then "sha256-DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD="
+        then "1plfvx7k5drh1dvd2zia901acd3anvgj58bfws071vlqk43hqv5v"
         else throw "Unknown platform";
     };
 
