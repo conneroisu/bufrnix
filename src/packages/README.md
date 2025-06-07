@@ -38,4 +38,4 @@ python3 update-hash.py
 2. Add a `default.nix` file with the package definition
 3. Create an `update-hash.py` script based on the existing examples
 4. Update language modules in `src/languages/` to reference the new package
-5. Test the package builds and update script works correctly
+5. Test that the package builds and update script work correctly

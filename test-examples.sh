@@ -58,20 +58,20 @@ test_example() {
     echo "  Cleaning generated files..."
     rm -rf "$example_dir/proto/gen" "$example_dir/gen" 2>/dev/null || true
     
-    # Build the example
+    # Build the example and capture the output path
     echo "  Building..."
     local build_output
-    if ! build_output=$(nix build --extra-experimental-features "nix-command flakes" "./$example_dir#default" --no-link 2>&1); then
+    if ! build_output=$(nix build --extra-experimental-features "nix-command flakes" "./$example_dir#default" --no-link --print-out-paths 2>&1); then
         echo -e "${RED}✗ Build failed for $example_name${NC}"
         echo -e "${RED}Build error output:${NC}"
         echo "$build_output" | sed 's/^/    /'
         FAILED_TESTS+=("$example_name: build failed")
         return 1
     fi
-    
-    # Get the output path
+
+    # Extract output path from build output
     local output_path
-    output_path=$(nix build --extra-experimental-features "nix-command flakes" "./$example_dir#default" --print-out-paths 2>/dev/null)
+    output_path=$(echo "$build_output" | tail -n1)
     
     if [ "$VERBOSE" = true ]; then
         echo -e "  ${BLUE}Output path: $output_path${NC}"
