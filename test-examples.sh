@@ -151,6 +151,11 @@ test_example "simple-flake" \
     "proto/gen/go/simple/v1/simple.pb.go" \
     "proto/gen/go/simple/v1/simple_grpc.pb.go"
 
+# Test Go flake-parts example
+test_example "go-flake-parts" \
+    "proto/gen/go/example/v1/service.pb.go" \
+    "proto/gen/go/example/v1/service_grpc.pb.go"
+
 # Test Dart example
 test_example "dart-example" \
     "proto/gen/dart/example/v1/example.pb.dart" \
