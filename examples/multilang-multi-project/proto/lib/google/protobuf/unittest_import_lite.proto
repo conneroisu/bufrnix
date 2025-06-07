@@ -18,7 +18,9 @@ import public "google/protobuf/unittest_import_public_lite.proto";
 option java_package = "com.google.protobuf";
 option optimize_for = LITE_RUNTIME;
 
-message ImportMessageLite { int32 d = 1; }
+message ImportMessageLite {
+  int32 d = 1;
+}
 
 enum ImportEnumLite {
   option features.enum_type = CLOSED;

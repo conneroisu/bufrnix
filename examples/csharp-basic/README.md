@@ -42,6 +42,7 @@ The generated code includes:
 - A complete .csproj file
 
 ## Using Dependencies
+
 There is also a manual method: First, restore the packages to the out directory, ensure you have cloned the upstream repository and you are inside it.
 
 ```bash

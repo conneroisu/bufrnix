@@ -24,7 +24,7 @@ import "google/protobuf/unittest_lazy_dependencies_enum.proto";
 option cc_enable_arenas = true;
 // Some generic_services option(s) added automatically.
 // See:  http://go/proto2-generic-services-default
-option cc_generic_services = true;   // auto-added
+option cc_generic_services = true; // auto-added
 option java_generic_services = true; // auto-added
 option java_outer_classname = "UnittestLazyImportsCustomOptionProto";
 // Protos optimized for SPEED use a strict superset of the generated code
@@ -33,8 +33,10 @@ option java_outer_classname = "UnittestLazyImportsCustomOptionProto";
 option optimize_for = SPEED;
 option py_generic_services = true; // auto-added
 
-message LazyMessage { int32 a = 1; }
+message LazyMessage {
+  int32 a = 1;
+}
 
 extend google.protobuf.MessageOptions {
-  LazyEnum lazy_enum_option = 138596335 [ default = LAZY_ENUM_1 ];
+  LazyEnum lazy_enum_option = 138596335 [default = LAZY_ENUM_1];
 }

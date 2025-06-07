@@ -27,36 +27,36 @@
                 sourceDirectories = ["proto"];
                 includeDirectories = ["proto"];
               };
-              
+
               languages = {
                 # Go with multiple output paths for different use cases
                 go = {
                   enable = true;
                   outputPath = [
-                    "gen/go"                    # Main generated code
-                    "pkg/shared/proto"          # Shared package location  
-                    "vendor/proto"              # Vendor directory for dependencies
-                    "services/common/proto"     # Microservices shared proto
+                    "gen/go" # Main generated code
+                    "pkg/shared/proto" # Shared package location
+                    "vendor/proto" # Vendor directory for dependencies
+                    "services/common/proto" # Microservices shared proto
                   ];
                   grpc = {
                     enable = true;
                     outputPath = [
-                      "gen/go/grpc"              # Generated gRPC code
-                      "pkg/shared/proto/grpc"    # Shared gRPC services
-                      "vendor/proto/grpc"        # Vendor gRPC dependencies
+                      "gen/go/grpc" # Generated gRPC code
+                      "pkg/shared/proto/grpc" # Shared gRPC services
+                      "vendor/proto/grpc" # Vendor gRPC dependencies
                     ];
                   };
                   validate.enable = true;
                 };
-                
+
                 # JavaScript with multiple output paths for different modules
                 js = {
                   enable = true;
                   outputPath = [
-                    "packages/frontend/src/proto"    # Frontend package
-                    "packages/backend/src/proto"     # Backend package  
-                    "packages/shared/proto"          # Shared utilities
-                    "dist/npm-package/proto"         # Distribution package
+                    "packages/frontend/src/proto" # Frontend package
+                    "packages/backend/src/proto" # Backend package
+                    "packages/shared/proto" # Shared utilities
+                    "dist/npm-package/proto" # Distribution package
                   ];
                   es = {
                     enable = true;
@@ -64,21 +64,21 @@
                   };
                   connect.enable = true;
                 };
-                
+
                 # Python with multiple output paths for development and distribution
                 python = {
                   enable = true;
                   outputPath = [
-                    "gen/python"                     # Main development location
-                    "src/mypackage/proto"            # Package source location
-                    "dist/mypackage/proto"           # Distribution package
-                    "tests/fixtures/proto"           # Test fixtures
+                    "gen/python" # Main development location
+                    "src/mypackage/proto" # Package source location
+                    "dist/mypackage/proto" # Distribution package
+                    "tests/fixtures/proto" # Test fixtures
                   ];
                   grpc.enable = true;
                   pyi.enable = true;
                 };
               };
-              
+
               debug = {
                 enable = true;
                 verbosity = 2;
@@ -86,7 +86,7 @@
             };
           };
         };
-        
+
         devShells.default = pkgs.mkShell {
           packages = with pkgs; [
             go
@@ -94,7 +94,7 @@
             python3
             protobuf
           ];
-          
+
           shellHook = ''
             echo "Multi-Output Paths Example Environment"
             echo "======================================"
@@ -106,7 +106,7 @@
             echo "  nix develop - Enter development environment"
             echo ""
             echo "The configuration generates code to multiple paths for each language:"
-            echo "- Go: gen/go, pkg/shared/proto, vendor/proto, services/common/proto"  
+            echo "- Go: gen/go, pkg/shared/proto, vendor/proto, services/common/proto"
             echo "- JavaScript: packages/frontend/src/proto, packages/backend/src/proto, packages/shared/proto, dist/npm-package/proto"
             echo "- Python: gen/python, src/mypackage/proto, dist/mypackage/proto, tests/fixtures/proto"
             echo ""

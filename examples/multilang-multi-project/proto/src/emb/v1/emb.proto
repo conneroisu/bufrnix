@@ -23,19 +23,19 @@ package emb.v1;
 import "gateway/protoc-gen-openapiv2/annotations.proto";
 
 option go_package = "github.com/conneroisu/bufrnix/examples/multilang-multi-project/proto/gen/go/emb/v1;emb";
-
 option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_swagger) = {
-  info : {
-    title : "Internal Tokenization/Embedding API"
-    version : "1.0.0"
-    description : "# Embeddings\n\nThis service provides a gRPC API for "
-                  "embedding text data and returning the corresponding "
-                  "embedding vectors.\n\n It is part of the internal api of "
-                  "the pegwings platform."
-    contact : {
-      name : "Conner Ohnsorge"
-      url : "https://github.com/pegwings"
-      email : "conneroisu@outlook.com"
+  info: {
+    title: "Internal Tokenization/Embedding API"
+    version: "1.0.0"
+    description:
+      "# Embeddings\n\nThis service provides a gRPC API for "
+      "embedding text data and returning the corresponding "
+      "embedding vectors.\n\n It is part of the internal api of "
+      "the pegwings platform."
+    contact: {
+      name: "Conner Ohnsorge"
+      url: "https://github.com/pegwings"
+      email: "conneroisu@outlook.com"
     }
   }
 };

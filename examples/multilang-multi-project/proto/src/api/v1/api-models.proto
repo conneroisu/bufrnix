@@ -1,9 +1,11 @@
 syntax = "proto3";
 package models.v1;
+
+import "gateway/protoc-gen-openapiv2/annotations.proto";
 // External
 import "google/api/field_behavior.proto";
 import "google/protobuf/timestamp.proto";
-import "gateway/protoc-gen-openapiv2/annotations.proto";
+
 option go_package = "github.com/conneroisu/bufrnix/examples/multilang-multi-project/proto/gen/go/api/v1;api";
 
 // ListResponse is the response message returned by the models api in
@@ -11,15 +13,16 @@ option go_package = "github.com/conneroisu/bufrnix/examples/multilang-multi-proj
 message ListResponse {
   //
   option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_schema) = {
-    json_schema : {
-      title : "List Models Response"
-      description : "The response message returned by the models api in "
-                    "response to an authenticated list request."
-      required : [ "models" ]
+    json_schema: {
+      title: "List Models Response"
+      description:
+        "The response message returned by the models api in "
+        "response to an authenticated list request."
+      required: ["models"]
     }
-    external_docs : {
-      url : "https://docs.pegwings.com/api/models"
-      description : "Learn more about the Models API"
+    external_docs: {
+      url: "https://docs.pegwings.com/api/models"
+      description: "Learn more about the Models API"
     }
   };
 
@@ -27,27 +30,28 @@ message ListResponse {
   repeated Model data = 1 [
     (google.api.field_behavior) = OUTPUT_ONLY,
     (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
-      description : "The list of models available for use by the caller."
-      example : "[\n"
-                "	{\n"
-                "		\"name\": \"k1\",\n"
-                "		\"description\": \"The default model for "
-                "pegwings.\",\n"
-                "		\"created\": \"2023-03-14T16:15:07.000Z\",\n"
-                "		\"owned_by\": \"pegwings\",\n"
-                "		\"model_type\": \"k1\",\n"
-                "		\"context_window\": 128000\n"
-                "	},\n"
-                "	{\n"
-                "		\"name\": \"k2\",\n"
-                "		\"description\": \"The default model for "
-                "pegwings.\",\n"
-                "		\"created\": \"2023-03-14T16:15:07.000Z\",\n"
-                "		\"owned_by\": \"pegwings\",\n"
-                "		\"model_type\": \"k2\",\n"
-                "		\"context_window\": 128000\n"
-                "	}\n"
-                "]"
+      description: "The list of models available for use by the caller."
+      example:
+        "[\n"
+        "	{\n"
+        "		\"name\": \"k1\",\n"
+        "		\"description\": \"The default model for "
+        "pegwings.\",\n"
+        "		\"created\": \"2023-03-14T16:15:07.000Z\",\n"
+        "		\"owned_by\": \"pegwings\",\n"
+        "		\"model_type\": \"k1\",\n"
+        "		\"context_window\": 128000\n"
+        "	},\n"
+        "	{\n"
+        "		\"name\": \"k2\",\n"
+        "		\"description\": \"The default model for "
+        "pegwings.\",\n"
+        "		\"created\": \"2023-03-14T16:15:07.000Z\",\n"
+        "		\"owned_by\": \"pegwings\",\n"
+        "		\"model_type\": \"k2\",\n"
+        "		\"context_window\": 128000\n"
+        "	}\n"
+        "]"
     }
   ];
 }
@@ -56,14 +60,14 @@ message ListResponse {
 message ModelGetRequest {
   //
   option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_schema) = {
-    json_schema : {
-      title : "Model Request"
-      description : "The request message for the GetModel method."
-      required : [ "model" ]
+    json_schema: {
+      title: "Model Request"
+      description: "The request message for the GetModel method."
+      required: ["model"]
     }
-    external_docs : {
-      url : "https://docs.pegwings.com/api/models"
-      description : "Learn more about the Models API"
+    external_docs: {
+      url: "https://docs.pegwings.com/api/models"
+      description: "Learn more about the Models API"
     }
   };
 
@@ -71,33 +75,40 @@ message ModelGetRequest {
   string model = 1 [
     (google.api.field_behavior) = REQUIRED,
     (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
-      description : "The unique identifier of the model to retrieve."
-      example : "\"k1\""
+      description: "The unique identifier of the model to retrieve."
+      example: "\"k1\""
     }
   ];
 }
+
 // Model is an ai model.
 message Model {
   //
   option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_schema) = {
-    json_schema : {
-      title : "Model"
-      description : "The model message."
-      required : [ "id", "created", "object", "owned_by" ]
+    json_schema: {
+      title: "Model"
+      description: "The model message."
+      required: [
+        "id",
+        "created",
+        "object",
+        "owned_by"
+      ]
       // pb:embed ./examples/v1.models.model.json
-      example : "{\n"
-                "                \"id\": \"k1\",\n"
-                "                \"description\": \"The default model for "
-                "pegwings.\",\n"
-                "                \"created\": \"2023-03-14T16:15:07.000Z\",\n"
-                "                \"owned_by\": \"pegwings\",\n"
-                "                \"model_type\": \"k1\",\n"
-                "                \"context_window\": 128000\n"
-                "}"
+      example:
+        "{\n"
+        "                \"id\": \"k1\",\n"
+        "                \"description\": \"The default model for "
+        "pegwings.\",\n"
+        "                \"created\": \"2023-03-14T16:15:07.000Z\",\n"
+        "                \"owned_by\": \"pegwings\",\n"
+        "                \"model_type\": \"k1\",\n"
+        "                \"context_window\": 128000\n"
+        "}"
     }
-    external_docs : {
-      url : "https://docs.pegwings.com/api/models"
-      description : "Learn more about the Models API"
+    external_docs: {
+      url: "https://docs.pegwings.com/api/models"
+      description: "Learn more about the Models API"
     }
   };
 
@@ -105,9 +116,10 @@ message Model {
   string name = 1 [
     (google.api.field_behavior) = OUTPUT_ONLY,
     (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
-      description : "The name/id of the model. This is the unique identifier "
-                    "used to make requests that use the model."
-      example : "\"k1\""
+      description:
+        "The name/id of the model. This is the unique identifier "
+        "used to make requests that use the model."
+      example: "\"k1\""
     }
   ];
 
@@ -115,8 +127,8 @@ message Model {
   string description = 2 [
     (google.api.field_behavior) = OUTPUT_ONLY,
     (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
-      description : "The description of the model."
-      example : "\"The default model for pegwings.\""
+      description: "The description of the model."
+      example: "\"The default model for pegwings.\""
     }
   ];
 
@@ -124,8 +136,8 @@ message Model {
   google.protobuf.Timestamp created = 3 [
     (google.api.field_behavior) = OUTPUT_ONLY,
     (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
-      description : "The timestamp when the model was created."
-      example : "\"2023-03-14T16:15:07.000Z\""
+      description: "The timestamp when the model was created."
+      example: "\"2023-03-14T16:15:07.000Z\""
     }
   ];
 
@@ -133,8 +145,8 @@ message Model {
   string owned_by = 4 [
     (google.api.field_behavior) = OUTPUT_ONLY,
     (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
-      description : "The organization who owns the model."
-      example : "\"pegwings\""
+      description: "The organization who owns the model."
+      example: "\"pegwings\""
     }
   ];
 
@@ -143,8 +155,8 @@ message Model {
   string model_type = 5 [
     (google.api.field_behavior) = OUTPUT_ONLY,
     (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
-      description : "The type of model."
-      example : "\"k1\""
+      description: "The type of model."
+      example: "\"k1\""
     }
   ];
 
@@ -152,8 +164,8 @@ message Model {
   int64 context_window = 6 [
     (google.api.field_behavior) = OUTPUT_ONLY,
     (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
-      description : "The context window for the model."
-      example : "128000"
+      description: "The context window for the model."
+      example: "128000"
     }
   ];
 }

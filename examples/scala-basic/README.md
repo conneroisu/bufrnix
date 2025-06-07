@@ -23,16 +23,19 @@ scala-basic/
 ### Using Nix (Recommended)
 
 1. **Generate Protocol Buffer code:**
+
    ```bash
    nix run
    ```
 
 2. **Run the example application:**
+
    ```bash
    nix run .#example
    ```
 
    This command will:
+
    - Generate the Scala code from proto files if needed
    - Compile the Scala project
    - Run the example application
@@ -40,16 +43,19 @@ scala-basic/
 ### Development Workflow
 
 1. **Enter the development shell:**
+
    ```bash
    nix develop
    ```
 
 2. **Generate Protocol Buffer code:**
+
    ```bash
    nix run
    ```
 
 3. **Build the Scala project:**
+
    ```bash
    sbt compile
    ```

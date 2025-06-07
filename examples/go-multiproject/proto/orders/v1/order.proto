@@ -2,11 +2,11 @@ syntax = "proto3";
 
 package orders.v1;
 
-option go_package = "github.com/example/multiproject/proto/gen/go/orders/v1;ordersv1";
-
 import "google/protobuf/timestamp.proto";
-import "users/v1/user.proto";
 import "products/v1/product.proto";
+import "users/v1/user.proto";
+
+option go_package = "github.com/example/multiproject/proto/gen/go/orders/v1;ordersv1";
 
 message Order {
   string id = 1;

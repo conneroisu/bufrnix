@@ -22,25 +22,25 @@ package llm.v1;
 
 // External
 import "gateway/protoc-gen-openapiv2/annotations.proto";
+import "google/api/annotations.proto";
+import "google/api/field_behavior.proto";
 import "google/protobuf/any.proto";
 import "google/protobuf/timestamp.proto";
 import "google/protobuf/wrappers.proto";
-import "google/api/field_behavior.proto";
-import "google/api/annotations.proto";
 
 option go_package = "github.com/conneroisu/bufrnix/examples/multilang-multi-project/proto/gen/go/llm/v1;llm";
-
 option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_swagger) = {
-  info : {
-    title : "Internal LLM API"
-    version : "1.0.0"
-    description : "# LLM\n\nThis service provides a gRPC API for "
-                  "generating text from prompts and variations.\n\n It is "
-                  "part of the internal api of the pegwings platform."
-    contact : {
-      name : "Conner Ohnsorge"
-      url : "https://github.com/pegwings"
-      email : "conneroisu@outlook.com"
+  info: {
+    title: "Internal LLM API"
+    version: "1.0.0"
+    description:
+      "# LLM\n\nThis service provides a gRPC API for "
+      "generating text from prompts and variations.\n\n It is "
+      "part of the internal api of the pegwings platform."
+    contact: {
+      name: "Conner Ohnsorge"
+      url: "https://github.com/pegwings"
+      email: "conneroisu@outlook.com"
     }
   }
 };
@@ -51,18 +51,21 @@ service LLMService {
   // ChatCompletionResponse.
   rpc Chat(ChatCompletionRequest) returns (ChatCompletionResponse) {
     option (google.api.http) = {
-      post : "/v1/chat/completions"
-      body : "*"
+      post: "/v1/chat/completions"
+      body: "*"
     };
     option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
-      security : {
-        security_requirement : {
-          key : "ApiKeyAuth"
-          value : {}
+      security: {
+        security_requirement: {
+          key: "ApiKeyAuth"
+          value: {}
         }
-        security_requirement : {
-          key : "OAuth2"
-          value : {scope : "read" scope : "write"}
+        security_requirement: {
+          key: "OAuth2"
+          value: {
+            scope: "read"
+            scope: "write"
+          }
         }
       }
     };
@@ -70,16 +73,15 @@ service LLMService {
 
   // Stream receives a ChatCompletionRequest and returns a stream of
   // ChatCompletionStreamResponse messages.
-  rpc Stream(ChatCompletionRequest)
-      returns (stream ChatCompletionStreamResponse) {
+  rpc Stream(ChatCompletionRequest) returns (stream ChatCompletionStreamResponse) {
     option (google.api.http) = {
-      post : "/v1/chat/stream"
-      body : "*"
+      post: "/v1/chat/stream"
+      body: "*"
     };
     option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
-      operation_id : "Stream"
-      summary : "Stream"
-      description : "Stream"
+      operation_id: "Stream"
+      summary: "Stream"
+      description: "Stream"
     };
   }
 
@@ -88,13 +90,10 @@ service LLMService {
 }
 
 message ChatCompletionRequest {
-
   // messages are the messages to send to the model.
   repeated CompletionMessage messages = 1 [
     (google.api.field_behavior) = REQUIRED,
-    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
-      description : "The messages to send to the model."
-    }
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {description: "The messages to send to the model."}
   ];
 
   // max_completion_tokens is the maximum number of tokens to generate.
@@ -102,33 +101,34 @@ message ChatCompletionRequest {
   google.protobuf.Int32Value max_completion_tokens = 2 [
     (google.api.field_behavior) = OPTIONAL,
     (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
-      description : "The maximum number of tokens to generate."
-      example : "100"
+      description: "The maximum number of tokens to generate."
+      example: "100"
     }
   ];
 
   float temperature = 3 [
     (google.api.field_behavior) = OPTIONAL,
     (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
-      description : "The temperature to use for the completion."
-      example : "0.5"
+      description: "The temperature to use for the completion."
+      example: "0.5"
     }
   ];
 
   float top_p = 4 [
     (google.api.field_behavior) = OPTIONAL,
     (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
-      description : "The top-p (nucleus sampling) value to use for the "
-                    "completion."
-      example : "0.5"
+      description:
+        "The top-p (nucleus sampling) value to use for the "
+        "completion."
+      example: "0.5"
     }
   ];
 
   string reasoning_effort = 5 [
     (google.api.field_behavior) = OPTIONAL,
     (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
-      description : "The reasoning effort to use for the completion."
-      example : "\"high\""
+      description: "The reasoning effort to use for the completion."
+      example: "\"high\""
     }
   ];
 
@@ -137,8 +137,8 @@ message ChatCompletionRequest {
   int32 n = 6 [
     (google.api.field_behavior) = OPTIONAL,
     (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
-      description : "The number of completions to generate."
-      example : "1"
+      description: "The number of completions to generate."
+      example: "1"
     }
   ];
 
@@ -146,8 +146,8 @@ message ChatCompletionRequest {
   bool stream = 7 [
     (google.api.field_behavior) = OPTIONAL,
     (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
-      description : "Indicates whether to stream the response."
-      example : "true"
+      description: "Indicates whether to stream the response."
+      example: "true"
     }
   ];
 
@@ -155,10 +155,11 @@ message ChatCompletionRequest {
   repeated string stop = 8 [
     (google.api.field_behavior) = OPTIONAL,
     (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
-      description : "A list of up to 4 token strings where the completion "
-                    "should stop."
-      example : "[\"stop\"]"
-      default : "[]"
+      description:
+        "A list of up to 4 token strings where the completion "
+        "should stop."
+      example: "[\"stop\"]"
+      default: "[]"
     }
   ];
 
@@ -166,8 +167,8 @@ message ChatCompletionRequest {
   float presence_penalty = 9 [
     (google.api.field_behavior) = OPTIONAL,
     (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
-      description : "The penalty for introducing new tokens."
-      example : "0.5"
+      description: "The penalty for introducing new tokens."
+      example: "0.5"
     }
   ];
 
@@ -175,7 +176,7 @@ message ChatCompletionRequest {
   ChatCompletionResponseFormat response_format = 10 [
     (google.api.field_behavior) = REQUIRED,
     (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
-      description : "Mapping of property names to their definitions."
+      description: "Mapping of property names to their definitions."
       // TODO: Add examples.
     }
   ];
@@ -184,7 +185,7 @@ message ChatCompletionRequest {
   google.protobuf.Int32Value seed = 11 [
     (google.api.field_behavior) = REQUIRED,
     (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
-      description : "Mapping of property names to their definitions."
+      description: "Mapping of property names to their definitions."
       // TODO: Add examples.
     }
   ];
@@ -193,7 +194,7 @@ message ChatCompletionRequest {
   float frequency_penalty = 12 [
     (google.api.field_behavior) = REQUIRED,
     (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
-      description : "Mapping of property names to their definitions."
+      description: "Mapping of property names to their definitions."
       // TODO: Add examples.
     }
   ];
@@ -202,7 +203,7 @@ message ChatCompletionRequest {
   map<string, int32> logit_bias = 13 [
     (google.api.field_behavior) = REQUIRED,
     (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
-      description : "Mapping of property names to their definitions."
+      description: "Mapping of property names to their definitions."
       // TODO: Add examples.
     }
   ];
@@ -211,7 +212,7 @@ message ChatCompletionRequest {
   bool logprobs = 14 [
     (google.api.field_behavior) = REQUIRED,
     (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
-      description : "Mapping of property names to their definitions."
+      description: "Mapping of property names to their definitions."
       // TODO: Add examples.
     }
   ];
@@ -220,7 +221,7 @@ message ChatCompletionRequest {
   int32 top_logprobs = 15 [
     (google.api.field_behavior) = REQUIRED,
     (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
-      description : "Mapping of property names to their definitions."
+      description: "Mapping of property names to their definitions."
       // TODO: Add examples.
     }
   ];
@@ -229,7 +230,7 @@ message ChatCompletionRequest {
   string user = 16 [
     (google.api.field_behavior) = REQUIRED,
     (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
-      description : "Mapping of property names to their definitions."
+      description: "Mapping of property names to their definitions."
       // TODO: Add examples.
     }
   ];
@@ -238,7 +239,7 @@ message ChatCompletionRequest {
   repeated Tool tools = 17 [
     (google.api.field_behavior) = REQUIRED,
     (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
-      description : "Mapping of property names to their definitions."
+      description: "Mapping of property names to their definitions."
       // TODO: Add examples.
     }
   ];
@@ -247,7 +248,7 @@ message ChatCompletionRequest {
   google.protobuf.Any tool_choice = 18 [
     (google.api.field_behavior) = REQUIRED,
     (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
-      description : "Mapping of property names to their definitions."
+      description: "Mapping of property names to their definitions."
       // TODO: Add examples.
     }
   ];
@@ -256,7 +257,7 @@ message ChatCompletionRequest {
   StreamOptions stream_options = 19 [
     (google.api.field_behavior) = REQUIRED,
     (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
-      description : "Mapping of property names to their definitions."
+      description: "Mapping of property names to their definitions."
       // TODO: Add examples.
     }
   ];
@@ -264,10 +265,9 @@ message ChatCompletionRequest {
   // parallel_tool_calls can contain any type of data; here we use
   // google.protobuf.Any.
   google.protobuf.Any parallel_tool_calls = 20 [
-
     (google.api.field_behavior) = REQUIRED,
     (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
-      description : "Mapping of property names to their definitions."
+      description: "Mapping of property names to their definitions."
       // TODO: Add examples.
     }
   ];
@@ -279,7 +279,7 @@ message ChatCompletionResponse {
   string id = 1 [
     (google.api.field_behavior) = REQUIRED,
     (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
-      description : "Mapping of property names to their definitions."
+      description: "Mapping of property names to their definitions."
       // TODO: Add examples.
     }
   ];
@@ -288,7 +288,7 @@ message ChatCompletionResponse {
   string object = 2 [
     (google.api.field_behavior) = REQUIRED,
     (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
-      description : "Mapping of property names to their definitions."
+      description: "Mapping of property names to their definitions."
       // TODO: Add examples.
     }
   ];
@@ -297,7 +297,7 @@ message ChatCompletionResponse {
   google.protobuf.Timestamp created = 3 [
     (google.api.field_behavior) = REQUIRED,
     (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
-      description : "Mapping of property names to their definitions."
+      description: "Mapping of property names to their definitions."
       // TODO: Add examples.
     }
   ];
@@ -306,7 +306,7 @@ message ChatCompletionResponse {
   string model = 4 [
     (google.api.field_behavior) = REQUIRED,
     (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
-      description : "Mapping of property names to their definitions."
+      description: "Mapping of property names to their definitions."
       // TODO: Add examples.
     }
   ];
@@ -315,7 +315,7 @@ message ChatCompletionResponse {
   repeated CompletionChoice choices = 5 [
     (google.api.field_behavior) = REQUIRED,
     (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
-      description : "Mapping of property names to their definitions."
+      description: "Mapping of property names to their definitions."
       // TODO: Add examples.
     }
   ];
@@ -324,7 +324,7 @@ message ChatCompletionResponse {
   Usage usage = 6 [
     (google.api.field_behavior) = REQUIRED,
     (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
-      description : "Mapping of property names to their definitions."
+      description: "Mapping of property names to their definitions."
       // TODO: Add examples.
     }
   ];
@@ -333,7 +333,7 @@ message ChatCompletionResponse {
   string system_fingerprint = 7 [
     (google.api.field_behavior) = REQUIRED,
     (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
-      description : "Mapping of property names to their definitions."
+      description: "Mapping of property names to their definitions."
       // TODO: Add examples.
     }
   ];
@@ -346,7 +346,7 @@ message ChatCompletionStreamResponse {
   string id = 1 [
     (google.api.field_behavior) = REQUIRED,
     (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
-      description : "Mapping of property names to their definitions."
+      description: "Mapping of property names to their definitions."
       // TODO: Add examples.
     }
   ];
@@ -355,7 +355,7 @@ message ChatCompletionStreamResponse {
   string object = 2 [
     (google.api.field_behavior) = REQUIRED,
     (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
-      description : "Mapping of property names to their definitions."
+      description: "Mapping of property names to their definitions."
       // TODO: Add examples.
     }
   ];
@@ -363,7 +363,7 @@ message ChatCompletionStreamResponse {
   google.protobuf.Timestamp created = 3 [
     (google.api.field_behavior) = REQUIRED,
     (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
-      description : "Mapping of property names to their definitions."
+      description: "Mapping of property names to their definitions."
       // TODO: Add examples.
     }
   ];
@@ -372,7 +372,7 @@ message ChatCompletionStreamResponse {
   string model = 4 [
     (google.api.field_behavior) = REQUIRED,
     (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
-      description : "Mapping of property names to their definitions."
+      description: "Mapping of property names to their definitions."
       // TODO: Add examples.
     }
   ];
@@ -381,7 +381,7 @@ message ChatCompletionStreamResponse {
   repeated CompletionStreamChoice choices = 5 [
     (google.api.field_behavior) = REQUIRED,
     (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
-      description : "Mapping of property names to their definitions."
+      description: "Mapping of property names to their definitions."
       // TODO: Add examples.
     }
   ];
@@ -390,7 +390,7 @@ message ChatCompletionStreamResponse {
   string system_fingerprint = 6 [
     (google.api.field_behavior) = REQUIRED,
     (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
-      description : "Mapping of property names to their definitions."
+      description: "Mapping of property names to their definitions."
       // TODO: Add examples.
     }
   ];
@@ -399,7 +399,7 @@ message ChatCompletionStreamResponse {
   repeated PromptAnnotation prompt_annotations = 7 [
     (google.api.field_behavior) = REQUIRED,
     (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
-      description : "Mapping of property names to their definitions."
+      description: "Mapping of property names to their definitions."
       // TODO: Add examples.
     }
   ];
@@ -408,7 +408,7 @@ message ChatCompletionStreamResponse {
   repeated PromptFilterResult prompt_filter_results = 8 [
     (google.api.field_behavior) = REQUIRED,
     (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
-      description : "Mapping of property names to their definitions."
+      description: "Mapping of property names to their definitions."
       // TODO: Add examples.
     }
   ];
@@ -418,7 +418,7 @@ message ChatCompletionStreamResponse {
   Usage usage = 9 [
     (google.api.field_behavior) = REQUIRED,
     (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
-      description : "Mapping of property names to their definitions."
+      description: "Mapping of property names to their definitions."
       // TODO: Add examples.
     }
   ];
@@ -434,7 +434,7 @@ message CompletionMessage {
   string name = 1 [
     (google.api.field_behavior) = REQUIRED,
     (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
-      description : "Mapping of property names to their definitions."
+      description: "Mapping of property names to their definitions."
       // TODO: Add examples.
     }
   ];
@@ -443,7 +443,7 @@ message CompletionMessage {
   Role role = 2 [
     (google.api.field_behavior) = REQUIRED,
     (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
-      description : "Mapping of property names to their definitions."
+      description: "Mapping of property names to their definitions."
       // TODO: Add examples.
     }
   ];
@@ -453,7 +453,7 @@ message CompletionMessage {
   string content = 3 [
     (google.api.field_behavior) = REQUIRED,
     (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
-      description : "Mapping of property names to their definitions."
+      description: "Mapping of property names to their definitions."
       // TODO: Add examples.
     }
   ];
@@ -463,7 +463,7 @@ message CompletionMessage {
   repeated MessagePart multi_content = 4 [
     (google.api.field_behavior) = REQUIRED,
     (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
-      description : "Mapping of property names to their definitions."
+      description: "Mapping of property names to their definitions."
       // TODO: Add examples.
     }
   ];
@@ -472,7 +472,7 @@ message CompletionMessage {
   repeated ToolCall tool_calls = 5 [
     (google.api.field_behavior) = REQUIRED,
     (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
-      description : "Mapping of property names to their definitions."
+      description: "Mapping of property names to their definitions."
       // TODO: Add examples.
     }
   ];
@@ -482,7 +482,7 @@ message CompletionMessage {
   string tool_call_id = 6 [
     (google.api.field_behavior) = REQUIRED,
     (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
-      description : "Mapping of property names to their definitions."
+      description: "Mapping of property names to their definitions."
       // TODO: Add examples.
     }
   ];
@@ -505,18 +505,14 @@ message MessageImageURL {
   // url is the URL of the image.
   string url = 1 [
     (google.api.field_behavior) = REQUIRED,
-    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
-      description : "The image URL."
-    }
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {description: "The image URL."}
   ];
 
   // detail describes the image detail quality.
   // See ImageURLDetail enum.
   ImageURLDetail detail = 2 [
     (google.api.field_behavior) = REQUIRED,
-    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
-      description : "The detail of the image."
-    }
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {description: "The detail of the image."}
   ];
 }
 
@@ -611,7 +607,7 @@ message ChatCompletionResponseFormat {
   Format type = 1 [
     (google.api.field_behavior) = REQUIRED,
     (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
-      description : "Mapping of property names to their definitions."
+      description: "Mapping of property names to their definitions."
       // TODO: Add examples.
     }
   ];
@@ -620,7 +616,7 @@ message ChatCompletionResponseFormat {
   ChatCompletionResponseFormatJSONSchema json_schema = 2 [
     (google.api.field_behavior) = REQUIRED,
     (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
-      description : "Mapping of property names to their definitions."
+      description: "Mapping of property names to their definitions."
       // TODO: Add examples.
     }
   ];
@@ -632,7 +628,7 @@ message ChatCompletionResponseFormatJSONSchema {
   string name = 1 [
     (google.api.field_behavior) = REQUIRED,
     (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
-      description : "Mapping of property names to their definitions."
+      description: "Mapping of property names to their definitions."
       // TODO: Add examples.
     }
   ];
@@ -641,7 +637,7 @@ message ChatCompletionResponseFormatJSONSchema {
   string description = 2 [
     (google.api.field_behavior) = REQUIRED,
     (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
-      description : "Mapping of property names to their definitions."
+      description: "Mapping of property names to their definitions."
       // TODO: Add examples.
     }
   ];
@@ -650,7 +646,7 @@ message ChatCompletionResponseFormatJSONSchema {
   string schema = 3 [
     (google.api.field_behavior) = REQUIRED,
     (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
-      description : "Mapping of property names to their definitions."
+      description: "Mapping of property names to their definitions."
       // TODO: Add examples.
     }
   ];
@@ -659,7 +655,7 @@ message ChatCompletionResponseFormatJSONSchema {
   bool strict = 4 [
     (google.api.field_behavior) = REQUIRED,
     (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
-      description : "Mapping of property names to their definitions."
+      description: "Mapping of property names to their definitions."
       // TODO: Add examples.
     }
   ];
@@ -671,7 +667,7 @@ message LogProb {
   string token = 1 [
     (google.api.field_behavior) = REQUIRED,
     (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
-      description : "Mapping of property names to their definitions."
+      description: "Mapping of property names to their definitions."
       // TODO: Add examples.
     }
   ];
@@ -680,7 +676,7 @@ message LogProb {
   double logprob = 2 [
     (google.api.field_behavior) = REQUIRED,
     (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
-      description : "Mapping of property names to their definitions."
+      description: "Mapping of property names to their definitions."
       // TODO: Add examples.
     }
   ];
@@ -689,7 +685,7 @@ message LogProb {
   bytes bytes = 3 [
     (google.api.field_behavior) = REQUIRED,
     (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
-      description : "Mapping of property names to their definitions."
+      description: "Mapping of property names to their definitions."
       // TODO: Add examples.
     }
   ];
@@ -701,7 +697,7 @@ message LogProbsContent {
   LogProb logprob = 1 [
     (google.api.field_behavior) = REQUIRED,
     (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
-      description : "Mapping of property names to their definitions."
+      description: "Mapping of property names to their definitions."
       // TODO: Add examples.
     }
   ];
@@ -711,7 +707,7 @@ message LogProbsContent {
   repeated LogProb top_logprobs = 2 [
     (google.api.field_behavior) = REQUIRED,
     (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
-      description : "Mapping of property names to their definitions."
+      description: "Mapping of property names to their definitions."
       // TODO: Add examples.
     }
   ];
@@ -720,16 +716,16 @@ message LogProbsContent {
 // LogProbs contains log probability information for the content.
 message LogProbs {
   option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_schema) = {
-    json_schema : {
-      description : "LogProbs contains log probability information for the "
-                    "content."
-    }
+    json_schema: {description:
+        "LogProbs contains log probability information for the "
+        "content."
+}
   };
   // content is a list of log probability details for each token position.
   repeated LogProbsContent content = 1 [
     (google.api.field_behavior) = REQUIRED,
     (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
-      description : "Mapping of property names to their definitions."
+      description: "Mapping of property names to their definitions."
       // TODO: Add examples.
     }
   ];
@@ -741,7 +737,7 @@ message CompletionChoice {
   int32 index = 1 [
     (google.api.field_behavior) = REQUIRED,
     (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
-      description : "Mapping of property names to their definitions."
+      description: "Mapping of property names to their definitions."
       // TODO: Add examples.
     }
   ];
@@ -750,7 +746,7 @@ message CompletionChoice {
   CompletionMessage message = 2 [
     (google.api.field_behavior) = REQUIRED,
     (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
-      description : "Mapping of property names to their definitions."
+      description: "Mapping of property names to their definitions."
       // TODO: Add examples.
     }
   ];
@@ -759,7 +755,7 @@ message CompletionChoice {
   FinishReason finish_reason = 3 [
     (google.api.field_behavior) = REQUIRED,
     (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
-      description : "Mapping of property names to their definitions."
+      description: "Mapping of property names to their definitions."
       // TODO: Add examples.
     }
   ];
@@ -768,7 +764,7 @@ message CompletionChoice {
   LogProbs logprobs = 4 [
     (google.api.field_behavior) = REQUIRED,
     (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
-      description : "Mapping of property names to their definitions."
+      description: "Mapping of property names to their definitions."
       // TODO: Add examples.
     }
   ];
@@ -780,7 +776,7 @@ message CompletionStreamChoiceDelta {
   string content = 1 [
     (google.api.field_behavior) = REQUIRED,
     (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
-      description : "Mapping of property names to their definitions."
+      description: "Mapping of property names to their definitions."
       // TODO: Add examples.
     }
   ];
@@ -789,7 +785,7 @@ message CompletionStreamChoiceDelta {
   string role = 2 [
     (google.api.field_behavior) = REQUIRED,
     (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
-      description : "Mapping of property names to their definitions."
+      description: "Mapping of property names to their definitions."
       // TODO: Add examples.
     }
   ];
@@ -798,7 +794,7 @@ message CompletionStreamChoiceDelta {
   FunctionCall function_call = 3 [
     (google.api.field_behavior) = REQUIRED,
     (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
-      description : "Mapping of property names to their definitions."
+      description: "Mapping of property names to their definitions."
       // TODO: Add examples.
     }
   ];
@@ -807,7 +803,7 @@ message CompletionStreamChoiceDelta {
   repeated ToolCall tool_calls = 4 [
     (google.api.field_behavior) = REQUIRED,
     (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
-      description : "Mapping of property names to their definitions."
+      description: "Mapping of property names to their definitions."
       // TODO: Add examples.
     }
   ];
@@ -819,7 +815,7 @@ message CompletionStreamChoice {
   int32 index = 1 [
     (google.api.field_behavior) = REQUIRED,
     (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
-      description : "Mapping of property names to their definitions."
+      description: "Mapping of property names to their definitions."
       // TODO: Add examples.
     }
   ];
@@ -828,7 +824,7 @@ message CompletionStreamChoice {
   CompletionStreamChoiceDelta delta = 2 [
     (google.api.field_behavior) = REQUIRED,
     (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
-      description : "Mapping of property names to their definitions."
+      description: "Mapping of property names to their definitions."
       // TODO: Add examples.
     }
   ];
@@ -837,7 +833,7 @@ message CompletionStreamChoice {
   FinishReason finish_reason = 3 [
     (google.api.field_behavior) = REQUIRED,
     (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
-      description : "Mapping of property names to their definitions."
+      description: "Mapping of property names to their definitions."
       // TODO: Add examples.
     }
   ];
@@ -850,7 +846,7 @@ message StreamOptions {
   bool include_usage = 1 [
     (google.api.field_behavior) = REQUIRED,
     (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
-      description : "Mapping of property names to their definitions."
+      description: "Mapping of property names to their definitions."
       // TODO: Add examples.
     }
   ];
@@ -862,7 +858,7 @@ message Usage {
   int32 prompt_tokens = 1 [
     (google.api.field_behavior) = REQUIRED,
     (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
-      description : "Mapping of property names to their definitions."
+      description: "Mapping of property names to their definitions."
       // TODO: Add examples.
     }
   ];
@@ -871,7 +867,7 @@ message Usage {
   int32 completion_tokens = 2 [
     (google.api.field_behavior) = REQUIRED,
     (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
-      description : "Mapping of property names to their definitions."
+      description: "Mapping of property names to their definitions."
       // TODO: Add examples.
     }
   ];
@@ -880,7 +876,7 @@ message Usage {
   int32 total_tokens = 3 [
     (google.api.field_behavior) = REQUIRED,
     (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
-      description : "Mapping of property names to their definitions."
+      description: "Mapping of property names to their definitions."
       // TODO: Add examples.
     }
   ];
@@ -896,7 +892,7 @@ message Tool {
   string type = 1 [
     (google.api.field_behavior) = REQUIRED,
     (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
-      description : "Mapping of property names to their definitions."
+      description: "Mapping of property names to their definitions."
       // TODO: Add examples.
     }
   ];
@@ -905,7 +901,7 @@ message Tool {
   FunctionDefinition function = 2 [
     (google.api.field_behavior) = REQUIRED,
     (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
-      description : "Mapping of property names to their definitions."
+      description: "Mapping of property names to their definitions."
       // TODO: Add examples.
     }
   ];
@@ -917,7 +913,7 @@ message ToolChoice {
   string type = 1 [
     (google.api.field_behavior) = REQUIRED,
     (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
-      description : "Mapping of property names to their definitions."
+      description: "Mapping of property names to their definitions."
       // TODO: Add examples.
     }
   ];
@@ -926,7 +922,7 @@ message ToolChoice {
   ToolFunction function = 2 [
     (google.api.field_behavior) = REQUIRED,
     (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
-      description : "Mapping of property names to their definitions."
+      description: "Mapping of property names to their definitions."
       // TODO: Add examples.
     }
   ];
@@ -938,7 +934,7 @@ message ToolFunction {
   string name = 1 [
     (google.api.field_behavior) = REQUIRED,
     (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
-      description : "Mapping of property names to their definitions."
+      description: "Mapping of property names to their definitions."
       // TODO: Add examples.
     }
   ];
@@ -950,7 +946,7 @@ message FunctionDefinition {
   string name = 1 [
     (google.api.field_behavior) = REQUIRED,
     (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
-      description : "Mapping of property names to their definitions."
+      description: "Mapping of property names to their definitions."
       // TODO: Add examples.
     }
   ];
@@ -959,7 +955,7 @@ message FunctionDefinition {
   string description = 2 [
     (google.api.field_behavior) = REQUIRED,
     (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
-      description : "Mapping of property names to their definitions."
+      description: "Mapping of property names to their definitions."
       // TODO: Add examples.
     }
   ];
@@ -968,7 +964,7 @@ message FunctionDefinition {
   FunctionParameters parameters = 3 [
     (google.api.field_behavior) = REQUIRED,
     (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
-      description : "Mapping of property names to their definitions."
+      description: "Mapping of property names to their definitions."
       // TODO: Add examples.
     }
   ];
@@ -980,7 +976,7 @@ message FunctionParameters {
   string type = 1 [
     (google.api.field_behavior) = REQUIRED,
     (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
-      description : "Mapping of property names to their definitions."
+      description: "Mapping of property names to their definitions."
       // TODO: Add examples.
     }
   ];
@@ -989,7 +985,7 @@ message FunctionParameters {
   map<string, PropertyDefinition> properties = 2 [
     (google.api.field_behavior) = REQUIRED,
     (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
-      description : "Mapping of property names to their definitions."
+      description: "Mapping of property names to their definitions."
       // TODO: Add examples.
     }
   ];
@@ -998,7 +994,7 @@ message FunctionParameters {
   repeated string required = 3 [
     (google.api.field_behavior) = REQUIRED,
     (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
-      description : "A list of property names that are required."
+      description: "A list of property names that are required."
       // TODO: Add examples.
     }
   ];
@@ -1013,7 +1009,7 @@ message PropertyDefinition {
   string type = 1 [
     (google.api.field_behavior) = REQUIRED,
     (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
-      description : "The data type of the property."
+      description: "The data type of the property."
       // TODO: Add examples.
     }
   ];
@@ -1022,7 +1018,7 @@ message PropertyDefinition {
   string description = 2 [
     (google.api.field_behavior) = REQUIRED,
     (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
-      description : "The description of the property."
+      description: "The description of the property."
       // TODO: Add examples.
     }
   ];
@@ -1033,18 +1029,21 @@ message PropertyDefinition {
 // The index field is only set in chunked responses.
 message ToolCall {
   option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_schema) = {
-    json_schema : {
-      title : "Tool Call"
-      description : "A tool call that may occur during a chat completion."
+    json_schema: {
+      title: "Tool Call"
+      description: "A tool call that may occur during a chat completion."
     }
-    external_docs : {url : "null", description : "null"}
+    external_docs: {
+      url: "null"
+      description: "null"
+    }
   };
   // index is an optional field representing the position/index in a streamed
   // response.
   google.protobuf.Int32Value index = 1 [
     (google.api.field_behavior) = REQUIRED,
     (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
-      description : "The index of the tool call in the response."
+      description: "The index of the tool call in the response."
       // TODO: Add examples.
     }
   ];
@@ -1053,7 +1052,7 @@ message ToolCall {
   string id = 2 [
     (google.api.field_behavior) = REQUIRED,
     (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
-      description : "The identifier for the tool call."
+      description: "The identifier for the tool call."
       // TODO: Add examples.
     }
   ];
@@ -1062,7 +1061,7 @@ message ToolCall {
   string type = 3 [
     (google.api.field_behavior) = REQUIRED,
     (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
-      description : "The type of the tool call."
+      description: "The type of the tool call."
       // TODO: Add examples.
     }
   ];
@@ -1071,7 +1070,7 @@ message ToolCall {
   FunctionCall function = 4 [
     (google.api.field_behavior) = REQUIRED,
     (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
-      description : "The function call details."
+      description: "The function call details."
       // TODO: Add examples.
     }
   ];
@@ -1080,18 +1079,21 @@ message ToolCall {
 // FunctionCall represents the details of a function call.
 message FunctionCall {
   option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_schema) = {
-    json_schema : {
-      title : "Function Call"
-      description : "Function call details."
+    json_schema: {
+      title: "Function Call"
+      description: "Function call details."
     }
-    external_docs : {url : "null", description : "null"}
+    external_docs: {
+      url: "null"
+      description: "null"
+    }
   };
 
   // name is the name of the function being called.
   string name = 1 [
     (google.api.field_behavior) = REQUIRED,
     (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
-      description : "The name of the function being called."
+      description: "The name of the function being called."
       // TODO: Add examples.
     }
   ];
@@ -1100,7 +1102,7 @@ message FunctionCall {
   string arguments = 2 [
     (google.api.field_behavior) = REQUIRED,
     (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
-      description : "The function call arguments in JSON format."
+      description: "The function call arguments in JSON format."
       // TODO: Add examples.
     }
   ];
@@ -1115,7 +1117,7 @@ message HealthCheckResponse {
   string status = 1 [
     (google.api.field_behavior) = OUTPUT_ONLY,
     (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
-      description : "The health check status."
+      description: "The health check status."
       // TODO: Add examples.
     }
   ];

@@ -17,11 +17,11 @@
   }:
     flake-utils.lib.eachDefaultSystem (system: let
       pkgs = nixpkgs.legacyPackages.${system};
-      
+
       # Create a bufrnix package for this project
       bufrnixPackage = bufrnix.lib.mkBufrnixPackage {
         inherit pkgs;
-        
+
         config = {
           root = ./.;
           debug.enable = true;
@@ -34,14 +34,14 @@
             outputPath = "gen/php";
             namespace = "";
             metadataNamespace = "";
-            
+
             # Enable gRPC support
             grpc = {
               enable = true;
               serviceNamespace = "Services";
-              clientOnly = false;  # Generate both client and server code
+              clientOnly = false; # Generate both client and server code
             };
-            
+
             # Enable RoadRunner for server interfaces
             roadrunner = {
               enable = true;
@@ -63,12 +63,12 @@
           bufrnixPackage
           php82
           php82Packages.composer
-          
+
           # Development tools
           git
           curl
           jq
-          
+
           # PHP development
           php82Packages.psalm
           php82Packages.php-cs-fixer

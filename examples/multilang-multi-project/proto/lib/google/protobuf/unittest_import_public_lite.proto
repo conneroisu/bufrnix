@@ -14,4 +14,6 @@ package proto2_unittest_import;
 option java_package = "com.google.protobuf";
 option optimize_for = LITE_RUNTIME;
 
-message PublicImportMessageLite { int32 e = 1; }
+message PublicImportMessageLite {
+  int32 e = 1;
+}

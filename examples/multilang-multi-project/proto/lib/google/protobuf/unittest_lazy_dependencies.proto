@@ -23,7 +23,7 @@ import "google/protobuf/unittest_lazy_dependencies_custom_option.proto";
 option cc_enable_arenas = true;
 // Some generic_services option(s) added automatically.
 // See:  http://go/proto2-generic-services-default
-option cc_generic_services = true;   // auto-added
+option cc_generic_services = true; // auto-added
 option java_generic_services = true; // auto-added
 option java_outer_classname = "UnittestLazyImportsProto";
 // Protos optimized for SPEED use a strict superset of the generated code
@@ -38,8 +38,12 @@ option py_generic_services = true; // auto-added
 // that calling message_type() etc will build the correct
 // descriptor lazily and return it.
 
-message ImportedMessage { LazyMessage lazy_message = 1; }
+message ImportedMessage {
+  LazyMessage lazy_message = 1;
+}
 
 message MessageCustomOption {}
 
-message MessageCustomOption2 { option (lazy_enum_option) = LAZY_ENUM_0; }
+message MessageCustomOption2 {
+  option (lazy_enum_option) = LAZY_ENUM_0;
+}

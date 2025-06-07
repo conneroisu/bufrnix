@@ -22,6 +22,10 @@ enum TestEnum {
   FOO = 1;
 }
 
-extend TestMessage { optional int32 test_extension = 1000; }
+extend TestMessage {
+  optional int32 test_extension = 1000;
+}
 
-service TestService { rpc Foo(TestMessage) returns (TestMessage); }
+service TestService {
+  rpc Foo(TestMessage) returns (TestMessage);
+}

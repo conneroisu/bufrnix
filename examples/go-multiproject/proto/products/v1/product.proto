@@ -2,9 +2,9 @@ syntax = "proto3";
 
 package products.v1;
 
-option go_package = "github.com/example/multiproject/proto/gen/go/products/v1;productsv1";
-
 import "google/protobuf/timestamp.proto";
+
+option go_package = "github.com/example/multiproject/proto/gen/go/products/v1;productsv1";
 
 message Product {
   string id = 1;

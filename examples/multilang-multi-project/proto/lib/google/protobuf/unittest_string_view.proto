@@ -17,7 +17,9 @@ message TestStringView {
   repeated bytes repeated_bytes = 4;
 }
 
-message TestStringViewExtension { extensions 1 to max; }
+message TestStringViewExtension {
+  extensions 1 to max;
+}
 
 extend TestStringViewExtension {
   string singular_string_view_extension = 1;

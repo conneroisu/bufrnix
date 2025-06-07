@@ -1,11 +1,10 @@
 syntax = "proto3";
 package images.v1;
 
+import "buf/validate/validate.proto";
+import "gateway/protoc-gen-openapiv2/annotations.proto";
 // External
 import "google/api/field_behavior.proto";
-import "gateway/protoc-gen-openapiv2/annotations.proto";
-import "buf/validate/validate.proto";
-
 // Internal
 import "lib/media.proto";
 
@@ -16,88 +15,74 @@ message ImageCreateRequest {
   string prompt = 1 [
     (validate.rules).string.min_len = 1,
     (validate.rules).string.max_len = 1000,
-    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
-      description : "The prompt to generate an image from."
-    }
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {description: "The prompt to generate an image from."}
   ];
 
   media.v1.ImageSize image_size = 2 [
     (validate.rules).enum.defined_only = true,
-    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
-      description : "The size of the image to generate."
-    }
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {description: "The size of the image to generate."}
   ];
 }
 
 // ImageCreateResponse is the response to create an image.
 message ImageCreateResponse {
   option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_schema) = {
-    json_schema : {title : "ImageCreateResponse"}
+    json_schema: {title: "ImageCreateResponse"}
   };
   // id is the ID of the image.
   string id = 1 [
     (google.api.field_behavior) = OUTPUT_ONLY,
-    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
-      description : "The ID of the image."
-    }
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {description: "The ID of the image."}
   ];
   // file_id is the ID of the file.
   string file_id = 2 [
     (google.api.field_behavior) = OUTPUT_ONLY,
-    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
-      description : "The ID of the file."
-    }
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {description: "The ID of the file."}
   ];
   // url is the private URL of the image.
   string url = 3 [
     (google.api.field_behavior) = OUTPUT_ONLY,
     (validate.rules).string.min_len = 1,
-    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
-      description : "The URL of the image."
-    }
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {description: "The URL of the image."}
   ];
 }
 
-message ImageSegmentRequest { string image_id = 1; }
+message ImageSegmentRequest {
+  string image_id = 1;
+}
 
 message ImageSegmentResponse {
   option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_schema) = {
-    json_schema : {
-      title : "ImageSegmentResponse"
-      description : "The response to segment an image."
+    json_schema: {
+      title: "ImageSegmentResponse"
+      description: "The response to segment an image."
     }
   };
 
   // id is the ID of the image segment.
   string id = 1 [
     (google.api.field_behavior) = OUTPUT_ONLY,
-    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
-      description : "The ID of the image segment."
-    }
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {description: "The ID of the image segment."}
   ];
 
   // file_id is the ID of the file.
   string file_id = 2 [
     (google.api.field_behavior) = OUTPUT_ONLY,
-    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
-      description : "The ID of the file."
-    }
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {description: "The ID of the file."}
   ];
 
   // url is the private URL of the image segment.
   string url = 3 [
     (google.api.field_behavior) = OUTPUT_ONLY,
-    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
-      description : "The URL of the image segment."
-    }
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {description: "The URL of the image segment."}
   ];
 }
 
 message ImageVariationCreateRequest {
   option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_schema) = {
-    json_schema : {
-      title : "ImageVariationCreateRequest"
-      description : "The request to create an image variation."
+    json_schema: {
+      title: "ImageVariationCreateRequest"
+      description: "The request to create an image variation."
     }
   };
 
@@ -105,108 +90,88 @@ message ImageVariationCreateRequest {
   string prompt = 1 [
     (validate.rules).string.min_len = 1,
     (validate.rules).string.max_len = 1000,
-    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
-      description : "The prompt to generate an image from."
-    }
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {description: "The prompt to generate an image from."}
   ];
 
   // image_id is the ID of the image to generate a variation from.
   string image_id = 2 [
     (validate.rules).string.min_len = 1,
-    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
-      description : "The ID of the image to generate a variation from."
-    }
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {description: "The ID of the image to generate a variation from."}
   ];
 }
 
 message ImageVariationCreateResponse {
   option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_schema) = {
-    json_schema : {
-      title : "ImageVariationCreateResponse"
-      description : "The response to create an image variation."
+    json_schema: {
+      title: "ImageVariationCreateResponse"
+      description: "The response to create an image variation."
     }
   };
 
   // id is the ID of the image variation.
   string id = 1 [
     (google.api.field_behavior) = OUTPUT_ONLY,
-    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
-      description : "The ID of the image variation."
-    }
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {description: "The ID of the image variation."}
   ];
 
   // file_id is the ID of the file.
   string file_id = 2 [
     (google.api.field_behavior) = OUTPUT_ONLY,
-    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
-      description : "The ID of the file."
-    }
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {description: "The ID of the file."}
   ];
 
   // url is the private URL of the image variation.
   string url = 3 [
     (google.api.field_behavior) = OUTPUT_ONLY,
-    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
-      description : "The URL of the image variation."
-    }
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {description: "The URL of the image variation."}
   ];
 }
 
 // ImageEditCreateRequest is the request to create an image edit.
 message ImageEditRequest {
   option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_schema) = {
-    json_schema : {
-      title : "ImageEditCreateRequest"
-      description : "The request to create an image edit."
+    json_schema: {
+      title: "ImageEditCreateRequest"
+      description: "The request to create an image edit."
     }
   };
   // prompt is the prompt to edit the image using.
   string prompt = 1 [
     (validate.rules).string.min_len = 1,
     (validate.rules).string.max_len = 1000,
-    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
-      description : "The prompt to generate an image from."
-    }
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {description: "The prompt to generate an image from."}
   ];
   string image_id = 2 [
     (validate.rules).string.min_len = 1,
-    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
-      description : "The ID of the image to generate an edit from."
-    }
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {description: "The ID of the image to generate an edit from."}
   ];
 }
 
 // ImageEditCreateResponse is the response to create an image edit.
 message ImageEditResponse {
   option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_schema) = {
-    json_schema : {
-      title : "ImageEditCreateResponse"
-      description : "The response to create an image edit."
+    json_schema: {
+      title: "ImageEditCreateResponse"
+      description: "The response to create an image edit."
     }
   };
 
   // id is the ID of the image edit.
   string id = 1 [
     (google.api.field_behavior) = OUTPUT_ONLY,
-    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
-      description : "The ID of the image edit."
-    }
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {description: "The ID of the image edit."}
   ];
 
   // file_id is the ID of the file.
   string file_id = 2 [
     (google.api.field_behavior) = OUTPUT_ONLY,
-    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
-      description : "The ID of the file."
-    }
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {description: "The ID of the file."}
   ];
 
   // url is the private URL of the image edit.
   string url = 3 [
     (google.api.field_behavior) = OUTPUT_ONLY,
     (validate.rules).string.min_len = 1,
-    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
-      description : "The URL of the image edit."
-    }
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {description: "The URL of the image edit."}
   ];
 }

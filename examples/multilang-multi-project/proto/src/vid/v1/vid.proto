@@ -23,20 +23,20 @@ package vid.v1;
 import "gateway/protoc-gen-openapiv2/annotations.proto";
 
 option go_package = "github.com/conneroisu/bufrnix/examples/multilang-multi-project/proto/gen/go/vid/v1;vid";
-
 option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_swagger) = {
-  info : {
-    title : "Internal Text/Image to Video API"
-    version : "1.0.0"
-    description : "# Text/Image to Video\n\nThis service provides a gRPC API "
-                  "for "
-                  "generating videos from text and images.\n\n It is part of "
-                  "the "
-                  "internal api of the pegwings platform."
-    contact : {
-      name : "Conner Ohnsorge"
-      url : "https://github.com/pegwings"
-      email : "conneroisu@outlook.com"
+  info: {
+    title: "Internal Text/Image to Video API"
+    version: "1.0.0"
+    description:
+      "# Text/Image to Video\n\nThis service provides a gRPC API "
+      "for "
+      "generating videos from text and images.\n\n It is part of "
+      "the "
+      "internal api of the pegwings platform."
+    contact: {
+      name: "Conner Ohnsorge"
+      url: "https://github.com/pegwings"
+      email: "conneroisu@outlook.com"
     }
   }
 };
@@ -77,10 +77,14 @@ message CameraControlConfig {
 }
 
 // VIDResponse is the response message for the TranscribeAudio method.
-message VIDResponse { string url = 1; }
+message VIDResponse {
+  string url = 1;
+}
 
 // HealthCheckRequest is the request message for the HealthCheck method.
 message HealthCheckRequest {}
 
 // HealthCheckResponse is the response message for the HealthCheck method.
-message HealthCheckResponse { bool healthy = 1; }
+message HealthCheckResponse {
+  bool healthy = 1;
+}

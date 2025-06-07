@@ -71,7 +71,9 @@ message TestImportEnumMap {
   map<int32, proto2_unittest_import.ImportEnumForMap> import_enum_amp = 1;
 }
 
-message TestIntIntMap { map<int32, int32> m = 1; }
+message TestIntIntMap {
+  map<int32, int32> m = 1;
+}
 
 // Test all key types: string, plus the non-floating-point scalars.
 message TestMaps {
@@ -90,7 +92,9 @@ message TestMaps {
 }
 
 // Test maps in submessages.
-message TestSubmessageMaps { optional TestMaps m = 1; }
+message TestSubmessageMaps {
+  optional TestMaps m = 1;
+}
 
 message TestProto2BytesMap {
   map<int32, bytes> map_bytes = 1;

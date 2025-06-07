@@ -15,14 +15,14 @@ The example uses a comprehensive `user.proto` file that defines:
 
 This example generates code for the following languages:
 
-| Language | Features | Output Directory |
-|----------|----------|------------------|
-| **Go** | Basic protobuf + gRPC + JSON tags | `proto/gen/go/` |
-| **Python** | Basic protobuf + gRPC + mypy stubs | `proto/gen/python/` |
-| **JavaScript/TypeScript** | ES modules support | `proto/gen/js/` |
-| **Java** | Basic protobuf + gRPC | `proto/gen/java/` |
-| **C++** | Basic protobuf + gRPC | `proto/gen/cpp/` |
-| **Rust** | Tonic gRPC support | `proto/gen/rust/` |
+| Language                  | Features                           | Output Directory    |
+| ------------------------- | ---------------------------------- | ------------------- |
+| **Go**                    | Basic protobuf + gRPC + JSON tags  | `proto/gen/go/`     |
+| **Python**                | Basic protobuf + gRPC + mypy stubs | `proto/gen/python/` |
+| **JavaScript/TypeScript** | ES modules support                 | `proto/gen/js/`     |
+| **Java**                  | Basic protobuf + gRPC              | `proto/gen/java/`   |
+| **C++**                   | Basic protobuf + gRPC              | `proto/gen/cpp/`    |
+| **Rust**                  | Tonic gRPC support                 | `proto/gen/rust/`   |
 
 ## Getting Started
 
@@ -49,6 +49,7 @@ ls proto/gen/
 Each language has its own development shell with appropriate tools and dependencies:
 
 #### Go Development
+
 ```bash
 nix develop .#go
 cd proto/gen/go
@@ -56,6 +57,7 @@ cd proto/gen/go
 ```
 
 #### Python Development
+
 ```bash
 nix develop .#python
 cd proto/gen/python
@@ -63,6 +65,7 @@ cd proto/gen/python
 ```
 
 #### JavaScript/TypeScript Development
+
 ```bash
 nix develop .#js
 cd proto/gen/js
@@ -70,6 +73,7 @@ cd proto/gen/js
 ```
 
 #### Java Development
+
 ```bash
 nix develop .#java
 cd proto/gen/java
@@ -77,6 +81,7 @@ cd proto/gen/java
 ```
 
 #### C++ Development
+
 ```bash
 nix develop .#cpp
 cd proto/gen/cpp
@@ -84,6 +89,7 @@ cd proto/gen/cpp
 ```
 
 #### Rust Development
+
 ```bash
 nix develop .#rust
 cd proto/gen/rust
@@ -93,6 +99,7 @@ cd proto/gen/rust
 ## Example Usage
 
 ### Go
+
 ```go
 package main
 
@@ -122,6 +129,7 @@ func main() {
 ```
 
 ### Python
+
 ```python
 from proto.gen.python.example.v1 import user_pb2
 
@@ -142,22 +150,28 @@ user = user_pb2.User(
 ```
 
 ### JavaScript/TypeScript
+
 ```javascript
-import { User, UserPreferences, Theme, UserStatus } from './proto/gen/js/example/v1/user_pb.js';
+import {
+  User,
+  UserPreferences,
+  Theme,
+  UserStatus,
+} from "./proto/gen/js/example/v1/user_pb.js";
 
 // Create a new user
 const user = new User({
-    id: 1,
-    email: "user@example.com",
-    name: "John Doe",
-    age: 30,
-    preferences: new UserPreferences({
-        language: "en",
-        timezone: "UTC",
-        emailNotifications: true,
-        theme: Theme.THEME_DARK
-    }),
-    status: UserStatus.USER_STATUS_ACTIVE
+  id: 1,
+  email: "user@example.com",
+  name: "John Doe",
+  age: 30,
+  preferences: new UserPreferences({
+    language: "en",
+    timezone: "UTC",
+    emailNotifications: true,
+    theme: Theme.THEME_DARK,
+  }),
+  status: UserStatus.USER_STATUS_ACTIVE,
 });
 ```
 
@@ -166,6 +180,7 @@ const user = new User({
 The `flake.nix` configuration demonstrates several important Bufrnix features:
 
 ### Multi-Language Support
+
 ```nix
 languages = {
   go = {
@@ -183,9 +198,11 @@ languages = {
 ```
 
 ### Language-Specific Development Shells
+
 Each language gets its own development environment with appropriate tools and dependencies, accessible via `nix develop .#<language>`.
 
 ### Flexible Output Paths
+
 Each language can have its own output directory structure, making it easy to integrate with existing projects.
 
 ## Benefits of This Approach

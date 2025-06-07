@@ -58,7 +58,7 @@
             echo "  3. Run: sbt run"
           '';
         };
-        
+
         apps = {
           default = {
             type = "app";

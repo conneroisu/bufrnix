@@ -54,9 +54,13 @@ message TestMapWithMessages {
   map<string, TestAllTypes> map_string_all_types = 12;
 }
 
-message TestMapSubmessage { TestMap test_map = 1; }
+message TestMapSubmessage {
+  TestMap test_map = 1;
+}
 
-message TestMessageMap { map<int32, TestAllTypes> map_int32_message = 1; }
+message TestMessageMap {
+  map<int32, TestAllTypes> map_int32_message = 1;
+}
 
 // Two map fields share the same entry default instance.
 message TestSameTypeMap {
@@ -71,7 +75,9 @@ enum MapEnum {
 }
 
 // Test embedded message with required fields
-message TestRequiredMessageMap { map<int32, TestRequired> map_field = 1; }
+message TestRequiredMessageMap {
+  map<int32, TestRequired> map_field = 1;
+}
 
 message TestArenaMap {
   map<int32, int32> map_int32_int32 = 1;
@@ -103,8 +109,14 @@ message MessageContainingEnumCalledType {
 }
 
 // Previously, message cannot contain map field called "entry".
-message MessageContainingMapCalledEntry { map<int32, int32> entry = 1; }
+message MessageContainingMapCalledEntry {
+  map<int32, int32> entry = 1;
+}
 
-message TestRecursiveMapMessage { map<string, TestRecursiveMapMessage> a = 1; }
+message TestRecursiveMapMessage {
+  map<string, TestRecursiveMapMessage> a = 1;
+}
 
-message TestI32StrMap { map<int32, string> m_32_str = 1; }
+message TestI32StrMap {
+  map<int32, string> m_32_str = 1;
+}

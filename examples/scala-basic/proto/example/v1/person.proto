@@ -2,23 +2,23 @@ syntax = "proto3";
 
 package example.v1;
 
-option java_package = "com.example.protobuf.v1";
 option java_outer_classname = "PersonProto";
+option java_package = "com.example.protobuf.v1";
 
 // Person represents an individual with contact information
 message Person {
   // Unique identifier for the person
   int32 id = 1;
-  
+
   // Person's full name
   string name = 2;
-  
+
   // Email address (optional)
   string email = 3;
-  
+
   // Phone numbers associated with the person
   repeated PhoneNumber phones = 4;
-  
+
   // Person's address (optional)
   Address address = 5;
 }
@@ -27,7 +27,7 @@ message Person {
 message PhoneNumber {
   // The phone number
   string number = 1;
-  
+
   // Type of phone number
   PhoneType type = 2;
 }

@@ -2,39 +2,39 @@ syntax = "proto3";
 
 package example.v1;
 
-option go_package = "github.com/example/proto/example/v1;examplev1";
-
 import "google/protobuf/timestamp.proto";
+
+option go_package = "github.com/example/proto/example/v1;examplev1";
 
 // Product represents a product in the catalog
 message Product {
   // Unique identifier for the product
   string id = 1;
-  
+
   // Product name
   string name = 2;
-  
+
   // Product description
   string description = 3;
-  
+
   // Product price in cents
   int64 price_cents = 4;
-  
+
   // Product category
   string category = 5;
-  
+
   // Product availability status
   ProductStatus status = 6;
-  
+
   // Product creation timestamp
   google.protobuf.Timestamp created_at = 7;
-  
+
   // Product last update timestamp
   google.protobuf.Timestamp updated_at = 8;
-  
+
   // Product metadata
   map<string, string> metadata = 9;
-  
+
   // Product tags
   repeated string tags = 10;
 }
@@ -51,19 +51,19 @@ enum ProductStatus {
 service ProductService {
   // Create a new product
   rpc CreateProduct(CreateProductRequest) returns (CreateProductResponse);
-  
+
   // Get a product by ID
   rpc GetProduct(GetProductRequest) returns (GetProductResponse);
-  
+
   // Update an existing product
   rpc UpdateProduct(UpdateProductRequest) returns (UpdateProductResponse);
-  
+
   // Delete a product
   rpc DeleteProduct(DeleteProductRequest) returns (DeleteProductResponse);
-  
+
   // List products with filtering and pagination
   rpc ListProducts(ListProductsRequest) returns (ListProductsResponse);
-  
+
   // Search products by query
   rpc SearchProducts(SearchProductsRequest) returns (SearchProductsResponse);
 }

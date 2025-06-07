@@ -20,7 +20,9 @@ option features.field_presence = IMPLICIT;
 // This proto includes every type of field in both singular and repeated
 // forms.
 message TestAllTypes {
-  message NestedMessage { int32 bb = 1; }
+  message NestedMessage {
+    int32 bb = 1;
+  }
 
   enum NestedEnum {
     FOO = 0;
@@ -58,10 +60,10 @@ message TestAllTypes {
   // optional proto2_unittest.ForeignEnum          optional_proto2_enum     =
   // 23;
 
-  string optional_string_piece = 24 [ ctype = STRING_PIECE ];
-  string optional_cord = 25 [ ctype = CORD ];
+  string optional_string_piece = 24 [ctype = STRING_PIECE];
+  string optional_cord = 25 [ctype = CORD];
 
-  NestedMessage optional_lazy_message = 30 [ lazy = true ];
+  NestedMessage optional_lazy_message = 30 [lazy = true];
 
   // Repeated
   repeated int32 repeated_int32 = 31;
@@ -87,8 +89,8 @@ message TestAllTypes {
   repeated NestedEnum repeated_nested_enum = 51;
   repeated ForeignEnum repeated_foreign_enum = 52;
 
-  repeated string repeated_string_piece = 54 [ ctype = STRING_PIECE ];
-  repeated string repeated_cord = 55 [ ctype = CORD ];
+  repeated string repeated_string_piece = 54 [ctype = STRING_PIECE];
+  repeated string repeated_cord = 55 [ctype = CORD];
 
   repeated NestedMessage repeated_lazy_message = 57;
 
@@ -107,16 +109,20 @@ message TestAllMapTypes {
   map<int32, ExplicitForeignMessage> map_int32_explicit_foreign_message = 4;
 }
 
-message TestProto2Required { proto2_unittest.TestRequired proto2 = 1; }
+message TestProto2Required {
+  proto2_unittest.TestRequired proto2 = 1;
+}
 
 // Define these after TestAllTypes to make sure the compiler can handle
 // that.
-message ForeignMessage { int32 c = 1; }
+message ForeignMessage {
+  int32 c = 1;
+}
 
 // Same as ForeignMessage, but all fields have explicit presence.
 // It can be useful for testing explicit-implicit presence interop behaviour.
 message ExplicitForeignMessage {
-  int32 c = 1 [ features.field_presence = EXPLICIT ];
+  int32 c = 1 [features.field_presence = EXPLICIT];
 }
 
 enum ForeignEnum {

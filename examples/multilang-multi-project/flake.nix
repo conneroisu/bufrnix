@@ -18,10 +18,10 @@
     flake-utils.lib.eachDefaultSystem (system: let
       pkgs = nixpkgs.legacyPackages.${system};
 
-        buildWithSpecificGo = pkg:
-          pkg.override {
-            buildGoModule = pkgs.buildGo124Module;
-          };
+      buildWithSpecificGo = pkg:
+        pkg.override {
+          buildGoModule = pkgs.buildGo124Module;
+        };
     in {
       # Main development shell with all tools
       devShells.default = pkgs.mkShell {
@@ -33,23 +33,22 @@
           protoc-gen-go
           protoc-gen-go-grpc
 
-              go_1_24 # Go Tools
-              air
-              templ
-              golangci-lint
-              (buildWithSpecificGo revive)
-              (buildWithSpecificGo gopls)
-              (buildWithSpecificGo templ)
-              (buildWithSpecificGo golines)
-              (buildWithSpecificGo golangci-lint-langserver)
-              (buildWithSpecificGo gomarkdoc)
-              (buildWithSpecificGo gotests)
-              (buildWithSpecificGo gotools)
-              (buildWithSpecificGo reftools)
-              pprof
-              graphviz
+          go_1_24 # Go Tools
+          air
+          templ
+          golangci-lint
+          (buildWithSpecificGo revive)
+          (buildWithSpecificGo gopls)
+          (buildWithSpecificGo templ)
+          (buildWithSpecificGo golines)
+          (buildWithSpecificGo golangci-lint-langserver)
+          (buildWithSpecificGo gomarkdoc)
+          (buildWithSpecificGo gotests)
+          (buildWithSpecificGo gotools)
+          (buildWithSpecificGo reftools)
+          pprof
+          graphviz
 
-          
           python3
           python3Packages.grpcio
           python3Packages.grpcio-tools
@@ -57,20 +56,20 @@
           python3Packages.mypy
           python3Packages.black
           python3Packages.pylint
-          
+
           nodejs
           nodePackages.typescript
           nodePackages.eslint
           nodePackages.prettier
-          
+
           # Protocol buffers and gRPC tools
           buf
           protobuf
           grpc
-          
+
           # Documentation and OpenAPI tools
           swagger-codegen3
-          
+
           # Development utilities
           jq
           curl
@@ -211,22 +210,22 @@
               go = {
                 enable = true;
                 outputPath = "proto/gen/go";
-                
+
                 # Core protobuf and gRPC
                 grpc.enable = true;
                 json.enable = true;
-                
+
                 # Gateway and OpenAPI generation
                 gateway = {
                   enable = true;
                   outputPath = "proto/gen/go";
                 };
-                
+
                 openapiv2 = {
                   enable = true;
                   outputPath = "proto/gen/openapi";
                 };
-                
+
                 # Performance optimizations
                 vtprotobuf = {
                   enable = true;

@@ -108,7 +108,7 @@ message BackendRule {
   double deadline = 3;
 
   // Deprecated, do not use.
-  double min_deadline = 4 [ deprecated = true ];
+  double min_deadline = 4 [deprecated = true];
 
   // The number of seconds to wait for the completion of a long running
   // operation. The default is no deadline.

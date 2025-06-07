@@ -52,38 +52,38 @@
         # Script to run both server and client
         runDemo = pkgs.writeShellScriptBin "run-demo" ''
           set -e
-          
+
           echo "🚀 Starting C# gRPC Demo..."
           echo "================================"
-          
+
           # Check if we're in the right directory
           if [[ ! -d "Server" || ! -d "Client" ]]; then
             echo "❌ Error: Server and Client directories not found!"
             echo "Please run this command from the csharp-grpc example directory."
             exit 1
           fi
-          
+
           # Start server in background
           echo "📡 Starting gRPC server..."
           cd Server
           ${pkgs.dotnetCorePackages.sdk_8_0}/bin/dotnet run &
           SERVER_PID=$!
           cd ..
-          
+
           # Wait for server to start
           echo "⏳ Waiting for server to be ready..."
           sleep 5
-          
+
           # Trap to cleanup server on exit
           trap "echo '🛑 Stopping server...'; kill $SERVER_PID 2>/dev/null || true; wait $SERVER_PID 2>/dev/null || true" EXIT
-          
+
           # Run client
           echo "📞 Running gRPC client..."
           echo "================================"
           cd Client
           ${pkgs.dotnetCorePackages.sdk_8_0}/bin/dotnet run
           cd ..
-          
+
           echo "================================"
           echo "✅ Demo completed successfully!"
         '';
