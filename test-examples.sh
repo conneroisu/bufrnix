@@ -264,6 +264,11 @@ test_example "js-protovalidate" \
 test_example "ts-flake-parts" \
     "gen/js/example/v1/user_pb.ts"
 
+# Test Python flake-parts example
+test_example "python-flake-parts" \
+    "proto/gen/python/greeter_pb2.py" \
+    "proto/gen/python/greeter_pb2_grpc.py"
+
 # TODO: Fix PHP features test (complex multi-config setup)
 # test_example "php-features-test" \
 #     "gen/php/basic/Test/V1/TestMessage.php"
