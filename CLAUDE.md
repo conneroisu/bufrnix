@@ -12,6 +12,13 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - **Multi-language**: Support for Go, Dart, JavaScript/TypeScript, PHP, Swift, and more
 - **Developer-friendly**: Zero setup with comprehensive tooling included
 
+### Quick Start
+1. Install [Nix](https://nixos.org/download.html) and enable [flakes](https://nixos.wiki/wiki/Flakes).
+2. Clone this repository and change into the project directory.
+3. Run `nix develop` from the repo root to load the development environment.
+4. Generate code in any example directory with `nix run` or validate everything using `./check-examples.sh`.
+5. Browse the full documentation at <https://conneroisu.github.io/bufrnix/>.
+
 ## Key Commands
 
 ### Development and Building
@@ -413,3 +420,5 @@ config = {
 ```
 
 This project emphasizes **reproducibility**, **developer experience**, and **local-first development** while maintaining compatibility with the broader Protocol Buffers ecosystem.
+
+For full guides and examples visit <https://conneroisu.github.io/bufrnix/>.
