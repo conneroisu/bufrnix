@@ -151,6 +151,11 @@ test_example "simple-flake" \
     "proto/gen/go/simple/v1/simple.pb.go" \
     "proto/gen/go/simple/v1/simple_grpc.pb.go"
 
+# Test Go flake-parts example
+test_example "go-flake-parts" \
+    "proto/gen/go/example/v1/service.pb.go" \
+    "proto/gen/go/example/v1/service_grpc.pb.go"
+
 # Test Dart example
 test_example "dart-example" \
     "proto/gen/dart/example/v1/example.pb.dart" \
@@ -189,6 +194,10 @@ test_example "csharp-grpc" \
     "gen/csharp/Greeter.cs" \
     "gen/csharp/GreeterGrpc.cs" \
     "gen/csharp/GreeterProtos.csproj"
+
+# Test C# flake-parts example
+test_example "csharp-flake-parts" \
+    "gen/csharp/ExampleProtos.csproj"
 
 # Test Kotlin basic example
 test_example "kotlin-basic" \
@@ -250,6 +259,15 @@ test_example "js-grpc-web" \
 # Test JavaScript protovalidate example
 test_example "js-protovalidate" \
     "proto/gen/js/example/v1/user_pb.ts"
+
+# Test TypeScript flake-parts example
+test_example "ts-flake-parts" \
+    "gen/js/example/v1/user_pb.ts"
+
+# Test Python flake-parts example
+test_example "python-flake-parts" \
+    "proto/gen/python/greeter_pb2.py" \
+    "proto/gen/python/greeter_pb2_grpc.py"
 
 # TODO: Fix PHP features test (complex multi-config setup)
 # test_example "php-features-test" \

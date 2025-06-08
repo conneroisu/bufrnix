@@ -29,7 +29,7 @@ python3 update-hash.py
 ## Packages
 
 - **protoc-gen-go-json**: Protocol buffer compiler plugin for Go JSON marshaling
-- **protoc-gen-go-vtproto**: Protocol buffer compiler plugin for Go with vtprotobuf optimizations  
+- **protoc-gen-go-vtproto**: Protocol buffer compiler plugin for Go with vtprotobuf optimizations
 - **protoc-gen-openapiv2**: Protocol buffer compiler plugin for OpenAPI v2 (Swagger) generation
 
 ## Adding New Packages

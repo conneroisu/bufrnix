@@ -12,7 +12,7 @@ echo "Running bufrnix..."
 
 # Add imports to generated file (since the plugin doesn't add them by default)
 echo "Adding imports to generated transformation file..."
-sed -i '5a\\nimport (\n\texamplev1 "github.com/example/proto/example/v1"\n\t"github.com/example/struct-transformer-example/models"\n)\n' gen/go/example/v1/transform/product_transformer.go
+sed -i '5a\\nimport (\n\texamplev1 "github.com/example/proto/example/v1"\n\t"github.com/conneroisu/bufrnix/examples/go-struct-transformer/models"\n)\n' gen/go/example/v1/transform/product_transformer.go
 
 # Create go.mod for generated code
 echo "Creating go.mod for generated code..."
@@ -23,10 +23,10 @@ go 1.21
 
 require (
 	google.golang.org/protobuf v1.34.0
-	github.com/example/struct-transformer-example v0.0.0
+        github.com/conneroisu/bufrnix/examples/go-struct-transformer v0.0.0
 )
 
-replace github.com/example/struct-transformer-example => ../..
+replace github.com/conneroisu/bufrnix/examples/go-struct-transformer => ../..
 EOF
 
 # Check if protobuf files were generated

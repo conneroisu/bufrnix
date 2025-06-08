@@ -23,16 +23,19 @@ go-multiproject/
 ## Proto Files Overview
 
 ### Users (`proto/users/v1/user.proto`)
+
 - Defines `User` message with fields like id, email, name, timestamps, and status
 - Includes `UserService` with CRUD operations
 - Contains `UserStatus` enum for user states
 
 ### Products (`proto/products/v1/product.proto`)
+
 - Defines `Product` message with pricing, inventory, and categorization
 - Includes `ProductService` with search and inventory management
 - Contains `ProductStatus` enum and `ProductCategory` message
 
 ### Orders (`proto/orders/v1/order.proto`)
+
 - Defines `Order` message that references users and products
 - Includes complex order management with items, shipping, and status tracking
 - Demonstrates cross-package imports and relationships
@@ -71,6 +74,7 @@ go run main.go
 ```
 
 The example application will:
+
 - Create sample user, product, and order instances
 - Demonstrate message creation and field access
 - Show cross-package references in action
@@ -79,13 +83,15 @@ The example application will:
 ### 3. Explore Generated Code
 
 After building, explore the generated Go code in:
+
 - `proto/gen/go/users/v1/` - User-related generated code
-- `proto/gen/go/products/v1/` - Product-related generated code  
+- `proto/gen/go/products/v1/` - Product-related generated code
 - `proto/gen/go/orders/v1/` - Order-related generated code
 
 ## Configuration Details
 
 The `flake.nix` configuration:
+
 - Specifies multiple proto files in the `files` array
 - Uses `includeDirectories` to set the proto search path
 - Enables Go code generation with gRPC support
@@ -94,6 +100,7 @@ The `flake.nix` configuration:
 ## Extending the Example
 
 To add more proto files:
+
 1. Create new `.proto` files in appropriate directories
 2. Add the file paths to the `files` array in `flake.nix`
 3. Import other proto files using their relative paths

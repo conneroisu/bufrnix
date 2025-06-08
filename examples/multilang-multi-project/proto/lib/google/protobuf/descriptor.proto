@@ -56,11 +56,11 @@ message FileDescriptorSet {
   repeated FileDescriptorProto file = 1;
 
   // Extensions for tooling.
-  extensions 536000000 [ declaration = {
-    number : 536000000
-    type : ".buf.descriptor.v1.FileDescriptorSetExtension"
-    full_name : ".buf.descriptor.v1.buf_file_descriptor_set_extension"
-  } ];
+  extensions 536000000 [declaration = {
+    number: 536000000
+    type: ".buf.descriptor.v1.FileDescriptorSetExtension"
+    full_name: ".buf.descriptor.v1.buf_file_descriptor_set_extension"
+  }];
 }
 
 // The full set of known editions.
@@ -101,7 +101,7 @@ enum Edition {
 
 // Describes a complete .proto file.
 message FileDescriptorProto {
-  optional string name = 1;    // file name, relative to root of source tree
+  optional string name = 1; // file name, relative to root of source tree
   optional string package = 2; // e.g. "foo", "foo.bar", etc.
 
   // Names of files imported by this file.
@@ -154,7 +154,7 @@ message DescriptorProto {
 
   message ExtensionRange {
     optional int32 start = 1; // Inclusive.
-    optional int32 end = 2;   // Exclusive.
+    optional int32 end = 2; // Exclusive.
 
     optional ExtensionRangeOptions options = 3;
   }
@@ -169,7 +169,7 @@ message DescriptorProto {
   // not overlap.
   message ReservedRange {
     optional int32 start = 1; // Inclusive.
-    optional int32 end = 2;   // Exclusive.
+    optional int32 end = 2; // Exclusive.
   }
   repeated ReservedRange reserved_range = 9;
   // Reserved field names, which may not be used by fields in the same message.
@@ -209,7 +209,7 @@ message ExtensionRangeOptions {
   // For external users: DO NOT USE. We are in the process of open sourcing
   // extension declaration and executing internal cleanups before it can be
   // used externally.
-  repeated Declaration declaration = 2 [ retention = RETENTION_SOURCE ];
+  repeated Declaration declaration = 2 [retention = RETENTION_SOURCE];
 
   // Any features defined in the specific edition.
   optional FeatureSet features = 50;
@@ -224,8 +224,10 @@ message ExtensionRangeOptions {
   // The verification state of the range.
   // TODO: flip the default to DECLARATION once all empty ranges
   // are marked as UNVERIFIED.
-  optional VerificationState verification = 3
-      [ default = UNVERIFIED, retention = RETENTION_SOURCE ];
+  optional VerificationState verification = 3 [
+    default = UNVERIFIED,
+    retention = RETENTION_SOURCE
+  ];
 
   // Clients can define custom options in extensions of this message. See above.
   extensions 1000 to max;
@@ -360,7 +362,7 @@ message EnumDescriptorProto {
   // domain.
   message EnumReservedRange {
     optional int32 start = 1; // Inclusive.
-    optional int32 end = 2;   // Inclusive.
+    optional int32 end = 2; // Inclusive.
   }
 
   // Range of reserved numeric values. Reserved numeric values may not be used
@@ -401,9 +403,9 @@ message MethodDescriptorProto {
   optional MethodOptions options = 4;
 
   // Identifies if client streams multiple client messages
-  optional bool client_streaming = 5 [ default = false ];
+  optional bool client_streaming = 5 [default = false];
   // Identifies if server streams multiple server messages
-  optional bool server_streaming = 6 [ default = false ];
+  optional bool server_streaming = 6 [default = false];
 }
 
 // ===================================================================
@@ -458,10 +460,10 @@ message FileOptions {
   // named by java_outer_classname.  However, the wrapper class will still be
   // generated to contain the file's getDescriptor() method as well as any
   // top-level extensions defined in the file.
-  optional bool java_multiple_files = 10 [ default = false ];
+  optional bool java_multiple_files = 10 [default = false];
 
   // This option does nothing.
-  optional bool java_generate_equals_and_hash = 20 [ deprecated = true ];
+  optional bool java_generate_equals_and_hash = 20 [deprecated = true];
 
   // A proto2 file can set this to true to opt in to UTF-8 checking for Java,
   // which will throw an exception if invalid UTF-8 is parsed from the wire or
@@ -473,16 +475,16 @@ message FileOptions {
   // Proto3 files already perform these checks. Setting the option explicitly to
   // false has no effect: it cannot be used to opt proto3 files out of UTF-8
   // checks.
-  optional bool java_string_check_utf8 = 27 [ default = false ];
+  optional bool java_string_check_utf8 = 27 [default = false];
 
   // Generated classes can be optimized for speed or code size.
   enum OptimizeMode {
     SPEED = 1; // Generate complete code for parsing, serialization,
     // etc.
-    CODE_SIZE = 2;    // Use ReflectionOps to implement these methods.
+    CODE_SIZE = 2; // Use ReflectionOps to implement these methods.
     LITE_RUNTIME = 3; // Generate code using MessageLite and the lite runtime.
   }
-  optional OptimizeMode optimize_for = 9 [ default = SPEED ];
+  optional OptimizeMode optimize_for = 9 [default = SPEED];
 
   // Sets the Go package where structs generated from this .proto will be
   // placed. If omitted, the Go package will be derived from the following:
@@ -501,9 +503,9 @@ message FileOptions {
   // that generate code specific to your particular RPC system.  Therefore,
   // these default to false.  Old code which depends on generic services should
   // explicitly set them to true.
-  optional bool cc_generic_services = 16 [ default = false ];
-  optional bool java_generic_services = 17 [ default = false ];
-  optional bool py_generic_services = 18 [ default = false ];
+  optional bool cc_generic_services = 16 [default = false];
+  optional bool java_generic_services = 17 [default = false];
+  optional bool py_generic_services = 18 [default = false];
   reserved 42; // removed php_generic_services
   reserved "php_generic_services";
 
@@ -511,11 +513,11 @@ message FileOptions {
   // Depending on the target platform, this can emit Deprecated annotations
   // for everything in the file, or it will be completely ignored; in the very
   // least, this is a formalization for deprecating files.
-  optional bool deprecated = 23 [ default = false ];
+  optional bool deprecated = 23 [default = false];
 
   // Enables the use of arenas for the proto messages in this file. This applies
   // only to generated classes for C++.
-  optional bool cc_enable_arenas = 31 [ default = true ];
+  optional bool cc_enable_arenas = 31 [default = true];
 
   // Sets the objective c class prefix which is prepended to all objective c
   // generated classes from this .proto. There is no default.
@@ -585,18 +587,18 @@ message MessageOptions {
   //
   // Because this is an option, the above two restrictions are not enforced by
   // the protocol compiler.
-  optional bool message_set_wire_format = 1 [ default = false ];
+  optional bool message_set_wire_format = 1 [default = false];
 
   // Disables the generation of the standard "descriptor()" accessor, which can
   // conflict with a field of the same name.  This is meant to make migration
   // from proto1 easier; new code should avoid fields named "descriptor".
-  optional bool no_standard_descriptor_accessor = 2 [ default = false ];
+  optional bool no_standard_descriptor_accessor = 2 [default = false];
 
   // Is this message deprecated?
   // Depending on the target platform, this can emit Deprecated annotations
   // for the message, or it will be completely ignored; in the very least,
   // this is a formalization for deprecating messages.
-  optional bool deprecated = 3 [ default = false ];
+  optional bool deprecated = 3 [default = false];
 
   reserved 4, 5, 6;
 
@@ -636,8 +638,7 @@ message MessageOptions {
   //
   // TODO This is legacy behavior we plan to remove once downstream
   // teams have had time to migrate.
-  optional bool deprecated_legacy_json_field_conflicts = 11
-      [ deprecated = true ];
+  optional bool deprecated_legacy_json_field_conflicts = 11 [deprecated = true];
 
   // Any features defined in the specific edition.
   // WARNING: This field should only be used by protobuf plugins or special
@@ -698,7 +699,7 @@ message FieldOptions {
   //
   // This option is an enum to permit additional types to be added, e.g.
   // goog.math.Integer.
-  optional JSType jstype = 6 [ default = JS_NORMAL ];
+  optional JSType jstype = 6 [default = JS_NORMAL];
   enum JSType {
     // Use the default type.
     JS_NORMAL = 0;
@@ -732,25 +733,25 @@ message FieldOptions {
   // on the outer message would fail if the inner message has missing required
   // fields. Failed verification would result in parsing failure (except when
   // uninitialized messages are acceptable).
-  optional bool lazy = 5 [ default = false ];
+  optional bool lazy = 5 [default = false];
 
   // unverified_lazy does no correctness checks on the byte stream. This should
   // only be used where lazy with verification is prohibitive for performance
   // reasons.
-  optional bool unverified_lazy = 15 [ default = false ];
+  optional bool unverified_lazy = 15 [default = false];
 
   // Is this field deprecated?
   // Depending on the target platform, this can emit Deprecated annotations
   // for accessors, or it will be completely ignored; in the very least, this
   // is a formalization for deprecating fields.
-  optional bool deprecated = 3 [ default = false ];
+  optional bool deprecated = 3 [default = false];
 
   // For Google-internal migration only. Do not use.
-  optional bool weak = 10 [ default = false ];
+  optional bool weak = 10 [default = false];
 
   // Indicate that the field value should not be printed out when using debug
   // formats, e.g. when the field contains sensitive credentials.
-  optional bool debug_redact = 16 [ default = false ];
+  optional bool debug_redact = 16 [default = false];
 
   // If set to RETENTION_SOURCE, the option will be omitted from the binary.
   enum OptionRetention {
@@ -819,7 +820,7 @@ message FieldOptions {
   // Clients can define custom options in extensions of this message. See above.
   extensions 1000 to max;
 
-  reserved 4;  // removed jtype
+  reserved 4; // removed jtype
   reserved 18; // reserve target, target_obsolete_do_not_use
 }
 
@@ -846,7 +847,7 @@ message EnumOptions {
   // Depending on the target platform, this can emit Deprecated annotations
   // for the enum, or it will be completely ignored; in the very least, this
   // is a formalization for deprecating enums.
-  optional bool deprecated = 3 [ default = false ];
+  optional bool deprecated = 3 [default = false];
 
   reserved 5; // javanano_as_lite
 
@@ -856,8 +857,7 @@ message EnumOptions {
   // well.
   // TODO Remove this legacy behavior once downstream teams have
   // had time to migrate.
-  optional bool deprecated_legacy_json_field_conflicts = 6
-      [ deprecated = true ];
+  optional bool deprecated_legacy_json_field_conflicts = 6 [deprecated = true];
 
   // Any features defined in the specific edition.
   // WARNING: This field should only be used by protobuf plugins or special
@@ -877,7 +877,7 @@ message EnumValueOptions {
   // Depending on the target platform, this can emit Deprecated annotations
   // for the enum value, or it will be completely ignored; in the very least,
   // this is a formalization for deprecating enum values.
-  optional bool deprecated = 1 [ default = false ];
+  optional bool deprecated = 1 [default = false];
 
   // Any features defined in the specific edition.
   // WARNING: This field should only be used by protobuf plugins or special
@@ -888,7 +888,7 @@ message EnumValueOptions {
   // Indicate that fields annotated with this enum value should not be printed
   // out when using debug formats, e.g. when the field contains sensitive
   // credentials.
-  optional bool debug_redact = 3 [ default = false ];
+  optional bool debug_redact = 3 [default = false];
 
   // Information about the support window of a feature value.
   optional FieldOptions.FeatureSupport feature_support = 4;
@@ -916,7 +916,7 @@ message ServiceOptions {
   // Depending on the target platform, this can emit Deprecated annotations
   // for the service, or it will be completely ignored; in the very least,
   // this is a formalization for deprecating services.
-  optional bool deprecated = 33 [ default = false ];
+  optional bool deprecated = 33 [default = false];
 
   // The parser stores options it doesn't recognize here. See above.
   repeated UninterpretedOption uninterpreted_option = 999;
@@ -935,7 +935,7 @@ message MethodOptions {
   // Depending on the target platform, this can emit Deprecated annotations
   // for the method, or it will be completely ignored; in the very least,
   // this is a formalization for deprecating methods.
-  optional bool deprecated = 33 [ default = false ];
+  optional bool deprecated = 33 [default = false];
 
   // Is this method side-effect-free (or safe in HTTP parlance), or idempotent,
   // or neither? HTTP based RPC implementation may choose GET verb for safe
@@ -943,10 +943,9 @@ message MethodOptions {
   enum IdempotencyLevel {
     IDEMPOTENCY_UNKNOWN = 0;
     NO_SIDE_EFFECTS = 1; // implies idempotent
-    IDEMPOTENT = 2;      // idempotent, but may have side effects
+    IDEMPOTENT = 2; // idempotent, but may have side effects
   }
-  optional IdempotencyLevel idempotency_level = 34
-      [ default = IDEMPOTENCY_UNKNOWN ];
+  optional IdempotencyLevel idempotency_level = 34 [default = IDEMPOTENCY_UNKNOWN];
 
   // Any features defined in the specific edition.
   // WARNING: This field should only be used by protobuf plugins or special
@@ -1009,10 +1008,19 @@ message FeatureSet {
     retention = RETENTION_RUNTIME,
     targets = TARGET_TYPE_FIELD,
     targets = TARGET_TYPE_FILE,
-    feature_support = {edition_introduced : EDITION_2023},
-    edition_defaults = {edition : EDITION_LEGACY value : "EXPLICIT"},
-    edition_defaults = {edition : EDITION_PROTO3 value : "IMPLICIT"},
-    edition_defaults = {edition : EDITION_2023 value : "EXPLICIT"}
+    feature_support = {edition_introduced: EDITION_2023},
+    edition_defaults = {
+      edition: EDITION_LEGACY
+      value: "EXPLICIT"
+    },
+    edition_defaults = {
+      edition: EDITION_PROTO3
+      value: "IMPLICIT"
+    },
+    edition_defaults = {
+      edition: EDITION_2023
+      value: "EXPLICIT"
+    }
   ];
 
   enum EnumType {
@@ -1024,9 +1032,15 @@ message FeatureSet {
     retention = RETENTION_RUNTIME,
     targets = TARGET_TYPE_ENUM,
     targets = TARGET_TYPE_FILE,
-    feature_support = {edition_introduced : EDITION_2023},
-    edition_defaults = {edition : EDITION_LEGACY value : "CLOSED"},
-    edition_defaults = {edition : EDITION_PROTO3 value : "OPEN"}
+    feature_support = {edition_introduced: EDITION_2023},
+    edition_defaults = {
+      edition: EDITION_LEGACY
+      value: "CLOSED"
+    },
+    edition_defaults = {
+      edition: EDITION_PROTO3
+      value: "OPEN"
+    }
   ];
 
   enum RepeatedFieldEncoding {
@@ -1038,9 +1052,15 @@ message FeatureSet {
     retention = RETENTION_RUNTIME,
     targets = TARGET_TYPE_FIELD,
     targets = TARGET_TYPE_FILE,
-    feature_support = {edition_introduced : EDITION_2023},
-    edition_defaults = {edition : EDITION_LEGACY value : "EXPANDED"},
-    edition_defaults = {edition : EDITION_PROTO3 value : "PACKED"}
+    feature_support = {edition_introduced: EDITION_2023},
+    edition_defaults = {
+      edition: EDITION_LEGACY
+      value: "EXPANDED"
+    },
+    edition_defaults = {
+      edition: EDITION_PROTO3
+      value: "PACKED"
+    }
   ];
 
   enum Utf8Validation {
@@ -1053,9 +1073,15 @@ message FeatureSet {
     retention = RETENTION_RUNTIME,
     targets = TARGET_TYPE_FIELD,
     targets = TARGET_TYPE_FILE,
-    feature_support = {edition_introduced : EDITION_2023},
-    edition_defaults = {edition : EDITION_LEGACY value : "NONE"},
-    edition_defaults = {edition : EDITION_PROTO3 value : "VERIFY"}
+    feature_support = {edition_introduced: EDITION_2023},
+    edition_defaults = {
+      edition: EDITION_LEGACY
+      value: "NONE"
+    },
+    edition_defaults = {
+      edition: EDITION_PROTO3
+      value: "VERIFY"
+    }
   ];
 
   enum MessageEncoding {
@@ -1067,8 +1093,11 @@ message FeatureSet {
     retention = RETENTION_RUNTIME,
     targets = TARGET_TYPE_FIELD,
     targets = TARGET_TYPE_FILE,
-    feature_support = {edition_introduced : EDITION_2023},
-    edition_defaults = {edition : EDITION_LEGACY value : "LENGTH_PREFIXED"}
+    feature_support = {edition_introduced: EDITION_2023},
+    edition_defaults = {
+      edition: EDITION_LEGACY
+      value: "LENGTH_PREFIXED"
+    }
   ];
 
   enum JsonFormat {
@@ -1081,9 +1110,15 @@ message FeatureSet {
     targets = TARGET_TYPE_MESSAGE,
     targets = TARGET_TYPE_ENUM,
     targets = TARGET_TYPE_FILE,
-    feature_support = {edition_introduced : EDITION_2023},
-    edition_defaults = {edition : EDITION_LEGACY value : "LEGACY_BEST_EFFORT"},
-    edition_defaults = {edition : EDITION_PROTO3 value : "ALLOW"}
+    feature_support = {edition_introduced: EDITION_2023},
+    edition_defaults = {
+      edition: EDITION_LEGACY
+      value: "LEGACY_BEST_EFFORT"
+    },
+    edition_defaults = {
+      edition: EDITION_PROTO3
+      value: "ALLOW"
+    }
   ];
 
   enum EnforceNamingStyle {
@@ -1102,25 +1137,44 @@ message FeatureSet {
     targets = TARGET_TYPE_ENUM_ENTRY,
     targets = TARGET_TYPE_SERVICE,
     targets = TARGET_TYPE_METHOD,
-    feature_support = {edition_introduced : EDITION_2024},
-    edition_defaults = {edition : EDITION_LEGACY value : "STYLE_LEGACY"},
-    edition_defaults = {edition : EDITION_2024 value : "STYLE2024"}
+    feature_support = {edition_introduced: EDITION_2024},
+    edition_defaults = {
+      edition: EDITION_LEGACY
+      value: "STYLE_LEGACY"
+    },
+    edition_defaults = {
+      edition: EDITION_2024
+      value: "STYLE2024"
+    }
   ];
 
   reserved 999;
 
   extensions 1000 to 9994 [
-    declaration =
-        {number : 1000 full_name : ".pb.cpp" type : ".pb.CppFeatures"},
-    declaration =
-        {number : 1001 full_name : ".pb.java" type : ".pb.JavaFeatures"},
-    declaration = {number : 1002 full_name : ".pb.go" type : ".pb.GoFeatures"},
-    declaration =
-        {number : 9990 full_name : ".pb.proto1" type : ".pb.Proto1Features"}
+    declaration = {
+      number: 1000
+      full_name: ".pb.cpp"
+      type: ".pb.CppFeatures"
+    },
+    declaration = {
+      number: 1001
+      full_name: ".pb.java"
+      type: ".pb.JavaFeatures"
+    },
+    declaration = {
+      number: 1002
+      full_name: ".pb.go"
+      type: ".pb.GoFeatures"
+    },
+    declaration = {
+      number: 9990
+      full_name: ".pb.proto1"
+      type: ".pb.Proto1Features"
+    }
   ];
 
   extensions 9995 to 9999; // For internal testing
-  extensions 10000;        // for https://github.com/bufbuild/protobuf-es
+  extensions 10000; // for https://github.com/bufbuild/protobuf-es
 }
 
 // A compiled specification for the defaults of a set of features.  These
@@ -1229,14 +1283,14 @@ message SourceCodeInfo {
     //   [ 4, 3, 2, 7 ]
     // this path refers to the whole field declaration (from the beginning
     // of the label to the terminating semicolon).
-    repeated int32 path = 1 [ packed = true ];
+    repeated int32 path = 1 [packed = true];
 
     // Always has exactly three or four elements: start line, start column,
     // end line (optional, otherwise assumed same as start line), end column.
     // These are packed into a single field for efficiency.  Note that line
     // and column numbers are zero-based -- typically you will want to add
     // 1 to each before displaying to a user.
-    repeated int32 span = 2 [ packed = true ];
+    repeated int32 span = 2 [packed = true];
 
     // If this SourceCodeInfo represents a complete declaration, these are any
     // comments appearing before and after the declaration which appear to be
@@ -1291,11 +1345,11 @@ message SourceCodeInfo {
   }
 
   // Extensions for tooling.
-  extensions 536000000 [ declaration = {
-    number : 536000000
-    type : ".buf.descriptor.v1.SourceCodeInfoExtension"
-    full_name : ".buf.descriptor.v1.buf_source_code_info_extension"
-  } ];
+  extensions 536000000 [declaration = {
+    number: 536000000
+    type: ".buf.descriptor.v1.SourceCodeInfoExtension"
+    full_name: ".buf.descriptor.v1.buf_source_code_info_extension"
+  }];
 }
 
 // Describes the relationship between generated code and its original source
@@ -1308,7 +1362,7 @@ message GeneratedCodeInfo {
   message Annotation {
     // Identifies the element in the original source .proto file. This field
     // is formatted the same as SourceCodeInfo.Location.path.
-    repeated int32 path = 1 [ packed = true ];
+    repeated int32 path = 1 [packed = true];
 
     // Identifies the filesystem path to the original source .proto.
     optional string source_file = 2;

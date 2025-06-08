@@ -1,0 +1,39 @@
+syntax = "proto3";
+
+package modern;
+
+message Product {
+  string id = 1;
+  string name = 2;
+  string description = 3;
+  double price = 4;
+  repeated string categories = 5;
+  map<string, string> attributes = 6;
+}
+
+message CreateProductRequest {
+  Product product = 1;
+}
+
+message CreateProductResponse {
+  Product product = 1;
+  bool success = 2;
+}
+
+service ProductService {
+  rpc CreateProduct(CreateProductRequest) returns (CreateProductResponse);
+  rpc GetProduct(GetProductRequest) returns (GetProductResponse);
+  rpc StreamProducts(StreamProductsRequest) returns (stream Product);
+}
+
+message GetProductRequest {
+  string product_id = 1;
+}
+
+message GetProductResponse {
+  Product product = 1;
+}
+
+message StreamProductsRequest {
+  repeated string categories = 1;
+}

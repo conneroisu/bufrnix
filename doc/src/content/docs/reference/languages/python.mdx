@@ -3,7 +3,12 @@ title: Python Language Support
 description: Comprehensive Protocol Buffer support for Python with gRPC, type stubs, and modern dataclass alternatives.
 ---
 
-import { Tabs, TabItem, FileTree, StarlightIcon } from "@astrojs/starlight/components";
+import {
+  Tabs,
+  TabItem,
+  FileTree,
+  StarlightIcon,
+} from "@astrojs/starlight/components";
 import { Code } from "astro:components";
 import betterprotoConfig from "./python.x-betterproto-configuration.nix?raw";
 
@@ -14,13 +19,14 @@ Python support provides comprehensive Protocol Buffer integration with multiple 
 
 ## Available Plugins
 
-| Plugin                              | Description                | Generated Files               |
-| ----------------------------------- | -------------------------- | ----------------------------- |
-| **`protoc-gen-python`**             | Base message generation    | `*_pb2.py`                    |
-| **`protoc-gen-grpc_python`**        | gRPC services              | `*_pb2_grpc.py`               |
-| **`protoc-gen-pyi`**                | Type stubs for IDE support | `*_pb2.pyi`                   |
-| **`protoc-gen-mypy`**               | Mypy type checking stubs   | `*_pb2.pyi`, `*_pb2_grpc.pyi` |
-| **`protoc-gen-python_betterproto`** | Modern dataclass approach  | `*.py` (with @dataclass)      |
+| Plugin                                              | Description                | Generated Files                   |
+| --------------------------------------------------- | -------------------------- | --------------------------------- |
+| **`protoc-gen-python`**                             | Base message generation    | `*_pb2.py`                        |
+| **`protoc-gen-grpc_python`**                        | gRPC services              | `*_pb2_grpc.py`                   |
+| **`protoc-gen-pyi`**                                | Type stubs for IDE support | `*_pb2.pyi`                       |
+| **`protoc-gen-mypy`**                               | Mypy type checking stubs   | `*_pb2.pyi`, `*_pb2_grpc.pyi`     |
+| **`protoc-gen-python_betterproto`**                 | Modern dataclass approach  | `*.py` (with @dataclass)          |
+| **`protoc-gen-python_betterproto`** (with pydantic) | Validated dataclasses      | `*.py` (with Pydantic validation) |
 
 ## Configuration
 
@@ -62,6 +68,7 @@ languages.python = {
   # Modern Python dataclasses (alternative to standard protobuf)
   betterproto = {
     enable = false;  # Opt-in due to different API
+    pydantic = false;  # Enable Pydantic dataclasses for validation
     options = [];
   };
 };
@@ -317,6 +324,94 @@ service GreetingService {
     ```
   </TabItem>
 
+  <TabItem label="Betterproto + Pydantic">
+    ```python
+    # With pydantic enabled, you get validation in addition to dataclasses
+    import asyncio
+    import grpclib
+    from pydantic import ValidationError
+    from proto.gen.python.example.v1 import Greeting, CreateGreetingRequest
+    from proto.gen.python.example.v1 import GreetingServiceStub
+    
+    async def main():
+        # Pydantic provides validation on creation
+        try:
+            greeting = Greeting(
+                id="greeting-1",
+                content="Hello from Pydantic betterproto!",
+                created_at=int(time.time()),
+                tags=["python", "pydantic", "validation"],
+                metadata={"author": "Python Client"},
+                text_value="Hello variant"
+            )
+            print(f"Valid greeting created: {greeting}")
+        except ValidationError as e:
+            print(f"Validation failed: {e}")
+        
+        # Type coercion works automatically
+        validated_greeting = Greeting(
+            id="auto-coerced",
+            content="Test",
+            created_at="1234567890",  # String will be coerced to int
+            price="99.99",  # String will be coerced to float
+            tags=["test"]
+        )
+        print(f"Coerced types: created_at={type(validated_greeting.created_at)}")
+        
+        # Enhanced validation (with proper proto field constraints)
+        try:
+            # This would validate if field constraints were defined in proto
+            invalid_greeting = Greeting(
+                id="invalid",
+                content="",  # Empty content might be invalid
+                created_at=-1,  # Negative timestamp might be invalid
+                price=-10.0  # Negative price might be invalid
+            )
+        except ValidationError as e:
+            print(f"Validation caught invalid data: {e}")
+        
+        # Pydantic methods available
+        if hasattr(greeting, 'model_dump'):
+            data_dict = greeting.model_dump()
+            print(f"Model dump: {data_dict}")
+        
+        if hasattr(greeting, 'model_validate'):
+            # Validate external data
+            external_data = {
+                "id": "external-1",
+                "content": "From external source",
+                "created_at": 1234567890,
+                "tags": ["external"],
+                "metadata": {}
+            }
+            validated = Greeting.model_validate(external_data)
+            print(f"Validated external data: {validated}")
+        
+        # Async/await support still works
+        async with grpclib.client.Channel('localhost', 50051) as channel:
+            client = GreetingServiceStub(channel)
+            
+            request = CreateGreetingRequest(
+                content="Pydantic validation enabled!",
+                tags=["pydantic", "validated"]
+            )
+            response = await client.create_greeting(request)
+            print(f"Server response: {response}")
+        
+        # Enhanced error messages
+        try:
+            Greeting(
+                id=None,  # Invalid type
+                content="Test"
+            )
+        except ValidationError as e:
+            print(f"Enhanced error message: {e}")
+    
+    if __name__ == "__main__":
+        asyncio.run(main())
+    ```
+  </TabItem>
+
   <TabItem label="Type Hints">
     ```python
     # With mypy/pyi enabled, you get full type hints
@@ -414,39 +509,43 @@ async def test_grpc_service():
 3. **Error Handling**: Always handle `grpc.RpcError` exceptions
 4. **Streaming**: Use generators efficiently for streaming RPCs
 5. **Betterproto**: Consider for new projects wanting modern Python APIs
-6. **Package Structure**: Follow Python package conventions
+6. **Pydantic Validation**: Enable `betterproto.pydantic = true` for data validation
+7. **Package Structure**: Follow Python package conventions
+8. **Validation Strategy**: Use proto field constraints for comprehensive validation
 
 ## Package Structure
 
 <FileTree>
-- proto/
-	- gen/
-		- python/
-			- example/
-				- v1/
-					- \_\_init\_\_.py
-					- example_pb2.py
-					- example_pb2.pyi If pyi/mypy enabled
-					- example_pb2_grpc.py
-					- example_pb2_grpc.pyi If pyi/mypy enabled
+  - proto/ - gen/ - python/ - example/ - v1/ - \_\_init\_\_.py - example_pb2.py
+  - example_pb2.pyi If pyi/mypy enabled - example_pb2_grpc.py -
+  example_pb2_grpc.pyi If pyi/mypy enabled
 </FileTree>
 
 ## Performance Considerations
 
 - **Standard protobuf**: Best performance, C++ implementation
 - **Betterproto**: Pure Python, slower but cleaner API
+- **Betterproto + Pydantic**: Additional validation overhead, enhanced safety
 - **Serialization**: Binary format is much smaller than JSON
 - **Streaming**: More efficient for large datasets
+- **Validation**: Pydantic validation has runtime cost but prevents data errors
 
 ## Try the Example
 
 ```bash
+# Standard Python example
 cd examples/python-example
 nix develop
 bufrnix_init
 bufrnix
 python main.py
 pytest -v
+
+# Betterproto with Pydantic validation
+cd examples/python-betterproto-pydantic
+nix develop
+nix run  # Generate code
+python test_pydantic.py  # Test validation features
 ```
 
 ## Troubleshooting
@@ -471,6 +570,15 @@ mypy --follow-imports=skip proto/gen/python/
 ### Betterproto Compatibility
 
 Betterproto generates different code than standard protobuf. Don't mix them in the same project.
+
+### Pydantic Validation
+
+For comprehensive validation with Pydantic:
+
+1. Define field constraints in your `.proto` files
+2. Use proto validation annotations (e.g., `buf validate`)
+3. Handle `ValidationError` exceptions in your code
+4. Consider validation performance impact for high-throughput scenarios
 
 ## Try the Example
 

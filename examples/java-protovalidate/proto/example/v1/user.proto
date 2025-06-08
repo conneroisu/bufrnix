@@ -4,18 +4,31 @@ package example.v1;
 
 import "buf/validate/validate.proto";
 
-option java_package = "com.example.protos.v1";
-option java_outer_classname = "UserProto";
 option java_multiple_files = true;
+option java_outer_classname = "UserProto";
+option java_package = "com.example.protos.v1";
 
 // User message with comprehensive validation constraints
 message User {
   int32 id = 1 [(buf.validate.field).int32.gt = 0];
-  string name = 2 [(buf.validate.field).string = {min_len: 1, max_len: 50}];
+  string name = 2 [(buf.validate.field).string = {
+    min_len: 1
+    max_len: 50
+  }];
   string email = 3 [(buf.validate.field).string.pattern = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$"];
-  int32 age = 4 [(buf.validate.field).int32 = {gte: 0, lte: 150}];
-  repeated string phone_numbers = 5 [(buf.validate.field).repeated = {min_items: 1, max_items: 3, unique: true}];
-  double score = 6 [(buf.validate.field).double = {gte: 0.0, lte: 100.0}];
+  int32 age = 4 [(buf.validate.field).int32 = {
+    gte: 0
+    lte: 150
+  }];
+  repeated string phone_numbers = 5 [(buf.validate.field).repeated = {
+    min_items: 1
+    max_items: 3
+    unique: true
+  }];
+  double score = 6 [(buf.validate.field).double = {
+    gte: 0.0
+    lte: 100.0
+  }];
   bool is_active = 7;
   UserProfile profile = 8;
 }
@@ -24,7 +37,7 @@ message UserProfile {
   optional string bio = 1 [(buf.validate.field).string.max_len = 500];
   optional string website = 2 [(buf.validate.field).string.pattern = "^https?://[^\\s/$.?#].[^\\s]*$"];
   repeated string preferences = 3 [(buf.validate.field).repeated.max_items = 10];
-  
+
   option (buf.validate.message).cel = "has(this.bio) || has(this.website)";
 }
 

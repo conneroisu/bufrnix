@@ -30,7 +30,9 @@ option cc_enable_arenas = true;
 option java_package = "com.google.protobuf.test";
 option optimize_for = SPEED;
 
-message ImportMessage { optional int32 d = 1; }
+message ImportMessage {
+  optional int32 d = 1;
+}
 
 enum ImportEnum {
   IMPORT_FOO = 7;

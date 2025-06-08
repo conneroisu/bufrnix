@@ -38,23 +38,23 @@
         # Script to run the Scala application
         runScript = pkgs.writeShellScriptBin "run-scala-example" ''
           set -e
-          
+
           # Create a temporary directory for the example
           tmpdir=$(mktemp -d)
           echo "Working in temporary directory: $tmpdir"
-          
+
           # Copy the source files
           cp -r ${./.}/* $tmpdir/
           cd $tmpdir
-          
+
           # Generate protobuf files
           echo "Generating protobuf files..."
           ${protoGen}/bin/bufrnix
-          
+
           # Run the application with sbt
           echo "Running Scala example..."
           ${pkgs.sbt}/bin/sbt -J-Xmx2G run
-          
+
           # Clean up
           rm -rf $tmpdir
         '';
@@ -84,7 +84,7 @@
             echo "  3. Run: sbt run"
           '';
         };
-        
+
         apps = {
           default = {
             type = "app";

@@ -5,6 +5,7 @@ This example demonstrates an enterprise-scale AI platform architecture using Pro
 ## Overview
 
 This example models a comprehensive AI platform ("Pegwings") with the following architecture:
+
 - **API Gateway**: Unified entry point routing to specialized microservices
 - **Multiple Microservices**: Chat/LLM, Image Generation, Text-to-Speech, Speech Recognition, Video Generation, and more
 - **Shared Libraries**: Common types for media formats, language codes, and authentication
@@ -40,24 +41,28 @@ This example models a comprehensive AI platform ("Pegwings") with the following 
 ### Microservices
 
 1. **API Gateway** (`api/v1/api.proto`)
+
    - Unified REST/gRPC interface
    - Request routing and aggregation
    - Authentication and rate limiting
    - Administrative endpoints
 
 2. **Chat/LLM Service** (`llm/v1/llm.proto`)
+
    - AI chat completions with streaming support
    - Function calling and tool use
    - Response formatting and logprobs
    - Usage tracking and model selection
 
 3. **Image Services**
+
    - **Generation** (`img/v1/img.proto`): Text-to-image generation
    - **Editing** (`edi/v1/edit.proto`): Image modification
    - **Segmentation** (`seg/v1/seg.proto`): Object detection and segmentation
    - **Variations** (`vari/v1/vari.proto`): Generate image variations
 
 4. **Audio Services**
+
    - **Text-to-Speech** (`tts/v1/tts.proto`): Convert text to natural speech
    - **Speech Recognition** (`asr/v1/asr.proto`): Transcribe audio to text
 
@@ -68,6 +73,7 @@ This example models a comprehensive AI platform ("Pegwings") with the following 
 ### Shared Libraries
 
 - **Media Types** (`lib/media.proto`)
+
   - Common image sizes and formats
   - Audio formats (MP3, Opus, AAC, FLAC, WAV, PCM)
   - Shared across all media-handling services
@@ -119,6 +125,7 @@ multilang-multi-project/
 ## Generated Code Features
 
 ### Go
+
 - Standard protobuf and gRPC code generation
 - gRPC-Gateway for REST API support
 - OpenAPI/Swagger specification generation
@@ -126,26 +133,31 @@ multilang-multi-project/
 - JSON marshaling support
 
 ### Python
+
 - Type-safe protobuf and gRPC stubs
 - MyPy type hints (`.pyi` files)
 - Async support ready
 
 ### JavaScript/TypeScript
+
 - ES module support
 - TypeScript definitions
 - Compatible with modern bundlers
 
 ### Swift
+
 - Native Swift protobuf implementation
 - gRPC client support
 - iOS/macOS compatible
 
 ### Dart
+
 - Flutter-ready packages
 - gRPC client support
 - Null-safety enabled
 
 ### C++
+
 - CMake integration helpers
 - gRPC support
 - Header and implementation files

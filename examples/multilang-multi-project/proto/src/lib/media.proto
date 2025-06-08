@@ -1,20 +1,20 @@
 syntax = "proto3";
 
 package media.v1;
+
 // External
 import "gateway/protoc-gen-openapiv2/annotations.proto";
 
 option go_package = "github.com/conneroisu/bufrnix/examples/multilang-multi-project/proto/gen/go/lib;lib";
-
 option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_swagger) = {
-  info : {
-    title : "Media LIBRARY"
-    version : "1.0.0"
-    description : "Internal Definitions of Media Data Types in Proto3."
-    contact : {
-      name : "Conner Ohnsorge"
-      url : "https://github.com/pegwings"
-      email : "conneroisu@outlook.com"
+  info: {
+    title: "Media LIBRARY"
+    version: "1.0.0"
+    description: "Internal Definitions of Media Data Types in Proto3."
+    contact: {
+      name: "Conner Ohnsorge"
+      url: "https://github.com/pegwings"
+      email: "conneroisu@outlook.com"
     }
   }
 };
@@ -22,27 +22,21 @@ option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_swagger) = {
 // ImageSize represents the size of an image.
 message ImageSize {
   // width is the width of the image.
-  int32 width = 1
-      [ (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
-        description : "Width of the image."
-      } ];
+  int32 width = 1 [(grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {description: "Width of the image."}];
   // height is the height of the image.
-  int32 height = 2
-      [ (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
-        description : "Height of the image."
-      } ];
+  int32 height = 2 [(grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {description: "Height of the image."}];
 }
 
 // AudioFormat represents the format of an audio file.
 enum AudioFormat {
   option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_enum) = {
-    title : "Audio Format"
-    description : "AudioFormat is the format of the returned audio data."
-    external_docs : {
-      url : "https://docs.pegwings.com/api/speech"
-      description : "Find out more about Speech."
+    title: "Audio Format"
+    description: "AudioFormat is the format of the returned audio data."
+    external_docs: {
+      url: "https://docs.pegwings.com/api/speech"
+      description: "Find out more about Speech."
     }
-    example : "\"MP3\""
+    example: "\"MP3\""
   };
 
   AUDIO_FORMAT_MP3 = 0;

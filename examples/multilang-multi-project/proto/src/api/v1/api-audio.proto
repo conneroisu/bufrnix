@@ -1,11 +1,10 @@
 syntax = "proto3";
 package audio.v1;
 
+import "buf/validate/validate.proto";
+import "gateway/protoc-gen-openapiv2/annotations.proto";
 // External
 import "google/api/field_behavior.proto";
-import "gateway/protoc-gen-openapiv2/annotations.proto";
-import "buf/validate/validate.proto";
-
 // Internal
 import "lib/lang.proto";
 
@@ -14,9 +13,9 @@ option go_package = "github.com/conneroisu/bufrnix/examples/multilang-multi-proj
 // SpeechCreateRequest is the request to synthesize speech from text.
 message SpeechCreateRequest {
   option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_schema) = {
-    json_schema : {
-      title : "SpeechCreateRequest"
-      description : "Request to create a new speech"
+    json_schema: {
+      title: "SpeechCreateRequest"
+      description: "Request to create a new speech"
     }
   };
 
@@ -25,9 +24,9 @@ message SpeechCreateRequest {
     (google.api.field_behavior) = REQUIRED,
     (validate.rules).string.min_len = 4,
     (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
-      title : "Text"
-      description : "The text to generate speech for."
-      example : "\"Hello world!\""
+      title: "Text"
+      description: "The text to generate speech for."
+      example: "\"Hello world!\""
     }
   ];
 
@@ -36,9 +35,9 @@ message SpeechCreateRequest {
     (google.api.field_behavior) = REQUIRED,
     (validate.rules).string.min_len = 1,
     (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
-      title : "Model"
-      description : "The model to use for generating speech."
-      example : "\"ks-1\""
+      title: "Model"
+      description: "The model to use for generating speech."
+      example: "\"ks-1\""
     }
   ];
 
@@ -47,9 +46,9 @@ message SpeechCreateRequest {
     (google.api.field_behavior) = OPTIONAL,
     (validate.rules).string.min_len = 1,
     (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
-      title : "Voice"
-      description : "The voice to use for generating speech."
-      example : "\"en-US-Standard-A\""
+      title: "Voice"
+      description: "The voice to use for generating speech."
+      example: "\"en-US-Standard-A\""
     }
   ];
 
@@ -59,11 +58,11 @@ message SpeechCreateRequest {
     (validate.rules).float.gt = 0.0,
     (validate.rules).float.lte = 4.0,
     (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
-      title : "Speed"
-      description : "The speed to use for generating speech."
-      example : "1.0"
-      minimum : 0.0
-      maximum : 4.0
+      title: "Speed"
+      description: "The speed to use for generating speech."
+      example: "1.0"
+      minimum: 0.0
+      maximum: 4.0
     }
   ];
 
@@ -72,9 +71,15 @@ message SpeechCreateRequest {
     (google.api.field_behavior) = OPTIONAL,
     (validate.rules).enum.defined_only = true,
     (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
-      title : "Response Format"
-      description : "The response format to use for generating speech."
-      enum : [ "mp3", "wav", "opus", "flac", "pcm" ]
+      title: "Response Format"
+      description: "The response format to use for generating speech."
+      enum: [
+        "mp3",
+        "wav",
+        "opus",
+        "flac",
+        "pcm"
+      ]
     }
   ];
 }
@@ -92,9 +97,9 @@ enum SpeechResponseFormat {
 // SpeechCreateResponse is the response to create a new speech.
 message SpeechCreateResponse {
   option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_schema) = {
-    json_schema : {
-      title : "SpeechCreateResponse"
-      description : "Response to create a new speech"
+    json_schema: {
+      title: "SpeechCreateResponse"
+      description: "Response to create a new speech"
     }
   };
 
@@ -102,9 +107,9 @@ message SpeechCreateResponse {
   string id = 1 [
     (google.api.field_behavior) = OUTPUT_ONLY,
     (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
-      title : "ID"
-      description : "The id of the created speech."
-      example : "\"1234567890\""
+      title: "ID"
+      description: "The id of the created speech."
+      example: "\"1234567890\""
     }
   ];
 
@@ -113,10 +118,11 @@ message SpeechCreateResponse {
   string file_id = 2 [
     (google.api.field_behavior) = OUTPUT_ONLY,
     (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
-      title : "File ID"
-      description : "The id of the file that contains the created speech in "
-                    "the specified response format."
-      example : "\"1234567890\""
+      title: "File ID"
+      description:
+        "The id of the file that contains the created speech in "
+        "the specified response format."
+      example: "\"1234567890\""
     }
   ];
 }
@@ -124,9 +130,9 @@ message SpeechCreateResponse {
 // TranscriptionCreateRequest is the request to create a new transcription.
 message TranscriptionCreateRequest {
   option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_schema) = {
-    json_schema : {
-      title : "TranscriptionCreateRequest"
-      description : "Request to create a new transcription"
+    json_schema: {
+      title: "TranscriptionCreateRequest"
+      description: "Request to create a new transcription"
     }
   };
 
@@ -135,9 +141,9 @@ message TranscriptionCreateRequest {
     (google.api.field_behavior) = REQUIRED,
     (validate.rules).string.min_len = 1,
     (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
-      title : "File ID"
-      description : "The id of the file to transcribe."
-      example : "\"pwg-tts-1234567890\""
+      title: "File ID"
+      description: "The id of the file to transcribe."
+      example: "\"pwg-tts-1234567890\""
     }
   ];
 
@@ -146,9 +152,9 @@ message TranscriptionCreateRequest {
     (google.api.field_behavior) = OPTIONAL,
     (validate.rules).string.min_len = 1,
     (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
-      title : "Model"
-      description : "The model to use for transcribing."
-      example : "\"visper\""
+      title: "Model"
+      description: "The model to use for transcribing."
+      example: "\"visper\""
     }
   ];
 
@@ -157,9 +163,9 @@ message TranscriptionCreateRequest {
     (google.api.field_behavior) = OPTIONAL,
     (validate.rules).string.min_len = 1,
     (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
-      title : "Language"
-      description : "The language to use for transcribing."
-      example : "\"en-US\""
+      title: "Language"
+      description: "The language to use for transcribing."
+      example: "\"en-US\""
     }
   ];
 }
@@ -167,26 +173,22 @@ message TranscriptionCreateRequest {
 // TranscriptionCreateResponse is the response to create a new transcription.
 message TranscriptionCreateResponse {
   option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_schema) = {
-    json_schema : {
-      title : "TranscriptionCreateResponse"
-      description : "Response to create a new transcription"
+    json_schema: {
+      title: "TranscriptionCreateResponse"
+      description: "Response to create a new transcription"
     }
   };
 
   // id is the id of the created transcription.
   string id = 1 [
     (google.api.field_behavior) = OUTPUT_ONLY,
-    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
-      description : "The id of the created transcription."
-    }
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {description: "The id of the created transcription."}
   ];
 
   // transcription is the transcription.  This is the text that was transcribed.
   string transcription = 2 [
     (google.api.field_behavior) = OUTPUT_ONLY,
-    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
-      description : "The transcription.  This is the text that was transcribed."
-    }
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {description: "The transcription.  This is the text that was transcribed."}
   ];
 }
 
@@ -197,9 +199,9 @@ message TranslationCreateRequest {
     (google.api.field_behavior) = REQUIRED,
     (validate.rules).string.min_len = 1,
     (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
-      title : "File ID"
-      description : "The id of the file to translate."
-      example : "\"pwg-tts-1234567890\""
+      title: "File ID"
+      description: "The id of the file to translate."
+      example: "\"pwg-tts-1234567890\""
     }
   ];
 }
@@ -209,8 +211,6 @@ message Translation {
   // The text that was translated.
   string text = 1 [
     (google.api.field_behavior) = OUTPUT_ONLY,
-    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
-      description : "The text that was translated."
-    }
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {description: "The text that was translated."}
   ];
 }

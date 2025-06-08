@@ -15,6 +15,7 @@ This example demonstrates Java gRPC code generation using bufrnix with the `grpc
 ## Generated Code
 
 The `grpc/java` generator creates:
+
 - Service base classes for server implementation
 - Client stub classes (blocking and async)
 - Message classes from the base `protocolbuffers/java` generator
@@ -23,17 +24,20 @@ The `grpc/java` generator creates:
 ## Quick Start
 
 1. Generate the code:
+
 ```bash
-nix run 
+nix run
 ```
 
 2. Build and run server:
+
 ```bash
 cd gen/java
 nix develop .. --command gradle runServer
 ```
 
 3. Build and run client (in separate terminal):
+
 ```bash
 cd gen/java
 nix develop .. --command gradle runClient
@@ -51,6 +55,7 @@ The example includes a `GreeterService` with four different RPC methods:
 ## Generated Files
 
 After running `nix run .#generate`, you'll find:
+
 - `gen/java/com/example/grpc/v1/` - Generated message classes
 - `gen/java/com/example/grpc/v1/GreeterServiceGrpc.java` - gRPC service classes
 - `gen/java/build.gradle` - Build file with gRPC dependencies
@@ -59,6 +64,7 @@ After running `nix run .#generate`, you'll find:
 ## gRPC Java Features
 
 This example showcases:
+
 - Type-safe service definitions
 - Multiple stub types (blocking, async, future)
 - Streaming support for all patterns
@@ -69,6 +75,7 @@ This example showcases:
 ## Dependencies
 
 The generated build files include:
+
 - `com.google.protobuf:protobuf-java` - Protocol Buffers runtime
 - `io.grpc:grpc-stub` - gRPC client stubs
 - `io.grpc:grpc-protobuf` - gRPC protobuf integration

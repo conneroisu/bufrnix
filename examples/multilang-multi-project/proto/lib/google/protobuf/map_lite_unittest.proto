@@ -96,13 +96,17 @@ enum MapEnumLite {
 }
 
 message TestRequiredLite {
-  int32 a = 1 [ features.field_presence = LEGACY_REQUIRED ];
+  int32 a = 1 [features.field_presence = LEGACY_REQUIRED];
 
-  int32 b = 2 [ features.field_presence = LEGACY_REQUIRED ];
+  int32 b = 2 [features.field_presence = LEGACY_REQUIRED];
 
-  int32 c = 3 [ features.field_presence = LEGACY_REQUIRED ];
+  int32 c = 3 [features.field_presence = LEGACY_REQUIRED];
 
-  extend TestAllExtensionsLite { TestRequiredLite single = 1000; }
+  extend TestAllExtensionsLite {
+    TestRequiredLite single = 1000;
+  }
 }
 
-message ForeignMessageArenaLite { int32 c = 1; }
+message ForeignMessageArenaLite {
+  int32 c = 1;
+}

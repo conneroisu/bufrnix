@@ -3,7 +3,7 @@ title: Java
 description: Java code generation with Protocol Buffers and gRPC
 ---
 
-import { Tabs, TabItem } from '@astrojs/starlight/components';
+import { Tabs, TabItem } from "@astrojs/starlight/components";
 import { Code } from "astro:components";
 import basicConfig from "./java.x-basic-configuration.nix?raw";
 
@@ -56,10 +56,10 @@ Java is a popular enterprise programming language with excellent Protocol Buffer
 
 Bufrnix supports all three major Java protobuf generators:
 
-| Generator | Purpose | Plugin |
-|-----------|---------|---------|
-| **protocolbuffers/java** | Base types for Java messages and enums | Built-in to protoc |
-| **grpc/java** | Java client and server stubs for gRPC | `protoc-gen-grpc-java` |
+| Generator                  | Purpose                                  | Plugin                     |
+| -------------------------- | ---------------------------------------- | -------------------------- |
+| **protocolbuffers/java**   | Base types for Java messages and enums   | Built-in to protoc         |
+| **grpc/java**              | Java client and server stubs for gRPC    | `protoc-gen-grpc-java`     |
 | **bufbuild/validate-java** | Runtime validation using CEL expressions | protovalidate-java library |
 
 ## Configuration
@@ -70,16 +70,16 @@ Bufrnix supports all three major Java protobuf generators:
 {
   languages.java = {
     enable = true;
-    
+
     # Output directory for generated Java files
     outputPath = "gen/java";
-    
+
     # Java package to use (defaults to proto package)
     packageName = "com.example.protos";
-    
+
     # JDK version to use
     jdk = pkgs.jdk17;
-    
+
     # Additional options for protoc
     options = [];
   };
@@ -92,10 +92,10 @@ Bufrnix supports all three major Java protobuf generators:
 {
   languages.java.grpc = {
     enable = true;
-    
+
     # gRPC Java package
     package = pkgs.grpc-java;
-    
+
     # Additional gRPC generation options
     options = [];
   };
@@ -108,10 +108,10 @@ Bufrnix supports all three major Java protobuf generators:
 {
   languages.java.protovalidate = {
     enable = true;
-    
+
     # Protovalidate package (runtime validation)
     package = pkgs.protoc-gen-validate-java;
-    
+
     # Additional validation options
     options = [];
   };
@@ -157,7 +157,7 @@ Person parsed = Person.parseFrom(data);
 ```java
 public class GreeterImpl extends GreeterServiceGrpc.GreeterServiceImplBase {
     @Override
-    public void sayHello(HelloRequest request, 
+    public void sayHello(HelloRequest request,
                         StreamObserver<HelloResponse> responseObserver) {
         HelloResponse response = HelloResponse.newBuilder()
             .setMessage("Hello " + request.getName())
@@ -180,7 +180,7 @@ try {
     System.out.println("User is valid!");
 } catch (ValidationException e) {
     System.out.println("Validation failed:");
-    e.getViolations().forEach(violation -> 
+    e.getViolations().forEach(violation ->
         System.out.println("- " + violation.getFieldPath() + ": " + violation.getMessage())
     );
 }
@@ -217,6 +217,7 @@ The generated `pom.xml` provides equivalent Maven dependencies:
 ## Features
 
 ### Core Protobuf Features
+
 - **Type Safety**: Strongly typed message classes with builders
 - **Performance**: Efficient binary serialization
 - **Immutability**: Generated classes are immutable
@@ -224,6 +225,7 @@ The generated `pom.xml` provides equivalent Maven dependencies:
 - **JSON Support**: Optional JSON serialization (with additional dependencies)
 
 ### gRPC Features
+
 - **Service Stubs**: Blocking, async, and future-based clients
 - **Server Implementation**: Base classes for service implementation
 - **Streaming**: Support for all four gRPC streaming patterns
@@ -231,6 +233,7 @@ The generated `pom.xml` provides equivalent Maven dependencies:
 - **Interceptors**: Client and server interceptor support
 
 ### Validation Features
+
 - **Runtime Validation**: CEL-based validation expressions
 - **Field Constraints**: String length, numeric ranges, patterns
 - **Message Validation**: Cross-field validation logic
@@ -255,6 +258,7 @@ The generated `pom.xml` provides equivalent Maven dependencies:
 ## Dependencies
 
 Java code generation requires:
+
 - **JDK 17+**: For building and running Java code
 - **Protocol Buffers**: Core protobuf runtime
 - **gRPC Java** (optional): For gRPC functionality

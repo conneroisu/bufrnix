@@ -106,7 +106,9 @@ with pkgs.lib; let
 
   # Helper function to normalize outputPath from string or array to array
   normalizeOutputPath = path:
-    if builtins.isList path then path else [path];
+    if builtins.isList path
+    then path
+    else [path];
 
   # Load language modules based on configuration
   languageNames = attrNames cfg.languages;
@@ -126,74 +128,87 @@ with pkgs.lib; let
 
   # Load all enabled language modules for extracting runtime inputs only
   # We need runtime inputs globally, but hooks will be handled per output path
-  loadedLanguageModulesForInputs = map (language:
-    if cfg.languages.${language}.enable
-    then
-      let
-        langCfg = cfg.languages.${language};
-        # Normalize to single path for runtime input extraction
-        normalizedLangCfg = langCfg // {
-          outputPath = if builtins.isList langCfg.outputPath 
-                       then builtins.head langCfg.outputPath
-                       else langCfg.outputPath;
-        };
-      in
-        import ../languages/${language} {
-          inherit pkgs;
-          inherit (pkgs) lib;
-          config = cfg;
-          cfg = normalizedLangCfg;
-        }
-    else {}
-  ) languageNames;
+  loadedLanguageModulesForInputs =
+    map (
+      language:
+        if cfg.languages.${language}.enable
+        then let
+          langCfg = cfg.languages.${language};
+          # Normalize to single path for runtime input extraction
+          normalizedLangCfg =
+            langCfg
+            // {
+              outputPath =
+                if builtins.isList langCfg.outputPath
+                then builtins.head langCfg.outputPath
+                else langCfg.outputPath;
+            };
+        in
+          import ../languages/${language} {
+            inherit pkgs;
+            inherit (pkgs) lib;
+            config = cfg;
+            cfg = normalizedLangCfg;
+          }
+        else {}
+    )
+    languageNames;
 
   # Extract runtime inputs from language modules
   languageRuntimeInputs = concatMap (module: module.runtimeInputs or []) loadedLanguageModulesForInputs;
 
   # Generate protoc commands for each enabled language with multiple output paths
-  generateProtocCommands = 
-    let
-      enabledLanguages = filter (lang: cfg.languages.${lang}.enable) languageNames;
-      
-      # For each enabled language, get the normalized output paths and generate commands
-      languageCommands = map (language:
-        let
+  generateProtocCommands = let
+    enabledLanguages = filter (lang: cfg.languages.${lang}.enable) languageNames;
+
+    # For each enabled language, get the normalized output paths and generate commands
+    languageCommands =
+      map (
+        language: let
           langCfg = cfg.languages.${language};
           module = loadLanguageModule language;
           outputPaths = normalizeOutputPath langCfg.outputPath;
-          
+
           # Generate a command for each output path
-          pathCommands = map (outputPath:
-            let
-              # Create modified cfg with single outputPath for this iteration
-              modifiedLangCfg = langCfg // { outputPath = outputPath; };
-              modifiedCfg = cfg // { 
-                languages = cfg.languages // { 
-                  ${language} = modifiedLangCfg; 
-                }; 
-              };
-              
-              # Load module with modified config
-              modifiedModule = import ../languages/${language} {
-                inherit pkgs;
-                inherit (pkgs) lib;
-                config = modifiedCfg;
-                cfg = modifiedLangCfg;
-              };
-            in {
-              inherit outputPath;
-              runtimeInputs = modifiedModule.runtimeInputs or [];
-              protocPlugins = modifiedModule.protocPlugins or [];
-              initHooks = modifiedModule.initHooks or "";
-              generateHooks = modifiedModule.generateHooks or "";
-            }
-          ) outputPaths;
+          pathCommands =
+            map (
+              outputPath: let
+                # Create modified cfg with single outputPath for this iteration
+                modifiedLangCfg = langCfg // {outputPath = outputPath;};
+                modifiedCfg =
+                  cfg
+                  // {
+                    languages =
+                      cfg.languages
+                      // {
+                        ${language} = modifiedLangCfg;
+                      };
+                  };
+
+                # Load module with modified config
+                modifiedModule = import ../languages/${language} {
+                  inherit pkgs;
+                  inherit (pkgs) lib;
+                  config = modifiedCfg;
+                  cfg = modifiedLangCfg;
+                };
+              in {
+                inherit outputPath;
+                runtimeInputs = modifiedModule.runtimeInputs or [];
+                protocPlugins = modifiedModule.protocPlugins or [];
+                initHooks = modifiedModule.initHooks or "";
+                generateHooks = modifiedModule.generateHooks or "";
+              }
+            )
+            outputPaths;
         in {
           inherit language;
           commands = pathCommands;
         }
-      ) enabledLanguages;
-    in languageCommands;
+      )
+      enabledLanguages;
+  in
+    languageCommands;
 in
   pkgs.writeShellApplication {
     name = "bufrnix";
@@ -246,30 +261,34 @@ in
       ''}
 
       # Generate protoc commands for each unique output path combination
-      ${concatMapStrings (langCmd: 
-          concatMapStrings (pathCmd: ''
-            echo "Generating ${langCmd.language} code for output path: ${pathCmd.outputPath}"
-            
-            # Run initialization hooks for this path
-            ${pathCmd.initHooks}
-            
-            # Create directory for this output path
-            mkdir -p "${pathCmd.outputPath}"
-            
-            # Build protoc command for this specific output path
-            protoc_args="$base_protoc_args $nanopb_opts"
-            ${concatMapStrings (plugin: ''
-              protoc_args="$protoc_args ${plugin}"
-            '') pathCmd.protocPlugins}
-            
-            # Execute protoc for this output path
-            eval "$protoc_cmd $protoc_args $proto_files"
-            
-            # Run generation hooks for this path
-            ${pathCmd.generateHooks}
-            
-          '') langCmd.commands
-        ) generateProtocCommands}
+      ${concatMapStrings (
+          langCmd:
+            concatMapStrings (pathCmd: ''
+              echo "Generating ${langCmd.language} code for output path: ${pathCmd.outputPath}"
+
+              # Run initialization hooks for this path
+              ${pathCmd.initHooks}
+
+              # Create directory for this output path
+              mkdir -p "${pathCmd.outputPath}"
+
+              # Build protoc command for this specific output path
+              protoc_args="$base_protoc_args $nanopb_opts"
+              ${concatMapStrings (plugin: ''
+                  protoc_args="$protoc_args ${plugin}"
+                '')
+                pathCmd.protocPlugins}
+
+              # Execute protoc for this output path
+              eval "$protoc_cmd $protoc_args $proto_files"
+
+              # Run generation hooks for this path
+              ${pathCmd.generateHooks}
+
+            '')
+            langCmd.commands
+        )
+        generateProtocCommands}
 
       ${debug.log 1 "Multiple output path code generation completed successfully" cfg}
     '';

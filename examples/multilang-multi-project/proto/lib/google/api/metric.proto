@@ -84,7 +84,7 @@ message MetricDescriptor {
     // Deprecated. Must use the
     // [MetricDescriptor.launch_stage][google.api.MetricDescriptor.launch_stage]
     // instead.
-    LaunchStage launch_stage = 1 [ deprecated = true ];
+    LaunchStage launch_stage = 1 [deprecated = true];
 
     // The sampling period of metric data points. For metrics which are written
     // periodically, consecutive data points are stored at this time interval,
@@ -98,8 +98,7 @@ message MetricDescriptor {
     google.protobuf.Duration ingest_delay = 3;
 
     // The scope of the timeseries data of the metric.
-    repeated TimeSeriesResourceHierarchyLevel
-        time_series_resource_hierarchy_level = 4;
+    repeated TimeSeriesResourceHierarchyLevel time_series_resource_hierarchy_level = 4;
   }
 
   // The resource name of the metric descriptor.

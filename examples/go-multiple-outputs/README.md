@@ -5,6 +5,7 @@ This example demonstrates Bufrnix's **multiple output paths** feature specifical
 ## Overview
 
 This example simulates a real-world e-commerce microservices setup with:
+
 - **Order Service** - Handles order management
 - **Payment Service** - Processes payments
 - **Shared Libraries** - Common proto definitions used across services
@@ -14,13 +15,14 @@ This example simulates a real-world e-commerce microservices setup with:
 The example demonstrates different multiple output strategies:
 
 ### 🚀 **Main Go Code Generation**
+
 ```nix
 go = {
   enable = true;
   outputPath = [
     "gen/go"                      # Main generated code location
     "services/order/proto"        # Order service proto
-    "services/payment/proto"      # Payment service proto  
+    "services/payment/proto"      # Payment service proto
     "services/shared/proto"       # Shared across all services
     "pkg/common/proto"            # Common package for libraries
   ];
@@ -28,6 +30,7 @@ go = {
 ```
 
 ### 🔗 **gRPC Service Generation**
+
 ```nix
 grpc = {
   enable = true;
@@ -40,6 +43,7 @@ grpc = {
 ```
 
 ### ✅ **Validation Generation**
+
 ```nix
 validate = {
   enable = true;
@@ -77,19 +81,25 @@ go-multiple-outputs/
 ## Real-World Use Cases
 
 ### 🏪 **Microservices Architecture**
+
 Each service gets its own copy of the proto definitions:
+
 - **Isolated deployments** - Each service can be deployed independently
 - **Service boundaries** - Clear separation of concerns
 - **Shared contracts** - Common proto definitions ensure compatibility
 
 ### 📦 **Library Distribution**
+
 Generate to multiple package locations:
+
 - **Development** - `gen/go/` for local development
 - **Services** - `services/*/proto/` for service-specific usage
 - **Libraries** - `pkg/common/proto/` for shared library packages
 
 ### 🔄 **CI/CD Integration**
+
 Perfect for automated workflows:
+
 - **Build artifacts** - Different locations for different build stages
 - **Testing** - Generate test fixtures in multiple locations
 - **Distribution** - Create packages for different consumers
@@ -97,11 +107,13 @@ Perfect for automated workflows:
 ## Proto Definitions
 
 ### Orders Service
+
 - `Order` - Complete order information with items, addresses, and status
 - `OrderService` - gRPC service for order management operations
 - Full CRUD operations with pagination and filtering
 
-### Payments Service  
+### Payments Service
+
 - `Payment` - Payment transaction details with multiple payment methods
 - `PaymentService` - gRPC service for payment processing
 - Support for cards, bank transfers, and digital wallets
@@ -109,6 +121,7 @@ Perfect for automated workflows:
 ## Usage
 
 ### Generate Code
+
 ```bash
 # Generate protobuf code to all configured locations
 nix run
@@ -118,6 +131,7 @@ nix develop
 ```
 
 ### Verify Multiple Outputs
+
 After generation, verify the same code exists in all locations:
 
 ```bash
@@ -143,13 +157,17 @@ ls pkg/common/proto/payments/v1/
 ## Advanced Features
 
 ### **Plugin-Specific Paths**
+
 Different plugins can generate to different subsets of locations:
+
 - **Base Go code** → All 5 locations
 - **gRPC services** → Only 3 locations (where services are needed)
 - **Validation** → Only 2 locations (where validation is used)
 
 ### **Debug Output**
+
 Enable debug mode to see generation progress:
+
 ```nix
 debug = {
   enable = true;
@@ -161,12 +179,12 @@ This shows detailed logs for each output path generation.
 
 ## Benefits
 
-1. **🎯 **Service Isolation**: Each microservice has its own proto copy
-2. **📚 **Shared Libraries**: Common packages available across all services
-3. **🚀 **Independent Deployments**: Services can be built and deployed separately
-4. **🔄 **Code Reuse**: Same proto definitions without duplication
-5. **🛠️ **Development Flexibility**: Multiple locations for different use cases
-6. **📦 **Package Distribution**: Ready for Go module distribution
+1. **🎯 **Service Isolation\*\*: Each microservice has its own proto copy
+2. **📚 **Shared Libraries\*\*: Common packages available across all services
+3. **🚀 **Independent Deployments\*\*: Services can be built and deployed separately
+4. **🔄 **Code Reuse\*\*: Same proto definitions without duplication
+5. **🛠️ **Development Flexibility\*\*: Multiple locations for different use cases
+6. **📦 **Package Distribution\*\*: Ready for Go module distribution
 
 ## Development Workflow
 

@@ -2,151 +2,156 @@ syntax = "proto3";
 
 package api.v1;
 
-// External
-import "google/api/annotations.proto";
-import "google/protobuf/empty.proto";
-import "gateway/protoc-gen-openapiv2/annotations.proto";
-
+import "api/v1/api-admin.proto";
+import "api/v1/api-audio.proto";
 // Internal
 import "api/v1/api-chat.proto";
 import "api/v1/api-embeddings.proto";
-import "api/v1/api-models.proto";
 import "api/v1/api-fine-tuning.proto";
-import "api/v1/api-admin.proto";
 import "api/v1/api-flashcards.proto";
-import "api/v1/api-audio.proto";
+import "api/v1/api-images.proto";
+import "api/v1/api-models.proto";
 import "api/v1/api-usage.proto";
 import "api/v1/api-video.proto";
-import "api/v1/api-images.proto";
+import "gateway/protoc-gen-openapiv2/annotations.proto";
+// External
+import "google/api/annotations.proto";
+import "google/protobuf/empty.proto";
 
 option go_package = "github.com/conneroisu/bufrnix/examples/multilang-multi-project/proto/gen/go/api/v1;api";
-
 option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_swagger) = {
-  info : {
-    title : "Pegwings API"
-    version : "1.0.0"
-    description : "# Pegwings API\n\nThis is the Main API for the Pegwings "
-                  "Platform.\n\n## Authorization\n\nYou can authorize using "
-                  "the following methods:\n\n- **ApiKeyAuth** - API Key\n\n- "
-                  "**OAuth2** - OAuth 2.0\n\n\n"
-                  "Rate limiting information\n\n    "
-                  "x-ratelimit-limit-requests\n    "
-                  "x-ratelimit-limit-tokens\n    "
-                  "x-ratelimit-remaining-requests\n    "
-                  "x-ratelimit-remaining-tokens\n    "
-                  "x-ratelimit-reset-requests\n    "
-                  "x-ratelimit-reset-tokens\n\n"
-                  "Pegings recommends logging request IDs in production "
-                  "deployments for more efficient troubleshooting with "
-                  "our support team, should the need arise. "
-                  "Our official SDKs provide a property on top-level response "
-                  "objects containing the value of the x-request-id header."
-    contact : {
-      name : "Conner Ohnsorge"
-      url : "https://github.com/pegwings"
-      email : "conneroisu@outlook.com"
+  info: {
+    title: "Pegwings API"
+    version: "1.0.0"
+    description:
+      "# Pegwings API\n\nThis is the Main API for the Pegwings "
+      "Platform.\n\n## Authorization\n\nYou can authorize using "
+      "the following methods:\n\n- **ApiKeyAuth** - API Key\n\n- "
+      "**OAuth2** - OAuth 2.0\n\n\n"
+      "Rate limiting information\n\n    "
+      "x-ratelimit-limit-requests\n    "
+      "x-ratelimit-limit-tokens\n    "
+      "x-ratelimit-remaining-requests\n    "
+      "x-ratelimit-remaining-tokens\n    "
+      "x-ratelimit-reset-requests\n    "
+      "x-ratelimit-reset-tokens\n\n"
+      "Pegings recommends logging request IDs in production "
+      "deployments for more efficient troubleshooting with "
+      "our support team, should the need arise. "
+      "Our official SDKs provide a property on top-level response "
+      "objects containing the value of the x-request-id header."
+    contact: {
+      name: "Conner Ohnsorge"
+      url: "https://github.com/pegwings"
+      email: "conneroisu@outlook.com"
     }
   }
-  security_definitions : {
-    security : {
-      key : "ApiKeyAuth"
-      value : {
-        type : TYPE_API_KEY
-        in : IN_HEADER
-        name : "X-API-Key"
-        description : "API Key authentication"
+  security_definitions: {
+    security: {
+      key: "ApiKeyAuth"
+      value: {
+        type: TYPE_API_KEY
+        in: IN_HEADER
+        name: "X-API-Key"
+        description: "API Key authentication"
       }
     }
-    security : {
-      key : "OAuth2"
-      value : {
-        type : TYPE_OAUTH2
-        flow : FLOW_ACCESS_CODE
-        authorization_url : "https://auth.pegwings.com/oauth2/authorize"
-        token_url : "https://auth.pegwings.com/oauth2/token"
-        description : "OAuth2 authentication"
-        scopes : {
-          scope : {key : "read" value : "Read access to the API"}
-          scope : {key : "write" value : "Write access to the API"}
+    security: {
+      key: "OAuth2"
+      value: {
+        type: TYPE_OAUTH2
+        flow: FLOW_ACCESS_CODE
+        authorization_url: "https://auth.pegwings.com/oauth2/authorize"
+        token_url: "https://auth.pegwings.com/oauth2/token"
+        description: "OAuth2 authentication"
+        scopes: {
+          scope: {
+            key: "read"
+            value: "Read access to the API"
+          }
+          scope: {
+            key: "write"
+            value: "Write access to the API"
+          }
         }
       }
     }
   }
   // Global security requirements - apply to all operations unless overridden
-  security : {
-    security_requirement : {
-      key : "ApiKeyAuth"
-      value : {}
+  security: {
+    security_requirement: {
+      key: "ApiKeyAuth"
+      value: {}
     }
   }
-  security : {
-    security_requirement : {
-      key : "OAuth2"
-      value : {scope : [ "read", "write" ]}
+  security: {
+    security_requirement: {
+      key: "OAuth2"
+      value: {
+        scope: [
+          "read",
+          "write"
+        ]
+      }
     }
   }
 };
 
 // APIService is the service for the Pegwings API.
 service APIService {
-
   // # MODELS
 
   // ModelGet is the method for getting a model by its name.
   rpc ModelGet(models.v1.ModelGetRequest) returns (models.v1.Model) {
-    option (google.api.http) = {
-      get : "/v1/models/{model}"
-    };
+    option (google.api.http) = {get: "/v1/models/{model}"};
     option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
-      tags : "get"
-      tags : "model"
-      description : "Get an accessible model by its name."
-      summary : "Get an accessible model by its name.\n"
-                "This is useful for learning more about a given model, or for "
-                "getting a model's metadata."
-      external_docs : {
-        url : "https://docs.pegwings.com/v1/models/get-model"
-        description : "Find out more about the Models API."
+      tags: "get"
+      tags: "model"
+      description: "Get an accessible model by its name."
+      summary:
+        "Get an accessible model by its name.\n"
+        "This is useful for learning more about a given model, or for "
+        "getting a model's metadata."
+      external_docs: {
+        url: "https://docs.pegwings.com/v1/models/get-model"
+        description: "Find out more about the Models API."
       }
     };
   }
 
   // ListModels is the method for listing models.
   rpc ListModels(google.protobuf.Empty) returns (models.v1.ListResponse) {
-    option (google.api.http) = {
-      get : "/v1/models"
-    };
+    option (google.api.http) = {get: "/v1/models"};
     option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
-      operation_id : "list_models"
-      tags : "models"
-      tags : "list"
-      description : "List avaliable ai models."
-      summary : "List avaliable ai models."
+      operation_id: "list_models"
+      tags: "models"
+      tags: "list"
+      description: "List avaliable ai models."
+      summary: "List avaliable ai models."
     };
   }
 
   // CreateFinetuningJob is the method for creating a fine-tuning job.
-  rpc CreateFinetuningJob(finetuning.v1.FinetuningCreateRequest)
-      returns (finetuning.v1.FinetuningCreateRequest) {
+  rpc CreateFinetuningJob(finetuning.v1.FinetuningCreateRequest) returns (finetuning.v1.FinetuningCreateRequest) {
     option (google.api.http) = {
-      post : "/v1/finetuning/jobs"
-      body : "*"
+      post: "/v1/finetuning/jobs"
+      body: "*"
     };
     option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
-      operation_id : "create_finetuning_job"
-      tags : "data"
-      tags : "dataset"
-      tags : "finetuning"
-      tags : "job"
-      description : "Create a fine-tuning job for the given parameters."
-      summary : "Create a fine-tuning job for the given parameters."
-      external_docs : {
-        url : "https://docs.pegwings.com/v1/fine-tuning/create-fine-tuning-job"
-        description : "Find out more about Fine-Tuning"
+      operation_id: "create_finetuning_job"
+      tags: "data"
+      tags: "dataset"
+      tags: "finetuning"
+      tags: "job"
+      description: "Create a fine-tuning job for the given parameters."
+      summary: "Create a fine-tuning job for the given parameters."
+      external_docs: {
+        url: "https://docs.pegwings.com/v1/fine-tuning/create-fine-tuning-job"
+        description: "Find out more about Fine-Tuning"
       }
-      responses : {
-        key : "200"
-        value : {description : "A successful response."}
+      responses: {
+        key: "200"
+        value: {description: "A successful response."}
       }
     };
   }
@@ -154,50 +159,51 @@ service APIService {
   // # CHAT
 
   // ChatCompletionCreate is the method for creating a chat completion.
-  rpc ChatCompletionCreate(chat.v1.ChatCompletionCreateRequest)
-      returns (chat.v1.ChatCompletionCreateResponse) {
+  rpc ChatCompletionCreate(chat.v1.ChatCompletionCreateRequest) returns (chat.v1.ChatCompletionCreateResponse) {
     option (google.api.http) = {
-      post : "/v1/chat/completions"
-      body : "*"
+      post: "/v1/chat/completions"
+      body: "*"
     };
     option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
-      operation_id : "create_chat_completion"
-      tags : "chat"
-      tags : "completion"
-      tags : "model"
-      tags : "model/llm"
-      description : "Create a chat completion for the given parameters."
-      summary : "Create a chat completion for the given parameters."
-      external_docs : {
-        url : "https://docs.pegwings.com/api/chat/create-completion"
-        description : "Find out more about Chat Completions"
+      operation_id: "create_chat_completion"
+      tags: "chat"
+      tags: "completion"
+      tags: "model"
+      tags: "model/llm"
+      description: "Create a chat completion for the given parameters."
+      summary: "Create a chat completion for the given parameters."
+      external_docs: {
+        url: "https://docs.pegwings.com/api/chat/create-completion"
+        description: "Find out more about Chat Completions"
       }
-      responses : {
-        key : "200"
-        value : {description : "A successful response."}
+      responses: {
+        key: "200"
+        value: {description: "A successful response."}
       }
-      responses : {
-        key : "401"
-        value : {description : "Unauthorized"}
+      responses: {
+        key: "401"
+        value: {description: "Unauthorized"}
       }
-      responses : {
-        key : "429"
-        value : {
-          description : "Rate limit reached"
-          schema : {
+      responses: {
+        key: "429"
+        value: {
+          description: "Rate limit reached"
+          schema: {
             // TODO: Upadate this to the actual error response
-            example : "{\"error\":\"RateLimitExceeded\"}"
-            external_docs : {
-              url : "https://github.com/grpc-ecosystem/grpc-gateway/blob/"
-                    "master/docs/docs/index.md"
-              description : "Find more info here"
+            example: "{\"error\":\"RateLimitExceeded\"}"
+            external_docs: {
+              url:
+                "https://github.com/grpc-ecosystem/grpc-gateway/blob/"
+                "master/docs/docs/index.md"
+              description: "Find more info here"
             }
-            json_schema : {
-              title : "Rate limit reached error response"
-              description : "The error response returned when the rate limit "
-                            "is exceeded"
+            json_schema: {
+              title: "Rate limit reached error response"
+              description:
+                "The error response returned when the rate limit "
+                "is exceeded"
 
-              type : STRING
+              type: STRING
             }
           }
         }
@@ -207,44 +213,43 @@ service APIService {
 
   // ChatCompletionGet is the method for getting a past chat completion made
   // by a vaild project api key.
-  rpc ChatCompletionGet(chat.v1.GetChatCompletionRequest)
-      returns (chat.v1.ChatCompletionResponse) {
-    option (google.api.http) = {
-      get : "/v1/chat/completions/{id}"
-    };
+  rpc ChatCompletionGet(chat.v1.GetChatCompletionRequest) returns (chat.v1.ChatCompletionResponse) {
+    option (google.api.http) = {get: "/v1/chat/completions/{id}"};
     option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
-      operation_id : "get_chat_completion"
-      tags : "chat"
-      tags : "completion"
-      tags : "get"
-      tags : "project"
-      produces : "application/json"
-      description : "Retrieve a chat completion by its id."
-      external_docs : {
-        url : "https://docs.pegwings.com/v1/chat/get-completion-request"
-        description : "Find out more about Get Completion Requests"
+      operation_id: "get_chat_completion"
+      tags: "chat"
+      tags: "completion"
+      tags: "get"
+      tags: "project"
+      produces: "application/json"
+      description: "Retrieve a chat completion by its id."
+      external_docs: {
+        url: "https://docs.pegwings.com/v1/chat/get-completion-request"
+        description: "Find out more about Get Completion Requests"
       }
-      responses : {
-        key : "200"
-        value : {description : "A successful response."},
+      responses: {
+        key: "200"
+        value: {description: "A successful response."}
       }
-      responses : {
-        key : "401"
-        value : {
-          description : "Unauthorized"
-          schema : {
+      responses: {
+        key: "401"
+        value: {
+          description: "Unauthorized"
+          schema: {
             // TODO: Upadate this to the actual error response
-            example : "{\"error\":\"RateLimitExceeded\"}"
-            external_docs : {
-              url : "https://github.com/grpc-ecosystem/grpc-gateway/blob/"
-                    "master/docs/docs/index.md"
-              description : "Find more info here"
+            example: "{\"error\":\"RateLimitExceeded\"}"
+            external_docs: {
+              url:
+                "https://github.com/grpc-ecosystem/grpc-gateway/blob/"
+                "master/docs/docs/index.md"
+              description: "Find more info here"
             }
-            json_schema : {
-              title : "Rate limit reached error response"
-              description : "The error response returned when the rate limit "
-                            "is exceeded."
-              type : STRING
+            json_schema: {
+              title: "Rate limit reached error response"
+              description:
+                "The error response returned when the rate limit "
+                "is exceeded."
+              type: STRING
             }
           }
         }
@@ -253,27 +258,25 @@ service APIService {
   }
 
   // ChatCompletionsList is the method for listing chat completions.
-  rpc ChatCompletionsList(chat.v1.ChatCompletionsListRequest)
-      returns (chat.v1.ChatCompletionsListResponse) {
-    option (google.api.http) = {
-      get : "/v1/chat/completions"
-    };
+  rpc ChatCompletionsList(chat.v1.ChatCompletionsListRequest) returns (chat.v1.ChatCompletionsListResponse) {
+    option (google.api.http) = {get: "/v1/chat/completions"};
     option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
-      operation_id : "list_chat_completions"
-      produces : "application/json"
-      tags : "chat"
-      tags : "completion"
-      tags : "list"
-      description : "ListCompletions is the method for listing chat "
-                    "completions."
-      summary : "ListCompletions is the method for listing chat completions."
-      external_docs : {
-        url : "https://docs.pegwings.com/v1/chat/list-completions"
-        description : "Find out more about List Completions"
+      operation_id: "list_chat_completions"
+      produces: "application/json"
+      tags: "chat"
+      tags: "completion"
+      tags: "list"
+      description:
+        "ListCompletions is the method for listing chat "
+        "completions."
+      summary: "ListCompletions is the method for listing chat completions."
+      external_docs: {
+        url: "https://docs.pegwings.com/v1/chat/list-completions"
+        description: "Find out more about List Completions"
       }
-      responses : {
-        key : "200"
-        value : {description : "A successful response."}
+      responses: {
+        key: "200"
+        value: {description: "A successful response."}
       }
     };
   }
@@ -305,176 +308,170 @@ service APIService {
   // # IMAGES
 
   // ImageCreate creates an image from a prompt.
-  rpc ImageCreate(images.v1.ImageCreateRequest)
-      returns (images.v1.ImageCreateResponse) {
+  rpc ImageCreate(images.v1.ImageCreateRequest) returns (images.v1.ImageCreateResponse) {
     option (google.api.http) = {
-      post : "/v1/images"
-      body : "*"
+      post: "/v1/images"
+      body: "*"
     };
     option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
-      summary : "Create an image"
-      description : "Create an image from a prompt."
+      summary: "Create an image"
+      description: "Create an image from a prompt."
     };
   }
 
   // ImageSegmentCreate creates an image segmentation from an input image and
   // list of targets.
-  rpc ImageSegmentCreate(images.v1.ImageSegmentRequest)
-      returns (images.v1.ImageSegmentResponse) {
+  rpc ImageSegmentCreate(images.v1.ImageSegmentRequest) returns (images.v1.ImageSegmentResponse) {
     option (google.api.http) = {
-      post : "/v1/image/segment"
-      body : "*"
+      post: "/v1/image/segment"
+      body: "*"
     };
     option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
-      operation_id : "ImageSegmentCreate"
-      summary : "ImageSegmentCreate creates an image segment from a prompt."
-      description : "ImageSegmentCreate creates an image segment from a prompt."
+      operation_id: "ImageSegmentCreate"
+      summary: "ImageSegmentCreate creates an image segment from a prompt."
+      description: "ImageSegmentCreate creates an image segment from a prompt."
     };
   }
 
   // ImageVariationCreate creates an image variation from an input image, a
   // prompt, and potentially a mask.
-  rpc ImageVariationCreate(images.v1.ImageVariationCreateRequest)
-      returns (images.v1.ImageVariationCreateResponse) {
+  rpc ImageVariationCreate(images.v1.ImageVariationCreateRequest) returns (images.v1.ImageVariationCreateResponse) {
     option (google.api.http) = {
-      post : "/v1/image/variation"
-      body : "*"
+      post: "/v1/image/variation"
+      body: "*"
     };
     option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
-      operation_id : "ImageVariationCreate"
-      summary : "ImageVariationCreate creates an image variation from a prompt."
-      description : "ImageVariationCreate creates an image variation from a "
-                    "prompt."
+      operation_id: "ImageVariationCreate"
+      summary: "ImageVariationCreate creates an image variation from a prompt."
+      description:
+        "ImageVariationCreate creates an image variation from a "
+        "prompt."
     };
   }
 
   // ImageEditCreate creates an image edit from an input image, a prompt, and
   // potentially a mask.
-  rpc ImageEditCreate(images.v1.ImageEditRequest)
-      returns (images.v1.ImageEditResponse) {
+  rpc ImageEditCreate(images.v1.ImageEditRequest) returns (images.v1.ImageEditResponse) {
     option (google.api.http) = {
-      post : "/v1/image/edit"
-      body : "*"
+      post: "/v1/image/edit"
+      body: "*"
     };
     option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
-      operation_id : "ImageEditCreate"
-      summary : "ImageEditCreate creates an image edit from a prompt."
-      description : "ImageEditCreate creates an image edit from a prompt."
+      operation_id: "ImageEditCreate"
+      summary: "ImageEditCreate creates an image edit from a prompt."
+      description: "ImageEditCreate creates an image edit from a prompt."
     };
   }
 
   // # VIDEO
 
   // VideoCreate creates a video from a prompt.
-  rpc VideoCreate(video.v1.VideoCreateRequest)
-      returns (video.v1.VideoCreateResponse) {
+  rpc VideoCreate(video.v1.VideoCreateRequest) returns (video.v1.VideoCreateResponse) {
     option (google.api.http) = {
-      post : "/v1/video/create"
-      body : "*"
+      post: "/v1/video/create"
+      body: "*"
     };
     option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
-      operation_id : "create_video"
-      summary : "Create a video"
-      description : "Create a video"
-      tags : "video"
-      tags : "create"
+      operation_id: "create_video"
+      summary: "Create a video"
+      description: "Create a video"
+      tags: "video"
+      tags: "create"
     };
   }
 
   // # AUDIO
 
   // SpeechCreate creates speech from text.
-  rpc SpeechCreate(audio.v1.SpeechCreateRequest)
-      returns (audio.v1.SpeechCreateResponse) {
+  rpc SpeechCreate(audio.v1.SpeechCreateRequest) returns (audio.v1.SpeechCreateResponse) {
     option (google.api.http) = {
-      post : "/v1/audio/speech"
-      body : "*"
+      post: "/v1/audio/speech"
+      body: "*"
     };
     option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
-      operation_id : "create_speech"
-      summary : "Synthesize speech from text."
-      description : "Create speech"
-      tags : "audio"
-      tags : "speech"
-      tags : "tts"
-      tags : "model/tts"
+      operation_id: "create_speech"
+      summary: "Synthesize speech from text."
+      description: "Create speech"
+      tags: "audio"
+      tags: "speech"
+      tags: "tts"
+      tags: "model/tts"
     };
   }
 
   // TranscriptionCreate creates speech from text.
-  rpc TranscriptionCreate(audio.v1.TranscriptionCreateRequest)
-      returns (audio.v1.TranscriptionCreateResponse) {
+  rpc TranscriptionCreate(audio.v1.TranscriptionCreateRequest) returns (audio.v1.TranscriptionCreateResponse) {
     option (google.api.http) = {
-      post : "/v1/audio/transcriptions"
-      body : "*"
+      post: "/v1/audio/transcriptions"
+      body: "*"
     };
     option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
-      operation_id : "create_transcription"
-      summary : "Create transcription"
-      description : "Create transcription"
-      tags : "audio"
-      tags : "transcription"
-      tags : "model/transcription"
+      operation_id: "create_transcription"
+      summary: "Create transcription"
+      description: "Create transcription"
+      tags: "audio"
+      tags: "transcription"
+      tags: "model/transcription"
     };
   }
 
   // TranslationCreate create an audio translation.
-  rpc TranslationCreate(audio.v1.TranslationCreateRequest)
-      returns (audio.v1.Translation) {
+  rpc TranslationCreate(audio.v1.TranslationCreateRequest) returns (audio.v1.Translation) {
     option (google.api.http) = {
-      post : "/v1/translation"
-      body : "*"
+      post: "/v1/translation"
+      body: "*"
     };
     option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
-      operation_id : "create_translation"
-      summary : "Create translation"
-      description : "Create translation"
-      tags : "audio"
-      tags : "translation"
-      tags : "model/translation"
+      operation_id: "create_translation"
+      summary: "Create translation"
+      description: "Create translation"
+      tags: "audio"
+      tags: "translation"
+      tags: "model/translation"
     };
   }
 
   // # EMBEDDINGS
 
   // Embeddings is the method for generating text embeddings.
-  rpc EmbeddingsCreate(embeddings.v1.EmbeddingsCreateRequest)
-      returns (embeddings.v1.Embedding) {
+  rpc EmbeddingsCreate(embeddings.v1.EmbeddingsCreateRequest) returns (embeddings.v1.Embedding) {
     option (google.api.http) = {
-      post : "/v1/embeddings"
-      body : "*"
+      post: "/v1/embeddings"
+      body: "*"
     };
     option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
-      produces : "application/json"
-      tags : "model/encoder"
-      tags : "embeddings"
-      tags : "text"
-      tags : "vector"
-      tags : "model/tokenizer"
-      description : "Generate text embeddings for the given text."
-      summary : "Generate text embeddings for the given text."
-      external_docs : {
-        url : "https://docs.pegwings.com/v1/embeddings/generate-embeddings"
-        description : "Find out more about Embeddings"
+      produces: "application/json"
+      tags: "model/encoder"
+      tags: "embeddings"
+      tags: "text"
+      tags: "vector"
+      tags: "model/tokenizer"
+      description: "Generate text embeddings for the given text."
+      summary: "Generate text embeddings for the given text."
+      external_docs: {
+        url: "https://docs.pegwings.com/v1/embeddings/generate-embeddings"
+        description: "Find out more about Embeddings"
       }
-      responses : {
-        key : "429"
-        value : {
-          description : "Rate limit reached"
-          schema : {
+      responses: {
+        key: "429"
+        value: {
+          description: "Rate limit reached"
+          schema: {
             // TODO: Upadate this to the actual error response
-            example : "{\"error\":\"RateLimitExceeded\"}"
-            external_docs : {
-              url : "https://github.com/grpc-ecosystem/grpc-gateway/blob/"
-                    "master/docs/docs/index.md"
-              description : "Find more info here"
+            example: "{\"error\":\"RateLimitExceeded\"}"
+            external_docs: {
+              url:
+                "https://github.com/grpc-ecosystem/grpc-gateway/blob/"
+                "master/docs/docs/index.md"
+              description: "Find more info here"
             }
-            json_schema : {
-              title : "Rate limit reached error response"
-              description : "The error response returned when the rate limit "
-                            "is exceeded"
+            json_schema: {
+              title: "Rate limit reached error response"
+              description:
+                "The error response returned when the rate limit "
+                "is exceeded"
 
-              type : STRING
+              type: STRING
             }
           }
         }
@@ -484,42 +481,40 @@ service APIService {
 
   // EmbeddingsGet gets an existing embeddings by its id received either from
   // the creation request, list request, or usage request.
-  rpc EmbeddingsGet(embeddings.v1.EmbeddingsGetRequest)
-      returns (embeddings.v1.EmbeddingsGetResponse) {
-    option (google.api.http) = {
-      get : "/v1/embeddings/{id}"
-    };
+  rpc EmbeddingsGet(embeddings.v1.EmbeddingsGetRequest) returns (embeddings.v1.EmbeddingsGetResponse) {
+    option (google.api.http) = {get: "/v1/embeddings/{id}"};
     option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
-      tags : "embeddings"
-      tags : "get"
-      tags : "model/encoder"
-      description : "Get an existing embeddings by its id."
-      summary : "Get an existing embeddings by its id."
-      external_docs : {
-        url : "https://docs.pegwings.com/v1/embeddings/get-embeddings"
-        description : "Find out more about Get Embeddings"
+      tags: "embeddings"
+      tags: "get"
+      tags: "model/encoder"
+      description: "Get an existing embeddings by its id."
+      summary: "Get an existing embeddings by its id."
+      external_docs: {
+        url: "https://docs.pegwings.com/v1/embeddings/get-embeddings"
+        description: "Find out more about Get Embeddings"
       }
-      responses : {
-        key : "200"
-        value : {description : "A successful response."}
+      responses: {
+        key: "200"
+        value: {description: "A successful response."}
       }
-      responses : {
-        key : "401"
-        value : {
-          description : "Unauthorized"
-          schema : {
+      responses: {
+        key: "401"
+        value: {
+          description: "Unauthorized"
+          schema: {
             // TODO: Upadate this to the actual error response
-            example : "{\"error\":\"RateLimitExceeded\"}"
-            external_docs : {
-              url : "https://github.com/grpc-ecosystem/grpc-gateway/blob/"
-                    "master/docs/docs/index.md"
-              description : "Find more info here"
+            example: "{\"error\":\"RateLimitExceeded\"}"
+            external_docs: {
+              url:
+                "https://github.com/grpc-ecosystem/grpc-gateway/blob/"
+                "master/docs/docs/index.md"
+              description: "Find more info here"
             }
-            json_schema : {
-              title : "Rate limit reached error response"
-              description : "The error response returned when the rate limit "
-                            "is exceeded"
-
+            json_schema: {
+              title: "Rate limit reached error response"
+              description:
+                "The error response returned when the rate limit "
+                "is exceeded"
             }
           }
         }
@@ -531,116 +526,100 @@ service APIService {
 
   // OrgFlashcardDeckCreate creates a new flashcard deck within an
   // organization.
-  rpc OrgFlashcardDeckCreate(
-      flashcards.v1.OrganizationFlashcardDeckCreateRequest)
-      returns (flashcards.v1.FlashcardDeck) {
+  rpc OrgFlashcardDeckCreate(flashcards.v1.OrganizationFlashcardDeckCreateRequest) returns (flashcards.v1.FlashcardDeck) {
     option (google.api.http) = {
-      post : "/v1/flashcards/decks"
-      body : "*"
+      post: "/v1/flashcards/decks"
+      body: "*"
     };
     option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
-      tags : "flashcard"
-      tags : "create"
-      description : "Create a flashcard set."
-      summary : "Create a flashcard set."
-      external_docs : {
-        url : "https://docs.pegwings.com/v1/flashcard/create-set"
-        description : "Find out more about Create Flashcard Set"
+      tags: "flashcard"
+      tags: "create"
+      description: "Create a flashcard set."
+      summary: "Create a flashcard set."
+      external_docs: {
+        url: "https://docs.pegwings.com/v1/flashcard/create-set"
+        description: "Find out more about Create Flashcard Set"
       }
     };
   }
 
   // OrgFlashcardCreate is the method for creating a flashcard.
-  rpc OrgFlashcardCreate(flashcards.v1.FlashcardCreateRequest)
-      returns (flashcards.v1.FlashcardCreateResponse) {
+  rpc OrgFlashcardCreate(flashcards.v1.FlashcardCreateRequest) returns (flashcards.v1.FlashcardCreateResponse) {
     option (google.api.http) = {
-      post : "/v1/flashcards"
-      body : "*"
+      post: "/v1/flashcards"
+      body: "*"
     };
     option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
-      tags : "flashcard"
-      tags : "create"
-      description : "Create a flashcard."
-      summary : "Create a flashcard."
-      external_docs : {
-        url : "https://docs.pegwings.com/v1/flashcard/create-flashcard"
-        description : "Find out more about Create Flashcard"
+      tags: "flashcard"
+      tags: "create"
+      description: "Create a flashcard."
+      summary: "Create a flashcard."
+      external_docs: {
+        url: "https://docs.pegwings.com/v1/flashcard/create-flashcard"
+        description: "Find out more about Create Flashcard"
       }
-      responses : {
-        key : "200"
-        value : {description : "A successful response."}
+      responses: {
+        key: "200"
+        value: {description: "A successful response."}
       }
     };
   }
 
   // OrgFlashcardGet is the method for getting a flashcard by its id.
-  rpc OrgFlashcardGet(flashcards.v1.FlashcardGetRequest)
-      returns (flashcards.v1.Flashcard) {
-    option (google.api.http) = {
-      get : "/v1/orgs/{org_id}/flashcards/{id}"
-    };
+  rpc OrgFlashcardGet(flashcards.v1.FlashcardGetRequest) returns (flashcards.v1.Flashcard) {
+    option (google.api.http) = {get: "/v1/orgs/{org_id}/flashcards/{id}"};
     option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
-      tags : "flashcard"
-      tags : "get"
-      description : "Get a flashcard by its id."
-      summary : "Get a flashcard by its id."
-      external_docs : {
-        url : "https://docs.pegwings.com/v1/flashcard/get-flashcard"
-        description : "Find out more about Flashcards API."
+      tags: "flashcard"
+      tags: "get"
+      description: "Get a flashcard by its id."
+      summary: "Get a flashcard by its id."
+      external_docs: {
+        url: "https://docs.pegwings.com/v1/flashcard/get-flashcard"
+        description: "Find out more about Flashcards API."
       }
     };
   }
 
   // OrgFlashcardDecksList lists all flashcard decks.
-  rpc OrgFlashcardDecksList(flashcards.v1.FlashcardDecksListRequest)
-      returns (flashcards.v1.FlashcardDecksListResponse) {
-    option (google.api.http) = {
-      get : "/v1/orgs/{org_id}/flashcard-decks"
-    };
+  rpc OrgFlashcardDecksList(flashcards.v1.FlashcardDecksListRequest) returns (flashcards.v1.FlashcardDecksListResponse) {
+    option (google.api.http) = {get: "/v1/orgs/{org_id}/flashcard-decks"};
     option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
-      summary : "List all flashcard decks"
-      description : "Lists all flashcard decks."
-      tags : "Organization"
-      external_docs : {
-        url : "https://docs.pegwings.com/v1/flashcard/list-flashcard-decks"
-        description : "See more about the flashcards API."
+      summary: "List all flashcard decks"
+      description: "Lists all flashcard decks."
+      tags: "Organization"
+      external_docs: {
+        url: "https://docs.pegwings.com/v1/flashcard/list-flashcard-decks"
+        description: "See more about the flashcards API."
       }
     };
   }
 
   // OrgFlashcardDeckDelete deletes a flashcard deck.
-  rpc OrgFlashcardDeckDelete(
-      flashcards.v1.OrganizationFlashcardDeckDeleteRequest)
-      returns (flashcards.v1.FlashcardDeck) {
-    option (google.api.http) = {
-      delete : "/v1/orgs/{org_id}/flashcard-decks/{id}"
-    };
+  rpc OrgFlashcardDeckDelete(flashcards.v1.OrganizationFlashcardDeckDeleteRequest) returns (flashcards.v1.FlashcardDeck) {
+    option (google.api.http) = {delete: "/v1/orgs/{org_id}/flashcard-decks/{id}"};
     option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
-      tags : "flashcard"
-      tags : "delete"
-      description : "Delete a flashcard deck."
-      summary : "Delete a flashcard deck."
-      external_docs : {
-        url : "https://docs.pegwings.com/v1/flashcard/delete-flashcard-deck"
-        description : "Find out more about Flashcards API."
+      tags: "flashcard"
+      tags: "delete"
+      description: "Delete a flashcard deck."
+      summary: "Delete a flashcard deck."
+      external_docs: {
+        url: "https://docs.pegwings.com/v1/flashcard/delete-flashcard-deck"
+        description: "Find out more about Flashcards API."
       }
     };
   }
 
   // OrgFlashcardDelete deletes a flashcard.
-  rpc OrgFlashcardDelete(flashcards.v1.OrganizationFlashcardDeleteRequest)
-      returns (flashcards.v1.Flashcard) {
-    option (google.api.http) = {
-      delete : "/v1/orgs/{org_id}/flashcards/{id}"
-    };
+  rpc OrgFlashcardDelete(flashcards.v1.OrganizationFlashcardDeleteRequest) returns (flashcards.v1.Flashcard) {
+    option (google.api.http) = {delete: "/v1/orgs/{org_id}/flashcards/{id}"};
     option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
-      tags : "flashcard"
-      tags : "delete"
-      description : "Delete a flashcard."
-      summary : "Delete a flashcard."
-      external_docs : {
-        url : "https://docs.pegwings.com/v1/flashcard/delete-flashcard"
-        description : "Find out more about Flashcards API."
+      tags: "flashcard"
+      tags: "delete"
+      description: "Delete a flashcard."
+      summary: "Delete a flashcard."
+      external_docs: {
+        url: "https://docs.pegwings.com/v1/flashcard/delete-flashcard"
+        description: "Find out more about Flashcards API."
       }
     };
   }
@@ -648,30 +627,27 @@ service APIService {
   // # ADMIN
 
   // OrganizationAdminAPIKeysList lists all admin API keys.
-  rpc OrganizationAdminAPIKeysList(admin.v1.AdminAPIKeysListRequest)
-      returns (admin.v1.AdminAPIKeysListResponse) {
-    option (google.api.http) = {
-      get : "/v1/orgs/{org_id}/admin/api-keys"
-    };
+  rpc OrganizationAdminAPIKeysList(admin.v1.AdminAPIKeysListRequest) returns (admin.v1.AdminAPIKeysListResponse) {
+    option (google.api.http) = {get: "/v1/orgs/{org_id}/admin/api-keys"};
     option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
-      operation_id : 'list_organization_admin_api_keys'
-      produces : "application/json"
-      tags : "admin"
-      tags : "api"
-      tags : "key"
-      tags : "list"
-      tags : "org"
-      description : "List all admin API keys."
-      summary : "List all admin API keys."
-      external_docs : {
-        url : "https://docs.pegwings.com/v1/admin/list-admin-api-keys"
-        description : "List all admin API keys."
+      operation_id: 'list_organization_admin_api_keys'
+      produces: "application/json"
+      tags: "admin"
+      tags: "api"
+      tags: "key"
+      tags: "list"
+      tags: "org"
+      description: "List all admin API keys."
+      summary: "List all admin API keys."
+      external_docs: {
+        url: "https://docs.pegwings.com/v1/admin/list-admin-api-keys"
+        description: "List all admin API keys."
       }
-      responses : {
-        key : "200"
-        value : {
-          description : "List of admin API Keys"
-          schema : {}
+      responses: {
+        key: "200"
+        value: {
+          description: "List of admin API Keys"
+          schema: {}
         }
       }
     };
@@ -679,462 +655,413 @@ service APIService {
 
   // OrganizationAdminAPIKey is the method for creating an admin API key
   // within an organization.
-  rpc OrganizationAdminAPIKeyCreate(
-      admin.v1.OrganizationAdminAPIKeyCreateRequest)
-      returns (admin.v1.CreateAdminAPIKeyResponse) {
+  rpc OrganizationAdminAPIKeyCreate(admin.v1.OrganizationAdminAPIKeyCreateRequest) returns (admin.v1.CreateAdminAPIKeyResponse) {
     option (google.api.http) = {
-      post : "/v1/orgs/{org_id}/keys"
-      body : "*"
+      post: "/v1/orgs/{org_id}/keys"
+      body: "*"
     };
     option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
-      operation_id : "create_organization_admin_api_key"
-      produces : "application/json"
-      tags : "admin"
-      tags : "create"
-      tags : "key"
-      tags : "org"
-      description : "CreateAdminAPIKey is the method for creating an "
-                    "organization scope admin API key."
-      summary : "CreateAdminAPIKey is the method for creating an admin "
-                "API key."
-      external_docs : {
-        url : "https://docs.pegwings.com/v1/admin/create-admin-api-key"
-        description : "CreateAdminAPIKey is the method for creating an "
-                      "admin API key."
+      operation_id: "create_organization_admin_api_key"
+      produces: "application/json"
+      tags: "admin"
+      tags: "create"
+      tags: "key"
+      tags: "org"
+      description:
+        "CreateAdminAPIKey is the method for creating an "
+        "organization scope admin API key."
+      summary:
+        "CreateAdminAPIKey is the method for creating an admin "
+        "API key."
+      external_docs: {
+        url: "https://docs.pegwings.com/v1/admin/create-admin-api-key"
+        description:
+          "CreateAdminAPIKey is the method for creating an "
+          "admin API key."
       }
-      responses : {
-        key : "200"
-        value : {description : "A successful response."}
+      responses: {
+        key: "200"
+        value: {description: "A successful response."}
       }
     };
   }
 
   // AdminAPIKeyGet returns the admin API key that was created.
-  rpc AdminAPIKeyGet(admin.v1.AdminAPIKeyGetRequest)
-      returns (admin.v1.AdminAPIKeyGetResponse) {
-    option (google.api.http) = {
-      get : "/v1/organization/admin_api_keys/{key_id}"
-    };
+  rpc AdminAPIKeyGet(admin.v1.AdminAPIKeyGetRequest) returns (admin.v1.AdminAPIKeyGetResponse) {
+    option (google.api.http) = {get: "/v1/organization/admin_api_keys/{key_id}"};
     option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
-      operation_id : "get_organization_admin_api_key"
-      produces : "application/json"
-      tags : "admin"
-      tags : "get"
-      tags : "key"
-      tags : "org"
-      description : "Get the admin API key."
-      summary : "Get the admin API key."
-      responses : {
-        key : "200"
-        value : {description : "A successful response."}
+      operation_id: "get_organization_admin_api_key"
+      produces: "application/json"
+      tags: "admin"
+      tags: "get"
+      tags: "key"
+      tags: "org"
+      description: "Get the admin API key."
+      summary: "Get the admin API key."
+      responses: {
+        key: "200"
+        value: {description: "A successful response."}
       }
     };
   }
 
   // AdminAPIKeyDelete deletes the admin API key.
-  rpc OrganizationAdminAPIKeyDelete(admin.v1.AdminAPIKeyDeleteRequest)
-      returns (admin.v1.AdminAPIKeyDeleteResponse) {
-    option (google.api.http) = {
-      delete : "/v1/orgs/{org_id}/admin_api_keys/{key_id}"
-    };
+  rpc OrganizationAdminAPIKeyDelete(admin.v1.AdminAPIKeyDeleteRequest) returns (admin.v1.AdminAPIKeyDeleteResponse) {
+    option (google.api.http) = {delete: "/v1/orgs/{org_id}/admin_api_keys/{key_id}"};
     option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
-      operation_id : "delete_organization_admin_api_key"
-      produces : "application/json"
-      tags : "admin"
-      tags : "delete"
-      tags : "org"
-      tags : "key"
-      description : "Delete the admin API key."
-      summary : "Delete the admin API key."
+      operation_id: "delete_organization_admin_api_key"
+      produces: "application/json"
+      tags: "admin"
+      tags: "delete"
+      tags: "org"
+      tags: "key"
+      description: "Delete the admin API key."
+      summary: "Delete the admin API key."
     };
   }
 
   // OrganizationUserGet is the method for getting an organization user.
-  rpc OrganizationUserGet(admin.v1.OrganizationUserGetRequest)
-      returns (admin.v1.User) {
-    option (google.api.http) = {
-      get : "/v1/orgs/{org_id}/users/{user_id}"
-    };
+  rpc OrganizationUserGet(admin.v1.OrganizationUserGetRequest) returns (admin.v1.User) {
+    option (google.api.http) = {get: "/v1/orgs/{org_id}/users/{user_id}"};
     option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
-      operation_id : "get_organization_user"
-      description : "Get an organization user by its id."
-      summary : "Get an organization user by its id."
-      produces : "application/json"
-      tags : "admin"
-      tags : "get"
-      tags : "org"
-      tags : "user"
-      responses : {
-        key : "200"
-        value : {description : "A successful response."}
+      operation_id: "get_organization_user"
+      description: "Get an organization user by its id."
+      summary: "Get an organization user by its id."
+      produces: "application/json"
+      tags: "admin"
+      tags: "get"
+      tags: "org"
+      tags: "user"
+      responses: {
+        key: "200"
+        value: {description: "A successful response."}
       }
     };
   }
 
   // OrganizationUserDelete is the method for deleting an organization user.
-  rpc OrganizationUserDelete(admin.v1.OrganizationUserDeleteRequest)
-      returns (admin.v1.OrganizationUserDeleteResponse) {
-    option (google.api.http) = {
-      delete : "/v1/orgs/{org_id}/users/{user_id}"
-    };
+  rpc OrganizationUserDelete(admin.v1.OrganizationUserDeleteRequest) returns (admin.v1.OrganizationUserDeleteResponse) {
+    option (google.api.http) = {delete: "/v1/orgs/{org_id}/users/{user_id}"};
     option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
-      operation_id : "delete_organization_user"
-      description : "Delete an organization user."
-      summary : "Delete an organization user."
-      produces : "application/json"
-      tags : "admin"
-      tags : "delete"
-      tags : "org"
-      tags : "user"
-      responses : {
-        key : "200"
-        value : {description : "A successful response."}
+      operation_id: "delete_organization_user"
+      description: "Delete an organization user."
+      summary: "Delete an organization user."
+      produces: "application/json"
+      tags: "admin"
+      tags: "delete"
+      tags: "org"
+      tags: "user"
+      responses: {
+        key: "200"
+        value: {description: "A successful response."}
       }
     };
   }
 
   // OrganizationUserUpdate is the method for updating an organization user.
-  rpc OrganizationUserUpdate(admin.v1.OrganizationUserUpdateRequest)
-      returns (admin.v1.User) {
+  rpc OrganizationUserUpdate(admin.v1.OrganizationUserUpdateRequest) returns (admin.v1.User) {
     option (google.api.http) = {
-      put : "/v1/orgs/{org_id}/users"
-      body : "*"
+      put: "/v1/orgs/{org_id}/users"
+      body: "*"
     };
     option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
-      operation_id : "update_organization_user"
-      description : "Update an organization user."
-      summary : "Update an organization user."
-      produces : "application/json"
-      tags : "admin"
-      tags : "update"
-      tags : "org"
-      tags : "user"
-      responses : {
-        key : "200"
-        value : {description : "A successful response."}
+      operation_id: "update_organization_user"
+      description: "Update an organization user."
+      summary: "Update an organization user."
+      produces: "application/json"
+      tags: "admin"
+      tags: "update"
+      tags: "org"
+      tags: "user"
+      responses: {
+        key: "200"
+        value: {description: "A successful response."}
       }
     };
   }
 
   // ProjectInvitesList lists the project invites for a user.
-  rpc ProjectInvitesList(admin.v1.ProjectInvitesListRequest)
-      returns (admin.v1.ProjectInvitesListResponse) {
-    option (google.api.http) = {
-      get : "/v1/organization/project_invites"
-    };
+  rpc ProjectInvitesList(admin.v1.ProjectInvitesListRequest) returns (admin.v1.ProjectInvitesListResponse) {
+    option (google.api.http) = {get: "/v1/organization/project_invites"};
     option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
-      operation_id : "list_organization_project_invites"
-      description : "List project invites."
-      summary : "List project invites."
-      produces : "application/json"
-      tags : "admin"
-      tags : "list"
-      tags : "project"
-      responses : {
-        key : "200"
-        value : {description : "A successful response."}
+      operation_id: "list_organization_project_invites"
+      description: "List project invites."
+      summary: "List project invites."
+      produces: "application/json"
+      tags: "admin"
+      tags: "list"
+      tags: "project"
+      responses: {
+        key: "200"
+        value: {description: "A successful response."}
       }
     };
   }
 
   // OrganizationProjectInviteGet gets a organization project invite by its
   // id.
-  rpc OrganizationProjectInvitesGet(
-      admin.v1.OrganizationProjectInviteGetRequest)
-      returns (admin.v1.OrganizationProjectInviteGetResponse) {
-    option (google.api.http) = {
-      get : "/v1/orgs/{org_id}/project_invites/{id}"
-    };
+  rpc OrganizationProjectInvitesGet(admin.v1.OrganizationProjectInviteGetRequest) returns (admin.v1.OrganizationProjectInviteGetResponse) {
+    option (google.api.http) = {get: "/v1/orgs/{org_id}/project_invites/{id}"};
     option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
-      operation_id : "get_organization_project_invite"
-      description : "Get a project invite by its id."
-      summary : "Get a project invite by its id."
-      produces : "application/json"
-      tags : "admin"
-      tags : "get"
-      tags : "project"
-      responses : {
-        key : "200"
-        value : {description : "A successful response."}
+      operation_id: "get_organization_project_invite"
+      description: "Get a project invite by its id."
+      summary: "Get a project invite by its id."
+      produces: "application/json"
+      tags: "admin"
+      tags: "get"
+      tags: "project"
+      responses: {
+        key: "200"
+        value: {description: "A successful response."}
       }
     };
   }
 
   // OrganizationProjectInviteDelelte deletes a organization project invite
   // with a known id.
-  rpc OrganizationProjectInviteDelete(
-      admin.v1.OrganizationProjectInviteDeleteRequest)
-      returns (admin.v1.OrganizationProjectInviteDeleteResponse) {
-    option (google.api.http) = {
-      delete : "/v1/orgs/{org_id}/project_invites/{invite_id}"
-    };
+  rpc OrganizationProjectInviteDelete(admin.v1.OrganizationProjectInviteDeleteRequest) returns (admin.v1.OrganizationProjectInviteDeleteResponse) {
+    option (google.api.http) = {delete: "/v1/orgs/{org_id}/project_invites/{invite_id}"};
     option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
-      operation_id : "delete_organization_project_invite"
-      description : "Delete a project invite."
-      summary : "Delete a project invite."
-      produces : "application/json"
-      tags : "admin"
-      tags : "delete"
-      tags : "project"
-      responses : {
-        key : "200"
-        value : {description : "A successful response."}
+      operation_id: "delete_organization_project_invite"
+      description: "Delete a project invite."
+      summary: "Delete a project invite."
+      produces: "application/json"
+      tags: "admin"
+      tags: "delete"
+      tags: "project"
+      responses: {
+        key: "200"
+        value: {description: "A successful response."}
       }
     };
   }
 
   // OrganizationProjectUsersList lists all users in a given organization's
   // project.
-  rpc OrganizationProjectUsersList(admin.v1.ProjectUsersListRequest)
-      returns (admin.v1.ProjectUsersListResponse) {
+  rpc OrganizationProjectUsersList(admin.v1.ProjectUsersListRequest) returns (admin.v1.ProjectUsersListResponse) {
     option (google.api.http) = {
-      post : "/v1/orgs/{org_id}/projs/{project_id}/users"
-      body : "*"
+      post: "/v1/orgs/{org_id}/projs/{project_id}/users"
+      body: "*"
     };
     option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
-      operation_id : "list_organization_project_users"
-      produces : "application/json"
-      tags : "admin"
-      tags : "list"
-      tags : "user"
-      tags : "project"
-      responses : {
-        key : "200"
-        value : {description : "A successful response."}
+      operation_id: "list_organization_project_users"
+      produces: "application/json"
+      tags: "admin"
+      tags: "list"
+      tags: "user"
+      tags: "project"
+      responses: {
+        key: "200"
+        value: {description: "A successful response."}
       }
     };
   }
 
   // OrganizationProjectUserGet returns a user of an organization project.
-  rpc OrganizationProjectUserGet(admin.v1.ProjectUserGetRequest)
-      returns (admin.v1.ProjectUserGetResponse) {
-    option (google.api.http) = {
-      get : "/v1/orgs/{org_id}/projs/{project_id}/users/{user_id}"
-    };
+  rpc OrganizationProjectUserGet(admin.v1.ProjectUserGetRequest) returns (admin.v1.ProjectUserGetResponse) {
+    option (google.api.http) = {get: "/v1/orgs/{org_id}/projs/{project_id}/users/{user_id}"};
     option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
-      operation_id : "get_organization_project_user"
-      produces : "application/json"
-      tags : "admin"
-      tags : "org"
-      tags : "project"
-      tags : "user"
-      responses : {
-        key : "200"
-        value : {description : "A successful response."}
+      operation_id: "get_organization_project_user"
+      produces: "application/json"
+      tags: "admin"
+      tags: "org"
+      tags: "project"
+      tags: "user"
+      responses: {
+        key: "200"
+        value: {description: "A successful response."}
       }
     };
   }
 
   // OrgProjectUserDelete deletes a user from a project.
-  rpc OrgProjectUserDelete(admin.v1.OrgProjectUserDeleteRequest)
-      returns (admin.v1.OrgProjectUserDeleteResponse) {
-    option (google.api.http) = {
-      delete : "/v1/orgs/{org_id}/projs/{project_id}/users/{user_id}"
-    };
+  rpc OrgProjectUserDelete(admin.v1.OrgProjectUserDeleteRequest) returns (admin.v1.OrgProjectUserDeleteResponse) {
+    option (google.api.http) = {delete: "/v1/orgs/{org_id}/projs/{project_id}/users/{user_id}"};
     option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
-      operation_id : "delete_organization_project_user"
-      produces : "application/json"
-      tags : "admin"
-      tags : "delete"
-      tags : "org"
-      tags : "project"
-      tags : "user"
-      responses : {
-        key : "200"
-        value : {description : "A successful response."}
+      operation_id: "delete_organization_project_user"
+      produces: "application/json"
+      tags: "admin"
+      tags: "delete"
+      tags: "org"
+      tags: "project"
+      tags: "user"
+      responses: {
+        key: "200"
+        value: {description: "A successful response."}
       }
     };
   }
 
   // OrgProjectUserUpdate updates a user in a project.
-  rpc OrgProjectUserUpdate(admin.v1.OrganizationProjectUserUpdateRequest)
-      returns (admin.v1.User) {
+  rpc OrgProjectUserUpdate(admin.v1.OrganizationProjectUserUpdateRequest) returns (admin.v1.User) {
     option (google.api.http) = {
-      put : "/v1/orgs/{org_id}/projs/{project_id}/users"
-      body : "*"
+      put: "/v1/orgs/{org_id}/projs/{project_id}/users"
+      body: "*"
     };
     option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
-      operation_id : "update_organization_project_user"
-      produces : "application/json"
-      tags : "admin"
-      tags : "org"
-      tags : "project"
-      tags : "update"
-      tags : "user"
-      responses : {
-        key : "200"
-        value : {description : "A successful response."}
+      operation_id: "update_organization_project_user"
+      produces: "application/json"
+      tags: "admin"
+      tags: "org"
+      tags: "project"
+      tags: "update"
+      tags: "user"
+      responses: {
+        key: "200"
+        value: {description: "A successful response."}
       }
     };
   }
 
   // OrgProjectsList lists all projects in an organization.
-  rpc OrgProjectsList(admin.v1.OrganizationProjectsListRequest)
-      returns (admin.v1.OrganizationProjectsListResponse) {
-    option (google.api.http) = {
-      get : "/v1/orgs/{org_id}/projs"
-    };
+  rpc OrgProjectsList(admin.v1.OrganizationProjectsListRequest) returns (admin.v1.OrganizationProjectsListResponse) {
+    option (google.api.http) = {get: "/v1/orgs/{org_id}/projs"};
     option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
-      operation_id : "list_organization_projects"
-      tags : "admin"
-      tags : "list"
-      tags : "org"
-      tags : "project"
-      produces : "application/json"
-      responses : {
-        key : "200"
-        value : {description : "A successful response."}
+      operation_id: "list_organization_projects"
+      tags: "admin"
+      tags: "list"
+      tags: "org"
+      tags: "project"
+      produces: "application/json"
+      responses: {
+        key: "200"
+        value: {description: "A successful response."}
       }
     };
   }
 
   // OrgProjectCreate creates a project.
-  rpc OrgProjectCreate(admin.v1.OrganizationProjectCreateRequest)
-      returns (admin.v1.OrganizationProject) {
+  rpc OrgProjectCreate(admin.v1.OrganizationProjectCreateRequest) returns (admin.v1.OrganizationProject) {
     option (google.api.http) = {
-      post : "/v1/orgs/{org_id}/projs"
-      body : "*"
+      post: "/v1/orgs/{org_id}/projs"
+      body: "*"
     };
     option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
-      operation_id : "create_organization_project"
-      produces : "application/json"
-      tags : "admin"
-      tags : "create"
-      tags : "org"
-      tags : "project"
-      responses : {
-        key : "200"
-        value : {description : "A successful response."}
+      operation_id: "create_organization_project"
+      produces: "application/json"
+      tags: "admin"
+      tags: "create"
+      tags: "org"
+      tags: "project"
+      responses: {
+        key: "200"
+        value: {description: "A successful response."}
       }
     };
   }
 
   // OrgProjectGet gets a project by its id.
-  rpc OrgProjectGet(admin.v1.OrganizationProjectGetRequest)
-      returns (admin.v1.OrganizationProject) {
-    option (google.api.http) = {
-      get : "/v1/orgs/{org_id}/projs/{project_id}"
-    };
+  rpc OrgProjectGet(admin.v1.OrganizationProjectGetRequest) returns (admin.v1.OrganizationProject) {
+    option (google.api.http) = {get: "/v1/orgs/{org_id}/projs/{project_id}"};
     option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
-      operation_id : "get_organization_project"
-      tags : "admin"
-      tags : "project"
-      tags : "get"
-      tags : "org"
-      produces : "application/json"
-      responses : {
-        key : "200"
-        value : {description : "A successful response."}
+      operation_id: "get_organization_project"
+      tags: "admin"
+      tags: "project"
+      tags: "get"
+      tags: "org"
+      produces: "application/json"
+      responses: {
+        key: "200"
+        value: {description: "A successful response."}
       }
     };
   }
 
   // OrgProjectArchive archives a project.
-  rpc OrgProjectArchive(admin.v1.OrganizationProjectArchiveRequest)
-      returns (admin.v1.OrganizationProject) {
+  rpc OrgProjectArchive(admin.v1.OrganizationProjectArchiveRequest) returns (admin.v1.OrganizationProject) {
     option (google.api.http) = {
-      post : "/v1/orgs/{org_id}/projs/{project_id}/archive"
-      body : "*"
+      post: "/v1/orgs/{org_id}/projs/{project_id}/archive"
+      body: "*"
     };
     option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
-      operation_id : "archive_organization_project"
-      produces : "application/json"
-      tags : "project"
-      tags : "archive"
-      tags : "org"
-      responses : {
-        key : "200"
-        value : {description : "A successful response."}
+      operation_id: "archive_organization_project"
+      produces: "application/json"
+      tags: "project"
+      tags: "archive"
+      tags: "org"
+      responses: {
+        key: "200"
+        value: {description: "A successful response."}
       }
     };
   }
 
   // OrgProjectAPIKeysList lists all API keys for a project.
-  rpc OrgProjectAPIKeysList(admin.v1.OrganizationProjectAPIKeysListRequest)
-      returns (admin.v1.OrganizationProjectAPIKeysListResponse) {
-    option (google.api.http) = {
-      get : "/v1/orgs/{org_id}/projs/{project_id}/api_keys"
-    };
+  rpc OrgProjectAPIKeysList(admin.v1.OrganizationProjectAPIKeysListRequest) returns (admin.v1.OrganizationProjectAPIKeysListResponse) {
+    option (google.api.http) = {get: "/v1/orgs/{org_id}/projs/{project_id}/api_keys"};
     option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
-      operation_id : "list_organization_project_api_keys"
-      produces : "application/json"
-      tags : "admin"
-      tags : "key"
-      tags : "list"
-      tags : "org"
-      tags : "project"
-      responses : {
-        key : "200"
-        value : {description : "A successful response."}
+      operation_id: "list_organization_project_api_keys"
+      produces: "application/json"
+      tags: "admin"
+      tags: "key"
+      tags: "list"
+      tags: "org"
+      tags: "project"
+      responses: {
+        key: "200"
+        value: {description: "A successful response."}
       }
     };
   }
 
   // OrgProjectAPIKeyCreate creates an API key for a project.
-  rpc OrgProjectAPIKeyCreate(admin.v1.ProjectAPIKeyCreateRequest)
-      returns (admin.v1.ProjectAPIKey) {
+  rpc OrgProjectAPIKeyCreate(admin.v1.ProjectAPIKeyCreateRequest) returns (admin.v1.ProjectAPIKey) {
     option (google.api.http) = {
-      post : "/v1/orgs/{org_id}/projs/{project_id}/api_keys"
-      body : "*"
+      post: "/v1/orgs/{org_id}/projs/{project_id}/api_keys"
+      body: "*"
     };
     option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
-      operation_id : "create_organization_project_api_key"
-      produces : "application/json"
-      tags : "admin"
-      tags : "create"
-      tags : "key"
-      tags : "org"
-      tags : "project"
-      responses : {
-        key : "200"
-        value : {description : "A successful response."}
+      operation_id: "create_organization_project_api_key"
+      produces: "application/json"
+      tags: "admin"
+      tags: "create"
+      tags: "key"
+      tags: "org"
+      tags: "project"
+      responses: {
+        key: "200"
+        value: {description: "A successful response."}
       }
     };
   }
 
   // OrgProjectAPIKeyGet returns the API key for a project.
-  rpc OrgProjectAPIKeyGet(admin.v1.OrganizationProjectAPIKeyGetRequest)
-      returns (admin.v1.ProjectAPIKey) {
-    option (google.api.http) = {
-      get : "/v1/orgs/{org_id}/projs/{project_id}/api_keys/{key_id}"
-    };
+  rpc OrgProjectAPIKeyGet(admin.v1.OrganizationProjectAPIKeyGetRequest) returns (admin.v1.ProjectAPIKey) {
+    option (google.api.http) = {get: "/v1/orgs/{org_id}/projs/{project_id}/api_keys/{key_id}"};
     option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
-      operation_id : "get_organization_project_api_key"
-      produces : "application/json"
-      tags : "admin"
-      tags : "get"
-      tags : "key"
-      tags : "org"
-      tags : "project"
-      responses : {
-        key : "200"
-        value : {description : "A successful response."}
+      operation_id: "get_organization_project_api_key"
+      produces: "application/json"
+      tags: "admin"
+      tags: "get"
+      tags: "key"
+      tags: "org"
+      tags: "project"
+      responses: {
+        key: "200"
+        value: {description: "A successful response."}
       }
     };
   }
 
   // OrgProjectAPIKEYDelete deletes a project API key.
-  rpc OrgProjectAPIKeyDelete(admin.v1.OrganizationProjectAPIKeyDeleteRequest)
-      returns (admin.v1.OrganizationProjectAPIKeyDeleteResponse) {
-    option (google.api.http) = {
-      delete : "/v1/orgs/{org_id}/projs/{project_id}/keys/{key_id}"
-    };
+  rpc OrgProjectAPIKeyDelete(admin.v1.OrganizationProjectAPIKeyDeleteRequest) returns (admin.v1.OrganizationProjectAPIKeyDeleteResponse) {
+    option (google.api.http) = {delete: "/v1/orgs/{org_id}/projs/{project_id}/keys/{key_id}"};
     option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
-      operation_id : "delete_organization_project_api_key"
-      produces : "application/json"
-      tags : "admin"
-      tags : "delete"
-      tags : "key"
-      tags : "org"
-      tags : "project"
-      description : "Deletes a organization project API key."
-      external_docs : {
-        url : "https://docs.pegwings.com/api/v1/admin/delete_project_api_key"
-        description : "Deletes a project API key."
+      operation_id: "delete_organization_project_api_key"
+      produces: "application/json"
+      tags: "admin"
+      tags: "delete"
+      tags: "key"
+      tags: "org"
+      tags: "project"
+      description: "Deletes a organization project API key."
+      external_docs: {
+        url: "https://docs.pegwings.com/api/v1/admin/delete_project_api_key"
+        description: "Deletes a project API key."
       }
-      responses : {
-        key : "200"
-        value : {description : "OK"}
+      responses: {
+        key: "200"
+        value: {description: "OK"}
       }
     };
   }
@@ -1142,140 +1069,134 @@ service APIService {
   // # USAGE
 
   // ChatUsageList returns the chat usage for the organization.
-  rpc ChatUsageList(usage.v1.ChatUsageGetRequest)
-      returns (usage.v1.ChatUsageGetResponse) {
+  rpc ChatUsageList(usage.v1.ChatUsageGetRequest) returns (usage.v1.ChatUsageGetResponse) {
     option (google.api.http) = {
-      post : "/v1/orgs/usage/chat"
-      body : "*"
+      post: "/v1/orgs/usage/chat"
+      body: "*"
     };
     option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
-      operation_id : "get_organization_chat_usage"
-      tags : "admin"
-      tags : "chat"
-      tags : "usage"
-      tags : "org"
-      description : "Get the chat usage for an organization."
-      summary : "Get the chat usage for an organization."
-      external_docs : {
-        url : "https://cloud.google.com/apigee/docs/api-platform/reference/"
-              "rest/v1/organizations.usage.chat/get"
-        description : "Get the chat usage for an organization."
+      operation_id: "get_organization_chat_usage"
+      tags: "admin"
+      tags: "chat"
+      tags: "usage"
+      tags: "org"
+      description: "Get the chat usage for an organization."
+      summary: "Get the chat usage for an organization."
+      external_docs: {
+        url:
+          "https://cloud.google.com/apigee/docs/api-platform/reference/"
+          "rest/v1/organizations.usage.chat/get"
+        description: "Get the chat usage for an organization."
       }
-      responses : {
-        key : "200"
-        value : {description : "OK"}
+      responses: {
+        key: "200"
+        value: {description: "OK"}
       }
     };
   }
 
   // EmbeddingsUsageList returns a list of client usage for the embeddings API.
-  rpc EmbeddingsUsageList(usage.v1.EmbeddingsUsageListRequest)
-      returns (usage.v1.EmbeddingsUsageListResponse) {
+  rpc EmbeddingsUsageList(usage.v1.EmbeddingsUsageListRequest) returns (usage.v1.EmbeddingsUsageListResponse) {
     option (google.api.http) = {
-      post : "/v1/orgs/usage/embeddings"
-      body : "*"
+      post: "/v1/orgs/usage/embeddings"
+      body: "*"
     };
     option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
-      operation_id : "EmbeddingsUsageList"
-      summary : "List Embeddings Usage"
-      description : "List Embeddings Usage"
-      tags : "usage"
-      tags : "embeddings"
-      tags : "admin"
-      tags : "org"
+      operation_id: "EmbeddingsUsageList"
+      summary: "List Embeddings Usage"
+      description: "List Embeddings Usage"
+      tags: "usage"
+      tags: "embeddings"
+      tags: "admin"
+      tags: "org"
     };
   }
 
   // TranscriptionsUsageList returns a list of client usage for the
   // transcriptions API.
-  rpc TranscriptionsUsageList(usage.v1.TranscriptionUsageListRequest)
-      returns (usage.v1.TranscriptionUsageListResponse) {
+  rpc TranscriptionsUsageList(usage.v1.TranscriptionUsageListRequest) returns (usage.v1.TranscriptionUsageListResponse) {
     option (google.api.http) = {
-      post : "/v1/orgs/usage/transcriptions"
-      body : "*"
+      post: "/v1/orgs/usage/transcriptions"
+      body: "*"
     };
     option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
-      operation_id : "TranscriptionsUsageList"
-      summary : "List Transcriptions Usage"
-      description : "List Transcriptions Usage"
-      tags : "usage"
-      tags : "transcriptions"
-      tags : "admin"
-      tags : "org"
+      operation_id: "TranscriptionsUsageList"
+      summary: "List Transcriptions Usage"
+      description: "List Transcriptions Usage"
+      tags: "usage"
+      tags: "transcriptions"
+      tags: "admin"
+      tags: "org"
     };
   }
 
   // TranslationsUsageList returns a list of client usage for the translations
   // API.
-  rpc TranslationsUsageList(usage.v1.TranslationUsageListRequest)
-      returns (usage.v1.TranslationUsageListResponse) {
+  rpc TranslationsUsageList(usage.v1.TranslationUsageListRequest) returns (usage.v1.TranslationUsageListResponse) {
     option (google.api.http) = {
-      post : "/v1/orgs/usage/translations"
-      body : "*"
+      post: "/v1/orgs/usage/translations"
+      body: "*"
     };
     option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
-      operation_id : "TranslationsUsageList"
-      summary : "List Translations Usage"
-      description : "List Translations Usage"
-      tags : "usage"
-      tags : "translations"
-      tags : "admin"
-      tags : "org"
+      operation_id: "TranslationsUsageList"
+      summary: "List Translations Usage"
+      description: "List Translations Usage"
+      tags: "usage"
+      tags: "translations"
+      tags: "admin"
+      tags: "org"
     };
   }
 
   // SpeechUsageList returns a list of client usage for the speech API.
-  rpc SpeechUsageList(usage.v1.SpeechUsageListRequest)
-      returns (usage.v1.SpeechUsageListResponse) {
+  rpc SpeechUsageList(usage.v1.SpeechUsageListRequest) returns (usage.v1.SpeechUsageListResponse) {
     option (google.api.http) = {
-      post : "/v1/orgs/usage/speech"
-      body : "*"
+      post: "/v1/orgs/usage/speech"
+      body: "*"
     };
     option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
-      operation_id : "SpeechUsageList"
-      summary : "List Speech Usage"
-      description : "List Speech Usage"
-      tags : "usage"
-      tags : "speech"
-      tags : "admin"
-      tags : "org"
+      operation_id: "SpeechUsageList"
+      summary: "List Speech Usage"
+      description: "List Speech Usage"
+      tags: "usage"
+      tags: "speech"
+      tags: "admin"
+      tags: "org"
     };
   }
 
   // OrgImageUsageList returns a list of client usages for the image API.
-  rpc OrgImageUsageList(usage.v1.OrgImageUsageListRequest)
-      returns (usage.v1.OrgImageUsageListResponse) {
+  rpc OrgImageUsageList(usage.v1.OrgImageUsageListRequest) returns (usage.v1.OrgImageUsageListResponse) {
     option (google.api.http) = {
-      post : "/v1/orgs/{org_id}/usage/images"
-      body : "*"
+      post: "/v1/orgs/{org_id}/usage/images"
+      body: "*"
     };
     option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
-      operation_id : "ImageUsageList"
-      summary : "List Image Usage"
-      description : "List Image Usage"
-      tags : "usage"
-      tags : "image"
-      tags : "admin"
-      tags : "org"
+      operation_id: "ImageUsageList"
+      summary: "List Image Usage"
+      description: "List Image Usage"
+      tags: "usage"
+      tags: "image"
+      tags: "admin"
+      tags: "org"
     };
   }
 
   // VideoUsageList returns a list of organization client usages for the video
   // API.
-  rpc VideoUsageList(usage.v1.VideoUsageListRequest)
-      returns (usage.v1.OrgVideoUsageListResponse) {
+  rpc VideoUsageList(usage.v1.VideoUsageListRequest) returns (usage.v1.OrgVideoUsageListResponse) {
     option (google.api.http) = {
-      post : "/v1/orgs/{org_id}/usage/video"
-      body : "*"
+      post: "/v1/orgs/{org_id}/usage/video"
+      body: "*"
     };
     option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
-      operation_id : "VideoUsageList"
-      summary : "List Video Usage"
-      description : "List Video Usage"
-      tags : "usage"
-      tags : "video"
-      tags : "admin"
-      tags : "org"
+      operation_id: "VideoUsageList"
+      summary: "List Video Usage"
+      description: "List Video Usage"
+      tags: "usage"
+      tags: "video"
+      tags: "admin"
+      tags: "org"
     };
   }
 

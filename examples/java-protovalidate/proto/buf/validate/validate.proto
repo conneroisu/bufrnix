@@ -18,8 +18,8 @@ package buf.validate;
 
 import "google/protobuf/descriptor.proto";
 
-option java_package = "build.buf.validate";
 option java_multiple_files = true;
+option java_package = "build.buf.validate";
 
 // Validation constraints that can be applied to messages and fields
 extend google.protobuf.FieldOptions {
@@ -40,19 +40,19 @@ message MessageConstraints {
 message FieldConstraints {
   // CEL expression for field validation
   repeated string cel = 1;
-  
+
   // String constraints
   StringRules string = 17;
-  
-  // Numeric constraints  
+
+  // Numeric constraints
   Int32Rules int32 = 5;
   Int64Rules int64 = 6;
   FloatRules float = 11;
   DoubleRules double = 12;
-  
+
   // Boolean constraints
   BoolRules bool = 14;
-  
+
   // Repeated field constraints
   RepeatedRules repeated = 18;
 }

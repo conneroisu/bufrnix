@@ -43,8 +43,8 @@
           python3
           python3Packages.betterproto
           python3Packages.grpclib # betterproto uses grpclib instead of grpcio
-          python3Packages.black   # Required for betterproto compiler
-          python3Packages.isort   # Required for betterproto compiler
+          python3Packages.black # Required for betterproto compiler
+          python3Packages.isort # Required for betterproto compiler
           protobuf
         ];
 
@@ -58,7 +58,7 @@
           echo "Note: Betterproto generates modern Python dataclasses"
           echo "      with async support and cleaner API"
           echo ""
-          
+
           # Add the bufrnix package to PATH
           export PATH="${bufrnixConfig}/bin:$PATH"
         '';

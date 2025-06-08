@@ -12,6 +12,7 @@ This example demonstrates basic Java protobuf code generation using bufrnix with
 ## Generated Code
 
 The `protocolbuffers/java` generator creates:
+
 - Java classes for each protobuf message
 - Builder pattern for message construction
 - Serialization methods (`toByteArray()`, `writeTo()`)
@@ -21,11 +22,13 @@ The `protocolbuffers/java` generator creates:
 ## Quick Start
 
 1. **Generate the protobuf code:**
+
    ```bash
    nix run .#generate
    ```
 
 2. **Build with Gradle:**
+
    ```bash
    nix develop
    cd gen/java
@@ -43,6 +46,7 @@ The `protocolbuffers/java` generator creates:
 ## Proto Definition
 
 The example uses a `Person` message with:
+
 - Basic fields (id, name, email)
 - Nested message (PhoneNumber)
 - Enum (PhoneType)
@@ -51,6 +55,7 @@ The example uses a `Person` message with:
 ## Generated Files
 
 After running `nix run .#generate`, you'll find:
+
 - `gen/java/com/example/protos/v1/` - Generated Java classes
 - `gen/java/build.gradle` - Gradle build file
 - `gen/java/pom.xml` - Maven build file
@@ -58,6 +63,7 @@ After running `nix run .#generate`, you'll find:
 ## Java Protobuf Features
 
 This example showcases:
+
 - Type-safe message builders
 - Efficient binary serialization
 - JSON serialization support (with additional dependencies)

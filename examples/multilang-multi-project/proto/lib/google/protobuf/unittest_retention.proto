@@ -13,15 +13,15 @@ import "google/protobuf/descriptor.proto";
 
 option csharp_namespace = "ProtobufUnittest";
 option (file_option) = {
-  plain_field : 1
-  runtime_retention_field : 2
-  source_retention_field : 3
+  plain_field: 1
+  runtime_retention_field: 2
+  source_retention_field: 3
 };
 option (plain_option) = 1;
 option (repeated_options) = {
-  plain_field : 1
-  runtime_retention_field : 2
-  source_retention_field : 3
+  plain_field: 1
+  runtime_retention_field: 2
+  source_retention_field: 3
 };
 option (runtime_retention_option) = 2;
 option (source_retention_option) = 3;
@@ -29,17 +29,15 @@ option (source_retention_option) = 3;
 // Retention attributes set directly on custom options
 extend google.protobuf.FileOptions {
   optional int32 plain_option = 505092806;
-  optional int32 runtime_retention_option = 505039132
-      [ retention = RETENTION_RUNTIME ];
-  optional int32 source_retention_option = 504878676
-      [ retention = RETENTION_SOURCE ];
+  optional int32 runtime_retention_option = 505039132 [retention = RETENTION_RUNTIME];
+  optional int32 source_retention_option = 504878676 [retention = RETENTION_SOURCE];
 }
 
 // Retention attributes set on fields nested within a message
 message OptionsMessage {
   optional int32 plain_field = 1;
-  optional int32 runtime_retention_field = 2 [ retention = RETENTION_RUNTIME ];
-  optional int32 source_retention_field = 3 [ retention = RETENTION_SOURCE ];
+  optional int32 runtime_retention_field = 2 [retention = RETENTION_RUNTIME];
+  optional int32 source_retention_field = 3 [retention = RETENTION_SOURCE];
 }
 
 extend google.protobuf.FileOptions {
@@ -83,98 +81,100 @@ extend google.protobuf.MethodOptions {
   optional OptionsMessage method_option = 504349420;
 }
 
-message Extendee { extensions 1, 2; }
+message Extendee {
+  extensions 1, 2;
+}
 
 extend Extendee {
-  optional int32 i = 1 [ (field_option) = {
-    plain_field : 1
-    runtime_retention_field : 2
-    source_retention_field : 3
-  } ];
+  optional int32 i = 1 [(field_option) = {
+    plain_field: 1
+    runtime_retention_field: 2
+    source_retention_field: 3
+  }];
 }
 
 message TopLevelMessage {
   option (message_option) = {
-    plain_field : 1
-    runtime_retention_field : 2
-    source_retention_field : 3
+    plain_field: 1
+    runtime_retention_field: 2
+    source_retention_field: 3
   };
 
   message NestedMessage {
     option (message_option) = {
-      plain_field : 1
-      runtime_retention_field : 2
-      source_retention_field : 3
+      plain_field: 1
+      runtime_retention_field: 2
+      source_retention_field: 3
     };
   }
 
   enum NestedEnum {
     option (enum_option) = {
-      plain_field : 1
-      runtime_retention_field : 2
-      source_retention_field : 3
+      plain_field: 1
+      runtime_retention_field: 2
+      source_retention_field: 3
     };
 
     NESTED_UNKNOWN = 0;
   }
 
-  optional float f = 1 [ (field_option) = {
-    plain_field : 1
-    runtime_retention_field : 2
-    source_retention_field : 3
-  } ];
+  optional float f = 1 [(field_option) = {
+    plain_field: 1
+    runtime_retention_field: 2
+    source_retention_field: 3
+  }];
 
   oneof o {
     option (oneof_option) = {
-      plain_field : 1
-      runtime_retention_field : 2
-      source_retention_field : 3
+      plain_field: 1
+      runtime_retention_field: 2
+      source_retention_field: 3
     };
 
     int64 i = 2;
   }
 
-  extensions 10 to 100 [ (extension_range_option) = {
-    plain_field : 1
-    runtime_retention_field : 2
-    source_retention_field : 3
-  } ];
+  extensions 10 to 100 [(extension_range_option) = {
+    plain_field: 1
+    runtime_retention_field: 2
+    source_retention_field: 3
+  }];
 
   extend Extendee {
-    optional string s = 2 [ (field_option) = {
-      plain_field : 1
-      runtime_retention_field : 2
-      source_retention_field : 3
-    } ];
+    optional string s = 2 [(field_option) = {
+      plain_field: 1
+      runtime_retention_field: 2
+      source_retention_field: 3
+    }];
   }
 }
 
 enum TopLevelEnum {
   option (enum_option) = {
-    plain_field : 1
-    runtime_retention_field : 2
-    source_retention_field : 3
+    plain_field: 1
+    runtime_retention_field: 2
+    source_retention_field: 3
   };
 
-  TOP_LEVEL_UNKNOWN = 0 [ (enum_entry_option) = {
-    plain_field : 1
-    runtime_retention_field : 2
-    source_retention_field : 3
-  } ];
+  TOP_LEVEL_UNKNOWN = 0 [(enum_entry_option) = {
+    plain_field: 1
+    runtime_retention_field: 2
+    source_retention_field: 3
+  }];
 }
 
 service Service {
   option (service_option) = {
-    plain_field : 1
-    runtime_retention_field : 2
-    source_retention_field : 3
+    plain_field: 1
+    runtime_retention_field: 2
+    source_retention_field: 3
   };
 
   rpc DoStuff(TopLevelMessage) returns (TopLevelMessage) {
     option (method_option) = {
-      plain_field : 1
-      runtime_retention_field : 2
-      source_retention_field : 3
+      plain_field: 1
+      runtime_retention_field: 2
+      source_retention_field: 3
     };
   }
 }

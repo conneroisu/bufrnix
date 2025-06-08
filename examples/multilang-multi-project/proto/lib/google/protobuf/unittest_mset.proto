@@ -28,7 +28,7 @@ message TestMessageSetContainer {
 message NestedTestMessageSetContainer {
   optional TestMessageSetContainer container = 1;
   optional NestedTestMessageSetContainer child = 2;
-  optional NestedTestMessageSetContainer lazy_child = 3 [ lazy = true ];
+  optional NestedTestMessageSetContainer lazy_child = 3 [lazy = true];
 }
 
 message NestedTestInt {
@@ -43,7 +43,7 @@ message TestMessageSetExtension1 {
   }
   optional int32 i = 15;
   optional proto2_wireformat_unittest.TestMessageSet recursive = 16;
-  optional string test_aliasing = 17 [ ctype = STRING_PIECE ];
+  optional string test_aliasing = 17 [ctype = STRING_PIECE];
 }
 
 message TestMessageSetExtension2 {

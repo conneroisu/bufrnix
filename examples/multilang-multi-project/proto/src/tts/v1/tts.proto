@@ -20,25 +20,25 @@ syntax = "proto3";
 
 package tts.v1;
 
+import "gateway/protoc-gen-openapiv2/annotations.proto";
+import "google/api/annotations.proto";
 // External
 import "google/api/field_behavior.proto";
-import "google/api/annotations.proto";
 import "google/protobuf/empty.proto";
-import "gateway/protoc-gen-openapiv2/annotations.proto";
 
 option go_package = "github.com/conneroisu/bufrnix/examples/multilang-multi-project/proto/gen/go/tts/v1;tts";
-
 option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_swagger) = {
-  info : {
-    title : "Internal Text to Speech API"
-    version : "1.0.0"
-    description : "# Text to Speech\n\nThis service provides a gRPC API for "
-                  "generating speech from text.\n\n It is part of the internal "
-                  "api of the pegwings platform."
-    contact : {
-      name : "Conner Ohnsorge"
-      url : "https://github.com/pegwings"
-      email : "conneroisu@outlook.com"
+  info: {
+    title: "Internal Text to Speech API"
+    version: "1.0.0"
+    description:
+      "# Text to Speech\n\nThis service provides a gRPC API for "
+      "generating speech from text.\n\n It is part of the internal "
+      "api of the pegwings platform."
+    contact: {
+      name: "Conner Ohnsorge"
+      url: "https://github.com/pegwings"
+      email: "conneroisu@outlook.com"
     }
   }
 };
@@ -48,24 +48,22 @@ service TTSService {
   // TTS creates speech from text.
   rpc TTS(TTSRequest) returns (TTSResponse) {
     option (google.api.http) = {
-      post : "/v1/tts"
-      body : "*"
+      post: "/v1/tts"
+      body: "*"
     };
     option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
-      summary : "Generate speech from text"
-      description : "Generate speech from text"
-      tags : "TTS"
+      summary: "Generate speech from text"
+      description: "Generate speech from text"
+      tags: "TTS"
     };
   }
   // HealthCheck returns the health of the service
   rpc HealthCheck(google.protobuf.Empty) returns (google.protobuf.Empty) {
-    option (google.api.http) = {
-      get : "/v1/health"
-    };
+    option (google.api.http) = {get: "/v1/health"};
     option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
-      summary : "Health check"
-      description : "Health check"
-      tags : "Health,healthcheck"
+      summary: "Health check"
+      description: "Health check"
+      tags: "Health,healthcheck"
     };
   }
 }
@@ -74,9 +72,7 @@ service TTSService {
 message TTSResponse {
   bytes text = 1 [
     (google.api.field_behavior) = OUTPUT_ONLY,
-    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
-      description : "The generated speech"
-    }
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {description: "The generated speech"}
   ];
 }
 
@@ -86,37 +82,29 @@ message TTSRequest {
   string text = 1 [
     (google.api.field_behavior) = REQUIRED,
     (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
-      description : "The text to generate audio for"
-      min_length : 1
-      max_length : 4096
+      description: "The text to generate audio for"
+      min_length: 1
+      max_length: 4096
     }
   ];
   // The model to use for generating audio. The default is "pinter".
   string model = 2 [
     (google.api.field_behavior) = OPTIONAL,
-    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
-      description : "The model to use for generating audio"
-    }
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {description: "The model to use for generating audio"}
   ];
   // The voice to use for generating audio. The default is "thamnes".
   string voice = 3 [
     (google.api.field_behavior) = OPTIONAL,
-    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
-      description : "The voice to use for generating audio"
-    }
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {description: "The voice to use for generating audio"}
   ];
   // The speed to use for generating audio. The default is 1.0.
   optional float speed = 4 [
     (google.api.field_behavior) = OPTIONAL,
-    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
-      description : "The speed to use for generating audio"
-    }
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {description: "The speed to use for generating audio"}
   ];
   // The format to use for generating audio. The default is "mp3".
   optional string response_format = 5 [
     (google.api.field_behavior) = OPTIONAL,
-    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
-      description : "The format to use for generating audio"
-    }
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {description: "The format to use for generating audio"}
   ];
 }

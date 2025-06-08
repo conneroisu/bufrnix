@@ -1,0 +1,44 @@
+syntax = "proto3";
+
+package example.v1;
+
+option go_package = "github.com/example/flakeparts/proto/gen/go/example/v1";
+
+// User represents a user in the system
+message User {
+  string id = 1;
+  string name = 2;
+  string email = 3;
+  int32 age = 4;
+}
+
+// CreateUserRequest contains the data needed to create a new user
+message CreateUserRequest {
+  string name = 1;
+  string email = 2;
+  int32 age = 3;
+}
+
+// CreateUserResponse contains the newly created user
+message CreateUserResponse {
+  User user = 1;
+}
+
+// GetUserRequest contains the user ID to retrieve
+message GetUserRequest {
+  string id = 1;
+}
+
+// GetUserResponse contains the requested user
+message GetUserResponse {
+  User user = 1;
+}
+
+// UserService provides operations for managing users
+service UserService {
+  // CreateUser creates a new user
+  rpc CreateUser(CreateUserRequest) returns (CreateUserResponse);
+  
+  // GetUser retrieves a user by ID
+  rpc GetUser(GetUserRequest) returns (GetUserResponse);
+}

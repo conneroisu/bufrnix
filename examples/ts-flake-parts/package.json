@@ -1,0 +1,24 @@
+{
+  "name": "@bufrnix-example/ts-flake-parts",
+  "version": "1.0.0",
+  "description": "TypeScript Flake-Parts example with Protobuf-ES",
+  "type": "module",
+  "scripts": {
+    "build": "nix build && tsc",
+    "demo": "npm run build && node dist/src/demo.js",
+    "dev": "npm run demo",
+    "clean": "rm -rf gen dist",
+    "typecheck": "tsc --noEmit",
+    "test": "npm run build && npm run typecheck"
+  },
+  "dependencies": {
+    "@bufbuild/protobuf": "^1.10.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.0",
+    "typescript": "^5.3.3"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}

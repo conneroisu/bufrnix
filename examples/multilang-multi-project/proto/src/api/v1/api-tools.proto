@@ -1,53 +1,48 @@
 syntax = "proto3";
 package tools.v1;
+
+import "gateway/protoc-gen-openapiv2/annotations.proto";
 // External
 import "google/api/field_behavior.proto";
-import "gateway/protoc-gen-openapiv2/annotations.proto";
+
 option go_package = "github.com/conneroisu/bufrnix/examples/multilang-multi-project/proto/gen/go/api/v1;api";
 
 // Tool represents a tool with its type and functional definition.
 message Tool {
   // type is the type of the tool (as a string).
-  string type = 1
-      [ (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
-        description : "The type of the tool."
-      } ];
+  string type = 1 [(grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {description: "The type of the tool."}];
 
   // function is the functional definition of the tool.
-  FunctionDefinition function = 2
-      [ (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
-        description : "The functional definition of the tool."
-      } ];
+  FunctionDefinition function = 2 [(grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {description: "The functional definition of the tool."}];
 }
 
 // ToolChoice represents a selected tool choice.
 message ToolChoice {
   option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_schema) = {
-    json_schema : {
-      title : "Tool Choice"
-      description : "A tool choice that may occur during a chat completion."
-      required : [ "type" ]
+    json_schema: {
+      title: "Tool Choice"
+      description: "A tool choice that may occur during a chat completion."
+      required: ["type"]
     }
-    external_docs : {
-      url : "https://docs.pegwings.com/v1/chat/tool-choice"
-      description : "Find out more about Tool Choices"
+    external_docs: {
+      url: "https://docs.pegwings.com/v1/chat/tool-choice"
+      description: "Find out more about Tool Choices"
     }
-    example : "{\"type\":\"function\","
-              "\"function\":{\"name\":\"get_current_weather\", "
-              "\"arguments\":{\"location\":\"New York\"}}}"
+    example:
+      "{\"type\":\"function\","
+      "\"function\":{\"name\":\"get_current_weather\", "
+      "\"arguments\":{\"location\":\"New York\"}}}"
   };
 
   string type = 1 [
     (google.api.field_behavior) = REQUIRED,
-    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
-      description : "The type of the tool choice."
-    }
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {description: "The type of the tool choice."}
   ];
 
   ToolFunction function = 2 [
     (google.api.field_behavior) = REQUIRED,
     (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
-      description : "The function details of the tool choice."
+      description: "The function details of the tool choice."
       // TODO: Add example
     }
   ];
@@ -55,288 +50,285 @@ message ToolChoice {
 
 message ToolFunction {
   option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_schema) = {
-    json_schema : {
-      title : "Tool Function"
-      description : "The function details of a tool choice."
-      required : [ "name" ]
+    json_schema: {
+      title: "Tool Function"
+      description: "The function details of a tool choice."
+      required: ["name"]
     }
-    external_docs : {
-      url : "https://docs.pegwings.com/v1/chat/tool-function"
-      description : "Find out more about Tool Functions"
+    external_docs: {
+      url: "https://docs.pegwings.com/v1/chat/tool-function"
+      description: "Find out more about Tool Functions"
     }
     // pb:embed ./examples/v1.tool-function.json
-    example : "{\"name\":\"get_current_weather\","
-              "\"arguments\":{\"location\":\"New York\"}}"
+    example:
+      "{\"name\":\"get_current_weather\","
+      "\"arguments\":{\"location\":\"New York\"}}"
   };
   // name is the name of the tool function.
-  string name = 1
-      [ (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
-        description : "Name of the tool function."
-      } ];
+  string name = 1 [(grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {description: "Name of the tool function."}];
 }
 
 message FunctionDefinition {
   option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_schema) = {
-    json_schema : {
-      title : "Function Definition"
-      description : "The definition of a function."
-      required : [ "name", "description", "parameters" ]
+    json_schema: {
+      title: "Function Definition"
+      description: "The definition of a function."
+      required: [
+        "name",
+        "description",
+        "parameters"
+      ]
     }
-    external_docs : {
-      url : "https://docs.pegwings.com/v1/chat/function-definition"
-      description : "Find out more about Function Definitions"
+    external_docs: {
+      url: "https://docs.pegwings.com/v1/chat/function-definition"
+      description: "Find out more about Function Definitions"
     }
-    example : "{\"name\":\"get_weather\","
-              "\"description\":\"Get the current weather in a given "
-              "location.\","
-              "\"parameters\":{\"type\":\"object\","
-              "\"properties\":{\"location\":{\"type\":\"string\","
-              "\"description\":\"The location of the weather report.\"}},"
-              "\"required\":[\"location\"],"
-              "\"additional_properties\":false}}"
+    example:
+      "{\"name\":\"get_weather\","
+      "\"description\":\"Get the current weather in a given "
+      "location.\","
+      "\"parameters\":{\"type\":\"object\","
+      "\"properties\":{\"location\":{\"type\":\"string\","
+      "\"description\":\"The location of the weather report.\"}},"
+      "\"required\":[\"location\"],"
+      "\"additional_properties\":false}}"
   };
 
   string name = 1 [
     (google.api.field_behavior) = REQUIRED,
-    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
-      description : "Name of the function."
-    }
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {description: "Name of the function."}
   ];
 
   string description = 2 [
     (google.api.field_behavior) = REQUIRED,
-    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
-      description : "Description of the function."
-    }
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {description: "Description of the function."}
   ];
 
   FunctionParameters parameters = 3 [
     (google.api.field_behavior) = REQUIRED,
-    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
-      description : "Parameters for the function."
-    }
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {description: "Parameters for the function."}
   ];
 }
 
 // FunctionParameters represents the parameters for a function.
 message FunctionParameters {
   option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_schema) = {
-    json_schema : {
-      title : "Function Parameters"
-      description : "The parameters for a function."
-      required : [ "type" ]
+    json_schema: {
+      title: "Function Parameters"
+      description: "The parameters for a function."
+      required: ["type"]
     }
-    external_docs : {
-      url : "https://docs.pegwings.com/v1/chat/function-parameters"
-      description : "Find out more about Function Parameters"
+    external_docs: {
+      url: "https://docs.pegwings.com/v1/chat/function-parameters"
+      description: "Find out more about Function Parameters"
     }
-    example : "{\"type\":\"object\","
-              "\"properties\":{\"location\":{\"type\":\"string\","
-              "\"description\":\"The location of the weather report.\"}},"
-              "\"required\":[\"location\"],"
-              "\"additional_properties\":false}"
+    example:
+      "{\"type\":\"object\","
+      "\"properties\":{\"location\":{\"type\":\"string\","
+      "\"description\":\"The location of the weather report.\"}},"
+      "\"required\":[\"location\"],"
+      "\"additional_properties\":false}"
   };
 
   string type = 1 [
     (google.api.field_behavior) = REQUIRED,
     (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
-
-      title : "Type"
-      description : "The type descriptor of the parameters. Should be "
-                    "\"object\"."
-      example : "\"object\""
+      title: "Type"
+      description:
+        "The type descriptor of the parameters. Should be "
+        "\"object\"."
+      example: "\"object\""
     }
   ];
 
   map<string, PropertyDefinition> properties = 2 [
     (google.api.field_behavior) = REQUIRED,
     (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
-      title : "Properties"
-      description : "A mapping of property names to their definitions."
-      example : "{\"location\":{\"type\":\"string\","
-                "\"description\":\"The location of the weather report.\"}}"
+      title: "Properties"
+      description: "A mapping of property names to their definitions."
+      example:
+        "{\"location\":{\"type\":\"string\","
+        "\"description\":\"The location of the weather report.\"}}"
     }
   ];
 
   repeated string required = 3 [
     (google.api.field_behavior) = OPTIONAL,
     (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
-      title : "Required"
-      description : "A list of property names that are required."
-      example : "[\"location\"]"
+      title: "Required"
+      description: "A list of property names that are required."
+      example: "[\"location\"]"
     }
   ];
 
-  bool additional_properties = 4
-      [ (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
-        title : "Additional Properties"
-        description : "If additional properties are allowed."
-        example : "false"
-        default : "false"
-      } ];
+  bool additional_properties = 4 [(grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+    title: "Additional Properties"
+    description: "If additional properties are allowed."
+    example: "false"
+    default: "false"
+  }];
 }
 
 // PropertyDefinition represents the definition of a single property.
 message PropertyDefinition {
   option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_schema) = {
-    json_schema : {
-      title : "Property Definition"
-      description : "The definition of a single property."
-      required : [ "type" ]
+    json_schema: {
+      title: "Property Definition"
+      description: "The definition of a single property."
+      required: ["type"]
     }
-    external_docs : {
-      url : "https://docs.pegwings.com/v1/chat/property-definition"
-      description : "Find out more about Property Definitions"
+    external_docs: {
+      url: "https://docs.pegwings.com/v1/chat/property-definition"
+      description: "Find out more about Property Definitions"
     }
-    example : "{\"type\":\"string\","
-              "\"description\":\"The location of the weather report.\"}"
+    example:
+      "{\"type\":\"string\","
+      "\"description\":\"The location of the weather report.\"}"
   };
 
   string type = 1 [
     (google.api.field_behavior) = REQUIRED,
     (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
-      title : "Type"
-      description : "The data type of the property."
-      example : "\"string\""
+      title: "Type"
+      description: "The data type of the property."
+      example: "\"string\""
     }
   ];
 
   string description = 2 [
     (google.api.field_behavior) = OPTIONAL,
     (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
-      title : "Description"
-      description : "The description of the property as a string."
-      example : "\"The location of the weather report.\""
+      title: "Description"
+      description: "The description of the property as a string."
+      example: "\"The location of the weather report.\""
     }
   ];
 }
 
 message ToolCall {
   option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_schema) = {
-    json_schema : {
-      title : "Tool Call"
-      description : "A tool call that may occur during a chat completion."
-      required : [ "id" ]
+    json_schema: {
+      title: "Tool Call"
+      description: "A tool call that may occur during a chat completion."
+      required: ["id"]
     }
-    external_docs : {
-      url : "https://docs.pegwings.com/v1/chat/tool-call"
-      description : "Find out more about Tool Calls"
+    external_docs: {
+      url: "https://docs.pegwings.com/v1/chat/tool-call"
+      description: "Find out more about Tool Calls"
     }
-    example : "{\"id\":\"get_current_weather\","
-              "\"type\":\"function\","
-              "\"function\":{\"name\":\"get_weather\", "
-              "\"arguments\":{\"location\":\"New York\"}}}"
+    example:
+      "{\"id\":\"get_current_weather\","
+      "\"type\":\"function\","
+      "\"function\":{\"name\":\"get_weather\", "
+      "\"arguments\":{\"location\":\"New York\"}}}"
   };
 
   int32 index = 1 [
     (google.api.field_behavior) = OPTIONAL,
     (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
-      title : "Index"
-      description : "The position/index in a streamed response."
-      example : "0"
+      title: "Index"
+      description: "The position/index in a streamed response."
+      example: "0"
     }
   ];
 
   string id = 2 [
     (google.api.field_behavior) = REQUIRED,
     (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
-      title : "ID"
-      description : "The identifier for the tool call."
-      example : "\"get_current_weather\""
+      title: "ID"
+      description: "The identifier for the tool call."
+      example: "\"get_current_weather\""
     }
   ];
 
   string type = 3 [
     (google.api.field_behavior) = REQUIRED,
     (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
-      title : "Type"
-      description : "The type of the tool call."
-      example : "\"function\""
+      title: "Type"
+      description: "The type of the tool call."
+      example: "\"function\""
     }
   ];
 
-  FunctionCall function = 4
-      [ (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
-        title : "Function"
-        description : "The details of the function call."
-        example : "{\"name\":\"get_weather\", "
-                  "\"arguments\":{\"location\":\"New York\"}}"
-      } ];
+  FunctionCall function = 4 [(grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+    title: "Function"
+    description: "The details of the function call."
+    example:
+      "{\"name\":\"get_weather\", "
+      "\"arguments\":{\"location\":\"New York\"}}"
+  }];
 }
 
 // FunctionCall represents the details of a function call.
 message FunctionCall {
   option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_schema) = {
-    json_schema : {
-      title : "Function Call"
-      description : "The details of a function call."
-      required : [ "name" ]
+    json_schema: {
+      title: "Function Call"
+      description: "The details of a function call."
+      required: ["name"]
     }
-    external_docs : {
-      url : "https://docs.pegwings.com/v1/chat/function-call"
-      description : "Find out more about Function Calls"
+    external_docs: {
+      url: "https://docs.pegwings.com/v1/chat/function-call"
+      description: "Find out more about Function Calls"
     }
   };
 
   string name = 1 [
     (google.api.field_behavior) = REQUIRED,
     (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
-      title : "Name"
-      description : "The name of the function being called."
-      example : "\"get_current_weather\""
+      title: "Name"
+      description: "The name of the function being called."
+      example: "\"get_current_weather\""
     }
   ];
 
-  string arguments = 2
-      [ (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
-        title : "Arguments"
-        description : "The function call arguments in JSON format."
-        example : "{\"location\":\"New York\"}"
-      } ];
+  string arguments = 2 [(grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+    title: "Arguments"
+    description: "The function call arguments in JSON format."
+    example: "{\"location\":\"New York\"}"
+  }];
 }
 
 // ToolGetRequest is the request for getting a tool.
 message ToolGetRequest {
-  string tool = 1
-      [ (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
-        title : "Tool"
-        description : "The name of the tool to get."
-        example : "\"get_current_weather\""
-      } ];
+  string tool = 1 [(grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+    title: "Tool"
+    description: "The name of the tool to get."
+    example: "\"get_current_weather\""
+  }];
 }
 
 // ToolsListRequest is the request for listing tools.
 message ToolsListRequest {
   option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_schema) = {
-    json_schema : {
-      title : "Tools List Request"
-      description : "The request for listing tools."
-      required : [ "toolbox" ]
+    json_schema: {
+      title: "Tools List Request"
+      description: "The request for listing tools."
+      required: ["toolbox"]
     }
-    external_docs : {
-      url : "https://docs.pegwings.com/v1/tools/list-tools"
-      description : "Find out more about List Tools"
+    external_docs: {
+      url: "https://docs.pegwings.com/v1/tools/list-tools"
+      description: "Find out more about List Tools"
     }
-    example : "{\"toolbox\":\"default\"}"
+    example: "{\"toolbox\":\"default\"}"
   };
 
   // toolbox is the toolbox to list tools from.
   string toolbox = 1 [
     (google.api.field_behavior) = REQUIRED,
     (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
-      title : "Toolbox"
-      description : "The toolbox to list tools from."
-      example : "\"default\""
+      title: "Toolbox"
+      description: "The toolbox to list tools from."
+      example: "\"default\""
     }
   ];
 }
 
 // ToolsListResponse is the response for listing tools.
 message ToolsListResponse {
-  repeated Tool tools = 1
-      [ (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
-        title : "Tools"
-        description : "The list of tools."
-        example : "[{\"name\":\"get_current_weather\"}]"
-      } ];
+  repeated Tool tools = 1 [(grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+    title: "Tools"
+    description: "The list of tools."
+    example: "[{\"name\":\"get_current_weather\"}]"
+  }];
 }

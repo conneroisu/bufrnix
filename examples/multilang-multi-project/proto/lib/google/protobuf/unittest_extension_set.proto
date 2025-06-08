@@ -19,6 +19,10 @@ option csharp_namespace = "Google.ProtocolBuffers.TestProtos";
 option optimize_for = SPEED;
 
 // A message with message_set_wire_format.
-message TestExtensionSet { extensions 4 to max; }
+message TestExtensionSet {
+  extensions 4 to max;
+}
 
-message TestExtensionSetContainer { optional TestExtensionSet extension = 1; }
+message TestExtensionSetContainer {
+  optional TestExtensionSet extension = 1;
+}

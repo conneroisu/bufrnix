@@ -49,7 +49,7 @@ cd Client && dotnet run
 
 - `nix run .#runDemo` - **Recommended**: Run complete demo with server and client
 - `nix build .#proto` - Generate protobuf/gRPC code
-- `nix build .#server` - Build the server application  
+- `nix build .#server` - Build the server application
 - `nix build .#client` - Build the client application
 - `nix develop` - Enter development shell for manual work
 

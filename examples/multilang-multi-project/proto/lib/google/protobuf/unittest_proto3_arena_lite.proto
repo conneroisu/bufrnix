@@ -66,14 +66,13 @@ message TestAllTypes {
   //
   // optional proto2_unittest_import.ImportEnum    optional_import_enum  = 23;
 
-  string optional_string_piece = 24 [ ctype = STRING_PIECE ];
-  string optional_cord = 25 [ ctype = CORD ];
+  string optional_string_piece = 24 [ctype = STRING_PIECE];
+  string optional_cord = 25 [ctype = CORD];
 
   // Defined in unittest_import_public.proto
-  proto2_unittest_import.PublicImportMessage optional_public_import_message =
-      26;
+  proto2_unittest_import.PublicImportMessage optional_public_import_message = 26;
 
-  NestedMessage optional_lazy_message = 27 [ lazy = true ];
+  NestedMessage optional_lazy_message = 27 [lazy = true];
 
   // Repeated
   repeated int32 repeated_int32 = 31;
@@ -109,8 +108,8 @@ message TestAllTypes {
   //
   // repeated proto2_unittest_import.ImportEnum    repeated_import_enum  = 53;
 
-  repeated string repeated_string_piece = 54 [ ctype = STRING_PIECE ];
-  repeated string repeated_cord = 55 [ ctype = CORD ];
+  repeated string repeated_string_piece = 54 [ctype = STRING_PIECE];
+  repeated string repeated_cord = 55 [ctype = CORD];
 
   repeated NestedMessage repeated_lazy_message = 57;
 
@@ -125,38 +124,38 @@ message TestAllTypes {
 // Test messages for packed fields
 
 message TestPackedTypes {
-  repeated int32 packed_int32 = 90 [ packed = true ];
-  repeated int64 packed_int64 = 91 [ packed = true ];
-  repeated uint32 packed_uint32 = 92 [ packed = true ];
-  repeated uint64 packed_uint64 = 93 [ packed = true ];
-  repeated sint32 packed_sint32 = 94 [ packed = true ];
-  repeated sint64 packed_sint64 = 95 [ packed = true ];
-  repeated fixed32 packed_fixed32 = 96 [ packed = true ];
-  repeated fixed64 packed_fixed64 = 97 [ packed = true ];
-  repeated sfixed32 packed_sfixed32 = 98 [ packed = true ];
-  repeated sfixed64 packed_sfixed64 = 99 [ packed = true ];
-  repeated float packed_float = 100 [ packed = true ];
-  repeated double packed_double = 101 [ packed = true ];
-  repeated bool packed_bool = 102 [ packed = true ];
-  repeated ForeignEnum packed_enum = 103 [ packed = true ];
+  repeated int32 packed_int32 = 90 [packed = true];
+  repeated int64 packed_int64 = 91 [packed = true];
+  repeated uint32 packed_uint32 = 92 [packed = true];
+  repeated uint64 packed_uint64 = 93 [packed = true];
+  repeated sint32 packed_sint32 = 94 [packed = true];
+  repeated sint64 packed_sint64 = 95 [packed = true];
+  repeated fixed32 packed_fixed32 = 96 [packed = true];
+  repeated fixed64 packed_fixed64 = 97 [packed = true];
+  repeated sfixed32 packed_sfixed32 = 98 [packed = true];
+  repeated sfixed64 packed_sfixed64 = 99 [packed = true];
+  repeated float packed_float = 100 [packed = true];
+  repeated double packed_double = 101 [packed = true];
+  repeated bool packed_bool = 102 [packed = true];
+  repeated ForeignEnum packed_enum = 103 [packed = true];
 }
 
 // Explicitly set packed to false
 message TestUnpackedTypes {
-  repeated int32 repeated_int32 = 1 [ packed = false ];
-  repeated int64 repeated_int64 = 2 [ packed = false ];
-  repeated uint32 repeated_uint32 = 3 [ packed = false ];
-  repeated uint64 repeated_uint64 = 4 [ packed = false ];
-  repeated sint32 repeated_sint32 = 5 [ packed = false ];
-  repeated sint64 repeated_sint64 = 6 [ packed = false ];
-  repeated fixed32 repeated_fixed32 = 7 [ packed = false ];
-  repeated fixed64 repeated_fixed64 = 8 [ packed = false ];
-  repeated sfixed32 repeated_sfixed32 = 9 [ packed = false ];
-  repeated sfixed64 repeated_sfixed64 = 10 [ packed = false ];
-  repeated float repeated_float = 11 [ packed = false ];
-  repeated double repeated_double = 12 [ packed = false ];
-  repeated bool repeated_bool = 13 [ packed = false ];
-  repeated TestAllTypes.NestedEnum repeated_nested_enum = 14 [ packed = false ];
+  repeated int32 repeated_int32 = 1 [packed = false];
+  repeated int64 repeated_int64 = 2 [packed = false];
+  repeated uint32 repeated_uint32 = 3 [packed = false];
+  repeated uint64 repeated_uint64 = 4 [packed = false];
+  repeated sint32 repeated_sint32 = 5 [packed = false];
+  repeated sint64 repeated_sint64 = 6 [packed = false];
+  repeated fixed32 repeated_fixed32 = 7 [packed = false];
+  repeated fixed64 repeated_fixed64 = 8 [packed = false];
+  repeated sfixed32 repeated_sfixed32 = 9 [packed = false];
+  repeated sfixed64 repeated_sfixed64 = 10 [packed = false];
+  repeated float repeated_float = 11 [packed = false];
+  repeated double repeated_double = 12 [packed = false];
+  repeated bool repeated_bool = 13 [packed = false];
+  repeated TestAllTypes.NestedEnum repeated_nested_enum = 14 [packed = false];
 }
 
 // This proto includes a recursively nested message.
@@ -167,7 +166,9 @@ message NestedTestAllTypes {
 
 // Define these after TestAllTypes to make sure the compiler can handle
 // that.
-message ForeignMessage { int32 c = 1; }
+message ForeignMessage {
+  int32 c = 1;
+}
 
 enum ForeignEnum {
   FOREIGN_ZERO = 0;
