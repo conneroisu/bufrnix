@@ -34,6 +34,11 @@ jobs:
         uses: actions/upload-pages-artifact@56afc609e74202658d3ffba0e8f6dda462b719fa # v3.0.1
         with:
           path: ./doc/result
+      - name: Run Examples
+        run: |
+          sh check-examples.sh
+          sh lint-examples.sh
+          sh test-examples.sh
   deploy-pages:
     if: github.ref == 'refs/heads/main'
     needs: build-pages
