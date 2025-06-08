@@ -57,13 +57,13 @@ jobs:
           
           # Run scripts with explicit logging
           echo "Running test-examples.sh..."
-          sh test-examples.sh
+          bash test-examples.sh
           
           echo "Running check-examples.sh..."
-          sh check-examples.sh
+          bash check-examples.sh
           
           echo "Running lint-examples.sh..."
-          sh lint-examples.sh
+          bash lint-examples.sh
           
           echo "All scripts completed successfully"
   deploy-pages:
