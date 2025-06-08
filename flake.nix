@@ -155,6 +155,9 @@
               git-bug
               # Python for package update scripts
               python3
+              actionlint
+              shellcheck
+              act
             ]
             ++ builtins.attrValues scriptPackages;
         };
