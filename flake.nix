@@ -157,6 +157,7 @@
               python3
               actionlint
               shellcheck
+              act
             ]
             ++ builtins.attrValues scriptPackages;
         };
