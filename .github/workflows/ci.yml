@@ -36,9 +36,9 @@ jobs:
           path: ./doc/result
       - name: Run Examples
         run: |
+          sh test-examples.sh
           sh check-examples.sh
           sh lint-examples.sh
-          sh test-examples.sh
   deploy-pages:
     if: github.ref == 'refs/heads/main'
     needs: build-pages
