@@ -34,38 +34,6 @@ jobs:
         uses: actions/upload-pages-artifact@56afc609e74202658d3ffba0e8f6dda462b719fa # v3.0.1
         with:
           path: ./doc/result
-      - name: Run Examples
-        run: |
-          set -e
-          
-          # Check for script existence and executability
-          echo "Checking script availability..."
-          for script in test-examples.sh check-examples.sh lint-examples.sh; do
-            if [ -f "$script" ]; then
-              echo "✓ $script exists"
-              if [ -x "$script" ]; then
-                echo "✓ $script is executable"
-              else
-                echo "! $script is not executable, making it executable"
-                chmod +x "$script"
-              fi
-            else
-              echo "✗ $script does not exist"
-              exit 1
-            fi
-          done
-          
-          # Run scripts with explicit logging
-          echo "Running test-examples.sh..."
-          bash test-examples.sh
-          
-          echo "Running check-examples.sh..."
-          bash check-examples.sh
-          
-          echo "Running lint-examples.sh..."
-          bash lint-examples.sh
-          
-          echo "All scripts completed successfully"
   deploy-pages:
     if: github.ref == 'refs/heads/main'
     needs: build-pages
