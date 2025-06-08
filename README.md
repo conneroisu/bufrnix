@@ -558,7 +558,7 @@ swift build && swift run
 ```bash
 # Clone the repository
 git clone https://github.com/conneroisu/bufr.nix.git
-cd bufr.nix
+cd bufrnix
 
 # Enter development environment  
 nix develop
