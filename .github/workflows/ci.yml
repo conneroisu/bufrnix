@@ -36,9 +36,36 @@ jobs:
           path: ./doc/result
       - name: Run Examples
         run: |
+          set -e
+          
+          # Check for script existence and executability
+          echo "Checking script availability..."
+          for script in test-examples.sh check-examples.sh lint-examples.sh; do
+            if [ -f "$script" ]; then
+              echo "✓ $script exists"
+              if [ -x "$script" ]; then
+                echo "✓ $script is executable"
+              else
+                echo "! $script is not executable, making it executable"
+                chmod +x "$script"
+              fi
+            else
+              echo "✗ $script does not exist"
+              exit 1
+            fi
+          done
+          
+          # Run scripts with explicit logging
+          echo "Running test-examples.sh..."
           sh test-examples.sh
+          
+          echo "Running check-examples.sh..."
           sh check-examples.sh
+          
+          echo "Running lint-examples.sh..."
           sh lint-examples.sh
+          
+          echo "All scripts completed successfully"
   deploy-pages:
     if: github.ref == 'refs/heads/main'
     needs: build-pages
