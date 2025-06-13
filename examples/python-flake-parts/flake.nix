@@ -8,18 +8,24 @@
     bufrnix.url = "path:../..";
   };
 
-  outputs = inputs @ { self, nixpkgs, flake-parts, bufrnix, ... }:
-    flake-parts.lib.mkFlake { inherit inputs; } {
-      systems = [ "x86_64-linux" "aarch64-linux" "x86_64-darwin" "aarch64-darwin" ];
+  outputs = inputs @ {
+    self,
+    nixpkgs,
+    flake-parts,
+    bufrnix,
+    ...
+  }:
+    flake-parts.lib.mkFlake {inherit inputs;} {
+      systems = ["x86_64-linux" "aarch64-linux" "x86_64-darwin" "aarch64-darwin"];
 
-      perSystem = { pkgs, ... }: {
+      perSystem = {pkgs, ...}: {
         packages.default = bufrnix.lib.mkBufrnixPackage {
           inherit pkgs;
           config = {
             root = ./.;
             protoc = {
-              includeDirectories = [ "proto" ];
-              files = [ "proto/greeter.proto" ];
+              includeDirectories = ["proto"];
+              files = ["proto/greeter.proto"];
             };
             languages.python = {
               enable = true;

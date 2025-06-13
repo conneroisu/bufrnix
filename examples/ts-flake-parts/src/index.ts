@@ -97,7 +97,10 @@ function typeSafetyExample() {
 
   // Type-safe enum usage
   const roles: Role[] = [Role.ADMIN, Role.USER, Role.MODERATOR];
-  console.log("Available roles:", roles.map(role => Role[role]));
+  console.log(
+    "Available roles:",
+    roles.map((role) => Role[role]),
+  );
 
   // Type-safe field access
   const userId: string = user.id;
@@ -148,7 +151,6 @@ function immutabilityExample() {
   console.log("This demonstrates proper message cloning and immutability");
 }
 
-
 // Main function to run all examples
 function main() {
   console.log("🚀 Bufrnix TypeScript Flake-Parts Example\n");
@@ -166,8 +168,9 @@ function main() {
 
     console.log("\n\n✅ All examples completed successfully!");
     console.log("This demonstrates that Bufrnix with flake-parts generates");
-    console.log("high-quality, type-safe TypeScript code from protobuf definitions.");
-
+    console.log(
+      "high-quality, type-safe TypeScript code from protobuf definitions.",
+    );
   } catch (error) {
     console.error("❌ Example failed:", error);
     process.exit(1);

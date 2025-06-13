@@ -34,6 +34,7 @@ Flake-parts provides several advantages over traditional flake configurations:
 ## Generated Code
 
 The example generates:
+
 - `proto/gen/go/example/v1/service.pb.go` - Protocol buffer messages
 - `proto/gen/go/example/v1/service_grpc.pb.go` - gRPC service definitions
 

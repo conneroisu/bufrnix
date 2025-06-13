@@ -23,7 +23,7 @@ jobs:
       - name: Run & Check Examples
         run: |
           set -e
-          
+
           # Check for script existence and executability
           echo "Checking script availability..."
           for script in test-examples.sh check-examples.sh lint-examples.sh; do
@@ -40,15 +40,15 @@ jobs:
               exit 1
             fi
           done
-          
+
           # Run scripts with explicit logging
           echo "Running test-examples.sh..."
           bash test-examples.sh
-          
+
           echo "Running check-examples.sh..."
           bash check-examples.sh
-          
+
           echo "Running lint-examples.sh..."
           bash lint-examples.sh
-          
+
           echo "All scripts completed successfully"

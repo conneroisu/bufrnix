@@ -17,7 +17,7 @@
   }:
     flake-parts.lib.mkFlake {inherit inputs;} {
       systems = ["x86_64-linux" "aarch64-linux" "x86_64-darwin" "aarch64-darwin"];
-      
+
       perSystem = {
         config,
         self',
@@ -112,7 +112,7 @@
             program = "${pkgs.nodejs_20}/bin/node";
             args = ["dist/index.js"];
           };
-          
+
           dev = {
             type = "app";
             program = "${pkgs.writeShellScript "ts-dev" ''
@@ -126,27 +126,28 @@
         };
 
         checks = {
-          build-typescript = pkgs.runCommand "build-typescript-check" {
-            buildInputs = [pkgs.nodejs_20 pkgs.nodePackages.npm pkgs.nodePackages.typescript];
-            src = ./.;
-          } ''
-            cp -r $src ./source
-            chmod -R +w ./source
-            cd ./source
-            
-            # Generate proto files first
-            cp -r ${protoGenerated}/gen ./
-            
-            # Install dependencies and build
-            npm install
-            npm run build
-            
-            # Verify output files exist
-            [ -f "dist/index.js" ] || (echo "Missing dist/index.js" && exit 1)
-            [ -f "dist/client.js" ] || (echo "Missing dist/client.js" && exit 1)
-            
-            touch $out
-          '';
+          build-typescript =
+            pkgs.runCommand "build-typescript-check" {
+              buildInputs = [pkgs.nodejs_20 pkgs.nodePackages.npm pkgs.nodePackages.typescript];
+              src = ./.;
+            } ''
+              cp -r $src ./source
+              chmod -R +w ./source
+              cd ./source
+
+              # Generate proto files first
+              cp -r ${protoGenerated}/gen ./
+
+              # Install dependencies and build
+              npm install
+              npm run build
+
+              # Verify output files exist
+              [ -f "dist/index.js" ] || (echo "Missing dist/index.js" && exit 1)
+              [ -f "dist/client.js" ] || (echo "Missing dist/client.js" && exit 1)
+
+              touch $out
+            '';
         };
       };
     };

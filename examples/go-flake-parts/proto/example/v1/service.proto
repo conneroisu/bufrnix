@@ -38,7 +38,7 @@ message GetUserResponse {
 service UserService {
   // CreateUser creates a new user
   rpc CreateUser(CreateUserRequest) returns (CreateUserResponse);
-  
+
   // GetUser retrieves a user by ID
   rpc GetUser(GetUserRequest) returns (GetUserResponse);
 }

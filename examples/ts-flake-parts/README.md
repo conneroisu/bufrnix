@@ -38,6 +38,7 @@ nix develop
 ```
 
 This provides:
+
 - Node.js 20
 - TypeScript compiler
 - npm package manager
@@ -143,7 +144,7 @@ await server.register(fastifyConnectPlugin, {
         // Implementation
       },
       async getUser(request) {
-        // Implementation  
+        // Implementation
       },
       // ... other methods
     });
@@ -190,7 +191,7 @@ The `flake.nix` demonstrates how to integrate Bufrnix with flake-parts:
   outputs = inputs @ { flake-parts, bufrnix, ... }:
     flake-parts.lib.mkFlake { inherit inputs; } {
       systems = ["x86_64-linux" "aarch64-linux" "x86_64-darwin" "aarch64-darwin"];
-      
+
       perSystem = { pkgs, ... }: let
         protoGenerated = bufrnix.lib.mkBufrnixPackage {
           inherit pkgs;

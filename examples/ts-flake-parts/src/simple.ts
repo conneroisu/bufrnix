@@ -1,6 +1,6 @@
 /**
  * Simple TypeScript example demonstrating Bufrnix + flake-parts
- * 
+ *
  * This demonstrates that the TypeScript generation works,
  * even though the specific protobuf-es API may need adjusting.
  */
@@ -8,14 +8,13 @@
 // Import the generated types (this shows that generation worked).
 // The generated code is compatible with the TypeScript compiler
 // when using the protobuf-es v2 configuration.
-import type { 
-  User,
-  Role 
-} from "../gen/js/example/v1/user_pb.js";
+import type { User, Role } from "../gen/js/example/v1/user_pb.js";
 
 console.log("🚀 TypeScript Flake-Parts Example");
 console.log("");
-console.log("✅ Bufrnix successfully generated TypeScript files from protobuf definitions");
+console.log(
+  "✅ Bufrnix successfully generated TypeScript files from protobuf definitions",
+);
 console.log("✅ Flake-parts integration is working correctly");
 console.log("✅ TypeScript compilation and module resolution is functional");
 console.log("");
@@ -31,6 +30,6 @@ console.log("   successfully generates TypeScript protobuf code!");
 console.log("");
 console.log("Role enum values:");
 console.log("- ROLE_UNSPECIFIED = 0");
-console.log("- USER = 1"); 
+console.log("- USER = 1");
 console.log("- ADMIN = 2");
 console.log("- MODERATOR = 3");
