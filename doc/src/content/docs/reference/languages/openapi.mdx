@@ -1,0 +1,172 @@
+---
+title: OpenAPI
+description: Generate OpenAPI v2 (Swagger) specifications from protobuf definitions
+---
+
+import BasicConfig from './openapi.x-basic-configuration.nix?raw';
+
+The OpenAPI language module generates OpenAPI v2 (Swagger) specifications from your protobuf service definitions. This is useful for creating REST API documentation, client SDKs, and API testing tools.
+
+## Features
+
+- **OpenAPI v2 (Swagger)** specification generation
+- **HTTP annotations** support via `google.api.http` options
+- **JSON output** in standard Swagger 2.0 format
+- **Service documentation** from protobuf comments
+- **REST API mapping** from gRPC services
+
+## Generated Files
+
+| File Pattern | Description |
+| ------------ | ----------- |
+| `*.swagger.json` | OpenAPI v2 specification files |
+
+## Configuration
+
+### Basic Configuration
+
+```nix
+languages.openapi = {
+  enable = true;
+  outputPath = "proto/gen/openapi";
+};
+```
+
+### With Options
+
+```nix
+languages.openapi = {
+  enable = true;
+  outputPath = "proto/gen/openapi";
+  options = [
+    "logtostderr=true"
+    "allow_merge=true"
+    "merge_file_name=api"
+  ];
+};
+```
+
+## Prerequisites
+
+Your protobuf files need HTTP annotations to generate meaningful OpenAPI specs:
+
+```protobuf
+syntax = "proto3";
+
+import "google/api/annotations.proto";
+
+service UserService {
+  rpc GetUser(GetUserRequest) returns (User) {
+    option (google.api.http) = {
+      get: "/v1/users/{user_id}"
+    };
+  }
+  
+  rpc CreateUser(CreateUserRequest) returns (User) {
+    option (google.api.http) = {
+      post: "/v1/users"
+      body: "*"
+    };
+  }
+}
+```
+
+## Common Use Cases
+
+### API Documentation
+
+Generate OpenAPI specs alongside your gRPC services:
+
+```nix
+languages = {
+  go = {
+    enable = true;
+    outputPath = "gen/go";
+    grpc.enable = true;
+    gateway.enable = true;
+  };
+  
+  openapi = {
+    enable = true;
+    outputPath = "gen/openapi";
+  };
+};
+```
+
+### Multi-Service APIs
+
+Merge multiple services into a single OpenAPI spec:
+
+```nix
+languages.openapi = {
+  enable = true;
+  outputPath = "docs/api";
+  options = [
+    "allow_merge=true"
+    "merge_file_name=api"
+  ];
+};
+```
+
+## Options Reference
+
+| Option | Description | Default |
+| ------ | ----------- | ------- |
+| `logtostderr` | Log to stderr instead of files | `true` |
+| `allow_merge` | Allow merging multiple services | `false` |
+| `merge_file_name` | Name for merged file | - |
+| `include_package_in_tags` | Include package name in tags | `false` |
+| `disable_default_errors` | Disable default error responses | `false` |
+| `use_go_templates` | Enable Go template annotations | `false` |
+
+## Integration
+
+### With gRPC-Gateway
+
+OpenAPI specs work seamlessly with gRPC-Gateway:
+
+```nix
+languages = {
+  go = {
+    enable = true;
+    grpc.enable = true;
+    gateway.enable = true;
+  };
+  
+  openapi = {
+    enable = true;
+    outputPath = go.outputPath; # Same directory as gateway code
+  };
+};
+```
+
+### With API Tools
+
+Generated specs can be used with:
+- **Swagger UI** for interactive documentation
+- **Postman** for API testing
+- **OpenAPI Generator** for client SDK generation
+- **API gateways** that support OpenAPI
+
+## Complete Example
+
+<details>
+<summary>Full configuration with OpenAPI generation</summary>
+
+```nix
+{BasicConfig}
+```
+</details>
+
+## Tips
+
+1. **HTTP Annotations**: Always include `google/api/annotations.proto` and add HTTP options to your RPC methods
+2. **Documentation**: Use protobuf comments - they're included in the OpenAPI spec
+3. **Validation**: Use tools like `swagger-cli` to validate generated specs
+4. **Versioning**: Include version info in your protobuf package names
+
+## See Also
+
+- [gRPC-Gateway documentation](https://grpc-ecosystem.github.io/grpc-gateway/)
+- [OpenAPI Specification](https://swagger.io/specification/v2/)
+- [Google API Design Guide](https://cloud.google.com/apis/design)

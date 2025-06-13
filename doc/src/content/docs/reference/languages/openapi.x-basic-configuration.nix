@@ -18,16 +18,6 @@
       system: let
         pkgs = import nixpkgs {inherit system;};
       in {
-        devShells.default = pkgs.mkShell {
-          packages = with pkgs; [
-            go
-            protobuf
-            protoc-gen-go
-            protoc-gen-go-grpc
-            buf
-          ];
-        };
-
         packages = {
           default = bufrnix.lib.mkBufrnixPackage {
             inherit pkgs;
@@ -35,34 +25,35 @@
               root = ".";
               protoc = {
                 includeDirectories = ["proto"];
-                files = ["proto/example/v1/user.proto"];
+                files = ["proto/api/v1/service.proto"];
               };
 
               languages = {
+                # Generate Go code with gRPC and Gateway
                 go = {
                   enable = true;
-                  outputPath = "proto/gen/go";
-
-                  # gRPC support
+                  outputPath = "gen/go";
                   grpc.enable = true;
-
-                  # High-performance vtprotobuf plugin
-                  vtprotobuf = {
-                    enable = true;
-                    options = [
-                      "paths=source_relative"
-                      "features=marshal+unmarshal+size+pool"
-                    ];
-                  };
-
-                  # JSON marshaling support
-                  json.enable = true;
+                  gateway.enable = true;
                 };
 
-                # OpenAPI v2 generation (now a separate language)
+                # Generate OpenAPI v2 specifications
                 openapi = {
                   enable = true;
-                  outputPath = "proto/gen/openapi";
+                  outputPath = "gen/openapi";
+                  options = [
+                    "logtostderr=true"
+                    "allow_merge=true"
+                    "merge_file_name=api"
+                  ];
+                };
+
+                # Generate TypeScript client
+                js = {
+                  enable = true;
+                  outputPath = "gen/js";
+                  es.enable = true;
+                  connect.enable = true;
                 };
               };
             };
