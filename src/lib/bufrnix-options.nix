@@ -205,26 +205,6 @@ with lib; {
           };
         };
 
-        openapiv2 = {
-          enable = mkOption {
-            type = types.bool;
-            default = false;
-            description = "Enable OpenAPI v2 documentation generation";
-          };
-
-          package = mkOption {
-            type = types.package;
-            defaultText = literalExpression "pkgs.protoc-gen-openapiv2";
-            description = "The protoc-gen-openapiv2 package to use";
-          };
-
-          options = mkOption {
-            type = types.listOf types.str;
-            default = ["logtostderr=true"];
-            description = "Options to pass to protoc-gen-openapiv2";
-          };
-        };
-
         vtprotobuf = {
           enable = mkOption {
             type = types.bool;
@@ -2001,6 +1981,39 @@ with lib; {
             default = false;
             description = "Enable validation support (scalapb-validate)";
           };
+        };
+      };
+
+      # OpenAPI language options
+      openapi = {
+        enable = mkOption {
+          type = types.bool;
+          default = false;
+          description = "Enable OpenAPI v2 (Swagger) specification generation";
+        };
+
+        package = mkOption {
+          type = types.package;
+          defaultText = literalExpression "pkgs.protoc-gen-openapiv2";
+          description = "The protoc-gen-openapiv2 package to use";
+        };
+
+        outputPath = mkOption {
+          type = types.either types.str (types.listOf types.str);
+          default = "gen/openapi";
+          description = "Output directory(ies) for generated OpenAPI specifications";
+          example = literalExpression ''
+            [
+              "gen/openapi"
+              "docs/api"
+            ]
+          '';
+        };
+
+        options = mkOption {
+          type = types.listOf types.str;
+          default = ["logtostderr=true"];
+          description = "Options to pass to protoc-gen-openapiv2";
         };
       };
     };

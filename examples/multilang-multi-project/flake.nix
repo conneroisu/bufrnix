@@ -215,15 +215,10 @@
                 grpc.enable = true;
                 json.enable = true;
 
-                # Gateway and OpenAPI generation
+                # Gateway generation
                 gateway = {
                   enable = true;
                   outputPath = "proto/gen/go";
-                };
-
-                openapiv2 = {
-                  enable = true;
-                  outputPath = "proto/gen/openapi";
                 };
 
                 # Performance optimizations
@@ -277,6 +272,12 @@
               doc = {
                 enable = true;
                 outputPath = "proto/gen/doc";
+              };
+
+              # OpenAPI specification generation
+              openapi = {
+                enable = true;
+                outputPath = "proto/gen/openapi";
               };
             };
           };

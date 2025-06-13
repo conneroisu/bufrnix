@@ -56,15 +56,6 @@ with lib; let
       };
   };
 
-  openapiv2Module = import ./openapiv2.nix {
-    inherit pkgs lib;
-    cfg =
-      (cfg.openapiv2 or {enable = false;})
-      // {
-        outputPath = outputPath;
-      };
-  };
-
   vtprotobufModule = import ./vtprotobuf.nix {
     inherit pkgs lib;
     cfg =
@@ -109,7 +100,6 @@ with lib; let
       gatewayModule
       validateModule
       protovalidateModule
-      openapiv2Module
       vtprotobufModule
       jsonModule
       federationModule
@@ -146,7 +136,6 @@ in {
       gatewayModule
       validateModule
       protovalidateModule
-      openapiv2Module
       vtprotobufModule
       jsonModule
       federationModule
@@ -166,7 +155,6 @@ in {
       gatewayModule
       validateModule
       protovalidateModule
-      openapiv2Module
       vtprotobufModule
       jsonModule
       federationModule
