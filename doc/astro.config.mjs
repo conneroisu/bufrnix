@@ -46,6 +46,7 @@ export default defineConfig({
             { label: 'Java Support', link: '/reference/languages/java/' },
             { label: 'Kotlin Support', link: '/reference/languages/kotlin/' },
             { label: 'Scala Support', link: '/reference/languages/scala/' },
+            { label: 'OpenAPI Support', link: '/reference/languages/openapi/' },
             { label: 'PHP Support', link: '/reference/languages/php/' },
             { label: 'Python Support', link: '/reference/languages/python/' },
             { label: 'Swift Support', link: '/reference/languages/swift/' },

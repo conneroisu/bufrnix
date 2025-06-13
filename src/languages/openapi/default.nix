@@ -28,6 +28,6 @@ in {
 
   # Generation hooks for OpenAPI v2
   generateHooks = optionalString enabled ''
-    echo "Configuring OpenAPI v2 generation..."
+    echo "Generated OpenAPI v2 specifications in ${outputPath}"
   '';
 }

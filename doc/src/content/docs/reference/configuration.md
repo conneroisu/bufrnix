@@ -817,7 +817,12 @@ Configure different services with different language requirements:
           outputPath = "gateway/proto";
           grpc.enable = true;
           gateway.enable = true; # HTTP/JSON gateway
-          openapiv2.enable = true; # API documentation
+        };
+        
+        # API documentation
+        openapi = {
+          enable = true;
+          outputPath = "gateway/openapi";
         };
       };
     };

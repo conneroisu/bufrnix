@@ -36,7 +36,6 @@ with pkgs.lib; let
         validate.package = pkgs.protoc-gen-validate;
         connect.package = pkgs.protoc-gen-connect-go;
         protovalidate.package = pkgs.protovalidate-go or null; # Not yet in nixpkgs
-        openapiv2.package = pkgs.protoc-gen-openapiv2 or (pkgs.callPackage ../packages/protoc-gen-openapiv2 {});
         vtprotobuf.package = pkgs.protoc-gen-go-vtproto or (pkgs.callPackage ../packages/protoc-gen-go-vtproto {});
         json.package = pkgs.protoc-gen-go-json or (pkgs.callPackage ../packages/protoc-gen-go-json {});
         federation.package = pkgs.protoc-gen-grpc-federation or null; # Not yet in nixpkgs
@@ -59,6 +58,9 @@ with pkgs.lib; let
       };
       doc = {
         package = pkgs.protoc-gen-doc;
+      };
+      openapi = {
+        package = pkgs.protoc-gen-openapiv2 or (pkgs.callPackage ../packages/protoc-gen-openapiv2 {});
       };
       python = {
         package = pkgs.protobuf;

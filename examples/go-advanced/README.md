@@ -53,7 +53,7 @@ ls proto/gen/openapi/
 go = {
   enable = true;
   grpc.enable = true;
-  openapiv2.enable = true;
+  openapi.enable = true;
   vtprotobuf = {
     enable = true;
     options = ["features=marshal+unmarshal+size+pool"];

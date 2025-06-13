@@ -66,6 +66,7 @@ Go support includes the complete Protocol Buffer ecosystem with all major plugin
 | **`protoc-gen-go-grpc`**      | gRPC services           | `*_grpc.pb.go`     |
 | **`protoc-gen-connect-go`**   | Connect protocol        | `*_connect.go`     |
 | **`protoc-gen-grpc-gateway`** | HTTP/JSON gateway       | `*.pb.gw.go`       |
+| **`protoc-gen-openapiv2`**    | OpenAPI v2 docs         | `*.swagger.json`   |
 | **`protoc-gen-validate`**     | Message validation      | `*.pb.validate.go` |
 
 ### Configuration
@@ -1376,6 +1377,69 @@ bufrnix_init
 bufrnix
 swift build
 swift run
+```
+
+## OpenAPI
+
+**Status**: ✅ Full Support  
+**Example**: [`examples/go-advanced/`](https://github.com/conneroisu/bufr.nix/tree/main/examples/go-advanced)
+
+OpenAPI v2 (Swagger) specification generation from protobuf service definitions.
+
+### Features
+
+- **OpenAPI v2 (Swagger)** specification generation
+- **HTTP annotations** support via `google.api.http` options
+- **JSON output** in standard Swagger 2.0 format
+- **Service documentation** from protobuf comments
+- **REST API mapping** from gRPC services
+
+### Quick Start
+
+```nix
+languages.openapi = {
+  enable = true;
+  outputPath = "proto/gen/openapi";
+};
+```
+
+### Generated Files
+
+| File Pattern | Description |
+| ------------ | ----------- |
+| `*.swagger.json` | OpenAPI v2 specification files |
+
+### Prerequisites
+
+Your protobuf files need HTTP annotations:
+
+```protobuf
+import "google/api/annotations.proto";
+
+service UserService {
+  rpc GetUser(GetUserRequest) returns (User) {
+    option (google.api.http) = {
+      get: "/v1/users/{user_id}"
+    };
+  }
+}
+```
+
+### Common Use with gRPC-Gateway
+
+```nix
+languages = {
+  go = {
+    enable = true;
+    grpc.enable = true;
+    gateway.enable = true;
+  };
+  
+  openapi = {
+    enable = true;
+    outputPath = "proto/gen/openapi";
+  };
+};
 ```
 
 ## Language Comparison
