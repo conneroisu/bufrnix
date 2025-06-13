@@ -1,0 +1,318 @@
+---
+title: C++ Language Support
+description: Complete Protocol Buffer support for C++ with gRPC, CMake integration, and embedded-friendly options.
+---
+
+import { Tabs, TabItem } from "@astrojs/starlight/components";
+import { Code } from "astro:components";
+
+# C++ Language Support
+
+**Status**: ✅ Full Support  
+**Examples**: 
+- [`examples/cpp-basic/`](https://github.com/conneroisu/bufr.nix/tree/main/examples/cpp-basic)
+- [`examples/cpp-grpc/`](https://github.com/conneroisu/bufr.nix/tree/main/examples/cpp-grpc)
+
+C++ support includes the complete Protocol Buffer ecosystem with gRPC, CMake integration, and embedded-friendly alternatives like nanopb.
+
+## Available Plugins
+
+### Core Plugins
+
+| Plugin                | Description                 | Generated Files    |
+| --------------------- | --------------------------- | ------------------ |
+| **`protoc`**          | Base message generation     | `*.pb.cc`, `*.pb.h` |
+| **`grpc_cpp_plugin`** | gRPC service generation     | `*.grpc.pb.cc`, `*.grpc.pb.h` |
+
+### Embedded & Alternative Plugins
+
+| Plugin                | Description                   | Generated Files    |
+| --------------------- | ----------------------------- | ------------------ |
+| **`nanopb`**          | Embedded C/C++ (minimal RAM)  | `*.pb.c`, `*.pb.h` |
+| **`protobuf-c`**      | Pure C code generation        | `*.pb-c.c`, `*.pb-c.h` |
+
+## Configuration
+
+### Basic Configuration
+
+```nix
+languages.cpp = {
+  enable = true;
+  outputPath = "gen/cpp";
+  standard = "c++17";
+  optimizeFor = "SPEED";
+};
+```
+
+### Full Configuration Example
+
+```nix
+languages.cpp = {
+  enable = true;
+  outputPath = "gen/cpp";
+  
+  # Protobuf version selection
+  protobufVersion = "latest"; # Options: "3.21", "3.25", "3.27", "4.25", "5.29", "latest"
+  
+  # C++ standard and optimization
+  standard = "c++17"; # Options: "c++17", "c++20", "c++23"
+  optimizeFor = "SPEED"; # Options: "SPEED", "CODE_SIZE", "LITE_RUNTIME"
+  runtime = "full"; # Options: "full", "lite"
+  
+  # Build system integration
+  cmakeIntegration = true;
+  pkgConfigIntegration = true;
+  
+  # Performance options
+  arenaAllocation = false; # Enable arena allocation for better performance
+  
+  # Additional include paths
+  includePaths = [
+    "/usr/local/include"
+    "./third_party"
+  ];
+  
+  # gRPC support
+  grpc = {
+    enable = true;
+    generateMockCode = true; # Generate mock code for testing
+    options = [
+      "generate_mock_code=true"
+    ];
+  };
+  
+  # Embedded C/C++ support
+  nanopb = {
+    enable = true;
+    options = [
+      "max_size=1024"
+      "max_count=16"
+    ];
+  };
+  
+  # Pure C support
+  protobuf-c = {
+    enable = false;
+    options = [];
+  };
+};
+```
+
+## C++ Standards Support
+
+Bufrnix supports all modern C++ standards:
+
+- **C++17**: Default, widely supported
+- **C++20**: Modern features like concepts and coroutines
+- **C++23**: Latest standard with additional features
+
+## Optimization Modes
+
+| Mode            | Description                                         | Use Case                |
+| --------------- | --------------------------------------------------- | ----------------------- |
+| `SPEED`         | Optimize for execution speed (default)              | Server applications     |
+| `CODE_SIZE`     | Optimize for smaller binary size                    | Mobile/embedded devices |
+| `LITE_RUNTIME`  | Use lite runtime (smaller binary, fewer features)   | Resource-constrained    |
+
+## Build System Integration
+
+### CMake Integration
+
+When `cmakeIntegration` is enabled, Bufrnix generates CMake configuration files:
+
+```cmake
+# FindProtobuf.cmake generated content
+find_package(Protobuf REQUIRED)
+find_package(gRPC REQUIRED)
+
+# Include generated proto headers
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/gen/cpp)
+
+# Link against protobuf libraries
+target_link_libraries(myapp
+  protobuf::libprotobuf
+  gRPC::grpc++
+)
+```
+
+### pkg-config Integration
+
+When `pkgConfigIntegration` is enabled, `.pc` files are generated for easy library discovery.
+
+## gRPC Support
+
+Enable gRPC to generate service stubs and client code:
+
+```nix
+grpc = {
+  enable = true;
+  generateMockCode = true; # Generate Google Mock compatible mocks
+};
+```
+
+Generated files include:
+- Service interfaces (`*.grpc.pb.h`)
+- Client and server implementations (`*.grpc.pb.cc`)
+- Mock classes for testing (when enabled)
+
+## Embedded Development
+
+### nanopb
+
+For embedded systems with limited RAM:
+
+```nix
+nanopb = {
+  enable = true;
+  options = [
+    "max_size=1024"      # Maximum message size
+    "max_count=16"       # Maximum repeated field count
+    "long_names=false"   # Use shorter field names
+  ];
+};
+```
+
+### protobuf-c
+
+For pure C environments:
+
+```nix
+protobuf-c = {
+  enable = true;
+  options = [];
+};
+```
+
+## Example Usage
+
+<Tabs>
+  <TabItem label="Basic Messages">
+    ```nix
+    # flake.nix
+    {
+      languages.cpp = {
+        enable = true;
+        outputPath = "src/proto";
+        standard = "c++17";
+      };
+    }
+    ```
+    
+    ```cpp
+    // main.cpp
+    #include "example.pb.h"
+    
+    int main() {
+      example::v1::User user;
+      user.set_id(123);
+      user.set_name("Alice");
+      
+      std::string serialized;
+      user.SerializeToString(&serialized);
+      
+      return 0;
+    }
+    ```
+  </TabItem>
+  
+  <TabItem label="gRPC Services">
+    ```nix
+    # flake.nix
+    {
+      languages.cpp = {
+        enable = true;
+        grpc.enable = true;
+        standard = "c++20";
+      };
+    }
+    ```
+    
+    ```cpp
+    // server.cpp
+    #include "service.grpc.pb.h"
+    #include <grpcpp/grpcpp.h>
+    
+    class MyServiceImpl final : public MyService::Service {
+      grpc::Status GetUser(grpc::ServerContext* context,
+                          const GetUserRequest* request,
+                          GetUserResponse* response) override {
+        response->mutable_user()->set_id(request->id());
+        response->mutable_user()->set_name("User " + std::to_string(request->id()));
+        return grpc::Status::OK;
+      }
+    };
+    ```
+  </TabItem>
+  
+  <TabItem label="Embedded (nanopb)">
+    ```nix
+    # flake.nix
+    {
+      languages.cpp = {
+        enable = true;
+        nanopb.enable = true;
+        nanopb.options = [
+          "max_size=256"
+          "max_count=8"
+        ];
+      };
+    }
+    ```
+    
+    ```c
+    // embedded.c
+    #include "pb_encode.h"
+    #include "pb_decode.h"
+    #include "message.pb.h"
+    
+    void encode_message(uint8_t *buffer, size_t buffer_size) {
+      Message msg = Message_init_zero;
+      msg.value = 42;
+      
+      pb_ostream_t stream = pb_ostream_from_buffer(buffer, buffer_size);
+      pb_encode(&stream, Message_fields, &msg);
+    }
+    ```
+  </TabItem>
+</Tabs>
+
+## Best Practices
+
+1. **Choose the Right Runtime**: Use lite runtime for mobile/embedded, full runtime for servers
+2. **Optimize Appropriately**: Use `SPEED` for servers, `CODE_SIZE` for embedded
+3. **Enable Arena Allocation**: For high-performance scenarios with many small allocations
+4. **Use Modern C++**: Prefer C++17 or newer for better language features
+5. **CMake Integration**: Enable for easier build system integration
+
+## Troubleshooting
+
+### Common Issues
+
+1. **Protobuf Version Mismatch**
+   ```nix
+   # Ensure consistent versions
+   protobufVersion = "3.27";  # Match your system protobuf
+   ```
+
+2. **Missing Headers**
+   ```nix
+   # Add include paths
+   includePaths = [
+     "${pkgs.protobuf}/include"
+     "./third_party/protobuf"
+   ];
+   ```
+
+3. **gRPC Compilation Errors**
+   ```nix
+   # Ensure gRPC is enabled with matching protobuf version
+   grpc.enable = true;
+   protobufVersion = "3.27";  # Must match gRPC's protobuf dependency
+   ```
+
+## See Also
+
+- [protobuf C++ Tutorial](https://protobuf.dev/getting-started/cpptutorial/)
+- [gRPC C++ Documentation](https://grpc.io/docs/languages/cpp/)
+- [nanopb Documentation](https://jpa.kapsi.fi/nanopb/)
+- [CMake Integration Guide](/guides/build-systems/cmake)

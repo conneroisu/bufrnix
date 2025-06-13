@@ -40,9 +40,11 @@ export default defineConfig({
             { label: 'Configuration', link: '/reference/configuration/' },
             { label: 'Language Support', link: '/reference/languages/' },
             { label: 'C Support', link: '/reference/languages/c/' },
+            { label: 'C++ Support', link: '/reference/languages/cpp/' },
             { label: 'C# Support', link: '/reference/languages/csharp/' },
             { label: 'Go Support', link: '/reference/languages/go/' },
             { label: 'JavaScript Support', link: '/reference/languages/javascript/' },
+            // JVM-like languages
             { label: 'Java Support', link: '/reference/languages/java/' },
             { label: 'Kotlin Support', link: '/reference/languages/kotlin/' },
             { label: 'Scala Support', link: '/reference/languages/scala/' },
