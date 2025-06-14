@@ -9,7 +9,20 @@ with pkgs.lib; let
   optionsDef = import ./bufrnix-options.nix {inherit (pkgs) lib;};
   debug = import ./utils/debug.nix {inherit (pkgs) lib;};
 
-  # Extract default values from options
+  /* Extract default values from option definitions recursively.
+  
+     This function traverses option definitions and extracts their default values,
+     handling both simple options and nested attribute sets of options.
+     
+     Type: extractDefaults :: AttrSet -> AttrSet
+     
+     Example:
+       extractDefaults { 
+         foo.default = "bar"; 
+         nested = { baz.default = 42; }; 
+       }
+       => { foo = "bar"; nested = { baz = 42; }; }
+  */
   extractDefaults = options:
     if isOption options
     then options.default or null
@@ -104,7 +117,18 @@ with pkgs.lib; let
   # Merge defaults with user config
   cfg = recursiveUpdate (recursiveUpdate defaultConfig packageDefaults) config;
 
-  # Helper function to normalize outputPath from string or array to array
+  /* Normalize output path from string or array to consistent array format.
+  
+     Bufrnix supports both single output paths (as strings) and multiple output paths
+     (as arrays) for each language. This function ensures all paths are represented
+     as arrays for consistent processing.
+     
+     Type: normalizeOutputPath :: (String | [String]) -> [String]
+     
+     Example:
+       normalizeOutputPath "gen/go" => ["gen/go"]
+       normalizeOutputPath ["gen/go", "pkg/proto"] => ["gen/go", "pkg/proto"]
+  */
   normalizeOutputPath = path:
     if builtins.isList path
     then path
@@ -113,7 +137,18 @@ with pkgs.lib; let
   # Load language modules based on configuration
   languageNames = attrNames cfg.languages;
 
-  # Function to load a language module if enabled
+  /* Load a language module if enabled in the configuration.
+  
+     Conditionally imports and instantiates a language module based on whether
+     the language is enabled in the configuration. Language modules provide
+     protoc plugins, runtime inputs, and generation hooks.
+     
+     Type: loadLanguageModule :: String -> AttrSet
+     
+     Example:
+       loadLanguageModule "go" 
+       => { runtimeInputs = [protoc-gen-go]; protocPlugins = ["--go_out=."]; ... }
+  */
   loadLanguageModule = language:
     if cfg.languages.${language}.enable
     then
@@ -157,7 +192,23 @@ with pkgs.lib; let
   # Extract runtime inputs from language modules
   languageRuntimeInputs = concatMap (module: module.runtimeInputs or []) loadedLanguageModulesForInputs;
 
-  # Generate protoc commands for each enabled language with multiple output paths
+  /* Generate protoc commands for each enabled language with multiple output paths.
+  
+     This function creates the command structure for protoc code generation across
+     all enabled languages and their configured output paths. It handles multi-output
+     scenarios where a single language can generate code to multiple directories.
+     
+     Returns a list of language command objects, each containing:
+     - language: The language name
+     - commands: List of path-specific command objects with:
+       * outputPath: Target directory for generated code
+       * runtimeInputs: Required packages for generation
+       * protocPlugins: protoc command-line plugin arguments
+       * initHooks: Shell commands run before generation
+       * generateHooks: Shell commands run after generation
+     
+     Type: generateProtocCommands :: [{ language :: String; commands :: [Command]; }]
+  */
   generateProtocCommands = let
     enabledLanguages = filter (lang: cfg.languages.${lang}.enable) languageNames;
 

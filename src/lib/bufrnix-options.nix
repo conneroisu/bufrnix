@@ -1,3 +1,27 @@
+/* Bufrnix Configuration Options Schema
+
+   This module defines the complete configuration schema for Bufrnix, including:
+   - Core project settings (root directory, debug options)
+   - Protoc compiler configuration (source/include directories, file lists)
+   - Language-specific configuration for all supported languages
+   - Plugin configurations for each language's ecosystem
+   
+   The options provide type safety, validation, and default values for all
+   configuration parameters used in Protocol Buffer code generation.
+   
+   Supported Languages:
+   - Go: Complete ecosystem with gRPC, Connect, Gateway, Validate, etc.
+   - JavaScript/TypeScript: ES modules, Connect-ES, gRPC-Web, Twirp
+   - Python: Standard protobuf, gRPC, betterproto, mypy integration
+   - Java: Standard protobuf, gRPC, validation
+   - C#: .NET support with project file generation
+   - C/C++: protobuf-c, nanopb, gRPC
+   - PHP: Framework integration (Laravel/Symfony), RoadRunner, async
+   - Dart: Flutter/mobile development support
+   - And many more...
+   
+   Type: BufrnixOptions :: { options :: AttrSet; }
+*/
 {lib, ...}:
 with lib; {
   options = {
