@@ -46,10 +46,6 @@
 
                   # Example 1: Using individual plugin configurations
                   grpc.enable = true;
-                  openapiv2 = {
-                    enable = true;
-                    outputPath = "proto/gen/openapi";
-                  };
                   vtprotobuf = {
                     enable = true;
                     options = [
@@ -69,8 +65,12 @@
                   #     opt = ["features=marshal+unmarshal+size+pool"];
                   #   }
                   #   "buf.build/community/mfridman-go-json"
-                  #   "openapiv2"
+                  #   # "openapiv2" # This is now a top-level language: languages.openapi
                   # ];
+                };
+                openapi = { # Moved from go.openapiv2
+                  enable = true;
+                  outputPath = "proto/gen/openapi";
                 };
               };
             };

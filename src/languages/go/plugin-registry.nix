@@ -58,12 +58,6 @@ with lib; {
       options = ["paths=source_relative"];
     };
 
-    "openapiv2" = {
-      package = pkgs.protoc-gen-openapiv2 or null;
-      module = "openapiv2";
-      options = ["logtostderr=true"];
-    };
-
     # Legacy plugins (for backwards compatibility)
     "validate" = {
       package = pkgs.protoc-gen-validate;

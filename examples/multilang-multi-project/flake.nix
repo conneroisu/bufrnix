@@ -221,11 +221,6 @@
                   outputPath = "proto/gen/go";
                 };
 
-                openapiv2 = {
-                  enable = true;
-                  outputPath = "proto/gen/openapi";
-                };
-
                 # Performance optimizations
                 vtprotobuf = {
                   enable = true;
@@ -277,6 +272,11 @@
               doc = {
                 enable = true;
                 outputPath = "proto/gen/doc";
+              };
+              # OpenAPI (formerly under Go)
+              openapi = {
+                enable = true;
+                outputPath = "proto/gen/openapi";
               };
             };
           };

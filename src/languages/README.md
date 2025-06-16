@@ -37,7 +37,6 @@ Go support includes the complete Protocol Buffer ecosystem with modern tooling a
 
 - **`vtprotobuf.nix`** - High-performance serialization (`protoc-gen-go-vtproto`) - 3.8x faster
 - **`json.nix`** - JSON integration with `encoding/json` (`protoc-gen-go-json`)
-- **`openapiv2.nix`** - OpenAPI v2 documentation generation (`protoc-gen-openapiv2`)
 - **`federation.nix`** - gRPC Federation for BFF servers (`protoc-gen-grpc-federation`)
 
 #### Buf Registry Plugin Support
@@ -123,12 +122,6 @@ languages.go = {
     options = ["paths=source_relative" "orig_name=true"];
   };
 
-  # OpenAPI documentation
-  openapiv2 = {
-    enable = true;
-    options = ["logtostderr=true"];
-  };
-
   # gRPC Federation (experimental)
   federation = {
     enable = true;
@@ -148,7 +141,6 @@ For a proto file `user/v1/user.proto`:
 - `user_connect.go` - Connect service definitions (if connect.enable = true)
 - `user_vtproto.pb.go` - High-performance marshal/unmarshal (if vtprotobuf.enable = true)
 - `user.pb.json.go` - JSON marshal/unmarshal methods (if json.enable = true)
-- `user.swagger.json` - OpenAPI v2 specification (if openapiv2.enable = true)
 - `user_federation.pb.go` - Federation BFF code (if federation.enable = true)
 
 ### C++
@@ -717,7 +709,6 @@ languages/
 │   ├── protovalidate.nix # Modern CEL-based validation
 │   ├── vtprotobuf.nix    # High-performance serialization
 │   ├── json.nix          # JSON integration plugin
-│   ├── openapiv2.nix     # OpenAPI v2 documentation
 │   ├── federation.nix    # gRPC Federation for BFF
 │   ├── plugin-registry.nix # Buf registry plugin mappings
 │   └── plugins.nix       # Dynamic plugin configuration
@@ -923,7 +914,6 @@ Available in nixpkgs:
 Plugins requiring custom packaging (not yet in nixpkgs):
 
 - `protovalidate-go` - Modern CEL-based validation runtime
-- `protoc-gen-openapiv2` - OpenAPI v2 documentation
 - `protoc-gen-go-vtproto` - High-performance Go serialization
 - `protoc-gen-go-json` - JSON integration for Go
 - `protoc-gen-grpc-federation` - gRPC Federation for BFF

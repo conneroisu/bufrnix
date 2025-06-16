@@ -140,12 +140,6 @@ languages.go = {
     options = ["paths=source_relative"];
   };
 
-  # OpenAPI v2 documentation
-  openapiv2 = {
-    enable = true;
-    options = ["logtostderr=true"];
-  };
-
   # High-performance serialization (3.8x faster)
   vtprotobuf = {
     enable = true;
@@ -616,7 +610,6 @@ Here's a comprehensive example showing multiple languages configured together:
             protovalidate.enable = true;
             vtprotobuf.enable = true; # High performance
             json.enable = true;
-            openapiv2.enable = true;
           };
 
           # Frontend: TypeScript with modern tooling
@@ -688,6 +681,13 @@ Here's a comprehensive example showing multiple languages configured together:
             enable = true;
             outputPath = "docs/diagrams";
           };
+
+          # OpenAPI v2 documentation
+          openapi = {
+            enable = true;
+            # outputPath = "gen/openapi"; # Default, or specify if different
+            # options = ["logtostderr=true"]; # Default, or specify if different
+          };
         };
       };
     };
@@ -739,7 +739,9 @@ Generate different configurations for different environments:
           enable = true;
           validate.enable = true;
           gateway.enable = true;
-          openapiv2.enable = true;
+        };
+        languages.openapi = { # Moved from go
+          enable = true;
         };
       };
     };
@@ -817,7 +819,10 @@ Configure different services with different language requirements:
           outputPath = "gateway/proto";
           grpc.enable = true;
           gateway.enable = true; # HTTP/JSON gateway
-          openapiv2.enable = true; # API documentation
+        };
+        languages.openapi = { # Moved from go
+          enable = true; # API documentation
+          # outputPath = "gateway/openapi"; # Example, if different from default
         };
       };
     };

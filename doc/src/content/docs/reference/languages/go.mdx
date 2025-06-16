@@ -38,7 +38,6 @@ Go support includes the complete Protocol Buffer ecosystem with all major plugin
 | -------------------------------- | ------------------------- | -------------------- |
 | **`protoc-gen-go-vtproto`**      | 3.8x faster serialization | `*_vtproto.pb.go`    |
 | **`protoc-gen-go-json`**         | JSON integration          | `*.pb.json.go`       |
-| **`protoc-gen-openapiv2`**       | OpenAPI v2 docs           | `*.swagger.json`     |
 | **`protoc-gen-grpc-federation`** | BFF generation            | `*_federation.pb.go` |
 
 ## Configuration
@@ -115,12 +114,6 @@ languages.go = {
   json = {
     enable = true;
     options = ["paths=source_relative" "orig_name=true"];
-  };
-
-  # OpenAPI documentation
-  openapiv2 = {
-    enable = true;
-    options = ["logtostderr=true"];
   };
 
   # gRPC Federation (experimental)
@@ -479,7 +472,6 @@ defer user.ReturnToVTPool()
 2. **Enable Validation**: Use protovalidate for modern CEL-based validation
 3. **Consider Performance**: Enable vtprotobuf for high-throughput services
 4. **HTTP APIs**: Use gRPC-Gateway or Connect for HTTP/JSON APIs
-5. **Documentation**: Enable OpenAPI generation for REST API documentation
 
 ## Try the Example
 
