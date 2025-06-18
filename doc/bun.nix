@@ -8,9 +8,9 @@
   };
   "@astrojs/compiler" = {
     out_path = "@astrojs/compiler";
-    name = "@astrojs/compiler@2.12.0";
-    url = "https://registry.npmjs.org/@astrojs/compiler/-/compiler-2.12.0.tgz";
-    hash = "sha512-7bCjW6tVDpUurQLeKBUN9tZ5kSv5qYrGmcn0sG0IwacL7isR2ZbyyA3AdZ4uxsuUFOS2SlgReTH7wkxO6zpqWA==";
+    name = "@astrojs/compiler@2.12.2";
+    url = "https://registry.npmjs.org/@astrojs/compiler/-/compiler-2.12.2.tgz";
+    hash = "sha512-w2zfvhjNCkNMmMMOn5b0J8+OmUaBL1o40ipMvqcG6NRpdC+lKxmTi48DT8Xw0SzJ3AfmeFLB45zXZXtmbsjcgw==";
   };
   "@astrojs/internal-helpers" = {
     out_path = "@astrojs/internal-helpers";
@@ -20,9 +20,9 @@
   };
   "@astrojs/markdown-remark" = {
     out_path = "@astrojs/markdown-remark";
-    name = "@astrojs/markdown-remark@6.3.1";
-    url = "https://registry.npmjs.org/@astrojs/markdown-remark/-/markdown-remark-6.3.1.tgz";
-    hash = "sha512-c5F5gGrkczUaTVgmMW9g1YMJGzOtRvjjhw6IfGuxarM6ct09MpwysP10US729dy07gg8y+ofVifezvP3BNsWZg==";
+    name = "@astrojs/markdown-remark@6.3.2";
+    url = "https://registry.npmjs.org/@astrojs/markdown-remark/-/markdown-remark-6.3.2.tgz";
+    hash = "sha512-bO35JbWpVvyKRl7cmSJD822e8YA8ThR/YbUsciWNA7yTcqpIAL2hJDToWP5KcZBWxGT6IOdOkHSXARSNZc4l/Q==";
   };
   "@astrojs/mdx" = {
     out_path = "@astrojs/mdx";
@@ -30,11 +30,23 @@
     url = "https://registry.npmjs.org/@astrojs/mdx/-/mdx-4.2.6.tgz";
     hash = "sha512-0i/GmOm6d0qq1/SCfcUgY/IjDc/bS0i42u7h85TkPFBmlFOcBZfkYhR5iyz6hZLwidvJOEq5yGfzt9B1Azku4w==";
   };
-  "@astrojs/prism" = {
-    out_path = "@astrojs/prism";
+  "@astrojs/mdx/@astrojs/markdown-remark" = {
+    out_path = "@astrojs/mdx/node_modules/@astrojs/node_modules/markdown-remark";
+    name = "@astrojs/markdown-remark@6.3.1";
+    url = "https://registry.npmjs.org/@astrojs/markdown-remark/-/markdown-remark-6.3.1.tgz";
+    hash = "sha512-c5F5gGrkczUaTVgmMW9g1YMJGzOtRvjjhw6IfGuxarM6ct09MpwysP10US729dy07gg8y+ofVifezvP3BNsWZg==";
+  };
+  "@astrojs/mdx/@astrojs/markdown-remark/@astrojs/prism" = {
+    out_path = "@astrojs/mdx/node_modules/@astrojs/node_modules/markdown-remark/node_modules/@astrojs/node_modules/prism";
     name = "@astrojs/prism@3.2.0";
     url = "https://registry.npmjs.org/@astrojs/prism/-/prism-3.2.0.tgz";
     hash = "sha512-GilTHKGCW6HMq7y3BUv9Ac7GMe/MO9gi9GW62GzKtth0SwukCu/qp2wLiGpEujhY+VVhaG9v7kv/5vFzvf4NYw==";
+  };
+  "@astrojs/prism" = {
+    out_path = "@astrojs/prism";
+    name = "@astrojs/prism@3.3.0";
+    url = "https://registry.npmjs.org/@astrojs/prism/-/prism-3.3.0.tgz";
+    hash = "sha512-q8VwfU/fDZNoDOf+r7jUnMC2//H2l0TuQ6FkGJL8vD8nw/q5KiL3DS1KKBI3QhI9UQhpJ5dc7AtqfbXWuOgLCQ==";
   };
   "@astrojs/sitemap" = {
     out_path = "@astrojs/sitemap";
@@ -44,9 +56,9 @@
   };
   "@astrojs/starlight" = {
     out_path = "@astrojs/starlight";
-    name = "@astrojs/starlight@0.34.3";
-    url = "https://registry.npmjs.org/@astrojs/starlight/-/starlight-0.34.3.tgz";
-    hash = "sha512-MAuD3NF+E+QXJJuVKofoR6xcPTP4BJmYWeOBd03udVdubNGVnPnSWVZAi+ZtnTofES4+mJdp8BNGf+ubUxkiiA==";
+    name = "@astrojs/starlight@0.34.4";
+    url = "https://registry.npmjs.org/@astrojs/starlight/-/starlight-0.34.4.tgz";
+    hash = "sha512-NfQ6S2OaDG8aaiE+evVxSMpgqMkXPLa/yCpzG340EX2pRzFxPeTSvpei3Uz9KouevXRCctjHSItKjuZP+2syrQ==";
   };
   "@astrojs/telemetry" = {
     out_path = "@astrojs/telemetry";
@@ -983,27 +995,15 @@
     binaries = {
       "astro" = "../astro/astro.js";
     };
-    name = "astro@5.8.0";
-    url = "https://registry.npmjs.org/astro/-/astro-5.8.0.tgz";
-    hash = "sha512-G57ELkdIntDiSrucA5lQaRtBOjquaZ9b9NIwoz2f471ZuuJcynLjWgItgBzlrz5UMY4WqnFbVWUCKlJb7nt9bA==";
+    name = "astro@5.9.4";
+    url = "https://registry.npmjs.org/astro/-/astro-5.9.4.tgz";
+    hash = "sha512-AEulm16C9IijMYrFb3VIFx9z17p/wfDSHUHdbbvSEX+rBca64xV+f67tnsql3s4CE8u2cwYpdX+5yH7l53W4iA==";
   };
   "astro-expressive-code" = {
     out_path = "astro-expressive-code";
     name = "astro-expressive-code@0.41.2";
     url = "https://registry.npmjs.org/astro-expressive-code/-/astro-expressive-code-0.41.2.tgz";
     hash = "sha512-HN0jWTnhr7mIV/2e6uu4PPRNNo/k4UEgTLZqbp3MrHU+caCARveG2yZxaZVBmxyiVdYqW5Pd3u3n2zjnshixbw==";
-  };
-  "astro/@astrojs/markdown-remark" = {
-    out_path = "astro/@astrojs/node_modules/markdown-remark";
-    name = "@astrojs/markdown-remark@6.3.2";
-    url = "https://registry.npmjs.org/@astrojs/markdown-remark/-/markdown-remark-6.3.2.tgz";
-    hash = "sha512-bO35JbWpVvyKRl7cmSJD822e8YA8ThR/YbUsciWNA7yTcqpIAL2hJDToWP5KcZBWxGT6IOdOkHSXARSNZc4l/Q==";
-  };
-  "astro/@astrojs/markdown-remark/@astrojs/prism" = {
-    out_path = "astro/@astrojs/node_modules/markdown-remark/node_modules/@astrojs/node_modules/prism";
-    name = "@astrojs/prism@3.3.0";
-    url = "https://registry.npmjs.org/@astrojs/prism/-/prism-3.3.0.tgz";
-    hash = "sha512-q8VwfU/fDZNoDOf+r7jUnMC2//H2l0TuQ6FkGJL8vD8nw/q5KiL3DS1KKBI3QhI9UQhpJ5dc7AtqfbXWuOgLCQ==";
   };
   "astro/sharp" = {
     out_path = "astro/node_modules/sharp";
