@@ -3,50 +3,86 @@ title: Go Language Support
 description: Complete Protocol Buffer support for Go with gRPC, Connect, Gateway, and validation plugins.
 ---
 
-import { Tabs, TabItem } from "@astrojs/starlight/components";
-import { Code } from "astro:components";
+import { Tabs, TabItem, Card, CardGrid, Badge, Code, LinkCard, FileTree, Aside } from "@astrojs/starlight/components";
 import basicConfig from "./go.x-basic-configuration.nix?raw";
 
 # Go Language Support
 
-**Status**: ✅ Full Support  
-**Example**: [`examples/simple-flake/`](https://github.com/conneroisu/bufr.nix/tree/main/examples/simple-flake)
+<Badge text="✅ Full Support" variant="success" /> <Badge text="8+ Plugins" variant="note" /> <Badge text="High Performance" variant="tip" />
 
-Go support includes the complete Protocol Buffer ecosystem with all major plugins and performance optimizations.
+Go support includes the complete Protocol Buffer ecosystem with all major plugins and performance optimizations. Perfect for microservices, CLI tools, and high-performance backend systems.
+
+<CardGrid>
+  <Card title="gRPC Services" icon="rocket">
+    Full gRPC server and client code generation with streaming support
+  </Card>
+  <Card title="HTTP/JSON APIs" icon="laptop">
+    REST API gateways via grpc-gateway or modern Connect protocol
+  </Card>
+  <Card title="High Performance" icon="lightning">
+    3.8x faster serialization with vtprotobuf optimization
+  </Card>
+  <Card title="Validation" icon="shield">
+    Built-in message validation with CEL expressions
+  </Card>
+</CardGrid>
 
 ## Available Plugins
 
-### Core Plugins
+<Tabs>
+<TabItem label="Core Plugins">
 
-| Plugin                        | Description             | Generated Files |
-| ----------------------------- | ----------------------- | --------------- |
-| **`protoc-gen-go`**           | Base message generation | `*.pb.go`       |
-| **`protoc-gen-go-grpc`**      | gRPC services           | `*_grpc.pb.go`  |
-| **`protoc-gen-connect-go`**   | Connect protocol        | `*_connect.go`  |
-| **`protoc-gen-grpc-gateway`** | HTTP/JSON gateway       | `*.pb.gw.go`    |
+<Card title="Essential Protocol Buffer Support" icon="star">
 
-### Validation Plugins
+| Plugin | Description | Generated Files | Status |
+|--------|-------------|-----------------|---------|
+| **protoc-gen-go** | Base message generation | `*.pb.go` | <Badge text="✅ Stable" variant="success" /> |
+| **protoc-gen-go-grpc** | gRPC services | `*_grpc.pb.go` | <Badge text="✅ Stable" variant="success" /> |
+| **protoc-gen-connect-go** | Connect protocol | `*_connect.go` | <Badge text="✅ Modern" variant="tip" /> |
+| **protoc-gen-grpc-gateway** | HTTP/JSON gateway | `*.pb.gw.go` | <Badge text="✅ Popular" variant="note" /> |
 
-| Plugin                    | Description           | Generated Files    |
-| ------------------------- | --------------------- | ------------------ |
-| **`protoc-gen-validate`** | Legacy validation     | `*.pb.validate.go` |
-| **`protovalidate`**       | Modern CEL validation | Runtime validation |
+</Card>
 
-### Performance & Feature Plugins
+</TabItem>
+<TabItem label="Validation">
 
-| Plugin                           | Description               | Generated Files      |
-| -------------------------------- | ------------------------- | -------------------- |
-| **`protoc-gen-go-vtproto`**      | 3.8x faster serialization | `*_vtproto.pb.go`    |
-| **`protoc-gen-go-json`**         | JSON integration          | `*.pb.json.go`       |
-| **`protoc-gen-openapiv2`**       | OpenAPI v2 docs           | `*.swagger.json`     |
-| **`protoc-gen-grpc-federation`** | BFF generation            | `*_federation.pb.go` |
+<Card title="Message Validation" icon="shield">
+
+| Plugin | Description | Generated Files | Recommendation |
+|--------|-------------|-----------------|----------------|
+| **protovalidate** | Modern CEL validation | Runtime validation | <Badge text="✨ Recommended" variant="tip" /> |
+| **protoc-gen-validate** | Legacy validation | `*.pb.validate.go` | <Badge text="⚠️ Legacy" variant="caution" /> |
+
+<Aside type="tip" title="Validation Choice">
+Use **protovalidate** for new projects. It provides more powerful CEL-based validation rules and better performance.
+</Aside>
+
+</Card>
+
+</TabItem>
+<TabItem label="Performance & Features">
+
+<Card title="Advanced Features" icon="lightning">
+
+| Plugin | Description | Generated Files | Performance |
+|--------|-------------|-----------------|-------------|
+| **protoc-gen-go-vtproto** | Fast serialization | `*_vtproto.pb.go` | <Badge text="3.8x faster" variant="success" /> |
+| **protoc-gen-go-json** | JSON integration | `*.pb.json.go` | <Badge text="Fast JSON" variant="tip" /> |
+| **protoc-gen-openapiv2** | OpenAPI v2 docs | `*.swagger.json` | <Badge text="API Docs" variant="note" /> |
+| **protoc-gen-grpc-federation** | BFF generation | `*_federation.pb.go` | <Badge text="🧪 Experimental" variant="caution" /> |
+
+</Card>
+
+</TabItem>
+</Tabs>
 
 ## Configuration
 
-### Basic Configuration
+<Tabs>
+<TabItem label="Basic Setup">
 
-```nix
-languages.go = {
+<Code 
+  code={`languages.go = {
   enable = true;
   outputPath = "gen/go";
   packagePrefix = "github.com/myorg/myproject";
@@ -54,8 +90,75 @@ languages.go = {
     "paths=source_relative"
     "require_unimplemented_servers=false"
   ];
-};
-```
+};`}
+  lang="nix"
+  title="Basic Go configuration"
+/>
+
+<FileTree>
+- project/
+  - proto/
+    - user/
+      - v1/
+        - user.proto
+  - gen/
+    - go/
+      - user/
+        - v1/
+          - user.pb.go
+          - user_grpc.pb.go
+</FileTree>
+
+</TabItem>
+<TabItem label="gRPC + Gateway">
+
+<Code
+  code={`languages.go = {
+  enable = true;
+  outputPath = "gen/go";
+  grpc = {
+    enable = true;
+    options = ["paths=source_relative"];
+  };
+  gateway = {
+    enable = true;
+    options = [
+      "paths=source_relative"
+      "generate_unbound_methods=true"
+    ];
+  };
+};`}
+  lang="nix" 
+  title="gRPC with HTTP gateway"
+/>
+
+</TabItem>
+<TabItem label="High Performance">
+
+<Code
+  code={`languages.go = {
+  enable = true;
+  outputPath = "gen/go";
+  grpc.enable = true;
+  protovalidate.enable = true;
+  vtprotobuf = {
+    enable = true;
+    options = [
+      "paths=source_relative"
+      "features=marshal+unmarshal+size+pool"
+    ];
+  };
+  json = {
+    enable = true;
+    options = ["paths=source_relative"];
+  };
+};`}
+  lang="nix"
+  title="Optimized for performance"
+/>
+
+</TabItem>
+</Tabs>
 
 ### Full Configuration Example
 
