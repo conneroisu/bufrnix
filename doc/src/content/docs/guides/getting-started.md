@@ -3,6 +3,8 @@ title: Getting Started with Bufrnix
 description: Learn how to set up Bufrnix and generate your first Protocol Buffer code with comprehensive examples and troubleshooting.
 ---
 
+import { Card, CardGrid, Tabs, TabItem, Code, Badge, LinkCard, Icon, Steps, Aside, FileTree } from "@astrojs/starlight/components";
+
 # Introduction
 
 Bufrnix makes it easy to integrate Protocol Buffers into your Nix-based projects with declarative configuration and reproducible builds. This comprehensive guide will walk you through setting up Bufrnix, generating code for your first Protocol Buffer definitions, and avoiding common pitfalls.
@@ -11,37 +13,74 @@ Bufrnix makes it easy to integrate Protocol Buffers into your Nix-based projects
 
 Before diving into setup, it's worth understanding why Bufrnix exists and when it's the right choice for your project:
 
-**🌐 Works Anywhere**: Unlike remote plugin systems, Bufrnix runs completely offline. Perfect for corporate firewalls, air-gapped environments, or unreliable internet connections. No more `context deadline exceeded` errors or geographic latency.
-
-**🔒 Keeps Schemas Private**: All processing happens locally - your proprietary API definitions never leave your environment. Essential for regulated industries (SOX, HIPAA, FedRAMP) and protecting competitive advantages.
-
-**⚡ Blazing Fast**: Up to 60x faster than remote alternatives. No network latency, no rate limiting, no timeouts. Parallel execution across multiple languages and plugins.
-
-**🎯 Truly Reproducible**: Same inputs = identical outputs, always. Cryptographic hashes ensure supply chain integrity across all environments. Content-addressed storage prevents version drift.
-
-**🔧 No Technical Limits**: Break free from 64KB response size constraints, enable plugin chaining, file system access, and custom multi-stage workflows that remote systems can't support.
-
-**💰 Cost Effective**: Access the full community plugin ecosystem without Pro/Enterprise subscriptions. Develop custom plugins without approval bottlenecks.
+<CardGrid>
+  <Card title="🌐 Works Anywhere" icon="laptop">
+    Unlike remote plugin systems, Bufrnix runs completely offline. Perfect for corporate firewalls, air-gapped environments, or unreliable internet connections.
+  </Card>
+  <Card title="🔒 Keeps Schemas Private" icon="shield">
+    All processing happens locally - your proprietary API definitions never leave your environment. Essential for regulated industries.
+  </Card>
+  <Card title="⚡ Blazing Fast" icon="lightning">
+    Up to 60x faster than remote alternatives. No network latency, no rate limiting, no timeouts. Parallel execution across languages.
+  </Card>
+  <Card title="🎯 Truly Reproducible" icon="rocket">
+    Same inputs = identical outputs, always. Cryptographic hashes ensure supply chain integrity across all environments.
+  </Card>
+  <Card title="🔧 No Technical Limits" icon="puzzle">
+    Break free from 64KB response constraints, enable plugin chaining, file system access, and custom multi-stage workflows.
+  </Card>
+  <Card title="💰 Cost Effective" icon="star">
+    Access the full community plugin ecosystem without Pro/Enterprise subscriptions. Develop custom plugins freely.
+  </Card>
+</CardGrid>
 
 ### Real-World Scenarios
 
-**Choose Bufrnix when you need:**
+<Tabs>
+<TabItem label="Choose Bufrnix">
 
-- Offline development in corporate or air-gapped environments
-- Processing sensitive schemas that can't leave your infrastructure
-- High-performance builds with complex multi-language generation
-- Custom plugins or community plugins not in Buf's approved registry
-- Compliance with regulations requiring local data processing
-- Supply chain security with cryptographic dependency verification
+<Card title="Perfect for Bufrnix" icon="thumbs-up">
 
-**Buf's remote plugins work well for:**
+- <Badge text="🏢 Corporate environments" variant="note" /> with firewalls or air-gapped networks
+- <Badge text="🔒 Sensitive schemas" variant="danger" /> that can't leave your infrastructure  
+- <Badge text="⚡ High-performance builds" variant="success" /> with complex multi-language generation
+- <Badge text="🔧 Custom plugins" variant="tip" /> or community plugins not in Buf's registry
+- <Badge text="📋 Compliance requirements" variant="caution" /> for local data processing
+- <Badge text="🛡️ Supply chain security" variant="note" /> with cryptographic verification
 
-- Quick experimentation and getting started
-- Simple, single-language projects with standard plugins
-- Teams comfortable with external schema processing
-- Workflows that fit within remote plugin technical limitations
+</Card>
 
-Many teams use **both tools together**: Buf for schema management and validation, Bufrnix for production code generation.
+</TabItem>
+<TabItem label="Buf Remote Plugins">
+
+<Card title="Good for Buf Remote" icon="information">
+
+- <Badge text="🧪 Quick experimentation" variant="tip" /> and getting started
+- <Badge text="🎯 Simple projects" variant="note" /> with single-language, standard plugins
+- <Badge text="☁️ Cloud-first teams" variant="success" /> comfortable with external processing
+- <Badge text="📊 Standard workflows" variant="note" /> within remote plugin limitations
+
+</Card>
+
+</TabItem>
+<TabItem label="Hybrid Approach">
+
+<Card title="Best of Both Worlds" icon="star">
+
+Many teams use **both tools together**:
+
+1. **Buf** for schema management, linting, and breaking change detection
+2. **Bufrnix** for production code generation and deployment
+3. **Combined workflows** for comprehensive Protocol Buffer development
+
+<Aside type="tip" title="Recommended Pattern">
+This hybrid approach addresses the full spectrum of protobuf development needs - from experimentation to production deployment.
+</Aside>
+
+</Card>
+
+</TabItem>
+</Tabs>
 
 **Ready to get started?** Let's build your first Bufrnix project.
 
@@ -67,10 +106,21 @@ experimental-features = nix-command flakes
 
 ### 1. Create a Flake Configuration
 
-Create a `flake.nix` file in your project root:
+<Steps>
 
-```nix
-{
+1. **Create your project directory and navigate to it**
+
+2. **Create a `flake.nix` file** in your project root
+
+3. **Add the Bufrnix configuration** from the example below
+
+</Steps>
+
+<Tabs>
+<TabItem label="Basic Go Setup">
+
+<Code
+  code={`{
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
     bufrnix.url = "github:conneroisu/bufrnix";
@@ -79,17 +129,14 @@ Create a `flake.nix` file in your project root:
 
   outputs = { nixpkgs, bufrnix, ... }:
   let
-    system = "x86_64-linux";  # Adjust for your system: x86_64-darwin, aarch64-linux, aarch64-darwin
-    pkgs = nixpkgs.legacyPackages.${system};
+    system = "x86_64-linux";  # Adjust for your system
+    pkgs = nixpkgs.legacyPackages.\${system};
   in {
     packages.default = bufrnix.lib.mkBufrnixPackage {
-      inherit (pkgs) lib;
-      inherit pkgs;
+      inherit (pkgs) lib pkgs;
       config = {
         root = ./.;
-        protoc = {
-          files = ["./proto/example/v1/example.proto"];
-        };
+        protoc.files = ["./proto/example/v1/example.proto"];
         languages.go = {
           enable = true;
           outputPath = "gen/go";
@@ -98,33 +145,97 @@ Create a `flake.nix` file in your project root:
       };
     };
 
-    # Development shell with all necessary tools
     devShells.default = pkgs.mkShell {
       packages = with pkgs; [
         go
         protobuf
-        buf  # Modern protobuf linter and build tool
-        grpcurl  # Command-line gRPC client
+        buf
+        grpcurl
       ];
     };
   };
-}
-```
+}`}
+  lang="nix"
+  title="flake.nix"
+/>
+
+</TabItem>
+<TabItem label="Multi-Language">
+
+<Code
+  code={`{
+  inputs = {
+    nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
+    bufrnix.url = "github:conneroisu/bufrnix";
+    bufrnix.inputs.nixpkgs.follows = "nixpkgs";
+  };
+
+  outputs = { nixpkgs, bufrnix, ... }:
+  let
+    system = "x86_64-linux";
+    pkgs = nixpkgs.legacyPackages.\${system};
+  in {
+    packages.default = bufrnix.lib.mkBufrnixPackage {
+      inherit (pkgs) lib pkgs;
+      config = {
+        root = ./.;
+        protoc.files = ["./proto/**/*.proto"];
+        languages = {
+          go = {
+            enable = true;
+            outputPath = "gen/go";
+            grpc.enable = true;
+          };
+          js = {
+            enable = true;
+            outputPath = "src/proto";
+            es.enable = true;
+          };
+          dart = {
+            enable = true;
+            outputPath = "lib/proto";
+            grpc.enable = true;
+          };
+        };
+      };
+    };
+
+    devShells.default = pkgs.mkShell {
+      packages = with pkgs; [
+        go nodejs dart protobuf buf grpcurl
+      ];
+    };
+  };
+}`}
+  lang="nix"
+  title="Multi-language flake.nix"
+/>
+
+</TabItem>
+</Tabs>
+
+<Aside type="note" title="System Architecture">
+Adjust the `system` variable for your platform:
+- `x86_64-linux` - Intel/AMD Linux
+- `aarch64-linux` - ARM64 Linux  
+- `x86_64-darwin` - Intel macOS
+- `aarch64-darwin` - Apple Silicon macOS
+</Aside>
 
 ### 2. Create Your Proto Files
 
 Create a directory structure for your Protocol Buffer definitions:
 
-```
-project/
-├── flake.nix
-├── proto/
-│   └── example/
-│       └── v1/
-│           └── example.proto
-└── gen/           # Generated code will appear here
-    └── go/
-```
+<FileTree>
+- project/
+  - flake.nix
+  - proto/
+    - example/
+      - v1/
+        - example.proto
+  - gen/           ← Generated code appears here
+    - go/
+</FileTree>
 
 Add your first proto file at `proto/example/v1/example.proto`:
 

@@ -16,7 +16,7 @@ hero:
       variant: minimal
 ---
 
-import { Card, CardGrid } from "@astrojs/starlight/components";
+import { Card, CardGrid, Tabs, TabItem, Code, Badge, LinkCard, Icon, Steps } from "@astrojs/starlight/components";
 
 ## Why Bufrnix?
 
@@ -24,11 +24,15 @@ Protocol Buffer tooling has traditionally suffered from **dependency hell**, **n
 
 **Remote Plugin Limitations:**
 
-- **Network dependency** breaks offline development and corporate environments
-- **64KB response limits** cause silent failures with large generated outputs
-- **Security concerns** from sending proprietary schemas to external servers
-- **Technical constraints** prevent file system access and cross-plugin dependencies
-- **Ecosystem bottlenecks** limit available plugins to centrally-approved options
+<Card title="Critical Issues" icon="warning">
+
+- <Badge text="Network dependency" variant="danger" /> breaks offline development and corporate environments
+- <Badge text="64KB response limits" variant="caution" /> cause silent failures with large generated outputs  
+- <Badge text="Security concerns" variant="danger" /> from sending proprietary schemas to external servers
+- <Badge text="Technical constraints" variant="caution" /> prevent file system access and cross-plugin dependencies
+- <Badge text="Ecosystem bottlenecks" variant="note" /> limit available plugins to centrally-approved options
+
+</Card>
 
 **Bufrnix solves these challenges** with local, deterministic execution powered by Nix.
 
@@ -120,17 +124,147 @@ This pattern addresses the full spectrum of protobuf development needs - from ex
 
 Add Bufrnix to your Nix flake and start generating Protocol Buffer code right away:
 
-```nix
-{
+<Tabs>
+<TabItem label="Basic Setup">
+
+<Code 
+  code={`{
+  inputs = {
+    nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
+    bufrnix.url = "github:conneroisu/bufrnix";
+    bufrnix.inputs.nixpkgs.follows = "nixpkgs";
+  };
+
+  outputs = { nixpkgs, bufrnix, ... }: {
+    packages.default = bufrnix.lib.mkBufrnixPackage {
+      inherit (nixpkgs.legacyPackages.x86_64-linux) lib pkgs;
+      config = {
+        root = ./.;
+        protoc.files = ["./proto/**/*.proto"];
+        languages.go = {
+          enable = true;
+          outputPath = "gen/go";
+          grpc.enable = true;
+        };
+      };
+    };
+  };
+}`}
+  lang="nix"
+  title="flake.nix"
+/>
+
+</TabItem>
+<TabItem label="Multi-Language">
+
+<Code
+  code={`{
+  inputs = {
+    nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
+    bufrnix.url = "github:conneroisu/bufrnix";
+    bufrnix.inputs.nixpkgs.follows = "nixpkgs";
+  };
+
+  outputs = { nixpkgs, bufrnix, ... }: {
+    packages.default = bufrnix.lib.mkBufrnixPackage {
+      inherit (nixpkgs.legacyPackages.x86_64-linux) lib pkgs;
+      config = {
+        root = ./.;
+        protoc.files = ["./proto/**/*.proto"];
+        languages = {
+          go = {
+            enable = true;
+            outputPath = "gen/go";
+            grpc.enable = true;
+          };
+          js = {
+            enable = true;
+            outputPath = "src/proto";
+            es.enable = true;
+          };
+          dart = {
+            enable = true;
+            outputPath = "lib/proto";
+            grpc.enable = true;
+          };
+        };
+      };
+    };
+  };
+}`}
+  lang="nix"
+  title="Multi-language flake.nix"
+/>
+
+</TabItem>
+<TabItem label="Development Shell">
+
+<Code
+  code={`{
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
     bufrnix.url = "github:conneroisu/bufrnix";
   };
 
-  outputs = { self, nixpkgs, bufrnix, ... }: {
-    # Your configuration here
-  };
-}
-```
+  outputs = { nixpkgs, bufrnix, ... }: {
+    packages.default = bufrnix.lib.mkBufrnixPackage {
+      # ... your config
+    };
 
-Check out our [Getting Started guide](/guides/getting-started/) to learn more.
+    devShells.default = nixpkgs.legacyPackages.x86_64-linux.mkShell {
+      packages = with nixpkgs.legacyPackages.x86_64-linux; [
+        go
+        protobuf
+        buf
+        grpcurl
+      ];
+      
+      shellHook = ''
+        echo "🚀 Bufrnix development environment ready!"
+      '';
+    };
+  };
+}`}
+  lang="nix" 
+  title="With development shell"
+/>
+
+</TabItem>
+</Tabs>
+
+## Quick Commands
+
+<Steps>
+
+1. **Create your configuration**: Add the flake.nix above to your project
+
+2. **Add proto files**: Create `proto/` directory with your `.proto` files
+
+3. **Generate code**: Run `nix build` to generate Protocol Buffer code
+
+4. **Start developing**: Use `nix develop` to enter the development environment
+
+</Steps>
+
+<CardGrid>
+  <LinkCard 
+    title="Getting Started Guide" 
+    description="Complete tutorial with examples and troubleshooting"
+    href="/guides/getting-started/"
+  />
+  <LinkCard 
+    title="Configuration Reference" 
+    description="All available options and advanced settings"
+    href="/reference/configuration/"  
+  />
+  <LinkCard 
+    title="Language Support" 
+    description="Supported languages and plugin ecosystems"
+    href="/reference/languages/"
+  />
+  <LinkCard 
+    title="Examples Repository" 
+    description="Real-world examples and templates to get started"
+    href="https://github.com/conneroisu/bufrnix/tree/main/examples"
+  />
+</CardGrid>

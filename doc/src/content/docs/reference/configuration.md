@@ -3,6 +3,8 @@ title: Configuration Reference
 description: Complete reference for all Bufrnix configuration options and settings with examples.
 ---
 
+import { Card, CardGrid, Tabs, TabItem, Code, Badge, LinkCard, FileTree, Aside } from "@astrojs/starlight/components";
+
 # Configuration Reference
 
 This page documents all available configuration options for Bufrnix. These options should be set in your project's `flake.nix` file within the `config` attribute of `bufrnix.lib.mkBufrnixPackage`.
@@ -11,43 +13,99 @@ This page documents all available configuration options for Bufrnix. These optio
 
 Bufrnix configuration prioritizes **explicitness over magic** and **reproducibility over convenience**. Every option is designed to give you complete control while maintaining declarative simplicity:
 
-- **Type-safe**: All options are validated at evaluation time, catching errors before generation runs
-- **Reproducible**: Same configuration = identical outputs across all environments and team members
-- **Explicit dependencies**: No hidden network calls or surprise downloads - everything declared upfront
-- **Modular**: Enable only what you need, compose complex workflows from simple parts
+<CardGrid>
+  <Card title="Type-safe" icon="check">
+    All options are validated at evaluation time, catching errors before generation runs
+  </Card>
+  <Card title="Reproducible" icon="rocket">
+    Same configuration = identical outputs across all environments and team members
+  </Card>
+  <Card title="Explicit dependencies" icon="shield">
+    No hidden network calls or surprise downloads - everything declared upfront
+  </Card>
+  <Card title="Modular" icon="puzzle">
+    Enable only what you need, compose complex workflows from simple parts
+  </Card>
+</CardGrid>
 
+<Aside type="tip" title="Production Ready">
 This approach trades some initial setup time for long-term reliability, making Bufrnix ideal for production systems where consistency matters more than convenience.
+</Aside>
 
 ## Basic Configuration Structure
 
-```nix
-bufrnix.lib.mkBufrnixPackage {
+<Tabs>
+<TabItem label="Simple Setup">
+
+<Code
+  code={`bufrnix.lib.mkBufrnixPackage {
+  inherit (pkgs) lib pkgs;
+  config = {
+    root = ./.;
+    protoc.files = ["./proto/**/*.proto"];
+    languages.go = {
+      enable = true;
+      outputPath = "gen/go";
+      grpc.enable = true;
+    };
+  };
+}`}
+  lang="nix"
+  title="Minimal configuration"
+/>
+
+</TabItem>
+<TabItem label="Full Structure">
+
+<Code
+  code={`bufrnix.lib.mkBufrnixPackage {
   inherit (pkgs) lib pkgs;
   config = {
     # Root configuration
-    root = "./proto";
+    root = ./.;
 
     # Protocol buffer compilation settings
-    protoc = { ... };
+    protoc = {
+      sourceDirectories = ["./proto"];
+      includeDirectories = ["./proto"];
+      files = ["./proto/**/*.proto"];
+    };
 
     # Debug settings
-    debug = { ... };
+    debug = {
+      enable = true;
+      verbosity = 2;
+    };
 
     # Language-specific configurations
     languages = {
-      go = { ... };
-      dart = { ... };
-      js = { ... };
-      php = { ... };
-      python = { ... };
-      swift = { ... };
-      csharp = { ... };
-      kotlin = { ... };
-      cpp = { ... };
-      c = { ... };
-      doc = { ... };
-      svg = { ... };
+      go = { enable = true; outputPath = "gen/go"; };
+      dart = { enable = true; outputPath = "lib/proto"; };
+      js = { enable = true; outputPath = "src/proto"; };
+      php = { enable = true; outputPath = "gen/php"; };
+      python = { enable = true; outputPath = "gen/python"; };
+      # ... other languages
     };
+  };
+}`}
+  lang="nix"
+  title="Complete configuration structure"
+/>
+
+</TabItem>
+</Tabs>
+
+<FileTree>
+- project/
+  - flake.nix          ← Bufrnix configuration here
+  - proto/
+    - user/v1/
+      - user.proto
+  - gen/               ← Generated code output
+    - go/
+    - python/
+    - js/
+</FileTree>
   };
 }
 ```
