@@ -197,7 +197,7 @@ Bufrnix doesn't replace Buf - it **extends** the Protocol Buffer ecosystem with 
 <table>
 <tr>
 <td>🚀 <strong>Multi-language Support</strong></td>
-<td>Go, Dart, JavaScript/TypeScript, PHP, Swift with more coming</td>
+<td>13+ languages: Go, JS/TS, Python, Java, C++, C#, Kotlin, Scala, Dart, PHP, Swift, C, and documentation generation</td>
 </tr>
 <tr>
 <td>🔧 <strong>Rich Plugin Ecosystem</strong></td>
@@ -479,13 +479,21 @@ languages.js = {
 
 ## 🌍 Language Support
 
-| Language | Plugins | Features | Output |
-|----------|---------|----------|--------|
-| **Go** | `protoc-gen-go`<br>`protoc-gen-go-grpc`<br>`protoc-gen-grpc-gateway`<br>`protoc-gen-validate`<br>`protoc-gen-connect-go` | Full gRPC ecosystem<br>HTTP gateways<br>Validation<br>Modern Connect protocol | Standard Go packages with proper module support |
-| **Dart** | `protoc-gen-dart` | Complete protobuf and gRPC support<br>Flutter and server applications | Dart classes with full type safety and gRPC clients/servers |
-| **JavaScript/TypeScript** | `protoc-gen-js`<br>`protoc-gen-es`<br>`protoc-gen-connect-es`<br>`protoc-gen-grpc-web`<br>`protoc-gen-twirp_js` | CommonJS<br>ES modules<br>Connect-ES<br>gRPC-Web<br>Twirp support | Modern JavaScript with TypeScript definitions |
-| **PHP** | `protoc-gen-php`<br>`protoc-gen-twirp_php` | Standard protobuf messages<br>Twirp RPC framework | PSR-4 compatible PHP classes |
-| **Swift** | `protoc-gen-swift` | Complete protobuf support<br>iOS/macOS applications | Swift classes with full type safety and Codable support |
+| Language | Status | Plugins & Features | Output |
+|----------|---------|-------------------|--------|
+| **Go** | ✅ Full | `protoc-gen-go`, gRPC, Connect, Gateway, Validation, VTProtobuf, Struct Transformer | Standard Go packages with comprehensive ecosystem |
+| **JavaScript/TypeScript** | ✅ Full | ES modules, gRPC-Web, Connect-ES, Twirp, ts-proto, Protovalidate | Modern JS/TS with type definitions |
+| **Python** | ✅ Full | Standard protoc, gRPC, mypy, betterproto, type stubs | Python packages with optional typing |
+| **Dart** | ✅ Full | `protoc-gen-dart`, gRPC support | Flutter/server Dart classes with type safety |
+| **PHP** | ✅ Full | Standard protoc, Twirp, Async, Laravel, Symfony, gRPC, RoadRunner | PSR-4 compatible classes with framework integration |
+| **Java** | ✅ Full | `protoc-gen-java`, gRPC, Protovalidate | Standard Java classes with build system integration |
+| **C++** | ✅ Full | `protoc-gen-cpp`, gRPC, CMake helpers | Native C++ classes with CMake integration |
+| **Swift** | ✅ Full | `protoc-gen-swift` | iOS/macOS Swift classes with SwiftProtobuf |
+| **C#** | ✅ Full | `protoc-gen-csharp`, gRPC | .NET compatible classes with gRPC support |
+| **Kotlin** | ✅ Full | `protoc-gen-kotlin`, gRPC, Connect | JVM Kotlin classes with modern RPC support |
+| **Scala** | ✅ Full | `protoc-gen-scala`, gRPC | Scala classes with functional programming patterns |
+| **C** | ✅ Full | protobuf-c, nanopb | Embedded-friendly C implementations |
+| **Documentation** | ✅ Full | HTML/SVG generation, MDX templates | Rich documentation output formats |
 
 ## 💡 Examples
 
@@ -570,6 +578,8 @@ nix fmt   # Format all files (Nix, Markdown, TypeScript, YAML)
 ```
 
 ### Documentation Development
+
+The documentation is built with Astro and uses MDX format for enhanced content capabilities:
 
 ```bash
 cd doc
