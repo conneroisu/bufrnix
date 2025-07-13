@@ -146,6 +146,162 @@ test_example() {
     fi
 }
 
+# Special test function for breaking change detection
+test_breaking_change_example() {
+    local example_name=$1
+    local example_dir="examples/$example_name"
+    
+    echo "  Testing breaking change detection functionality..."
+    
+    # Check if example directory exists
+    if [ ! -d "$example_dir" ]; then
+        echo -e "${RED}✗ Example directory $example_dir does not exist${NC}"
+        return 1
+    fi
+    
+    # Clean generated files
+    echo "  Cleaning generated files..."
+    rm -rf "$example_dir/proto/gen" "$example_dir/gen" 2>/dev/null || true
+    
+    # Setup git repository in the example directory
+    echo "  Setting up git repository for breaking change testing..."
+    pushd "$example_dir" >/dev/null
+    
+    # Clean any existing git repo
+    rm -rf .git 2>/dev/null || true
+    
+    # Initialize git repo
+    git init --quiet
+    git config user.name "Test User"
+    git config user.email "test@example.com"
+    
+    # Enable breaking change detection for testing
+    sed -i.bak 's/enable = false;  # Disabled for testing/enable = true;/' flake.nix
+    
+    # Add initial files and commit
+    git add .
+    git commit --quiet -m "Initial commit with proto schema"
+    
+    popd >/dev/null
+    
+    # Build the example
+    echo "  Building with breaking change detection..."
+    local build_output
+    if ! build_output=$(nix build --extra-experimental-features "nix-command flakes" "./$example_dir#default" --no-link --print-out-paths --impure 2>&1); then
+        echo -e "${RED}✗ Build failed for $example_name${NC}"
+        echo "$build_output" | sed 's/^/    /'
+        return 1
+    fi
+    
+    # Extract output path
+    local output_path
+    output_path=$(echo "$build_output" | tail -n1)
+    
+    # Test 1: Run generation with no changes (should succeed)
+    echo "  Test 1: Running with no changes (should succeed)..."
+    pushd "$example_dir" >/dev/null
+    local gen_output
+    local gen_exit_code
+    gen_output=$("$output_path/bin/bufrnix" 2>&1)
+    gen_exit_code=$?
+    
+    if [ $gen_exit_code -ne 0 ]; then
+        echo -e "${RED}✗ Initial generation failed (exit code: $gen_exit_code)${NC}"
+        echo "$gen_output" | sed 's/^/    /'
+        popd >/dev/null
+        return 1
+    fi
+    
+    echo -e "    ${GREEN}✓${NC} Initial generation succeeded"
+    
+    # Check expected files were generated
+    local expected_files=(
+        "gen/go/github.com/example/proto/gen/go/user/v1/user.pb.go"
+        "gen/go/github.com/example/proto/gen/go/user/v1/user_grpc.pb.go"
+    )
+    
+    for expected_file in "${expected_files[@]}"; do
+        if [ -f "$expected_file" ]; then
+            echo -e "    ${GREEN}✓${NC} Found: $expected_file"
+        else
+            echo -e "    ${RED}✗${NC} Missing: $expected_file"
+            popd >/dev/null
+            return 1
+        fi
+    done
+    
+    # Test 2: Make a safe change (should succeed)
+    echo "  Test 2: Adding optional field (should succeed)..."
+    
+    # Add optional field to proto
+    sed -i.bak 's/google.protobuf.Timestamp last_login = 6;/google.protobuf.Timestamp last_login = 6;\
+  \
+  \/\/ New optional field - backward compatible\
+  string phone_number = 7;/' proto/user/v1/user.proto
+    
+    # Commit the change
+    git add proto/user/v1/user.proto
+    git commit --quiet -m "Add optional phone_number field"
+    
+    # Run generation (should succeed)
+    gen_output=$("$output_path/bin/bufrnix" 2>&1)
+    gen_exit_code=$?
+    
+    if [ $gen_exit_code -ne 0 ]; then
+        echo -e "${RED}✗ Generation failed after safe change (exit code: $gen_exit_code)${NC}"
+        echo "$gen_output" | sed 's/^/    /'
+        popd >/dev/null
+        return 1
+    fi
+    
+    echo -e "    ${GREEN}✓${NC} Safe change generation succeeded"
+    
+    # Test 3: Make a breaking change (should fail)
+    echo "  Test 3: Removing field (should fail)..."
+    
+    # Remove the last_login field (breaking change)
+    sed -i.bak 's/google.protobuf.Timestamp last_login = 6;//' proto/user/v1/user.proto
+    sed -i.bak '/\/\/ Last login timestamp/d' proto/user/v1/user.proto
+    
+    # Commit the breaking change
+    git add proto/user/v1/user.proto
+    git commit --quiet -m "Remove last_login field (breaking change)"
+    
+    # Run generation (should fail)
+    gen_output=$("$output_path/bin/bufrnix" 2>&1)
+    gen_exit_code=$?
+    
+    if [ $gen_exit_code -eq 0 ]; then
+        echo -e "${RED}✗ Generation should have failed after breaking change but didn't${NC}"
+        popd >/dev/null
+        return 1
+    fi
+    
+    # Check that the output mentions breaking changes
+    if echo "$gen_output" | grep -q -i "breaking"; then
+        echo -e "    ${GREEN}✓${NC} Breaking change correctly detected and build failed"
+    else
+        echo -e "${RED}✗ Build failed but breaking change detection message not found${NC}"
+        echo "$gen_output" | sed 's/^/    /'
+        # Restore original flake.nix before returning
+        if [ -f "flake.nix.bak" ]; then
+            mv flake.nix.bak flake.nix
+        fi
+        popd >/dev/null
+        return 1
+    fi
+    
+    # Restore original flake.nix
+    if [ -f "flake.nix.bak" ]; then
+        mv flake.nix.bak flake.nix
+    fi
+    
+    popd >/dev/null
+    
+    echo -e "${GREEN}✓ $example_name breaking change detection tests passed${NC}\n"
+    return 0
+}
+
 # Test Go example
 test_example "simple-flake" \
     "proto/gen/go/simple/v1/simple.pb.go" \
@@ -243,6 +399,19 @@ test_example "go-advanced" \
 test_example "go-struct-transformer" \
     "gen/go/example/v1/product.pb.go" \
     "gen/go/example/v1/transform/product_transformer.go"
+
+# Test Go breaking change example (basic generation first)
+test_example "go-breaking-change" \
+    "gen/go/github.com/example/proto/gen/go/user/v1/user.pb.go" \
+    "gen/go/github.com/example/proto/gen/go/user/v1/user_grpc.pb.go"
+
+# Test breaking change detection (special test with git setup)
+echo -e "${YELLOW}Testing go-breaking-change breaking change detection...${NC}"
+if test_breaking_change_example "go-breaking-change"; then
+    PASSED_TESTS+=("go-breaking-change-detection")
+else
+    FAILED_TESTS+=("go-breaking-change-detection: breaking change test failed")
+fi
 
 # TODO: Fix JavaScript ES modules example (has Connect-ES plugin issues)
 # test_example "js-es-modules" \

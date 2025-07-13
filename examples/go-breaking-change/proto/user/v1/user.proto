@@ -1,0 +1,92 @@
+syntax = "proto3";
+
+package user.v1;
+
+import "google/protobuf/timestamp.proto";
+
+option go_package = "github.com/example/proto/gen/go/user/v1;userv1";
+
+// User represents a user in the system
+message User {
+  // Unique identifier for the user
+  string id = 1;
+  
+  // User's email address
+  string email = 2;
+  
+  // User's display name
+  string name = 3;
+  
+  // User's status
+  UserStatus status = 4;
+  
+  // Account creation timestamp
+  google.protobuf.Timestamp created_at = 5;
+  
+  // Last login timestamp
+  google.protobuf.Timestamp last_login = 6;
+}
+
+// UserStatus represents the current status of a user account
+enum UserStatus {
+  USER_STATUS_UNSPECIFIED = 0;
+  USER_STATUS_ACTIVE = 1;
+  USER_STATUS_INACTIVE = 2;
+  USER_STATUS_SUSPENDED = 3;
+}
+
+// UserService provides operations for managing users
+service UserService {
+  // Create a new user
+  rpc CreateUser(CreateUserRequest) returns (CreateUserResponse);
+  
+  // Get user by ID
+  rpc GetUser(GetUserRequest) returns (GetUserResponse);
+  
+  // Update an existing user
+  rpc UpdateUser(UpdateUserRequest) returns (UpdateUserResponse);
+  
+  // Delete a user
+  rpc DeleteUser(DeleteUserRequest) returns (DeleteUserResponse);
+}
+
+// CreateUserRequest contains the data needed to create a new user
+message CreateUserRequest {
+  string email = 1;
+  string name = 2;
+}
+
+// CreateUserResponse contains the newly created user
+message CreateUserResponse {
+  User user = 1;
+}
+
+// GetUserRequest contains the user ID to retrieve
+message GetUserRequest {
+  string id = 1;
+}
+
+// GetUserResponse contains the requested user
+message GetUserResponse {
+  User user = 1;
+}
+
+// UpdateUserRequest contains the user data to update
+message UpdateUserRequest {
+  string id = 1;
+  string name = 2;
+  UserStatus status = 3;
+}
+
+// UpdateUserResponse contains the updated user
+message UpdateUserResponse {
+  User user = 1;
+}
+
+// DeleteUserRequest contains the user ID to delete
+message DeleteUserRequest {
+  string id = 1;
+}
+
+// DeleteUserResponse is empty as deletion returns no data
+message DeleteUserResponse {}
