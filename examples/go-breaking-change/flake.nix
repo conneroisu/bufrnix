@@ -39,13 +39,11 @@
           echo "to see the breaking change detection in action!"
         '';
       };
-
       packages = {
         default = bufrnix.lib.mkBufrnixPackage {
           inherit pkgs;
           config = {
             root = ./.;
-            
             protoc = {
               sourceDirectories = ["./proto"];
               includeDirectories = ["./proto"];
@@ -53,38 +51,21 @@
             };
 
             # Breaking change detection (disabled for basic testing)
-            # Enable this when you have a git repository with commits
             breaking = {
               enable = false;  # Disabled for testing
               mode = "backward";
               baseReference = "HEAD~1";
               failOnBreaking = true;
               outputFormat = "text";
-              ignoreRules = [
-                # Uncomment to ignore specific rules:
-                # "FIELD_REMOVED"
-                # "ENUM_VALUE_REMOVED"
-              ];
-              buf = {
-                timeout = 30;
-              };
             };
 
-            debug = {
+            languages.go = {
               enable = true;
-              verbosity = 2;
-            };
-
-            languages = {
-              go = {
+              outputPath = "gen/go";
+              options = ["paths=source_relative"];
+              grpc = {
                 enable = true;
-                outputPath = "gen/go";
                 options = ["paths=source_relative"];
-                
-                grpc = {
-                  enable = true;
-                  options = ["paths=source_relative"];
-                };
               };
             };
           };
