@@ -1,0 +1,400 @@
+---
+title: Breaking Change Detection
+description: Maintain API compatibility with automatic breaking change detection for Protocol Buffer schemas
+sidebar:
+  order: 6
+---
+
+import { Code } from '@astrojs/starlight/components';
+
+Bufrnix includes native breaking change detection to help maintain API compatibility during Protocol Buffer schema evolution. This feature automatically validates that your protobuf schema changes don't introduce compatibility issues that could break existing clients.
+
+## Overview
+
+Breaking change detection is essential for maintaining backward compatibility in distributed systems and APIs. Bufrnix integrates with the industry-standard [Buf CLI](https://docs.buf.build/breaking) to provide comprehensive breaking change validation that runs automatically before code generation.
+
+### Key Benefits
+
+- **Catch Breaking Changes Early**: Detect compatibility issues before they reach production
+- **Automated Validation**: Runs automatically as part of your code generation workflow
+- **Flexible Configuration**: Choose from different compatibility modes and customize rules
+- **Git Integration**: Compare schemas against any git reference (commits, branches, tags)
+- **CI/CD Ready**: Seamlessly integrates with continuous integration pipelines
+
+## Basic Configuration
+
+Enable breaking change detection in your `flake.nix`:
+
+<Code code={`{
+  inputs = {
+    nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
+    bufrnix.url = "github:conneroisu/bufrnix";
+    bufrnix.inputs.nixpkgs.follows = "nixpkgs";
+  };
+
+  outputs = { nixpkgs, bufrnix, ... }: {
+    packages.default = bufrnix.lib.mkBufrnixPackage {
+      inherit (nixpkgs.legacyPackages.x86_64-linux) lib pkgs;
+      config = {
+        root = ./.;
+        
+        # Enable breaking change detection
+        breaking = {
+          enable = true;
+          mode = "backward";
+          baseReference = "HEAD~1";
+          failOnBreaking = true;
+        };
+        
+        protoc = {
+          sourceDirectories = ["./proto"];
+        };
+        
+        languages = {
+          go.enable = true;
+        };
+      };
+    };
+  };
+}`} lang="nix" title="flake.nix" />
+
+## Configuration Options
+
+### Core Settings
+
+| Option | Type | Default | Description |
+|--------|------|---------|-------------|
+| `enable` | `bool` | `false` | Enable breaking change detection |
+| `mode` | `enum` | `"backward"` | Compatibility mode: `"backward"`, `"forward"`, or `"full"` |
+| `baseReference` | `string` | `"HEAD~1"` | Git reference for comparison (commit, branch, tag) |
+| `failOnBreaking` | `bool` | `true` | Fail the build when breaking changes are detected |
+| `outputFormat` | `enum` | `"text"` | Output format: `"text"`, `"json"`, or `"junit"` |
+
+### Advanced Settings
+
+| Option | Type | Default | Description |
+|--------|------|---------|-------------|
+| `ignoreRules` | `list` | `[]` | List of breaking change rules to ignore |
+| `basePath` | `string?` | `null` | Alternative: path to base proto files directory |
+| `buf.timeout` | `int` | `60` | Timeout for buf command in seconds |
+| `buf.configPath` | `string?` | `null` | Path to buf.yaml config file |
+
+## Compatibility Modes
+
+### Backward Compatibility (Default)
+
+Ensures new code can read data written by old code.
+
+**Safe Changes:**
+- ✅ Adding optional fields
+- ✅ Adding enum values
+- ✅ Adding services/methods
+- ✅ Adding repeated fields
+
+**Breaking Changes:**
+- ❌ Removing fields
+- ❌ Changing field types
+- ❌ Removing enum values
+- ❌ Changing field numbers
+
+<Code code={`breaking = {
+  enable = true;
+  mode = "backward";
+  baseReference = "origin/main";
+};`} lang="nix" title="Backward Compatibility" />
+
+### Forward Compatibility
+
+Ensures old code can read data written by new code.
+
+**Safe Changes:**
+- ✅ Removing optional fields
+- ✅ Removing services/methods
+
+**Breaking Changes:**
+- ❌ Adding required fields
+- ❌ Changing field numbers
+
+<Code code={`breaking = {
+  enable = true;
+  mode = "forward";
+  baseReference = "v1.0.0";
+};`} lang="nix" title="Forward Compatibility" />
+
+### Full Compatibility
+
+Most restrictive mode ensuring both backward and forward compatibility.
+
+**Safe Changes:**
+- ✅ Adding optional fields (with careful consideration)
+- ✅ Adding enum values (with reserved ranges)
+
+<Code code={`breaking = {
+  enable = true;
+  mode = "full";
+  baseReference = "HEAD~1";
+};`} lang="nix" title="Full Compatibility" />
+
+## Ignoring Breaking Changes
+
+Sometimes you need to make breaking changes intentionally. You can ignore specific rules:
+
+<Code code={`breaking = {
+  enable = true;
+  ignoreRules = [
+    "FIELD_REMOVED"          # Allow field removal
+    "ENUM_VALUE_REMOVED"     # Allow enum value removal
+    "SERVICE_REMOVED"        # Allow service removal
+    "METHOD_REMOVED"         # Allow method removal
+  ];
+};`} lang="nix" title="Ignoring Specific Rules" />
+
+### Common Breaking Change Rules
+
+| Rule | Description |
+|------|-------------|
+| `FIELD_REMOVED` | Field was removed from a message |
+| `FIELD_TYPE_CHANGED` | Field type was changed |
+| `FIELD_NUMBER_CHANGED` | Field number was changed |
+| `ENUM_VALUE_REMOVED` | Enum value was removed |
+| `SERVICE_REMOVED` | Service was removed |
+| `METHOD_REMOVED` | RPC method was removed |
+| `PACKAGE_CHANGED` | Package name was changed |
+
+## Warning Mode
+
+To detect breaking changes without failing the build:
+
+<Code code={`breaking = {
+  enable = true;
+  failOnBreaking = false;    # Show warnings but don't fail
+  outputFormat = "json";     # Machine-readable warnings
+};`} lang="nix" title="Warning Mode" />
+
+## Git References
+
+Compare against different git references:
+
+<Code code={`# Compare against main branch
+breaking.baseReference = "origin/main";
+
+# Compare against a specific tag
+breaking.baseReference = "v1.0.0";
+
+# Compare against multiple commits back
+breaking.baseReference = "HEAD~5";
+
+# Compare against a specific commit
+breaking.baseReference = "abc123def456";`} lang="nix" title="Git Reference Examples" />
+
+## Output Formats
+
+### Text Format (Default)
+
+Human-readable output suitable for development:
+
+```
+[ERROR] user/v1/user.proto:15:3: Field "last_login" was removed.
+```
+
+### JSON Format
+
+Machine-readable output for tooling integration:
+
+<Code code={`breaking = {
+  enable = true;
+  outputFormat = "json";
+};`} lang="nix" title="JSON Output" />
+
+```json
+{
+  "results": [
+    {
+      "path": "user/v1/user.proto",
+      "start_line": 15,
+      "start_column": 3,
+      "type": "FIELD_REMOVED",
+      "message": "Field \"last_login\" was removed."
+    }
+  ]
+}
+```
+
+### JUnit Format
+
+For CI/CD integration:
+
+<Code code={`breaking = {
+  enable = true;
+  outputFormat = "junit";
+};`} lang="nix" title="JUnit Output" />
+
+## Workflow Integration
+
+### Development Workflow
+
+<Code code={`# 1. Make schema changes
+vim proto/user/v1/user.proto
+
+# 2. Generate code with breaking change detection
+nix run
+
+# 3. If breaking changes detected, review and fix
+# 4. Commit changes
+git add . && git commit -m "Update user schema"`} lang="bash" title="Development Workflow" />
+
+### CI/CD Integration
+
+<Code code={`name: Validate Schema Changes
+on: [push, pull_request]
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Fetch full history for git comparisons
+      
+      - uses: cachix/install-nix-action@v24
+      
+      - name: Validate protobuf changes
+        run: |
+          # Compare against main branch
+          nix develop -c bash -c "
+            git fetch origin main
+            nix run
+          "`} lang="yaml" title=".github/workflows/validate.yml" />
+
+## Manual Breaking Change Detection
+
+You can also run buf breaking manually:
+
+<Code code={`# Enter development environment
+nix develop
+
+# Check against previous commit
+buf breaking --against .git#branch=HEAD~1
+
+# Check against main branch  
+buf breaking --against .git#branch=origin/main
+
+# Check with JSON output
+buf breaking --against .git#branch=HEAD~1 --format json
+
+# Check with custom timeout
+timeout 120 buf breaking --against .git#branch=HEAD~1`} lang="bash" title="Manual Commands" />
+
+## Best Practices
+
+### Safe Schema Evolution
+
+1. **Use Field Options for Deprecation**:
+   ```protobuf
+   message User {
+     string id = 1;
+     string email = 2;
+     string old_field = 3 [deprecated = true];  // Mark as deprecated
+     string new_field = 4;                      // Add replacement
+   }
+   ```
+
+2. **Reserve Field Numbers**:
+   ```protobuf
+   message User {
+     reserved 3, 15, 9 to 11;
+     reserved "old_field", "another_old_field";
+     
+     string id = 1;
+     string email = 2;
+     string name = 4;
+   }
+   ```
+
+3. **Use Semantic Versioning**:
+   - Major version bump for breaking changes
+   - Minor version bump for backward-compatible additions
+   - Patch version bump for bug fixes
+
+### Common Pitfalls
+
+1. **Don't Reuse Field Numbers**: Once a field number is used, never reuse it
+2. **Don't Change Field Types**: Even "compatible" type changes can break
+3. **Don't Remove Required Fields**: This breaks all existing data
+4. **Be Careful with Enum Values**: Removing enum values breaks compatibility
+
+## Troubleshooting
+
+### Error: "Not in a git repository"
+
+Breaking change detection requires a git repository:
+
+<Code code={`git init
+git add .
+git commit -m "Initial commit"`} lang="bash" title="Initialize Git Repo" />
+
+### Error: "Base reference not found"
+
+Verify the git reference exists:
+
+<Code code={`# Check if reference exists
+git rev-parse --verify HEAD~1
+
+# List available branches
+git branch -a
+
+# List available tags
+git tag -l`} lang="bash" title="Check Git References" />
+
+### Error: "buf command timed out"
+
+Increase the timeout:
+
+<Code code={`breaking = {
+  buf.timeout = 120;  # 2 minutes
+};`} lang="nix" title="Increase Timeout" />
+
+### Error: "buf not found"
+
+Ensure buf is available in your environment:
+
+<Code code={`nix develop -c which buf`} lang="bash" title="Check Buf Installation" />
+
+## Examples
+
+### Complete Example
+
+See the [go-breaking-change example](/examples/go-breaking-change/) for a complete demonstration of breaking change detection with:
+
+- Basic configuration setup
+- Safe and breaking change examples
+- Git workflow integration
+- Common use cases and patterns
+
+### Advanced Configuration
+
+<Code code={`breaking = {
+  enable = true;
+  mode = "backward";
+  baseReference = "origin/main";
+  failOnBreaking = true;
+  outputFormat = "json";
+  
+  ignoreRules = [
+    "FIELD_REMOVED"  # Allow field removal in this version
+  ];
+  
+  buf = {
+    timeout = 90;
+    configPath = "./buf.yaml";  # Custom buf configuration
+  };
+};`} lang="nix" title="Advanced Configuration" />
+
+## Related Documentation
+
+- [Buf Breaking Change Detection](https://docs.buf.build/breaking)
+- [Protocol Buffers Style Guide](https://developers.google.com/protocol-buffers/docs/style)
+- [API Evolution Best Practices](https://developers.google.com/protocol-buffers/docs/overview#evolution)
+- [Bufrnix Configuration Reference](/reference/configuration/)
+
+Breaking change detection helps ensure your Protocol Buffer schemas evolve safely while maintaining compatibility with existing systems. Combined with Bufrnix's other features, it provides a complete solution for managing protobuf schemas at scale.
