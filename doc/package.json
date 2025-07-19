@@ -5,6 +5,7 @@
     "@astrojs/starlight": "0.34.4",
     "@tailwindcss/vite": "^4.1.10",
     "astro": "5.9.4",
+    "@4hse/astro-llms-txt": "^0.3.0",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "lucide-react": "^0.517.0",

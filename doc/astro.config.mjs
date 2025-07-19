@@ -2,6 +2,7 @@
 import { defineConfig } from 'astro/config';
 import starlight from '@astrojs/starlight';
 import tailwindcss from '@tailwindcss/vite';
+import astroLlmsTxt from '@4hse/astro-llms-txt';
 
 // https://astro.build/config
 export default defineConfig({
@@ -12,6 +13,18 @@ export default defineConfig({
     plugins: [tailwindcss()],
   },
   integrations: [
+    astroLlmsTxt({
+      title: 'Bufrnix',
+      description: 'Nix-powered Protocol Buffers code generation framework',
+      docSet: [
+        {
+          title: 'Complete Documentation',
+          url: '/bufrnix/llms-full.txt',
+          include: ['**'],
+          description: 'Full documentation including guides, reference materials, and examples for all supported languages'
+        }
+      ]
+    }),
     starlight({
       title: 'Bufrnix',
       description: 'Nix powered Protocol Buffers with developer tooling',
