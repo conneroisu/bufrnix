@@ -71,6 +71,13 @@ This approach trades some initial setup time for long-term reliability, making B
       files = ["./proto/**/*.proto"];
     };
 
+    # Breaking change detection
+    breaking = {
+      enable = true;
+      mode = "backward";
+      baseReference = "HEAD~1";
+    };
+
     # Debug settings
     debug = {
       enable = true;
@@ -155,6 +162,48 @@ protoc = {
 | `protoc.sourceDirectories`  | list of strings | `["./proto"]` | Directories containing proto files to compile                                                   |
 | `protoc.includeDirectories` | list of strings | `["./proto"]` | Directories to include in the include path for imports                                          |
 | `protoc.files`              | list of strings | `[]`          | Specific proto files to compile (leave empty to compile all .proto files in source directories) |
+
+### Breaking Change Detection
+
+Breaking change detection automatically validates that protobuf schema changes maintain compatibility with existing clients. This feature integrates with the Buf CLI to provide comprehensive validation before code generation.
+
+```nix
+breaking = {
+  enable = true;                    # Enable breaking change detection
+  mode = "backward";               # Compatibility mode: "backward", "forward", or "full"
+  baseReference = "HEAD~1";        # Git reference for comparison
+  failOnBreaking = true;           # Fail build on breaking changes
+  outputFormat = "text";           # Output format: "text", "json", or "junit"
+  
+  ignoreRules = [                  # Rules to ignore
+    "FIELD_REMOVED"
+    "ENUM_VALUE_REMOVED"
+  ];
+  
+  buf = {
+    timeout = 60;                  # Timeout in seconds
+    configPath = "./buf.yaml";     # Path to buf config file
+  };
+};
+```
+
+| Option | Type | Default | Description |
+| ------ | ---- | ------- | ----------- |
+| `breaking.enable` | boolean | `false` | Enable breaking change detection |
+| `breaking.mode` | enum | `"backward"` | Compatibility mode: `"backward"`, `"forward"`, or `"full"` |
+| `breaking.baseReference` | string | `"HEAD~1"` | Git reference for comparison (commit, branch, tag) |
+| `breaking.basePath` | string? | `null` | Alternative: path to base proto files directory |
+| `breaking.failOnBreaking` | boolean | `true` | Fail the build when breaking changes are detected |
+| `breaking.outputFormat` | enum | `"text"` | Output format: `"text"`, `"json"`, or `"junit"` |
+| `breaking.ignoreRules` | list of strings | `[]` | List of breaking change rules to ignore |
+| `breaking.customRules` | list of attrs | `[]` | Custom breaking change validation rules |
+| `breaking.buf.package` | package | `pkgs.buf` | The buf CLI package to use |
+| `breaking.buf.configPath` | string? | `null` | Path to buf.yaml config file |
+| `breaking.buf.timeout` | integer | `60` | Timeout for buf command in seconds |
+
+<Aside type="tip" title="See the Breaking Changes Guide">
+For comprehensive examples and best practices, see the [Breaking Change Detection guide](/guides/breaking-changes/).
+</Aside>
 
 ## Language Support
 

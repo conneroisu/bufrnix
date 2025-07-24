@@ -112,6 +112,11 @@ with pkgs.lib; let
         package = pkgs.callPackage ../packages/scalapb {};
       };
     };
+    breaking = {
+      buf = {
+        package = pkgs.buf;
+      };
+    };
   };
 
   # Merge defaults with user config
@@ -269,10 +274,106 @@ in
         bash
         protobuf
       ]
-      ++ languageRuntimeInputs;
+      ++ languageRuntimeInputs
+      ++ optionals cfg.breaking.enable [
+        cfg.breaking.buf.package
+        git  # Required for git-based breaking change detection
+      ];
 
     text = ''
       ${debug.log 1 "Starting code generation with multiple output paths support" cfg}
+
+      ${optionalString cfg.breaking.enable ''
+        # Breaking Change Detection
+        echo "Running breaking change detection..."
+        
+        ${debug.log 2 "Breaking change detection enabled with mode: ${cfg.breaking.mode}" cfg}
+        
+        # Check if we're in a git repository
+        if ! git rev-parse --git-dir > /dev/null 2>&1; then
+          ${if cfg.breaking.failOnBreaking then ''
+            echo "ERROR: Breaking change detection requires a git repository, but none found"
+            exit 1
+          '' else ''
+            echo "WARNING: Breaking change detection requires a git repository, but none found. Skipping..."
+          ''}
+        else
+          # Verify base reference exists
+          if ! git rev-parse --verify "${cfg.breaking.baseReference}" > /dev/null 2>&1; then
+            ${if cfg.breaking.failOnBreaking then ''
+              echo "ERROR: Base reference '${cfg.breaking.baseReference}' not found in git repository"
+              exit 1
+            '' else ''
+              echo "WARNING: Base reference '${cfg.breaking.baseReference}' not found. Skipping breaking change detection..."
+            ''}
+          else
+            # Build buf breaking command
+            buf_cmd="${cfg.breaking.buf.package}/bin/buf breaking"
+            
+            # Add mode flag
+            case "${cfg.breaking.mode}" in
+              "backward")
+                buf_cmd="$buf_cmd --against-input-config"
+                ;;
+              "forward")
+                buf_cmd="$buf_cmd --against-input-config" 
+                ;;
+              "full")
+                buf_cmd="$buf_cmd --against-input-config"
+                ;;
+            esac
+            
+            # Add base reference
+            buf_cmd="$buf_cmd '.git#branch=${cfg.breaking.baseReference}'"
+            
+            # Add config file if specified
+            ${optionalString (cfg.breaking.buf.configPath != null) ''
+              buf_cmd="$buf_cmd --config '${cfg.breaking.buf.configPath}'"
+            ''}
+            
+            # Add output format
+            case "${cfg.breaking.outputFormat}" in
+              "json")
+                buf_cmd="$buf_cmd --format json"
+                ;;
+              "junit")
+                buf_cmd="$buf_cmd --format junit"
+                ;;
+              *)
+                # Default to text format
+                ;;
+            esac
+            
+            # Add ignore rules
+            ${concatMapStrings (rule: ''
+              buf_cmd="$buf_cmd --except-rule ${rule}"
+            '') cfg.breaking.ignoreRules}
+            
+            ${debug.log 3 "Running buf breaking command: $buf_cmd" cfg}
+            
+            # Execute buf breaking command with timeout
+            if timeout ${toString cfg.breaking.buf.timeout} bash -c "$buf_cmd"; then
+              echo "✓ No breaking changes detected"
+            else
+              exit_code=$?
+              if [ $exit_code -eq 124 ]; then
+                echo "ERROR: Breaking change detection timed out after ${toString cfg.breaking.buf.timeout} seconds"
+                ${if cfg.breaking.failOnBreaking then "exit 1" else "echo 'WARNING: Continuing despite timeout...'"}
+              elif [ $exit_code -ne 0 ]; then
+                echo "⚠ Breaking changes detected!"
+                ${if cfg.breaking.failOnBreaking then ''
+                  echo "ERROR: Breaking changes found. Set breaking.failOnBreaking = false to continue anyway."
+                  exit 1
+                '' else ''
+                  echo "WARNING: Breaking changes found but failOnBreaking is disabled. Continuing..."
+                ''}
+              fi
+            fi
+          fi
+        fi
+        
+        echo "Breaking change detection completed."
+      ''}
 
       # Expand proto file globs if needed
       proto_files=""

@@ -74,6 +74,78 @@ with lib; {
       };
     };
 
+    # Breaking change detection options
+    breaking = {
+      enable = mkOption {
+        type = types.bool;
+        default = false;
+        description = "Enable breaking change detection";
+      };
+
+      mode = mkOption {
+        type = types.enum ["backward" "forward" "full"];
+        default = "backward";
+        description = "Compatibility mode for breaking change detection";
+      };
+
+      baseReference = mkOption {
+        type = types.str;
+        default = "HEAD~1";
+        description = "Git reference for comparison base (commit, branch, tag)";
+      };
+
+      basePath = mkOption {
+        type = types.nullOr types.str;
+        default = null;
+        description = "Alternative: path to base proto files directory";
+      };
+
+      failOnBreaking = mkOption {
+        type = types.bool;
+        default = true;
+        description = "Fail the build when breaking changes are detected";
+      };
+
+      outputFormat = mkOption {
+        type = types.enum ["text" "json" "junit"];
+        default = "text";
+        description = "Output format for breaking change reports";
+      };
+
+      ignoreRules = mkOption {
+        type = types.listOf types.str;
+        default = [];
+        description = "List of breaking change rules to ignore";
+        example = ["FIELD_REMOVED" "ENUM_VALUE_REMOVED"];
+      };
+
+      customRules = mkOption {
+        type = types.listOf types.attrs;
+        default = [];
+        description = "Custom breaking change validation rules";
+      };
+
+      buf = {
+        package = mkOption {
+          type = types.package;
+          defaultText = literalExpression "pkgs.buf";
+          description = "The buf CLI package to use for breaking change detection";
+        };
+
+        configPath = mkOption {
+          type = types.nullOr types.str;
+          default = null;
+          description = "Path to buf.yaml config file (uses buf defaults if not specified)";
+        };
+
+        timeout = mkOption {
+          type = types.int;
+          default = 60;
+          description = "Timeout for buf breaking command in seconds";
+        };
+      };
+    };
+
     # Language options
     languages = {
       # Go language options
