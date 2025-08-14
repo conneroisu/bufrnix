@@ -37,7 +37,7 @@
         ];
         shellHook = ''
           # Setup the environment
-          export PATH=$PWD/node_modules/.bin:$PATH
+          echo "Entering bufrnix-docs devShell"
         '';
       };
     });
@@ -48,7 +48,7 @@
       bufrnix-docs = bun2nix.lib.${system}.mkBunDerivation {
         pname = "bufrnix-docs";
         version = "0.0.1";
-        src = ./.;
+        src = self;
         bunNix = ./bun.nix;
 
         buildPhase = ''
