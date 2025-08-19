@@ -18,14 +18,17 @@ export default defineConfig({
     ],
   },
   integrations: [
-    starlightLlmsTxt({
-      projectName: 'Bufrnix',
-      description: 'Nix-powered Protocol Buffers code generation framework',
-    }),
     starlight({
       title: 'Bufrnix',
       description: 'Nix powered Protocol Buffers with developer tooling',
+      editLink: {
+        baseUrl: "https://github.com/conneroisu/bufrnix/edit/main/doc",
+      },
       plugins: [
+        starlightLlmsTxt({
+          projectName: 'Bufrnix',
+          description: 'Nix-powered Protocol Buffers code generation framework',
+        }),
         starlightSiteGraph({
         }),
         starlightImageZoom({
