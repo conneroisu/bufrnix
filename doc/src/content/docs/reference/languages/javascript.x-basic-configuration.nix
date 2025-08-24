@@ -38,6 +38,17 @@
               enable = true;
               outputPath = "proto/gen/js";
               packageName = "example-proto";
+              
+              # Per-language file control (new feature)
+              # files = [
+              #   "./proto/common/v1/types.proto"
+              #   "./proto/api/v1/user_api.proto"
+              # ];
+              # additionalFiles = [
+              #   "./proto/google/api/annotations.proto"  # For Connect-ES REST clients
+              #   "./proto/google/api/http.proto"
+              # ];
+
               # Modern JavaScript with ECMAScript modules
               es = {
                 enable = true;

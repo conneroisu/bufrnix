@@ -30,6 +30,33 @@ with pkgs.lib; let
     then mapAttrs (_: extractDefaults) options
     else options;
 
+  /* Compute proto files for a specific language
+     
+     This function determines which proto files should be compiled for a given language
+     by checking the language's files and additionalFiles configuration.
+     
+     Type: getFilesForLanguage :: String -> AttrSet -> Config -> [String]
+     
+     Args:
+       - langName: The name of the language (e.g., "go", "js", "python")
+       - langConfig: The language configuration from cfg.languages.<lang>
+       - cfg: The full bufrnix configuration
+       
+     Returns:
+       - List of proto files to compile for this language
+       
+     Logic:
+       - If langConfig.files is not null: use langConfig.files + langConfig.additionalFiles
+       - If langConfig.files is null: use cfg.protoc.files + langConfig.additionalFiles
+  */
+  getFilesForLanguage = langName: langConfig: cfg:
+    let
+      baseFiles = if langConfig.files != null
+                  then langConfig.files
+                  else cfg.protoc.files;
+      allFiles = baseFiles ++ langConfig.additionalFiles;
+    in allFiles;
+
   defaultConfig = extractDefaults optionsDef.options;
 
   # Add package defaults
@@ -272,30 +299,7 @@ in
       ++ languageRuntimeInputs;
 
     text = ''
-      ${debug.log 1 "Starting code generation with multiple output paths support" cfg}
-
-      # Expand proto file globs if needed
-      proto_files=""
-      ${
-        if (cfg.protoc.files == [])
-        then
-          if (cfg.protoc.sourceDirectories == [])
-          then ''
-            # Find all proto files from root
-            proto_files=$(find "${cfg.root}" -name "*.proto" -type f)
-          ''
-          else ''
-            # Find proto files from specified directories
-            ${concatMapStrings (dir: ''
-                proto_files="$proto_files $(find "${dir}" -name "*.proto" -type f)"
-              '')
-              cfg.protoc.sourceDirectories}
-          ''
-        else ''
-          # Use explicitly specified files
-          proto_files="${concatStringsSep " " cfg.protoc.files}"
-        ''
-      }
+      ${debug.log 1 "Starting code generation with per-language file support" cfg}
 
       protoc_cmd="${pkgs.protobuf}/bin/protoc"
       base_protoc_args="-I ${concatStringsSep " -I " cfg.protoc.includeDirectories}"
@@ -317,6 +321,38 @@ in
             concatMapStrings (pathCmd: ''
               echo "Generating ${langCmd.language} code for output path: ${pathCmd.outputPath}"
 
+              # Compute proto files for this specific language
+              lang_proto_files=""
+              ${
+                let
+                  # Get the language configuration
+                  langConfig = cfg.languages.${langCmd.language};
+                  # Compute files for this language
+                  languageFiles = getFilesForLanguage langCmd.language langConfig cfg;
+                in
+                  if (languageFiles == [])
+                  then
+                    # Fallback to finding files from source directories
+                    if (cfg.protoc.sourceDirectories == [])
+                    then ''
+                      # Find all proto files from root
+                      lang_proto_files=$(find "${cfg.root}" -name "*.proto" -type f)
+                    ''
+                    else ''
+                      # Find proto files from specified directories
+                      ${concatMapStrings (dir: ''
+                          lang_proto_files="$lang_proto_files $(find "${dir}" -name "*.proto" -type f)"
+                        '')
+                        cfg.protoc.sourceDirectories}
+                    ''
+                  else ''
+                    # Use computed language-specific files
+                    lang_proto_files="${concatStringsSep " " languageFiles}"
+                  ''
+              }
+
+              echo "Proto files for ${langCmd.language}: $lang_proto_files"
+
               # Run initialization hooks for this path
               ${pathCmd.initHooks}
 
@@ -330,8 +366,8 @@ in
                 '')
                 pathCmd.protocPlugins}
 
-              # Execute protoc for this output path
-              eval "$protoc_cmd $protoc_args $proto_files"
+              # Execute protoc for this output path with language-specific files
+              eval "$protoc_cmd $protoc_args $lang_proto_files"
 
               # Run generation hooks for this path
               ${pathCmd.generateHooks}

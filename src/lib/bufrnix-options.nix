@@ -90,6 +90,26 @@ with lib; {
           description = "The protoc-gen-go package to use";
         };
 
+        files = mkOption {
+          type = types.nullOr (types.listOf types.str);
+          default = null;
+          description = "Proto files to compile for Go only. Overrides global protoc.files. If null, uses global protoc.files.";
+          example = [
+            "./proto/internal/v1/user_service.proto"
+            "./proto/common/v1/types.proto"
+          ];
+        };
+
+        additionalFiles = mkOption {
+          type = types.listOf types.str;
+          default = [];
+          description = "Additional proto files to compile for Go. Extends global protoc.files.";
+          example = [
+            "./proto/google/grpc/gateway/protoc-gen-openapiv2/options/annotations.proto"
+            "./proto/buf/validate/validate.proto"
+          ];
+        };
+
         outputPath = mkOption {
           type = types.either types.str (types.listOf types.str);
           default = "gen/go";
@@ -365,6 +385,25 @@ with lib; {
           description = "The protobuf package to use for C++ generation";
         };
 
+        files = mkOption {
+          type = types.nullOr (types.listOf types.str);
+          default = null;
+          description = "Proto files to compile for C++ only. Overrides global protoc.files. If null, uses global protoc.files.";
+          example = [
+            "./proto/internal/v1/service.proto"
+            "./proto/common/v1/types.proto"
+          ];
+        };
+
+        additionalFiles = mkOption {
+          type = types.listOf types.str;
+          default = [];
+          description = "Additional proto files to compile for C++. Extends global protoc.files.";
+          example = [
+            "./proto/buf/validate/validate.proto"
+          ];
+        };
+
         protobufVersion = mkOption {
           type = types.enum ["3.21" "3.25" "3.27" "4.25" "5.29" "latest"];
           default = "latest";
@@ -529,6 +568,26 @@ with lib; {
           type = types.listOf types.str;
           default = [];
           description = "Options to pass to protoc PHP plugins";
+        };
+
+        files = mkOption {
+          type = types.nullOr (types.listOf types.str);
+          default = null;
+          description = "Proto files to compile for this language only. Overrides global protoc.files. If null, uses global protoc.files.";
+          example = [
+            "./proto/api/v1/user_service.proto"
+            "./proto/common/v1/types.proto"
+          ];
+        };
+
+        additionalFiles = mkOption {
+          type = types.listOf types.str;
+          default = [];
+          description = "Additional proto files to compile for this language. Extends global protoc.files.";
+          example = [
+            "./proto/php/v1/laravel_extensions.proto"
+            "./proto/web/v1/session_management.proto"
+          ];
         };
 
         namespace = mkOption {
@@ -757,6 +816,28 @@ with lib; {
           type = types.package;
           defaultText = literalExpression "pkgs.protoc-gen-js";
           description = "The protoc-gen-js package to use";
+        };
+
+        files = mkOption {
+          type = types.nullOr (types.listOf types.str);
+          default = null;
+          description = "Proto files to compile for JavaScript only. Overrides global protoc.files. If null, uses global protoc.files.";
+          example = [
+            "./proto/api/v1/user_api.proto"
+            "./proto/common/v1/types.proto"
+            "./proto/google/api/annotations.proto"
+          ];
+        };
+
+        additionalFiles = mkOption {
+          type = types.listOf types.str;
+          default = [];
+          description = "Additional proto files to compile for JavaScript. Extends global protoc.files.";
+          example = [
+            "./proto/google/api/annotations.proto"
+            "./proto/google/api/http.proto"
+            "./proto/buf/validate/validate.proto"
+          ];
         };
 
         outputPath = mkOption {
@@ -1005,6 +1086,26 @@ with lib; {
           description = "The protobuf package to use for Java generation";
         };
 
+        files = mkOption {
+          type = types.nullOr (types.listOf types.str);
+          default = null;
+          description = "Proto files to compile for Java only. Overrides global protoc.files. If null, uses global protoc.files.";
+          example = [
+            "./proto/api/v1/user_api.proto"
+            "./proto/common/v1/types.proto"
+          ];
+        };
+
+        additionalFiles = mkOption {
+          type = types.listOf types.str;
+          default = [];
+          description = "Additional proto files to compile for Java. Extends global protoc.files.";
+          example = [
+            "./proto/buf/validate/validate.proto"
+            "./proto/google/api/annotations.proto"
+          ];
+        };
+
         outputPath = mkOption {
           type = types.either types.str (types.listOf types.str);
           default = "gen/java";
@@ -1108,6 +1209,26 @@ with lib; {
           description = "Options to pass to protoc-gen-dart";
         };
 
+        files = mkOption {
+          type = types.nullOr (types.listOf types.str);
+          default = null;
+          description = "Proto files to compile for this language only. Overrides global protoc.files. If null, uses global protoc.files.";
+          example = [
+            "./proto/mobile/v1/flutter_app.proto"
+            "./proto/common/v1/types.proto"
+          ];
+        };
+
+        additionalFiles = mkOption {
+          type = types.listOf types.str;
+          default = [];
+          description = "Additional proto files to compile for this language. Extends global protoc.files.";
+          example = [
+            "./proto/dart/v1/dart_extensions.proto"
+            "./proto/mobile/v1/push_notifications.proto"
+          ];
+        };
+
         packageName = mkOption {
           type = types.str;
           default = "";
@@ -1165,6 +1286,26 @@ with lib; {
           type = types.listOf types.str;
           default = ["html,index.html"];
           description = "Options to pass to protoc-gen-doc (format,output_file)";
+        };
+
+        files = mkOption {
+          type = types.nullOr (types.listOf types.str);
+          default = null;
+          description = "Proto files to compile for this language only. Overrides global protoc.files. If null, uses global protoc.files.";
+          example = [
+            "./proto/api/v1/user_service.proto"
+            "./proto/api/v1/auth_service.proto"
+          ];
+        };
+
+        additionalFiles = mkOption {
+          type = types.listOf types.str;
+          default = [];
+          description = "Additional proto files to compile for this language. Extends global protoc.files.";
+          example = [
+            "./proto/docs/v1/examples.proto"
+            "./proto/third_party/google/api/annotations.proto"
+          ];
         };
 
         format = mkOption {
@@ -1268,6 +1409,26 @@ with lib; {
           default = [];
           description = "Options to pass to protoc-gen-d2";
         };
+
+        files = mkOption {
+          type = types.nullOr (types.listOf types.str);
+          default = null;
+          description = "Proto files to compile for this language only. Overrides global protoc.files. If null, uses global protoc.files.";
+          example = [
+            "./proto/architecture/v1/system_design.proto"
+            "./proto/api/v1/user_service.proto"
+          ];
+        };
+
+        additionalFiles = mkOption {
+          type = types.listOf types.str;
+          default = [];
+          description = "Additional proto files to compile for this language. Extends global protoc.files.";
+          example = [
+            "./proto/diagrams/v1/data_flow.proto"
+            "./proto/internal/v1/service_dependencies.proto"
+          ];
+        };
       };
 
       # Python language options
@@ -1282,6 +1443,26 @@ with lib; {
           type = types.package;
           defaultText = literalExpression "pkgs.protobuf";
           description = "The protobuf package to use for Python generation";
+        };
+
+        files = mkOption {
+          type = types.nullOr (types.listOf types.str);
+          default = null;
+          description = "Proto files to compile for Python only. Overrides global protoc.files. If null, uses global protoc.files.";
+          example = [
+            "./proto/api/v1/user_api.proto"
+            "./proto/common/v1/types.proto"
+          ];
+        };
+
+        additionalFiles = mkOption {
+          type = types.listOf types.str;
+          default = [];
+          description = "Additional proto files to compile for Python. Extends global protoc.files.";
+          example = [
+            "./proto/buf/validate/validate.proto"
+            "./proto/google/api/annotations.proto"
+          ];
         };
 
         outputPath = mkOption {
@@ -1423,6 +1604,26 @@ with lib; {
           description = "Options to pass to protoc-gen-swift";
         };
 
+        files = mkOption {
+          type = types.nullOr (types.listOf types.str);
+          default = null;
+          description = "Proto files to compile for this language only. Overrides global protoc.files. If null, uses global protoc.files.";
+          example = [
+            "./proto/mobile/v1/ios_app.proto"
+            "./proto/common/v1/types.proto"
+          ];
+        };
+
+        additionalFiles = mkOption {
+          type = types.listOf types.str;
+          default = [];
+          description = "Additional proto files to compile for this language. Extends global protoc.files.";
+          example = [
+            "./proto/swift/v1/swift_extensions.proto"
+            "./proto/mobile/v1/apple_push_notifications.proto"
+          ];
+        };
+
         packageName = mkOption {
           type = types.str;
           default = "";
@@ -1460,6 +1661,26 @@ with lib; {
           type = types.listOf types.str;
           default = [];
           description = "Options to pass to protoc C# plugin";
+        };
+
+        files = mkOption {
+          type = types.nullOr (types.listOf types.str);
+          default = null;
+          description = "Proto files to compile for this language only. Overrides global protoc.files. If null, uses global protoc.files.";
+          example = [
+            "./proto/api/v1/user_service.proto"
+            "./proto/common/v1/types.proto"
+          ];
+        };
+
+        additionalFiles = mkOption {
+          type = types.listOf types.str;
+          default = [];
+          description = "Additional proto files to compile for this language. Extends global protoc.files.";
+          example = [
+            "./proto/dotnet/v1/aspnet_extensions.proto"
+            "./proto/web/v1/blazor_components.proto"
+          ];
         };
 
         namespace = mkOption {
@@ -1678,6 +1899,26 @@ with lib; {
           description = "Generate package-info.java files";
         };
 
+        files = mkOption {
+          type = types.nullOr (types.listOf types.str);
+          default = null;
+          description = "Proto files to compile for this language only. Overrides global protoc.files. If null, uses global protoc.files.";
+          example = [
+            "./proto/android/v1/kotlin_app.proto"
+            "./proto/common/v1/types.proto"
+          ];
+        };
+
+        additionalFiles = mkOption {
+          type = types.listOf types.str;
+          default = [];
+          description = "Additional proto files to compile for this language. Extends global protoc.files.";
+          example = [
+            "./proto/kotlin/v1/kotlin_extensions.proto"
+            "./proto/mobile/v1/android_services.proto"
+          ];
+        };
+
         # gRPC support
         grpc = {
           enable = mkOption {
@@ -1775,6 +2016,26 @@ with lib; {
               "src/proto"
             ]
           '';
+        };
+
+        files = mkOption {
+          type = types.nullOr (types.listOf types.str);
+          default = null;
+          description = "Proto files to compile for this language only. Overrides global protoc.files. If null, uses global protoc.files.";
+          example = [
+            "./proto/embedded/v1/sensor_data.proto"
+            "./proto/common/v1/types.proto"
+          ];
+        };
+
+        additionalFiles = mkOption {
+          type = types.listOf types.str;
+          default = [];
+          description = "Additional proto files to compile for this language. Extends global protoc.files.";
+          example = [
+            "./proto/c/v1/c_extensions.proto"
+            "./proto/system/v1/kernel_messages.proto"
+          ];
         };
 
         # protobuf-c support
@@ -1932,6 +2193,26 @@ with lib; {
           type = types.listOf types.str;
           default = [];
           description = "Options to pass to ScalaPB";
+        };
+
+        files = mkOption {
+          type = types.nullOr (types.listOf types.str);
+          default = null;
+          description = "Proto files to compile for this language only. Overrides global protoc.files. If null, uses global protoc.files.";
+          example = [
+            "./proto/api/v1/user_service.proto"
+            "./proto/common/v1/types.proto"
+          ];
+        };
+
+        additionalFiles = mkOption {
+          type = types.listOf types.str;
+          default = [];
+          description = "Additional proto files to compile for this language. Extends global protoc.files.";
+          example = [
+            "./proto/scala/v1/scala_extensions.proto"
+            "./proto/akka/v1/actor_messages.proto"
+          ];
         };
 
         scalaVersion = mkOption {

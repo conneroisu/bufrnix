@@ -43,6 +43,16 @@
                   enable = true;
                   outputPath = "proto/gen/go";
 
+                  # Per-language file control (new feature)
+                  # files = [
+                  #   "./proto/common/v1/types.proto"
+                  #   "./proto/internal/v1/user_service.proto"
+                  #   # Note: Exclude Google API annotations to prevent Go linting errors
+                  # ];
+                  # additionalFiles = [
+                  #   "./proto/monitoring/v1/metrics.proto"
+                  # ];
+
                   # gRPC support
                   grpc.enable = true;
 

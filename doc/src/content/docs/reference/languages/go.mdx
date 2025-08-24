@@ -234,6 +234,142 @@ languages.go = {
 };
 ```
 
+## Per-Language Files
+
+<Badge text="🆕 New Feature" variant="tip" />
+
+Control exactly which proto files Go processes using `files` and `additionalFiles`:
+
+<Tabs>
+<TabItem label="Smart Exclusions">
+
+<Card title="Avoid Go Linting Issues" icon="warning">
+
+**Problem**: Go generates linting errors when processing Google API annotations.
+**Solution**: Use `files` to exclude annotation files from Go while keeping them for other languages.
+
+<Code
+  code={`# Global files (used by all languages by default)
+protoc.files = [
+  "./proto/common/v1/types.proto"
+  "./proto/common/v1/status.proto"
+];
+
+languages = {
+  # Go: Override global files - exclude Google annotations
+  go = {
+    enable = true;
+    files = [
+      "./proto/common/v1/types.proto"
+      "./proto/common/v1/status.proto"
+      "./proto/internal/v1/user_service.proto"
+      # NOTE: No Google API annotations - prevents linting errors
+    ];
+    grpc.enable = true;
+  };
+  
+  # JavaScript: Extend global files - include Google annotations
+  js = {
+    enable = true;
+    additionalFiles = [
+      "./proto/api/v1/user_api.proto"
+      "./proto/google/api/annotations.proto"  # Needed for REST mapping
+      "./proto/google/api/http.proto"
+    ];
+    es.enable = true;
+  };
+};`}
+  lang="nix"
+  title="Smart file separation"
+/>
+
+</Card>
+
+</TabItem>
+<TabItem label="Backend-Only Services">
+
+<Card title="Internal Services" icon="lock">
+
+Generate Go code only for backend-specific services:
+
+<Code
+  code={`languages.go = {
+  enable = true;
+  outputPath = "internal/proto/go";
+  # Override: Only internal services + shared types
+  files = [
+    "./proto/common/v1/types.proto"
+    "./proto/internal/v1/user_service.proto"
+    "./proto/internal/v1/admin_service.proto"
+    "./proto/internal/v1/metrics_service.proto"
+    # No public API files - backend only
+  ];
+  grpc.enable = true;
+  protovalidate.enable = true;
+};`}
+  lang="nix"
+  title="Backend-specific generation"
+/>
+
+</Card>
+
+</TabItem>
+<TabItem label="Additional Files">
+
+<Card title="Add Go-Specific Files" icon="plus">
+
+Extend global files with Go-specific protobuf definitions:
+
+<Code
+  code={`languages.go = {
+  enable = true;
+  # Use global files + these additional Go-specific files
+  additionalFiles = [
+    "./proto/go/v1/go_extensions.proto"
+    "./proto/monitoring/v1/metrics.proto"
+    "./proto/internal/v1/background_jobs.proto"
+  ];
+  grpc.enable = true;
+  vtprotobuf.enable = true;
+};`}
+  lang="nix"
+  title="Go-specific extensions"
+/>
+
+</Card>
+
+</TabItem>
+</Tabs>
+
+### Configuration Options
+
+| Option | Type | Description | Example |
+|--------|------|-------------|---------|
+| `files` | `list` | Override global files completely | Backend-only services |
+| `additionalFiles` | `list` | Extend global files | Add monitoring protos |
+
+<Aside type="tip" title="When to Use Each Option">
+- **`files`**: When Go needs a completely different set of proto files (e.g., backend vs frontend separation)
+- **`additionalFiles`**: When Go needs the shared files plus some additional ones (e.g., Go-specific monitoring)
+</Aside>
+
+### Common Go Use Cases
+
+<CardGrid stagger>
+  <Card title="Exclude Google Annotations" icon="warning">
+    Use `files` to prevent Go linting errors from Google API annotations
+  </Card>
+  <Card title="Backend Services Only" icon="server">
+    Generate only internal gRPC services for Go backends
+  </Card>
+  <Card title="Add Monitoring" icon="chart">
+    Include Go-specific metrics and health check protos
+  </Card>
+  <Card title="Multi-Team Projects" icon="group">
+    Different teams can process different proto subsets
+  </Card>
+</CardGrid>
+
 ## Buf Registry Plugin Support
 
 Use Buf registry plugins directly:
@@ -583,6 +719,8 @@ defer user.ReturnToVTPool()
 3. **Consider Performance**: Enable vtprotobuf for high-throughput services
 4. **HTTP APIs**: Use gRPC-Gateway or Connect for HTTP/JSON APIs
 5. **Documentation**: Enable OpenAPI generation for REST API documentation
+6. **Smart File Management**: Use `files` to exclude Google API annotations and prevent Go linting errors
+7. **Separate Concerns**: Use per-language files to create clear backend/frontend boundaries
 
 ## Try the Example
 

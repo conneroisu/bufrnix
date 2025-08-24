@@ -3,7 +3,7 @@ title: C++ Language Support
 description: Complete Protocol Buffer support for C++ with gRPC, CMake integration, and embedded-friendly options.
 ---
 
-import { Tabs, TabItem } from "@astrojs/starlight/components";
+import { Tabs, TabItem, Badge, Card, CardGrid } from "@astrojs/starlight/components";
 import { Code } from "astro:components";
 
 # C++ Language Support
@@ -97,6 +97,107 @@ languages.cpp = {
   };
 };
 ```
+
+## Per-Language Files
+
+<Badge text="🆕 New Feature" variant="tip" />
+
+Control exactly which proto files C++ processes using `files` and `additionalFiles`:
+
+<Tabs>
+<TabItem label="Embedded Systems">
+
+**Use Case**: C++ embedded application needs only core protocol definitions.
+
+```nix
+languages.cpp = {
+  enable = true;
+  outputPath = "embedded/proto";
+  # Override: Only embedded-friendly, minimal protocols
+  files = [
+    "./proto/common/v1/types.proto"
+    "./proto/embedded/v1/sensor_data.proto"
+    "./proto/embedded/v1/control_messages.proto"
+    "./proto/embedded/v1/status_reports.proto"
+    # No complex APIs or large message definitions
+  ];
+  nanopb.enable = true;
+  optimizeFor = "CODE_SIZE";
+  runtime = "lite";
+};
+```
+
+</TabItem>
+<TabItem label="Add System Libraries">
+
+**Use Case**: Include system-level and third-party protocol definitions.
+
+```nix
+languages.cpp = {
+  enable = true;
+  standard = "c++20";
+  # Use global files + additional system-level dependencies
+  additionalFiles = [
+    "./proto/system/v1/logging.proto"
+    "./proto/third_party/opencensus/trace.proto"
+    "./proto/monitoring/v1/performance.proto"
+    "./proto/networking/v1/tcp_stats.proto"
+  ];
+  grpc.enable = true;
+  arenaAllocation = true;
+};
+```
+
+</TabItem>
+<TabItem label="Game Engine Specific">
+
+**Use Case**: C++ game engine processes only game-related protocols.
+
+```nix
+languages.cpp = {
+  enable = true;
+  outputPath = "game_engine/proto";
+  # Override: Only game engine protocols
+  files = [
+    "./proto/common/v1/types.proto"
+    "./proto/game/v1/player_state.proto"
+    "./proto/game/v1/world_updates.proto"
+    "./proto/game/v1/input_events.proto"
+    "./proto/networking/v1/multiplayer.proto"
+    # No web APIs or mobile-specific protocols
+  ];
+  grpc.enable = true;
+  optimizeFor = "SPEED";
+  arenaAllocation = true;
+};
+```
+
+</TabItem>
+</Tabs>
+
+### Configuration Options
+
+| Option | Type | Description | Example |
+|--------|------|-------------|---------|
+| `files` | `list` | Override global files completely | Embedded system protocols |
+| `additionalFiles` | `list` | Extend global files | Add system monitoring protos |
+
+### Common C++ Use Cases
+
+<CardGrid stagger>
+  <Card title="Embedded Systems" icon="chip">
+    Minimal protocols optimized for memory-constrained devices
+  </Card>
+  <Card title="High-Performance Computing" icon="lightning">
+    System-level protocols with performance optimizations
+  </Card>
+  <Card title="Game Development" icon="gamepad2">
+    Real-time protocols for game engines and multiplayer
+  </Card>
+  <Card title="System Programming" icon="server">
+    OS-level and network protocol definitions
+  </Card>
+</CardGrid>
 
 ## C++ Standards Support
 
