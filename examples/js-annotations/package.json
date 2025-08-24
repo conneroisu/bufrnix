@@ -1,0 +1,54 @@
+{
+  "name": "js-annotations-example",
+  "version": "1.0.0",
+  "description": "JavaScript/TypeScript example with Google API annotations using Bufrnix and Connect-ES",
+  "type": "module",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsx src/index.ts",
+    "start": "node dist/index.js",
+    "lint": "eslint src --ext .ts,.js",
+    "lint:fix": "eslint src --ext .ts,.js --fix",
+    "type-check": "tsc --noEmit",
+    "clean": "rm -rf dist gen",
+    "generate": "nix build",
+    "test": "tsx src/test.ts"
+  },
+  "keywords": [
+    "protobuf",
+    "typescript",
+    "connect-es",
+    "google-api",
+    "annotations",
+    "grpc",
+    "rest",
+    "bufrnix",
+    "nix"
+  ],
+  "author": "Bufrnix Example",
+  "license": "MIT",
+  "dependencies": {
+    "@bufbuild/protobuf": "^1.10.0",
+    "@connectrpc/connect": "^1.4.0",
+    "@connectrpc/connect-node": "^1.4.0",
+    "@connectrpc/connect-web": "^1.4.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "@typescript-eslint/eslint-plugin": "^6.0.0",
+    "@typescript-eslint/parser": "^6.0.0",
+    "eslint": "^8.0.0",
+    "tsx": "^4.0.0",
+    "typescript": "^5.3.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/conneroisu/bufrnix",
+    "directory": "examples/js-annotations"
+  }
+}
