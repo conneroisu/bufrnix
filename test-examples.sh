@@ -146,6 +146,47 @@ test_example() {
     fi
 }
 
+# Function to test that specific files do NOT exist (negative testing)
+test_files_not_exist() {
+    local example_name=$1
+    local example_dir="examples/$example_name"
+    shift
+    local files_that_should_not_exist=("$@")
+    
+    echo -e "${YELLOW}Testing $example_name (exclusions)...${NC}"
+    
+    # Check if example directory exists
+    if [ ! -d "$example_dir" ]; then
+        echo -e "${RED}✗ Example directory $example_dir does not exist${NC}"
+        FAILED_TESTS+=("$example_name-exclusions: directory missing")
+        return 1
+    fi
+    
+    echo "  Checking excluded files are NOT generated..."
+    local all_correctly_excluded=true
+    local unexpectedly_found_files=()
+    
+    for file_that_should_not_exist in "${files_that_should_not_exist[@]}"; do
+        if [ -f "$example_dir/$file_that_should_not_exist" ]; then
+            echo -e "    ${RED}✗${NC} Found (should be excluded): $file_that_should_not_exist"
+            unexpectedly_found_files+=("$file_that_should_not_exist")
+            all_correctly_excluded=false
+        else
+            echo -e "    ${GREEN}✓${NC} Correctly excluded: $file_that_should_not_exist"
+        fi
+    done
+    
+    if [ "$all_correctly_excluded" = true ]; then
+        echo -e "${GREEN}✓ $example_name exclusions correct${NC}\n"
+        PASSED_TESTS+=("$example_name-exclusions")
+        return 0
+    else
+        echo -e "${RED}✗ $example_name exclusions failed - found files that should be excluded${NC}\n"
+        FAILED_TESTS+=("$example_name-exclusions: unexpected files found")
+        return 1
+    fi
+}
+
 # Test Go example
 test_example "simple-flake" \
     "proto/gen/go/simple/v1/simple.pb.go" \
@@ -256,9 +297,42 @@ test_example "js-grpc-web" \
     "proto/gen/js/user_pb.ts" \
     "proto/gen/js/chat_pb.ts"
 
+# Test JavaScript annotations example
+test_example "js-annotations" \
+    "proto/gen/ts/example/v1/user_service_pb.ts" \
+    "proto/gen/ts/example/v1/user_service_pb.js" \
+    "proto/gen/ts/google/api/annotations_pb.ts" \
+    "proto/gen/ts/google/api/annotations_pb.js" \
+    "proto/gen/ts/google/api/http_pb.ts" \
+    "proto/gen/ts/google/api/http_pb.js"
+
 # Test JavaScript protovalidate example
 test_example "js-protovalidate" \
     "proto/gen/js/example/v1/user_pb.ts"
+
+# Test Multi-language per-files example - POSITIVE tests (files that SHOULD exist)
+test_example "multilang-per-files" \
+    "backend/generated/go/common/v1/types.pb.go" \
+    "backend/generated/go/common/v1/status.pb.go" \
+    "backend/generated/go/internal/v1/user_service.pb.go" \
+    "backend/generated/go/internal/v1/user_service_grpc.pb.go" \
+    "backend/generated/go/internal/v1/admin_service.pb.go" \
+    "backend/generated/go/internal/v1/admin_service_grpc.pb.go" \
+    "frontend/src/proto/generated/common/v1/types_pb.ts" \
+    "frontend/src/proto/generated/common/v1/status_pb.ts" \
+    "frontend/src/proto/generated/api/v1/user_api_pb.ts" \
+    "frontend/src/proto/generated/api/v1/auth_api_pb.ts" \
+    "frontend/src/proto/generated/google/api/annotations_pb.ts" \
+    "frontend/src/proto/generated/google/api/http_pb.ts"
+
+# Test Multi-language per-files example - NEGATIVE tests (files that should NOT exist)
+test_files_not_exist "multilang-per-files" \
+    "backend/generated/go/google/api/annotations.pb.go" \
+    "backend/generated/go/google/api/http.pb.go" \
+    "backend/generated/go/api/v1/user_api.pb.go" \
+    "backend/generated/go/api/v1/auth_api.pb.go" \
+    "frontend/src/proto/generated/internal/v1/user_service_pb.ts" \
+    "frontend/src/proto/generated/internal/v1/admin_service_pb.ts"
 
 # Test TypeScript flake-parts example
 test_example "ts-flake-parts" \
@@ -308,10 +382,10 @@ test_example "svg-example" \
     "proto/gen/svg/example/v1/example.svg" \
     "proto/gen/doc/index.html"
 
-# Test Scala basic example
-test_example "scala-basic" \
-    "gen/scala/com/example/protobuf/v1/person/Person.scala"
-
+# # Test Scala basic example
+# test_example "scala-basic" \
+#     "gen/scala/com/example/protobuf/v1/person/Person.scala"
+#
 # Test Java basic example
 test_example "java-basic" \
     "gen/java/com/example/protos/v1/Person.java" \

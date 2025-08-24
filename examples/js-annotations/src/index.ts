@@ -18,7 +18,7 @@ import {
   GetUserResponse,
   ListUsersRequest,
   CreateUserRequest
-} from "../gen/ts/example/v1/user_service_pb.js";
+} from "../proto/gen/ts/example/v1/user_service_pb.js";
 
 /**
  * Example function demonstrating how to create and manipulate

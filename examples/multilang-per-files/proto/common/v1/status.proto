@@ -1,0 +1,27 @@
+syntax = "proto3";
+
+package common.v1;
+
+option go_package = "github.com/example/backend/generated/go/common/v1";
+
+// Common status and error types
+
+enum ResponseStatus {
+  RESPONSE_STATUS_UNSPECIFIED = 0;
+  RESPONSE_STATUS_SUCCESS = 1;
+  RESPONSE_STATUS_ERROR = 2;
+  RESPONSE_STATUS_PENDING = 3;
+}
+
+message ErrorDetails {
+  string code = 1;
+  string message = 2;
+  repeated string details = 3;
+}
+
+message HealthCheck {
+  ResponseStatus status = 1;
+  string version = 2;
+  int64 timestamp = 3;
+  map<string, string> metadata = 4;
+}

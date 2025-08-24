@@ -48,6 +48,16 @@
               jdk = pkgs.jdk17;
               outputPath = "gen/java";
               options = [];
+
+              # Per-language file control (new feature)
+              # files = [
+              #   "./proto/common/v1/types.proto"
+              #   "./proto/enterprise/v1/billing_service.proto"
+              # ];
+              # additionalFiles = [
+              #   "./proto/google/cloud/pubsub/v1/pubsub.proto"
+              #   "./proto/third_party/kafka/kafka.proto"
+              # ];
             };
           };
         };

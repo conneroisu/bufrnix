@@ -29,6 +29,16 @@
             enable = true;
             outputPath = "proto/gen/python";
 
+            # Per-language file control (new feature)
+            # files = [
+            #   "./proto/common/v1/types.proto"
+            #   "./proto/ml/v1/training_service.proto"
+            # ];
+            # additionalFiles = [
+            #   "./proto/google/cloud/storage/v1/storage.proto"
+            #   "./proto/third_party/tensorflow/serving/apis/model.proto"
+            # ];
+
             # Use betterproto instead of standard protobuf
             betterproto = {
               enable = true;

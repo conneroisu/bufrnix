@@ -22,7 +22,7 @@
   },
   "include": [
     "src/**/*",
-    "gen/ts/**/*"
+    "proto/gen/ts/**/*"
   ],
   "exclude": [
     "node_modules",

@@ -8,6 +8,9 @@ import {
   TabItem,
   FileTree,
   StarlightIcon,
+  Badge,
+  Card,
+  CardGrid,
 } from "@astrojs/starlight/components";
 import { Code } from "astro:components";
 import betterprotoConfig from "./python.x-betterproto-configuration.nix?raw";
@@ -73,6 +76,104 @@ languages.python = {
   };
 };
 ```
+
+## Per-Language Files
+
+<Badge text="🆕 New Feature" variant="tip" />
+
+Control exactly which proto files Python processes using `files` and `additionalFiles`:
+
+<Tabs>
+<TabItem label="Data Science APIs">
+
+**Use Case**: Python needs data processing and ML proto files.
+
+```nix
+languages.python = {
+  enable = true;
+  outputPath = "ml_backend/proto";
+  # Override: Only data science and ML-related protos
+  files = [
+    "./proto/common/v1/types.proto"
+    "./proto/ml/v1/training_service.proto"
+    "./proto/ml/v1/inference_service.proto"
+    "./proto/data/v1/pipeline_service.proto"
+    "./proto/analytics/v1/metrics.proto"
+    # No frontend APIs - backend data processing only
+  ];
+  grpc.enable = true;
+  mypy.enable = true;
+};
+```
+
+</TabItem>
+<TabItem label="Add External Dependencies">
+
+**Use Case**: Include third-party and Google Cloud proto definitions.
+
+```nix
+languages.python = {
+  enable = true;
+  # Use global files + additional Python-specific dependencies
+  additionalFiles = [
+    "./proto/google/cloud/storage/v1/storage.proto"
+    "./proto/google/cloud/bigquery/v1/bigquery.proto"
+    "./proto/third_party/tensorflow/serving/apis/model.proto"
+    "./proto/monitoring/v1/prometheus.proto"
+  ];
+  grpc.enable = true;
+  betterproto.enable = true;
+};
+```
+
+</TabItem>
+<TabItem label="Microservice Specific">
+
+**Use Case**: Python microservice only needs specific service definitions.
+
+```nix
+languages.python = {
+  enable = true;
+  outputPath = "auth_service/proto";
+  # Override: Only auth and user management services
+  files = [
+    "./proto/common/v1/types.proto"
+    "./proto/auth/v1/auth_service.proto"
+    "./proto/users/v1/user_service.proto"
+    "./proto/sessions/v1/session_service.proto"
+    # No payment, analytics, or other services
+  ];
+  grpc.enable = true;
+  pyi.enable = true;
+};
+```
+
+</TabItem>
+</Tabs>
+
+### Configuration Options
+
+| Option | Type | Description | Example |
+|--------|------|-------------|---------|
+| `files` | `list` | Override global files completely | Microservice-specific APIs |
+| `additionalFiles` | `list` | Extend global files | Add Google Cloud protos |
+
+### Common Python Use Cases
+
+<CardGrid stagger>
+  <Card title="Data Science" icon="chart">
+    Include ML training and inference service definitions
+  </Card>
+  <Card title="Cloud Integration" icon="cloud">
+    Add Google Cloud or AWS service proto definitions
+  </Card>
+  <Card title="Microservice Focus" icon="server">
+    Process only relevant service definitions per microservice
+  </Card>
+  <Card title="Third-Party APIs" icon="puzzle">
+    Include external protobuf dependencies and frameworks
+  </Card>
+</CardGrid>
 
 ## Proto Example
 

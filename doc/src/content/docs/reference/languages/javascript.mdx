@@ -3,7 +3,7 @@ title: JavaScript/TypeScript Language Support
 description: Modern Protocol Buffer support for JavaScript and TypeScript with ES modules, Connect-ES, gRPC-Web, and Twirp.
 ---
 
-import { Tabs, TabItem } from "@astrojs/starlight/components";
+import { Tabs, TabItem, Badge, CardGrid, Card } from "@astrojs/starlight/components";
 import { Code } from "astro:components";
 import basicConfig from "./javascript.x-basic-configuration.nix?raw";
 
@@ -83,6 +83,120 @@ languages.js = {
   };
 };
 ```
+
+## Per-Language Files
+
+<Badge text="🆕 New Feature" variant="tip" />
+
+Control exactly which proto files JavaScript/TypeScript processes using `files` and `additionalFiles`:
+
+<Tabs>
+<TabItem label="Frontend + Google Annotations">
+
+**Use Case**: Frontend needs Google API annotations for REST mapping, but backend doesn't.
+
+```nix
+# Global files (shared by all languages)
+protoc.files = [
+  "./proto/common/v1/types.proto"
+  "./proto/common/v1/status.proto"
+];
+
+languages = {
+  # JavaScript: Extend global files with frontend-specific files
+  js = {
+    enable = true;
+    additionalFiles = [
+      "./proto/api/v1/user_api.proto"      # Public REST APIs
+      "./proto/api/v1/auth_api.proto"      # Authentication
+      "./proto/google/api/annotations.proto"  # HTTP annotations
+      "./proto/google/api/http.proto"      # REST definitions
+    ];
+    es.enable = true;
+    connect.enable = true;
+  };
+  
+  # Go: Use only internal services (excludes Google annotations)
+  go = {
+    enable = true;
+    files = [
+      "./proto/common/v1/types.proto"
+      "./proto/internal/v1/user_service.proto"
+      # No Google annotations - prevents linting errors
+    ];
+    grpc.enable = true;
+  };
+};
+```
+
+</TabItem>
+<TabItem label="Web Client Only">
+
+**Use Case**: JavaScript only needs public API definitions for web clients.
+
+```nix
+languages.js = {
+  enable = true;
+  outputPath = "src/proto/client";
+  # Override: Only public APIs + shared types
+  files = [
+    "./proto/common/v1/types.proto"
+    "./proto/api/v1/public_api.proto"
+    "./proto/api/v1/auth_api.proto"
+    "./proto/google/api/annotations.proto"
+    # No internal services - client security boundary
+  ];
+  es.enable = true;
+  connect.enable = true;
+};
+```
+
+</TabItem>
+<TabItem label="Add Browser-Specific">
+
+**Use Case**: Add browser-specific protobuf definitions to the standard set.
+
+```nix
+languages.js = {
+  enable = true;
+  # Use global files + these additional browser-specific files
+  additionalFiles = [
+    "./proto/browser/v1/analytics.proto"
+    "./proto/browser/v1/notifications.proto"
+    "./proto/browser/v1/offline_storage.proto"
+    "./proto/third_party/google/protobuf/timestamp.proto"
+  ];
+  es.enable = true;
+  grpcWeb.enable = true;
+};
+```
+
+</TabItem>
+</Tabs>
+
+### Configuration Options
+
+| Option | Type | Description | Example |
+|--------|------|-------------|---------|
+| `files` | `list` | Override global files completely | Web client APIs only |
+| `additionalFiles` | `list` | Extend global files | Add Google annotations |
+
+### Common JavaScript Use Cases
+
+<CardGrid stagger>
+  <Card title="Google API Annotations" icon="globe">
+    Add HTTP/REST annotations for Connect-ES clients
+  </Card>
+  <Card title="Frontend Boundaries" icon="shield">
+    Prevent frontend access to internal backend services
+  </Card>
+  <Card title="Browser-Specific APIs" icon="laptop">
+    Include browser-only protobuf definitions
+  </Card>
+  <Card title="Third-Party Protos" icon="puzzle">
+    Add external protobuf dependencies
+  </Card>
+</CardGrid>
 
 ## Proto Example
 
@@ -628,6 +742,8 @@ export function UserList() {
 4. **Error Handling**: Use proper error types from Connect/gRPC
 5. **Streaming**: Use async iterators for efficient streaming
 6. **Tree Shaking**: ES modules enable better bundle optimization
+7. **Smart File Management**: Use `additionalFiles` to include Google API annotations for REST clients
+8. **Security Boundaries**: Use per-language files to prevent frontend access to internal backend services
 
 ## Try the Example
 

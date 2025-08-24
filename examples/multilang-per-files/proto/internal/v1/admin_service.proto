@@ -1,0 +1,169 @@
+syntax = "proto3";
+
+package internal.v1;
+
+import "common/v1/types.proto";
+import "common/v1/status.proto";
+import "internal/v1/user_service.proto";
+
+option go_package = "github.com/example/backend/generated/go/internal/v1";
+
+// Internal Admin Service for administrative operations
+// Backend-only, should not be accessible to frontend
+
+service AdminService {
+  // System administration
+  rpc GetSystemStats(GetSystemStatsRequest) returns (GetSystemStatsResponse);
+  rpc FlushCache(FlushCacheRequest) returns (FlushCacheResponse);
+  rpc RestartService(RestartServiceRequest) returns (RestartServiceResponse);
+  
+  // User administration
+  rpc GetAllUsers(GetAllUsersRequest) returns (GetAllUsersResponse);
+  rpc SuspendUser(SuspendUserRequest) returns (SuspendUserResponse);
+  rpc UnsuspendUser(UnsuspendUserRequest) returns (UnsuspendUserResponse);
+  rpc ImpersonateUser(ImpersonateUserRequest) returns (ImpersonateUserResponse);
+  
+  // Audit and monitoring
+  rpc GetAuditLogs(GetAuditLogsRequest) returns (GetAuditLogsResponse);
+  rpc ExportUserData(ExportUserDataRequest) returns (ExportUserDataResponse);
+}
+
+message GetSystemStatsRequest {
+  bool include_detailed_metrics = 1;
+}
+
+message GetSystemStatsResponse {
+  SystemStats stats = 1;
+}
+
+message SystemStats {
+  int64 total_users = 1;
+  int64 active_users = 2;
+  int64 suspended_users = 3;
+  int64 total_requests_today = 4;
+  double avg_response_time_ms = 5;
+  int64 cache_hit_rate = 6;
+  int64 database_connections = 7;
+  repeated ServiceHealth services = 8;
+}
+
+message ServiceHealth {
+  string name = 1;
+  common.v1.ResponseStatus status = 2;
+  string version = 3;
+  int64 uptime_seconds = 4;
+}
+
+message FlushCacheRequest {
+  string cache_type = 1; // "all", "user", "session", etc.
+}
+
+message FlushCacheResponse {
+  bool success = 1;
+  int64 entries_flushed = 2;
+}
+
+message RestartServiceRequest {
+  string service_name = 1;
+  bool force = 2;
+}
+
+message RestartServiceResponse {
+  bool success = 1;
+  string restart_id = 2;
+}
+
+message GetAllUsersRequest {
+  common.v1.PaginationRequest pagination = 1;
+  AdminUserFilter filter = 2;
+}
+
+message GetAllUsersResponse {
+  repeated AdminUserView users = 1;
+  common.v1.PaginationResponse pagination = 2;
+}
+
+message AdminUserFilter {
+  common.v1.UserStatus status = 1;
+  bool include_deleted = 2;
+  string email_pattern = 3;
+  int64 created_after = 4;
+  int64 created_before = 5;
+  repeated string roles = 6;
+}
+
+message AdminUserView {
+  common.v1.User user = 1;
+  InternalUserMetadata metadata = 2;
+  repeated AuditLogEntry recent_activity = 3;
+}
+
+message SuspendUserRequest {
+  string user_id = 1;
+  string reason = 2;
+  int64 until_timestamp = 3; // 0 = indefinite
+}
+
+message SuspendUserResponse {
+  bool success = 1;
+  string suspension_id = 2;
+}
+
+message UnsuspendUserRequest {
+  string user_id = 1;
+  string reason = 2;
+}
+
+message UnsuspendUserResponse {
+  bool success = 1;
+}
+
+message ImpersonateUserRequest {
+  string admin_user_id = 1;
+  string target_user_id = 2;
+  string reason = 3;
+  int64 duration_seconds = 4;
+}
+
+message ImpersonateUserResponse {
+  bool success = 1;
+  string impersonation_token = 2;
+  int64 expires_at = 3;
+}
+
+message GetAuditLogsRequest {
+  string user_id = 1; // empty = all users
+  string action_type = 2; // "login", "update", "delete", etc.
+  int64 from_timestamp = 3;
+  int64 to_timestamp = 4;
+  common.v1.PaginationRequest pagination = 5;
+}
+
+message GetAuditLogsResponse {
+  repeated AuditLogEntry logs = 1;
+  common.v1.PaginationResponse pagination = 2;
+}
+
+message AuditLogEntry {
+  string id = 1;
+  string user_id = 2;
+  string action_type = 3;
+  string description = 4;
+  string ip_address = 5;
+  string user_agent = 6;
+  int64 timestamp = 7;
+  map<string, string> metadata = 8;
+}
+
+message ExportUserDataRequest {
+  string user_id = 1;
+  repeated string data_types = 2; // "profile", "activity", "settings", etc.
+  string format = 3; // "json", "csv", "xml"
+}
+
+message ExportUserDataResponse {
+  bool success = 1;
+  string export_id = 2;
+  string download_url = 3;
+  int64 expires_at = 4;
+}

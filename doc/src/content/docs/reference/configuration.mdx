@@ -156,6 +156,121 @@ protoc = {
 | `protoc.includeDirectories` | list of strings | `["./proto"]` | Directories to include in the include path for imports                                          |
 | `protoc.files`              | list of strings | `[]`          | Specific proto files to compile (leave empty to compile all .proto files in source directories) |
 
+### Per-Language File Configuration
+
+Control exactly which proto files each language processes using `files` and `additionalFiles` options:
+
+<Tabs>
+<TabItem label="files (Override)">
+
+Completely replaces global `protoc.files` for a specific language:
+
+```nix
+protoc.files = [
+  "./proto/common/v1/types.proto"
+  "./proto/api/v1/user.proto"
+];
+
+languages.go = {
+  # Override: Go processes only these files
+  files = [
+    "./proto/common/v1/types.proto"
+    "./proto/internal/v1/admin.proto"
+  ];
+};
+# Result: Go ignores protoc.files, processes only the files listed above
+```
+
+</TabItem>
+<TabItem label="additionalFiles (Extend)">
+
+Adds files to global `protoc.files` for a specific language:
+
+```nix
+protoc.files = [
+  "./proto/common/v1/types.proto"
+  "./proto/api/v1/user.proto"
+];
+
+languages.js = {
+  # Extend: Add Google annotations for JavaScript
+  additionalFiles = [
+    "./proto/google/api/annotations.proto"
+    "./proto/google/api/http.proto"
+  ];
+};
+# Result: JS processes protoc.files + additionalFiles
+```
+
+</TabItem>
+<TabItem label="Smart Exclusions">
+
+Prevent problematic or unnecessary code generation:
+
+```nix
+languages = {
+  go = {
+    # Backend: Only internal services + shared types
+    files = [
+      "./proto/common/v1/types.proto"
+      "./proto/internal/v1/user_service.proto"
+      # Exclude: Google annotations (causes Go linting errors)
+    ];
+    grpc.enable = true;
+  };
+  
+  js = {
+    # Frontend: Public APIs + Google annotations
+    additionalFiles = [
+      "./proto/api/v1/user_api.proto"
+      "./proto/google/api/annotations.proto"
+      # Exclude: Internal services (security boundary)
+    ];
+    es.enable = true;
+  };
+};
+```
+
+</TabItem>
+</Tabs>
+
+**Configuration Options:**
+
+| Option | Type | Default | Description |
+|--------|------|---------|-------------|
+| `languages.*.files` | list of strings or null | `null` | Proto files for this language only. Overrides global `protoc.files` |
+| `languages.*.additionalFiles` | list of strings | `[]` | Additional files to add to global `protoc.files` for this language |
+
+**Use Cases:**
+
+<CardGrid>
+  <Card title="Backend + Frontend Separation" icon="split">
+    **Problem**: Different services for different tiers  
+    **Solution**: `go.files` for internal services, `js.additionalFiles` for public APIs
+  </Card>
+  <Card title="Google Annotations Linting" icon="shield">
+    **Problem**: Go + Google annotations = linting errors  
+    **Solution**: Exclude Google annotations from Go, include in JavaScript
+  </Card>
+  <Card title="Security Boundaries" icon="lock">
+    **Problem**: Frontend accessing internal services  
+    **Solution**: Use `files` to enforce strict separation at build time
+  </Card>
+  <Card title="Build Performance" icon="rocket">
+    **Problem**: All languages process all files  
+    **Solution**: Each language processes only relevant files
+  </Card>
+</CardGrid>
+
+<Aside type="tip" title="Migration from Global Files">
+**Backward Compatible**: Existing configurations work unchanged. Per-language files are opt-in enhancements.
+
+**Migration Path**:
+1. Start with global `protoc.files` (current behavior)
+2. Add `additionalFiles` for language-specific extensions  
+3. Use `files` for complete per-language control
+</Aside>
+
 ## Language Support
 
 ### Go Language Configuration

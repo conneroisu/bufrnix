@@ -3,7 +3,7 @@ title: Java
 description: Java code generation with Protocol Buffers and gRPC
 ---
 
-import { Tabs, TabItem } from "@astrojs/starlight/components";
+import { Tabs, TabItem, Badge, Card, CardGrid } from "@astrojs/starlight/components";
 import { Code } from "astro:components";
 import basicConfig from "./java.x-basic-configuration.nix?raw";
 
@@ -117,6 +117,103 @@ Bufrnix supports all three major Java protobuf generators:
   };
 }
 ```
+
+## Per-Language Files
+
+<Badge text="🆕 New Feature" variant="tip" />
+
+Control exactly which proto files Java processes using `files` and `additionalFiles`:
+
+<Tabs>
+<TabItem label="Enterprise Services">
+
+**Use Case**: Java enterprise application needs only backend service definitions.
+
+```nix
+languages.java = {
+  enable = true;
+  outputPath = "src/main/java/generated";
+  # Override: Only enterprise services + shared types
+  files = [
+    "./proto/common/v1/types.proto"
+    "./proto/enterprise/v1/billing_service.proto"
+    "./proto/enterprise/v1/reporting_service.proto"
+    "./proto/internal/v1/admin_service.proto"
+    # No frontend APIs or mobile-specific services
+  ];
+  grpc.enable = true;
+  protovalidate.enable = true;
+};
+```
+
+</TabItem>
+<TabItem label="Add Cloud Dependencies">
+
+**Use Case**: Include Google Cloud and third-party service definitions.
+
+```nix
+languages.java = {
+  enable = true;
+  # Use global files + additional enterprise dependencies
+  additionalFiles = [
+    "./proto/google/cloud/pubsub/v1/pubsub.proto"
+    "./proto/google/cloud/spanner/v1/spanner.proto"
+    "./proto/third_party/kafka/kafka.proto"
+    "./proto/observability/v1/tracing.proto"
+  ];
+  grpc.enable = true;
+  packageName = "com.myenterprise.proto";
+};
+```
+
+</TabItem>
+<TabItem label="Microservice Specific">
+
+**Use Case**: Individual Java microservice processes only relevant APIs.
+
+```nix
+languages.java = {
+  enable = true;
+  outputPath = "payment-service/src/main/java/proto";
+  # Override: Only payment-related services
+  files = [
+    "./proto/common/v1/types.proto"
+    "./proto/payments/v1/payment_service.proto"
+    "./proto/billing/v1/billing_service.proto"
+    "./proto/notifications/v1/payment_notifications.proto"
+    # No user management, analytics, or other microservices
+  ];
+  grpc.enable = true;
+  protovalidate.enable = true;
+};
+```
+
+</TabItem>
+</Tabs>
+
+### Configuration Options
+
+| Option | Type | Description | Example |
+|--------|------|-------------|---------|
+| `files` | `list` | Override global files completely | Microservice-specific APIs |
+| `additionalFiles` | `list` | Extend global files | Add Google Cloud services |
+
+### Common Java Use Cases
+
+<CardGrid stagger>
+  <Card title="Enterprise Services" icon="server">
+    Focus on backend business logic and internal services
+  </Card>
+  <Card title="Cloud Integration" icon="cloud">
+    Add Google Cloud, AWS, or Azure service definitions
+  </Card>
+  <Card title="Microservice Architecture" icon="grid">
+    Process only relevant APIs per microservice boundary
+  </Card>
+  <Card title="Third-Party APIs" icon="external-link">
+    Include external protobuf dependencies and frameworks
+  </Card>
+</CardGrid>
 
 ## Generated Code Structure
 

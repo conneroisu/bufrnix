@@ -1,0 +1,66 @@
+syntax = "proto3";
+
+package api.v1;
+
+import "common/v1/types.proto";
+import "google/api/annotations.proto";
+
+option go_package = "github.com/example/backend/generated/go/api/v1";
+
+// Public User API for frontend consumption
+// These are REST endpoints with Google API annotations
+
+service UserAPIService {
+  // Get a user by ID
+  rpc GetUser(GetUserRequest) returns (GetUserResponse) {
+    option (google.api.http) = {
+      get: "/api/v1/users/{user_id}"
+    };
+  }
+
+  // List users with pagination
+  rpc ListUsers(ListUsersRequest) returns (ListUsersResponse) {
+    option (google.api.http) = {
+      get: "/api/v1/users"
+    };
+  }
+
+  // Update user profile
+  rpc UpdateUserProfile(UpdateUserProfileRequest) returns (UpdateUserProfileResponse) {
+    option (google.api.http) = {
+      put: "/api/v1/users/{user_id}/profile"
+      body: "profile"
+    };
+  }
+}
+
+message GetUserRequest {
+  string user_id = 1;
+  repeated string fields = 2; // Field mask for partial responses
+}
+
+message GetUserResponse {
+  common.v1.User user = 1;
+  common.v1.UserProfile profile = 2;
+}
+
+message ListUsersRequest {
+  common.v1.PaginationRequest pagination = 1;
+  common.v1.UserStatus status_filter = 2;
+  string search_query = 3;
+}
+
+message ListUsersResponse {
+  repeated common.v1.User users = 1;
+  common.v1.PaginationResponse pagination = 2;
+}
+
+message UpdateUserProfileRequest {
+  string user_id = 1;
+  common.v1.UserProfile profile = 2;
+}
+
+message UpdateUserProfileResponse {
+  common.v1.UserProfile profile = 1;
+  bool success = 2;
+}
